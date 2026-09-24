@@ -1,0 +1,20 @@
+{
+  "id": "xiyan",
+  "name": "喜宴",
+  "version": "1.0.0",
+  "level": "D",
+  "token": "【副本进行中：喜宴】",
+  "legacyKeys": [],
+  "detect": {
+    "briefingName": "喜宴"
+  },
+  "time": {
+    "type": "none"
+  },
+  "remaining": {
+    "type": "fromPanel"
+  },
+  "phases": [],
+  "events": [],
+  "docs": []
+}

@@ -1,0 +1,94 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { endManually, skipToPhaseEnd, startManual, state } from '../../app';
+
+const pickId = ref('');
+const inDungeon = computed(() => !!state.session && !!state.pack);
+const p = computed(() => state.progress);
+const hasPhases = computed(() => !!state.pack?.phases.length);
+
+const roundText = computed(() => {
+  const pr = p.value;
+  if (!pr) return '';
+  if (!hasPhases.value) return `第${pr.round}轮`;
+  return `${pr.warn ? '⚠️ ' : ''}${pr.round}/${pr.phase.cap}`;
+});
+
+const remaining = computed(() => {
+  const pr = p.value;
+  if (!pr) return '';
+  if (state.pack?.remaining.type === 'nights' && pr.remainingText) return pr.remainingText;
+  return pr.panel?.limit || state.session?.briefing?.limit || '—';
+});
+
+const canSkip = computed(() => {
+  const pr = p.value;
+  return !!pr && !pr.ended && hasPhases.value && pr.phase.cap > 0 && pr.nextRound < pr.phase.cap;
+});
+
+async function choose() {
+  if (!pickId.value) return;
+  await startManual(pickId.value);
+  pickId.value = '';
+}
+</script>
+
+<template>
+  <div class="rlzc-system">
+    <template v-if="inDungeon && p">
+      <div class="rlzc-card rlzc-hero">
+        <div class="rlzc-hero-top">
+          <span class="rlzc-level">{{ state.pack!.level }}</span>
+          <h3>{{ state.pack!.name }}</h3>
+          <span v-if="p.ended" class="rlzc-chip">已结束</span>
+        </div>
+        <p v-if="state.session?.briefing?.goal" class="rlzc-goal">目标：{{ state.session.briefing.goal }}</p>
+      </div>
+
+      <div class="rlzc-grid">
+        <div class="rlzc-stat" v-if="hasPhases"><span>阶段</span><b>{{ p.phase.name }}</b></div>
+        <div class="rlzc-stat" :class="{ warn: p.warn }"><span>轮次</span><b>{{ roundText }}</b></div>
+        <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
+        <div class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
+      </div>
+
+      <div v-if="p.skipGoal" class="rlzc-note">快进中：目标 {{ state.pack!.phases.find((x) => x.id === p!.skipGoal!.phase)?.name }} 第{{ p.skipGoal.round }}轮</div>
+
+      <div v-if="p.ended && p.settlement" class="rlzc-card">
+        <div class="rlzc-kv"><span>结果</span><b>{{ p.settlement.result ?? '—' }}</b></div>
+        <div class="rlzc-kv"><span>评价</span><b>{{ p.settlement.rating ?? '—' }}</b></div>
+      </div>
+      <div v-else-if="p.ended" class="rlzc-note">副本已手动结束。</div>
+
+      <div v-if="p.panel" class="rlzc-card">
+        <div v-if="p.panel.progressBar" class="rlzc-kv"><span>进度</span><b class="rlzc-mono">{{ p.panel.progressBar }}</b></div>
+        <div v-if="p.panel.tasks.length" class="rlzc-tasks">
+          <span>任务</span>
+          <ul><li v-for="(t, i) in p.panel.tasks" :key="i">{{ t }}</li></ul>
+        </div>
+        <div v-if="p.panel.ps" class="rlzc-ps">ps：{{ p.panel.ps }}</div>
+      </div>
+
+      <div class="rlzc-actions">
+        <button class="rlzc-btn" :disabled="!canSkip" @click="skipToPhaseEnd">跳过（到本阶段结束）</button>
+        <button class="rlzc-btn ghost" :disabled="p.ended" @click="endManually">手动结束副本</button>
+      </div>
+    </template>
+
+    <div v-else class="rlzc-card rlzc-rest">
+      <h3>休整中</h3>
+      <p>当前在回廊里，没有进行中的副本，也不会注入任何提示词。</p>
+    </div>
+
+    <div class="rlzc-card">
+      <label class="rlzc-label">手动选择副本（以最新一条AI回复为第1轮）</label>
+      <div class="rlzc-row">
+        <select v-model="pickId" class="rlzc-input">
+          <option value="">选择副本…</option>
+          <option v-for="pk in state.packs" :key="pk.id" :value="pk.id">{{ pk.level }}｜{{ pk.name }}</option>
+        </select>
+        <button class="rlzc-btn" :disabled="!pickId" @click="choose">进入</button>
+      </div>
+    </div>
+  </div>
+</template>
