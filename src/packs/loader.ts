@@ -4,11 +4,12 @@ import jingjie from './builtin/jingjie.json';
 import kaoshi from './builtin/kaoshi.json';
 import xiyan from './builtin/xiyan.json';
 import youxi from './builtin/youxi.json';
+import wuming from './builtin/wuming.json';
 import zhonglouMap from './builtin/zhonglou-map.svg?raw';
 
 export const GENERIC_PACK_ID = 'generic';
 
-export const BUILTIN_PACKS: Pack[] = [zhonglou, jingjie, kaoshi, xiyan, youxi] as Pack[];
+export const BUILTIN_PACKS: Pack[] = [zhonglou, jingjie, kaoshi, xiyan, youxi, wuming] as Pack[];
 
 /** 内置包的图片：包 id → 包内路径 → 图片 URL */
 const BUILTIN_ASSETS: Record<string, Record<string, string>> = {
@@ -43,19 +44,20 @@ export function validatePack(input: unknown): string[] {
   if (typeof p.id === 'string' && !/^[A-Za-z0-9_-]+$/.test(p.id)) errors.push('id 只能包含字母、数字、下划线和短横线');
   if (p.id === GENERIC_PACK_ID) errors.push(`id 不能是保留字 ${GENERIC_PACK_ID}`);
   if (!LEVELS.includes(p.level)) errors.push('level 必须是 D/C/B/A/S 之一');
-  if (p.players !== undefined && typeof p.players !== 'number') errors.push('players 必须是数字');
+  if (p.players !== undefined && typeof p.players !== 'number' && typeof p.players !== 'string') errors.push('players 必须是数字或文本');
   if (!Array.isArray(p.legacyKeys) || p.legacyKeys.some((k: unknown) => typeof k !== 'string')) errors.push('legacyKeys 必须是文本数组');
   if (!p.detect || typeof p.detect.briefingName !== 'string' || !p.detect.briefingName) errors.push('缺少 detect.briefingName');
 
   const t = p.time;
-  if (!t || (t.type !== 'none' && t.type !== 'clock')) errors.push('time.type 必须是 clock 或 none');
-  else if (t.type === 'clock') {
-    if (typeof t.dayStart !== 'string' || !/^\d{1,2}:\d{2}$/.test(t.dayStart)) errors.push('time.dayStart 格式应为 HH:MM');
-    if (typeof t.minutesPerRound !== 'number' || t.minutesPerRound <= 0) errors.push('time.minutesPerRound 必须是正数');
+  if (!t || !['none', 'clock', 'countdown'].includes(t.type)) errors.push('time.type 必须是 clock、countdown 或 none');
+  else {
+    if (t.type === 'clock' && (typeof t.dayStart !== 'string' || !/^\d{1,2}:\d{2}$/.test(t.dayStart))) errors.push('time.dayStart 格式应为 HH:MM');
+    if (t.type !== 'none' && (typeof t.minutesPerRound !== 'number' || t.minutesPerRound <= 0)) errors.push('time.minutesPerRound 必须是正数');
   }
   const r = p.remaining;
-  if (!r || (r.type !== 'nights' && r.type !== 'fromPanel')) errors.push('remaining.type 必须是 nights 或 fromPanel');
-  else if (r.type === 'nights' && typeof r.template !== 'string') errors.push('remaining.template 必须是文本');
+  if (!r || !['nights', 'countdown', 'fromPanel'].includes(r.type)) errors.push('remaining.type 必须是 nights、countdown 或 fromPanel');
+  else if (r.type !== 'fromPanel' && typeof r.template !== 'string') errors.push('remaining.template 必须是文本');
+  if (r?.type === 'countdown' && t?.type !== 'countdown') errors.push('remaining.type 为 countdown 时，time.type 也必须是 countdown');
 
   if (p.roles !== undefined && (!Array.isArray(p.roles) || p.roles.some((x: unknown) => typeof x !== 'string' || !x))) errors.push('roles 必须是文本数组');
 

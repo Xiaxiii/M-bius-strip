@@ -32,10 +32,14 @@ export interface PackDoc {
 
 export type PackTime =
   | { type: 'clock'; dayStart: string; minutesPerRound: number }
+  /** 倒计时：每轮消耗 minutesPerRound 分钟，不显示钟时 */
+  | { type: 'countdown'; minutesPerRound: number }
   | { type: 'none' };
 
 export type PackRemaining =
   | { type: 'nights'; template: string }
+  /** 剩余分钟 = (当前阶段剩余轮数 + 后续各阶段上限) × time.minutesPerRound，模板占位符 {m} */
+  | { type: 'countdown'; template: string }
   | { type: 'fromPanel' };
 
 export interface Pack {
@@ -43,7 +47,8 @@ export interface Pack {
   name: string;
   version: string;
   level: Level;
-  players?: number;
+  /** 人数，可以是数字或 '4-8' 这样的文本 */
+  players?: number | string;
   token: string;
   legacyKeys: string[];
   detect: { briefingName: string };
