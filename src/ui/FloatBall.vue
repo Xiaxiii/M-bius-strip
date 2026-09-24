@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { saveSettings, state } from '../app';
 
 const SIZE = 44;
@@ -40,6 +40,8 @@ function up(e: PointerEvent) {
 
 const active = computed(() => !!state.session && !state.progress?.ended);
 const warn = computed(() => !!state.progress?.warn);
+
+watch(() => state.settings.ball, place, { deep: true });
 
 onMounted(() => {
   place();
