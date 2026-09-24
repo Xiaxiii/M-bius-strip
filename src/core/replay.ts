@@ -50,7 +50,10 @@ export interface Progress {
   clock?: string;
   /** 已完成这一轮的钟时（仅 clock 阶段，面板显示用） */
   currentClock?: string;
+  /** 剩余时间（按即将生成的这一轮计算，注入用） */
   remainingText?: string;
+  /** 剩余时间（按已完成的这一轮计算，面板用） */
+  currentRemainingText?: string;
   ended: boolean;
   endedBy?: 'tag' | 'manual';
   firedEvents: string[];
@@ -152,6 +155,23 @@ function remainingNights(pack: Pack, phase: Phase): number {
   return n;
 }
 
+/**
+ * 倒计时剩余分钟：(当前阶段剩余轮数 + 后续各阶段上限) × minutesPerRound。
+ * 通过 <阶段切换> 提前进入某阶段后，后续只沿该阶段的 next 链计算。
+ */
+export function remainingMinutes(pack: Pack, phase: Phase, round: number): number | undefined {
+  if (pack.time.type !== 'countdown' || phase.cap <= 0) return undefined;
+  let rounds = Math.max(0, phase.cap - round);
+  const seen = new Set<string>([phase.id]);
+  let cur = findPhase(pack, phase.next);
+  while (cur && !seen.has(cur.id)) {
+    rounds += Math.max(0, cur.cap);
+    seen.add(cur.id);
+    cur = findPhase(pack, cur.next);
+  }
+  return rounds * pack.time.minutesPerRound;
+}
+
 export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progress | null {
   const entryIndex = session.entryIndex;
   if (!isCountable(chat[entryIndex])) return null;
@@ -246,8 +266,17 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   const firedEvents = pack.events.filter((e) => fired.has(e.id)).map((e) => e.id);
 
   let remainingText: string | undefined;
-  if (!ended && pack.remaining.type === 'nights' && pack.phases.length && !phase.byTag && !phase.frozen) {
-    remainingText = pack.remaining.template.replace('{n}', String(remainingNights(pack, phase)));
+  let currentRemainingText: string | undefined;
+  const remaining = pack.remaining;
+  if (!ended && remaining.type === 'nights' && pack.phases.length && !phase.byTag && !phase.frozen) {
+    remainingText = currentRemainingText = remaining.template.replace('{n}', String(remainingNights(pack, phase)));
+  } else if (!ended && remaining.type === 'countdown' && pack.phases.length) {
+    const fill = (r: number) => {
+      const m = remainingMinutes(pack, phase, r);
+      return m === undefined ? undefined : remaining.template.replace('{m}', String(m));
+    };
+    remainingText = fill(nextRound);
+    currentRemainingText = fill(round);
   }
 
   return {
@@ -257,6 +286,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     clock: ended ? undefined : phaseClock(pack, phase, nextRound),
     currentClock: phaseClock(pack, phase, round),
     remainingText,
+    currentRemainingText,
     ended,
     endedBy,
     firedEvents,

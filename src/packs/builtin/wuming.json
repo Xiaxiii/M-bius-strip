@@ -1,0 +1,64 @@
+{
+  "id": "wuming",
+  "name": "污名",
+  "version": "1.0.0",
+  "level": "B",
+  "players": "4-8",
+  "token": "【副本进行中：污名】",
+  "legacyKeys": [
+    "污名"
+  ],
+  "detect": {
+    "briefingName": "污名"
+  },
+  "time": {
+    "type": "countdown",
+    "minutesPerRound": 3
+  },
+  "remaining": {
+    "type": "countdown",
+    "template": "剩余{m}分钟"
+  },
+  "phases": [
+    {
+      "id": "normal",
+      "name": "常规",
+      "cap": 50,
+      "next": "final"
+    },
+    {
+      "id": "final",
+      "name": "定稿",
+      "cap": 10,
+      "next": null
+    }
+  ],
+  "events": [
+    {
+      "id": "E01",
+      "phase": "normal",
+      "from": 1,
+      "to": 1,
+      "kind": "event",
+      "text": "玩家在正在直播的卧室里醒来，系统展开简报。直播已经开始，她正在被围攻。"
+    },
+    {
+      "id": "E02",
+      "phase": "final",
+      "from": 1,
+      "to": 1,
+      "kind": "directive",
+      "text": "定稿阶段开始：弹幕不再产生全新指控，而是从此前出现过的叙事中挑选一版，逐渐写进现实。"
+    },
+    {
+      "id": "E03",
+      "phase": "final",
+      "from": 10,
+      "to": 10,
+      "kind": "event",
+      "text": "收播：直播结束。按世界书F1第九节判定失败或评价，在正文末尾输出<副本结算>。"
+    }
+  ],
+  "docs": [],
+  "disableLive": true
+}

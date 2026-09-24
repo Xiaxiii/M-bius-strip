@@ -17,7 +17,7 @@ const roundText = computed(() => {
 const remaining = computed(() => {
   const pr = p.value;
   if (!pr) return '';
-  if (state.pack?.remaining.type === 'nights' && pr.remainingText) return pr.remainingText;
+  if (state.pack?.remaining.type !== 'fromPanel' && pr.currentRemainingText) return pr.currentRemainingText;
   return pr.panel?.limit || state.session?.briefing?.limit || '—';
 });
 
