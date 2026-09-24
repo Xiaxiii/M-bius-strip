@@ -60,3 +60,19 @@ describe('副本包', () => {
     expect(validatePack(bad).join()).toContain('不存在的阶段');
   });
 });
+
+describe('内置包与 packs/ 同步', () => {
+  it('src/packs/builtin 与 packs/ 内容一致', () => {
+    const src = import.meta.glob('../packs/*', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+    const built = import.meta.glob('../src/packs/builtin/*', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+    const names = Object.keys(src).map((k) => k.split('/').pop()!);
+    expect(names.length).toBeGreaterThan(0);
+    for (const n of names) expect(built[`../src/packs/builtin/${n}`], n).toBe(src[`../packs/${n}`]);
+  });
+
+  it('钟楼为 1.1.0，第三夜事件已更新', () => {
+    const zl = BUILTIN_PACKS.find((p) => p.id === 'zhonglou')!;
+    expect(zl.version).toBe('1.1.0');
+    expect(zl.events.find((e) => e.id === 'E27')!.text).toContain('成为钟守');
+  });
+});
