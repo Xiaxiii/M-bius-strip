@@ -1,0 +1,20 @@
+{
+  "id": "kaoshi",
+  "name": "考试",
+  "version": "1.0.0",
+  "level": "A",
+  "token": "【副本进行中：考试】",
+  "legacyKeys": [],
+  "detect": {
+    "briefingName": "考试"
+  },
+  "time": {
+    "type": "none"
+  },
+  "remaining": {
+    "type": "fromPanel"
+  },
+  "phases": [],
+  "events": [],
+  "docs": []
+}

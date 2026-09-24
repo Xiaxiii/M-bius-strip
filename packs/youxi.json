@@ -1,0 +1,20 @@
+{
+  "id": "youxi",
+  "name": "游戏",
+  "version": "1.0.0",
+  "level": "C",
+  "token": "【副本进行中：游戏】",
+  "legacyKeys": [],
+  "detect": {
+    "briefingName": "游戏"
+  },
+  "time": {
+    "type": "none"
+  },
+  "remaining": {
+    "type": "fromPanel"
+  },
+  "phases": [],
+  "events": [],
+  "docs": []
+}
