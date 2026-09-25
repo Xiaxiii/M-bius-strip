@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSetRoles, debugSetRound, state } from '../../app';
 import { getChat } from '../../st/context';
 import type { Snapshot } from '../../packs/types';
+import { formatState, latestSubState } from '../../core/subapi';
 
 const editable = computed(() => state.settings.debug);
 const phaseSel = ref('');
@@ -32,7 +33,42 @@ const snapshots = computed(() => {
 });
 
 /** 有时限警告的楼层，快照表里标黄 */
-const limitWarned = computed(() => new Set((state.audit?.warnings ?? []).filter((w) => w.kind === 'limit').map((w) => w.index)));
+/** 时限不符、副API判定事件没写出来的楼层，快照表里标黄 */
+const limitWarned = computed(
+  () => new Set((state.audit?.warnings ?? []).filter((w) => w.kind === 'limit' || w.kind === 'eventMissed').map((w) => w.index)),
+);
+
+/** 副API：当前隐藏状态与最近一次整理记录 */
+const subView = computed(() => {
+  void state.tick;
+  if (!state.session || !state.pack || !state.progress) return null;
+  const chat = getChat();
+  const latest = latestSubState(chat, state.progress.entryIndex);
+  let record = null as Snapshot['sub'] | null;
+  for (let i = chat.length - 1; i >= state.progress.entryIndex; i--) {
+    const r = chat[i]?.extra?.rlzc?.sub;
+    if (r) {
+      record = r;
+      break;
+    }
+  }
+  return {
+    text: latest ? formatState(state.pack, latest.state) : '',
+    state: latest?.state ?? null,
+    record,
+  };
+});
+
+const MARK = { done: '✓', missed: '✗', void: '–' } as const;
+function subCell(snap: Snapshot): string {
+  if (!snap.sub && !snap.skippedEvents?.length) return '';
+  const parts: string[] = [];
+  if (snap.sub?.skipped) parts.push(`未更新（${snap.sub.error ?? ''}）`);
+  for (const e of snap.sub?.events ?? []) parts.push(`${e.id}${MARK[e.status]}`);
+  for (const k of snap.skippedEvents ?? []) parts.push(`跳过${k.id}`);
+  if (snap.sub && !snap.sub.skipped && !parts.length) parts.push('已整理');
+  return parts.join(' ');
+}
 
 const progressView = computed(() => {
   const p = state.progress;
@@ -114,6 +150,13 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
         <p v-else class="rlzc-hint">无</p>
       </div>
 
+      <details v-if="subView && (subView.state || subView.record)" class="rlzc-card">
+        <summary>副API：隐藏状态与最近一次整理</summary>
+        <pre class="rlzc-pre">{{ subView.text || '（尚无状态）' }}</pre>
+        <pre v-if="subView.record" class="rlzc-pre">{{ json(subView.record) }}</pre>
+        <p class="rlzc-hint">✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 副API预判条件不成立，没有注入</p>
+      </details>
+
       <details class="rlzc-card" open>
         <summary>本次注入</summary>
         <pre class="rlzc-pre">{{ [state.lastInjection.token, state.lastInjection.progress, state.lastInjection.turn].filter(Boolean).join('\n\n') || '（尚未生成）' }}</pre>
@@ -129,7 +172,7 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
       <details class="rlzc-card">
         <summary>每楼快照（最近60条）</summary>
         <table class="rlzc-table">
-          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>时限</th><th>事件</th></tr></thead>
+          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>时限</th><th>事件</th><th>副API</th></tr></thead>
           <tbody>
             <tr v-for="row in snapshots" :key="row.index" :class="{ 'rlzc-row-warn': limitWarned.has(row.index) }">
               <td>{{ row.index }}{{ row.snap.entry ? '★' : '' }}</td>
@@ -138,6 +181,7 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
               <td>{{ row.snap.clock ?? '' }}</td>
               <td>{{ row.snap.limit?.text ?? '' }}</td>
               <td>{{ row.snap.injected.join(' ') }}</td>
+              <td>{{ subCell(row.snap) }}</td>
             </tr>
           </tbody>
         </table>

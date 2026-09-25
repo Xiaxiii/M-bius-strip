@@ -1,12 +1,24 @@
 /**
  * 扩展的运行时状态与 ST 事件处理。核心计算全部交给 core/ 下的纯函数。
  */
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs/types';
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, KEY_PROGRESS, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
+import {
+  buildSubPrompt,
+  callWithRetry,
+  classifyError,
+  formatState,
+  lastNextChecks,
+  latestSubState,
+  shouldCallSub,
+  type SubMessages,
+  type SubRecord,
+} from './core/subapi';
+import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget } from './core/detector';
 import {
   createSession,
@@ -38,7 +50,34 @@ export interface Settings {
   panelDisplay: 'panel' | 'statusbar';
   /** 通用副本包按等级的默认轮数上限（CLAUDE.md 12.4） */
   genericCaps: GenericCaps;
+  /** 副API「记录员」（CLAUDE.md 14） */
+  subApi: SubApiSettings;
 }
+
+export interface SubApiSettings {
+  /** 关闭 / 跟随主API / 独立接口（接口预设）/ 酒馆连接配置 */
+  source: SubSource;
+  presets: SubPreset[];
+  /** 上次用的接口预设 */
+  presetId: string;
+  /** 酒馆连接配置 id */
+  profileId: string;
+  /** 省钱模式：只在本轮有注入事件、或下一轮有带条件的事件时调用 */
+  saveMode: boolean;
+  /** 等待整理：生成下一轮前等本轮整理完成 */
+  wait: boolean;
+  timeoutSec: number;
+}
+
+export const DEFAULT_SUB_API: SubApiSettings = {
+  source: 'off',
+  presets: [],
+  presetId: '',
+  profileId: '',
+  saveMode: false,
+  wait: true,
+  timeoutSec: 60,
+};
 
 const DEFAULT_SETTINGS: Settings = {
   depths: { token: 4, progress: 4, turn: 0 },
@@ -48,6 +87,7 @@ const DEFAULT_SETTINGS: Settings = {
   customPacks: [],
   panelDisplay: 'panel',
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
+  subApi: structuredClone(DEFAULT_SUB_API),
 };
 
 /** 面板页签（CLAUDE.md 11.9）：第三期「账本」、第四期「黑市」以后加在 system 与 settings 之间 */
@@ -59,6 +99,10 @@ export const state = reactive({
   pack: null as Pack | null,
   progress: null as Progress | null,
   audit: null as AuditResult | null,
+  /** 副API正在整理 */
+  subBusy: false,
+  /** 系统页的一行小字：副本记录：已更新（第N轮）/ 第N轮状态未更新 */
+  subLine: '',
   settings: structuredClone(DEFAULT_SETTINGS) as Settings,
   packs: [] as Pack[],
   lastInjection: EMPTY_INJECTION as Injection,
@@ -91,6 +135,11 @@ export function loadSettings(): void {
     customPacks: Array.isArray(saved.customPacks) ? saved.customPacks.filter((p) => validatePack(p).length === 0) : [],
     panelDisplay: saved.panelDisplay === 'statusbar' ? 'statusbar' : 'panel',
     genericCaps: { ...DEFAULT_GENERIC_CAPS, ...(saved.genericCaps ?? {}) },
+    subApi: {
+      ...structuredClone(DEFAULT_SUB_API),
+      ...(saved.subApi ?? {}),
+      presets: Array.isArray(saved.subApi?.presets) ? saved.subApi!.presets : [],
+    },
   };
   all[SETTINGS_KEY] = merged;
   state.settings = merged;
@@ -98,7 +147,8 @@ export function loadSettings(): void {
 }
 
 export function saveSettings(): void {
-  ctx().extensionSettings[SETTINGS_KEY] = JSON.parse(JSON.stringify(state.settings));
+  // 存同一个对象（去掉 Vue 代理），ST 保存时会序列化；这样面板与 extensionSettings.rlzc 始终一致
+  ctx().extensionSettings[SETTINGS_KEY] = toRaw(state.settings);
   ctx().saveSettingsDebounced();
   state.packs = allPacks(state.settings.customPacks);
 }
@@ -207,6 +257,7 @@ export function refresh(): void {
   state.pack = c.pack;
   state.progress = c.progress;
   state.audit = c.audit;
+  state.subLine = subStatusLine(chat, c.progress);
   state.tick++;
 }
 
@@ -228,14 +279,25 @@ function injectFor(type: string | undefined): void {
   const session = readSession();
   const { pack, progress, audit } = compute(chat, session);
   const roles = session ? effectiveRoles(session, progress?.rolesFromChat) : undefined;
+  // 副API：当前隐藏状态与上一条消息对本轮带条件事件的预判（关闭时都不用）
+  const subOn = subEnabled() && !!progress;
+  const subState = subOn ? latestSubState(chat, progress!.entryIndex) : null;
   const inj = pack
-    ? buildInjection(pack, progress, session, { roles, briefing: session?.briefing, panelLimit: progress?.panel?.limit, audit: audit ?? undefined })
+    ? buildInjection(pack, progress, session, {
+        roles,
+        briefing: session?.briefing,
+        panelLimit: progress?.panel?.limit,
+        audit: audit ?? undefined,
+        subNext: subOn ? lastNextChecks(chat, progress!.entryIndex) : undefined,
+        stateText: subState ? formatState(pack, subState.state) : undefined,
+      })
     : EMPTY_INJECTION;
   clearInjection();
   const d = state.settings.depths;
   if (inj.token) setPrompt(KEY_TOKEN, inj.token, d.token, true);
   if (inj.progress) setPrompt(KEY_PROGRESS, inj.progress, d.progress, false);
   if (inj.turn) setPrompt(KEY_TURN, inj.turn, d.turn, false);
+  if (inj.state) setPrompt(KEY_STATE, inj.state, d.progress, false);
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
@@ -274,6 +336,7 @@ export async function interceptor(_chat: unknown[], _contextSize: number, _abort
       return;
     }
     if (type !== 'continue' && type !== 'swipe' && type !== 'regenerate') await maybeAskSkip();
+    await waitForSub(type);
     injectFor(type);
   } catch (e) {
     console.error('[rlzc] 拦截器出错', e);
@@ -422,9 +485,259 @@ export async function abandonSession(): Promise<void> {
   refresh();
 }
 
+// ───────────── 副API「记录员」（CLAUDE.md 14）─────────────
+
+export function subEnabled(): boolean {
+  return state.settings.subApi.source !== 'off';
+}
+
+/** 按当前设置得到发请求的目标；独立接口没选预设时返回 null */
+function subTarget(): SubTarget | null {
+  const s = state.settings.subApi;
+  const timeoutMs = Math.max(5, Number(s.timeoutSec) || 60) * 1000;
+  if (s.source === 'main') return { source: 'main', timeoutMs };
+  if (s.source === 'profile') return s.profileId ? { source: 'profile', profileId: s.profileId, timeoutMs } : null;
+  if (s.source === 'preset') {
+    const preset = s.presets.find((p) => p.id === s.presetId);
+    return preset ? { source: 'preset', preset, timeoutMs } : null;
+  }
+  return null;
+}
+
+function targetLabel(t: SubTarget): string {
+  if (t.source === 'main') return '跟随主API';
+  if (t.source === 'profile') return `连接配置 ${t.profileId}`;
+  return `预设「${t.preset?.name}」`;
+}
+
+/** 系统页的一行小字 */
+function subStatusLine(chat: ChatMessage[], progress: Progress | null): string {
+  if (!subEnabled() || !progress || progress.ended) return '';
+  if (state.subBusy) return '副本记录：整理中…';
+  const indices = Object.keys(progress.perMessage).map(Number);
+  if (!indices.length) return '';
+  const last = Math.max(...indices);
+  if (chat[last]?.extra?.rlzc?.sub?.skipped) return `第${progress.perMessage[last].round}轮状态未更新`;
+  const latest = latestSubState(chat, progress.entryIndex);
+  if (latest && progress.perMessage[latest.index]) return `副本记录：已更新（第${progress.perMessage[latest.index].round}轮）`;
+  return '副本记录：尚未整理';
+}
+
+interface SubJob {
+  key: string;
+  index: number;
+  promise: Promise<void>;
+}
+
+let subJob: SubJob | null = null;
+/** 同一轮不重复弹窗、跳过后不再自动重试 */
+const subDone = new Set<string>();
+
+function hashText(t: string): string {
+  let h = 0;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
+  return `${t.length}.${h}`;
+}
+
+function subKey(index: number): string {
+  return `${getChatId()}:${index}:${hashText(String(getChat()[index]?.mes ?? ''))}`;
+}
+
+/** 「整理中」：显示在发送按钮旁 */
+function setSubBusy(busy: boolean): void {
+  state.subBusy = busy;
+  state.subLine = subStatusLine(getChat(), state.progress);
+  const id = 'rlzc-sub-busy';
+  let el = document.getElementById(id);
+  if (busy && state.settings.subApi.wait) {
+    const anchor = document.getElementById('rightSendForm');
+    if (!el && anchor) {
+      el = document.createElement('small');
+      el.id = id;
+      el.textContent = '整理中…';
+      el.title = '回廊种菜系统：副API正在整理本轮状态';
+      el.style.cssText = 'align-self:center;margin-right:6px;opacity:.75;white-space:nowrap;';
+      anchor.prepend(el);
+    }
+  } else el?.remove();
+}
+
+/** 把整理结果写进这一楼；这一楼已被删改（滑动、重新生成）时丢弃 */
+function writeSub(index: number, key: string, record: SubRecord): void {
+  if (subKey(index) !== key) return;
+  const msg = getChat()[index];
+  if (!msg?.extra?.rlzc) return;
+  msg.extra.rlzc = plain({ ...msg.extra.rlzc, sub: record });
+  saveMeta();
+  refresh();
+}
+
+/** 收到AI消息后调用（MESSAGE_RECEIVED）：按设置决定是否整理这一楼 */
+function startSub(index: number, type?: string): void {
+  const chat = getChat();
+  const progress = state.progress;
+  const pack = state.pack;
+  const msg = chat[index];
+  const rec = progress?.perMessage[index];
+  if (!pack || !progress || !rec || !msg) return;
+  const injected = new Set(msg.extra?.rlzc?.injected ?? []);
+  const roles = currentRoles();
+  const fill = (e: (typeof pack.events)[number]) => ({ ...e, text: fillRoles(e.text, pack, roles), if: e.if ? fillRoles(e.if, pack, roles) : undefined });
+  const events = pack.events.filter((e) => injected.has(e.id)).map(fill);
+  const nextConditional = (progress.next?.events ?? []).filter((e) => e.if).map(fill);
+  const call = shouldCallSub({
+    enabled: subEnabled(),
+    active: !progress.ended && state.session?.status === 'active',
+    type,
+    saveMode: state.settings.subApi.saveMode,
+    hasEvents: events.length > 0,
+    hasNextConditional: nextConditional.length > 0,
+  });
+  if (!call) return;
+  const key = subKey(index);
+  if (subDone.has(key)) return;
+  const phase = pack.phases.find((p) => p.id === rec.phase);
+  const prev = latestSubState(chat.slice(0, index), progress.entryIndex);
+  const raw = buildSubPrompt({
+    pack,
+    phaseName: phase?.name ?? rec.phase,
+    round: rec.round,
+    prevState: prev?.state ?? null,
+    events,
+    nextConditional,
+    text: String(msg.mes ?? ''),
+  });
+  const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
+  const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
+  const promise = runSubJob(index, key, rec.round, messages);
+  subJob = { key, index, promise };
+  void promise.finally(() => {
+    if (subJob?.key === key) subJob = null;
+  });
+}
+
+async function runSubJob(index: number, key: string, round: number, messages: SubMessages): Promise<void> {
+  setSubBusy(true);
+  try {
+    let retries = 2;
+    for (;;) {
+      const target = subTarget();
+      if (!target) throw new Error('副API没有设置好：独立接口需要先选一个接口预设，连接配置需要先选一个配置');
+      const t0 = Date.now();
+      try {
+        const result = await callWithRetry((m) => callSub(target, m), messages, retries);
+        writeSub(index, key, { ...result, ms: Date.now() - t0, via: targetLabel(target), at: new Date().toISOString() });
+        subDone.add(key);
+        return;
+      } catch (e) {
+        if (subKey(index) !== key) return; // 这一楼已经变了，不再处理
+        const reason = classifyError(e);
+        const detail = String((e as Error)?.message ?? e).slice(0, 200);
+        log('副API失败', reason, e);
+        if (!state.settings.subApi.wait) {
+          toast('warning', `第${round}轮状态整理失败（${reason}），已沿用上一轮状态。`);
+          skipSub(index, key, reason);
+          return;
+        }
+        const choice = await askSubFailure(round, reason, detail);
+        if (choice === 'skip') {
+          skipSub(index, key, reason);
+          return;
+        }
+        retries = 0; // 玩家点的重试：再调用一次
+      }
+    }
+  } catch (e) {
+    toast('error', String((e as Error)?.message ?? e));
+    skipSub(index, key, '其他');
+  } finally {
+    setSubBusy(false);
+  }
+}
+
+function skipSub(index: number, key: string, reason: string): void {
+  subDone.add(key);
+  writeSub(index, key, { skipped: true, error: reason, at: new Date().toISOString() });
+}
+
+/** 失败弹窗：重试 / 换一个接口（弹窗内出现接口预设下拉框，选定后立即重试）/ 这轮先跳过 */
+async function askSubFailure(round: number, reason: string, detail: string): Promise<'retry' | 'skip'> {
+  const c = ctx() as any;
+  if (!c.Popup || !c.POPUP_TYPE) {
+    return window.confirm(`第${round}轮状态整理失败（${reason}）。重试吗？取消则这轮先跳过。`) ? 'retry' : 'skip';
+  }
+  const s = state.settings.subApi;
+  const box = document.createElement('div');
+  const title = document.createElement('h3');
+  title.textContent = `第${round}轮状态整理失败`;
+  const p = document.createElement('p');
+  p.textContent = `原因：${reason}`;
+  const small = document.createElement('small');
+  small.textContent = detail;
+  small.style.opacity = '0.7';
+  const switchBox = document.createElement('div');
+  switchBox.style.cssText = 'display:none;margin-top:10px;';
+  const label = document.createElement('label');
+  label.textContent = '换成：';
+  const select = document.createElement('select');
+  select.className = 'text_pole';
+  const options: { value: string; text: string }[] = [{ value: '', text: '请选择…' }];
+  for (const pr of s.presets) if (!(s.source === 'preset' && pr.id === s.presetId)) options.push({ value: `preset:${pr.id}`, text: `接口预设：${pr.name}` });
+  if (s.source !== 'main') options.push({ value: 'main', text: '跟随主API' });
+  for (const o of options) {
+    const opt = document.createElement('option');
+    opt.value = o.value;
+    opt.textContent = o.text;
+    select.append(opt);
+  }
+  label.append(select);
+  switchBox.append(label);
+  box.append(title, p, small, switchBox);
+
+  let popup: any;
+  select.addEventListener('change', () => {
+    const v = select.value;
+    if (!v) return;
+    if (v === 'main') s.source = 'main';
+    else {
+      s.source = 'preset';
+      s.presetId = v.slice('preset:'.length);
+    }
+    saveSettings();
+    void popup.complete(c.POPUP_RESULT.CUSTOM1);
+  });
+  popup = new c.Popup(box, c.POPUP_TYPE.TEXT, '', {
+    okButton: '重试',
+    cancelButton: '这轮先跳过',
+    customButtons: [
+      {
+        text: '换一个接口',
+        action: () => {
+          switchBox.style.display = '';
+          select.focus();
+        },
+      },
+    ],
+  });
+  const result = await popup.show();
+  return result === c.POPUP_RESULT.AFFIRMATIVE || result === c.POPUP_RESULT.CUSTOM1 ? 'retry' : 'skip';
+}
+
+/** 开着「等待整理」时，生成下一轮前等本轮整理完成（滑动、重新生成的正是那一楼时不必等） */
+async function waitForSub(type?: string): Promise<void> {
+  const job = subJob;
+  if (!job || !state.settings.subApi.wait) return;
+  if ((type === 'swipe' || type === 'regenerate' || type === 'continue') && job.index >= chatForGeneration(type).length) return;
+  try {
+    await job.promise;
+  } catch {
+    /* 失败已在任务里处理 */
+  }
+}
+
 // ───────────── 事件 ─────────────
 
-export function onMessageReceived(index: number): void {
+export function onMessageReceived(index: number, type?: string): void {
   const chat = getChat();
   const msg = chat[index];
   if (!isCountable(msg)) return;
@@ -467,12 +780,16 @@ export function onMessageReceived(index: number): void {
     if (limit) snap.limit = limit;
     const entry = msg.extra?.rlzc?.entry;
     if (entry) snap.entry = entry;
+    if (lastInjectionIndex === index && state.lastInjection.skipped?.length) snap.skippedEvents = state.lastInjection.skipped;
+    // 继续（continue）不重新整理，保留这一楼原来的整理结果
+    if (type === 'continue' && msg.extra?.rlzc?.sub) snap.sub = msg.extra.rlzc.sub;
     msg.extra = msg.extra ?? {};
     // 写进聊天数据的必须是普通对象：ST 会 structuredClone 消息，Vue 的响应式代理无法被克隆
     msg.extra.rlzc = plain(snap);
     saveMeta();
     // 核对要用到刚写入的快照
     refresh();
+    startSub(index, type);
   }
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);

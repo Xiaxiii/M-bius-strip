@@ -60,6 +60,8 @@ async function choose() {
         <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
       </div>
 
+      <p v-if="state.subLine" class="rlzc-subline">{{ state.subLine }}</p>
+
       <div v-if="p.skipGoal" class="rlzc-note">快进中：目标 {{ state.pack!.phases.find((x) => x.id === p!.skipGoal!.phase)?.name }} 第{{ p.skipGoal.round }}轮</div>
 
       <div v-if="p.ended && p.settlement" class="rlzc-card">

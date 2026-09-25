@@ -133,3 +133,7 @@
 .rlzc-table th, .rlzc-table td { text-align: left; padding: 3px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .rlzc-warns li { align-items: flex-start; font-size: 13px; }
 .rlzc-row-warn td { background: color-mix(in srgb, #e0b000 22%, transparent); }
+.rlzc-intro { line-height: 1.6; margin-bottom: 8px; }
+.rlzc-grow { flex: 1; margin: 0; }
+.rlzc-grow > .rlzc-input { flex: 1; min-width: 0; }
+.rlzc-subline { font-size: 12px; color: var(--muted); margin: 0; }

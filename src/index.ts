@@ -26,7 +26,7 @@ globalThis.rlzcInterceptor = interceptor;
 function init() {
   loadSettings();
 
-  onEvent('MESSAGE_RECEIVED', (id: number) => onMessageReceived(Number(id)));
+  onEvent('MESSAGE_RECEIVED', (id: number, type?: string) => onMessageReceived(Number(id), type));
   onEvent('CHARACTER_MESSAGE_RENDERED', (id: number) => hideTagsInMessage(Number(id)));
   onEvent('MESSAGE_DELETED', () => onChatMutated());
   onEvent('MESSAGE_SWIPED', (id: number) => {

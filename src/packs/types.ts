@@ -26,6 +26,13 @@ export interface PackEvent {
   kind: 'event' | 'directive';
 }
 
+/** 副API要维护的隐藏状态字段（CLAUDE.md 14） */
+export interface StateField {
+  key: string;
+  label: string;
+  hint: string;
+}
+
 export interface PackDoc {
   title: string;
   md?: string;
@@ -67,6 +74,8 @@ export interface Pack {
   deadline?: string;
   /** 预留：第三期直播功能在该副本中关闭 */
   disableLive?: boolean;
+  /** 副API维护的隐藏状态字段；没有时只维护一个 summary（不超过150字） */
+  stateFields?: StateField[];
   /** 预留：第四期赌坊是否在该副本内开放（默认不开放，赌坊只在回廊营业） */
   casino?: boolean;
 }
@@ -110,6 +119,10 @@ export interface Snapshot {
   injected: string[];
   /** 本楼注入的时限：文字，及倒计时的约剩/总时长分钟（CLAUDE.md 12.6） */
   limit?: { text: string; minutes?: number; total?: number };
+  /** 副API对这一楼的整理结果（状态来源：最近一条带 sub.state 的楼） */
+  sub?: import('../core/subapi').SubRecord;
+  /** 生成这一楼时，因副API预判「条件不成立」而没有注入的事件 */
+  skippedEvents?: { id: string; reason: string }[];
   /** 仅入场消息：所属会话 id */
   entry?: string;
 }
