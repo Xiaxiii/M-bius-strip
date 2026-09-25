@@ -7,6 +7,7 @@ import {
   type PanelInfo,
   type Settlement,
 } from './detector';
+import { computeLimit, nextChainStart, remainingNights, type LimitInfo } from './timeLimit';
 
 /**
  * 从聊天记录重放出当前副本状态（CLAUDE.md 5.1）。
@@ -38,6 +39,8 @@ export interface MessageRecord {
   round: number;
   events: string[];
   skipFrom?: number;
+  /** 这一轮的时限（与当时注入的一致，用于核对） */
+  limit?: LimitInfo;
 }
 
 export interface Progress {
@@ -50,12 +53,12 @@ export interface Progress {
   clock?: string;
   /** 已完成这一轮的钟时（仅 clock 阶段，面板显示用） */
   currentClock?: string;
-  /** 剩余时间（按即将生成的这一轮计算，注入用） */
+  /** 副本包 remaining 模板填好的文字：nights →「剩余N夜」；countdown →「剩余M分钟」（M = 约剩分钟） */
   remainingText?: string;
-  /** 剩余时间（按已完成的这一轮计算，面板用） */
-  currentRemainingText?: string;
-  /** 即将生成这一轮 <副本> 时限一栏应写的内容（副本包有轮数表时） */
-  limitText?: string;
+  /** 即将生成这一轮的时限：剩余X/Y轮、截止条件、<副本> 时限一栏应写的文字（CLAUDE.md 12.2） */
+  limit?: LimitInfo;
+  /** 当前链的起点阶段 id */
+  chainStart?: string;
   ended: boolean;
   endedBy?: 'tag' | 'manual';
   firedEvents: string[];
@@ -145,59 +148,16 @@ export function planRound(pack: Pack, phase: Phase, round: number, skipGoal: Ski
   return { phase, round: base, events: phaseEvents.filter((e) => e.from === base) };
 }
 
-function remainingNights(pack: Pack, phase: Phase): number {
-  const seen = new Set<string>();
-  let n = 0;
-  let cur: Phase | undefined = phase;
-  while (cur && !seen.has(cur.id)) {
-    if (cur.night) n++;
-    seen.add(cur.id);
-    cur = findPhase(pack, cur.next);
-  }
-  return n;
-}
-
-/**
- * 倒计时剩余分钟：(当前阶段剩余轮数 + 后续各阶段上限) × minutesPerRound。
- * 通过 <阶段切换> 提前进入某阶段后，后续只沿该阶段的 next 链计算。
- */
-export function remainingMinutes(pack: Pack, phase: Phase, round: number): number | undefined {
-  if (pack.time.type !== 'countdown' || phase.cap <= 0) return undefined;
-  let rounds = Math.max(0, phase.cap - round);
-  const seen = new Set<string>([phase.id]);
-  let cur = findPhase(pack, phase.next);
-  while (cur && !seen.has(cur.id)) {
-    rounds += Math.max(0, cur.cap);
-    seen.add(cur.id);
-    cur = findPhase(pack, cur.next);
-  }
-  return rounds * pack.time.minutesPerRound;
-}
-
-/**
- * 某阶段第 round 轮时，<副本> 时限一栏应写的内容，按副本包的计时方式计算：
- * nights → 剩余N夜；countdown → 剩余M分钟；其余有上限的阶段（如调查、审判）→「阶段名剩余K轮」。
- * 没有轮数表的副本返回 undefined。
- */
-export function limitTextAt(pack: Pack, phase: Phase, round: number): string | undefined {
-  if (!pack.phases.some((p) => p.id === phase.id)) return undefined;
-  const r = pack.remaining;
-  if (r.type === 'nights' && !phase.byTag && !phase.frozen) return r.template.replace('{n}', String(remainingNights(pack, phase)));
-  if (r.type === 'countdown') {
-    const m = remainingMinutes(pack, phase, round);
-    if (m !== undefined) return r.template.replace('{m}', String(m));
-  }
-  if (phase.cap > 0) return `${phase.name}剩余${Math.max(0, phase.cap - round)}轮`;
-  return undefined;
-}
-
 export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progress | null {
   const entryIndex = session.entryIndex;
   if (!isCountable(chat[entryIndex])) return null;
 
   const phases = phasesOf(pack);
   let phase = phases[0];
+  let chainStart = phases[0];
   let round = 0;
+  /** 上一条AI消息 <副本> 时限一栏的原文（“只减不增”） */
+  let prevLimit: string | undefined;
   let ended = false;
   let endedBy: 'tag' | 'manual' | undefined;
   let skipGoal: SkipGoal | null = null;
@@ -214,6 +174,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   }
 
   const enter = (next: Phase) => {
+    if (pack.phases.length) chainStart = nextChainStart(pack, chainStart, next);
     phase = next;
     round = 0;
     if (skipGoal && !reachable(pack, phase, skipGoal.phase)) skipGoal = null;
@@ -225,12 +186,19 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
       const plan = planRound(pack, phase, round, skipGoal);
       round = plan.round;
       plan.events.forEach((e) => fired.add(e.id));
-      perMessage[i] = { phase: phase.id, round, events: plan.events.map((e) => e.id), skipFrom: plan.skipFrom };
+      perMessage[i] = {
+        phase: phase.id,
+        round,
+        events: plan.events.map((e) => e.id),
+        skipFrom: plan.skipFrom,
+        limit: computeLimit(pack, phase, chainStart, round, prevLimit),
+      };
       if (skipGoal && phase.id === skipGoal.phase && round >= skipGoal.round) skipGoal = null;
 
       const text = String(msg.mes ?? '');
       const p = detectPanel(text);
       if (p) panel = p;
+      prevLimit = p?.limit;
       const r = detectRoles(text);
       if (r) rolesFromChat = r;
 
@@ -284,18 +252,13 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   const capped = phase.cap > 0;
   const firedEvents = pack.events.filter((e) => fired.has(e.id)).map((e) => e.id);
 
+  const limit = ended ? undefined : computeLimit(pack, phase, chainStart, nextRound, prevLimit);
   let remainingText: string | undefined;
-  let currentRemainingText: string | undefined;
   const remaining = pack.remaining;
   if (!ended && remaining.type === 'nights' && pack.phases.length && !phase.byTag && !phase.frozen) {
-    remainingText = currentRemainingText = remaining.template.replace('{n}', String(remainingNights(pack, phase)));
-  } else if (!ended && remaining.type === 'countdown' && pack.phases.length) {
-    const fill = (r: number) => {
-      const m = remainingMinutes(pack, phase, r);
-      return m === undefined ? undefined : remaining.template.replace('{m}', String(m));
-    };
-    remainingText = fill(nextRound);
-    currentRemainingText = fill(round);
+    remainingText = remaining.template.replace('{n}', String(remainingNights(pack, phase)));
+  } else if (!ended && remaining.type === 'countdown' && limit?.minutes !== undefined) {
+    remainingText = remaining.template.replace('{m}', String(limit.minutes));
   }
 
   return {
@@ -305,8 +268,8 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     clock: ended ? undefined : phaseClock(pack, phase, nextRound),
     currentClock: phaseClock(pack, phase, round),
     remainingText,
-    currentRemainingText,
-    limitText: ended ? undefined : limitTextAt(pack, phase, nextRound),
+    limit,
+    chainStart: pack.phases.length ? chainStart.id : undefined,
     ended,
     endedBy,
     firedEvents,

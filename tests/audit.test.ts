@@ -8,7 +8,7 @@ import type { ChatMessage, Pack } from '../src/packs/types';
 import { ai, BRIEFING, session, user, zhonglou } from './helpers';
 
 const wuming = BUILTIN_PACKS.find((p) => p.id === 'wuming') as Pack;
-const panel = (bar: string, limit = '剩余3夜') => `正文……\n<副本>\n时限：${limit}\n进度条：${bar}\n任务：\n活下去\n</副本>`;
+const panel = (bar: string, limit = '至第四日日出·剩余3夜') => `正文……\n<副本>\n时限：${limit}\n进度条：${bar}\n任务：\n活下去\n</副本>`;
 
 /** 简报(入场，第1轮) + 若干条AI回复 */
 function chatOf(...replies: string[]): ChatMessage[] {
@@ -93,52 +93,70 @@ describe('b. 进度条', () => {
   });
 });
 
-describe('c. 时限', () => {
-  it('钟楼：每轮注入时限应写的内容', () => {
-    const r = check(chatOf(panel('0')));
-    expect(r.p.limitText).toBe('剩余3夜');
-    expect(buildInjection(zhonglou, r.p, r.s, { audit: r.a }).turn).toContain('本轮<副本>的时限一栏写：剩余3夜');
+describe('F. 时限核对（与本楼快照的注入值比较）', () => {
+  const xiyan = BUILTIN_PACKS.find((p) => p.id === 'xiyan') as Pack;
+  const xy = (...replies: string[]) => {
+    const c: ChatMessage[] = [user('开始'), ai('「副本简报 - 喜宴」')];
+    for (const r of replies) c.push(user(), ai(r));
+    return c;
+  };
+  /** 给第 index 楼写上快照里的注入值（模拟扩展在生成时记录的） */
+  const snap = (c: ChatMessage[], index: number, limit: { text: string; minutes?: number; total?: number }) => {
+    c[index].extra = { rlzc: { phase: '喜宴', round: 0, injected: [], limit } };
+  };
+
+  it('钟楼：与注入文字一致不警告，不一致警告', () => {
+    expect(check(chatOf(panel('0'))).kinds).toEqual([]);
+    const bad = check(chatOf(panel('0', '剩余2夜')));
+    expect(bad.a.warnings.map((w) => w.text)).toEqual(['时限与注入文字不一致：写的是「剩余2夜」，注入的是「至第四日日出·剩余3夜」']);
   });
 
-  it('钟楼第二日：剩余2夜；写错时警告', () => {
-    const replies = Array.from({ length: 72 + 28 + 5 }, () => panel('0', '剩余2夜'));
-    const { a } = check(chatOf(...replies));
-    // 第一日（剩余3夜）写成了剩余2夜
-    const limitWarns = a.warnings.filter((w) => w.kind === 'limit');
-    expect(limitWarns[0].text).toContain('应为「剩余3夜」');
-    expect(limitWarns.every((w) => w.phase !== '第二日·白天')).toBe(true);
-  });
-
-  it('调查阶段：阶段名剩余K轮', () => {
-    const r = check(chatOf(panel('0'), '<阶段切换>调查</阶段切换>' + panel('0')));
+  it('钟楼调查阶段：停摆文字', () => {
+    const r = check(chatOf(panel('0'), '<阶段切换>调查</阶段切换>' + panel('0'), panel('0', '钟楼停摆·调查中')));
     expect(r.p.phase.id).toBe('inv');
-    expect(r.p.limitText).toBe('调查剩余49轮');
+    expect(r.kinds).toEqual([]);
   });
 
-  it('污名倒计时：常规第12轮应写剩余144分钟', () => {
-    const c: ChatMessage[] = [user('开始'), ai('「副本简报 - 污名」')];
-    for (let i = 2; i <= 12; i++) c.push(user(), ai(panel('0', `剩余${(50 - i + 10) * 3}分钟`)));
-    const r = check(c, wuming);
-    expect(r.p.round).toBe(12);
-    expect(r.kinds).toEqual([]);
-    expect(r.p.limitText).toBe('剩余141分钟');
-    c[c.length - 1] = ai(panel('0', '剩余150分钟'));
-    const bad = check(c, wuming);
-    expect(bad.a.warnings.map((w) => w.text)).toEqual(['时限与计算值不一致：写的是「剩余150分钟」，应为「剩余144分钟」']);
+  it('倒计时：一致、写得更少都不警告', () => {
+    const c = xy(panel('0', '约剩7小时54分/8小时'), panel('0', '约剩6小时/8小时'));
+    expect(check(c, xiyan).kinds).toEqual([]);
+  });
+
+  it('倒计时：剩余比注入值多、总时长不一致、读不到都警告', () => {
+    const texts = check(xy(panel('0', '约剩7小时58分/8小时')), xiyan).a.warnings.map((w) => w.text);
+    expect(texts).toEqual(['剩余时间比注入值多：写的是7小时58分，注入的是7小时54分']);
+    expect(check(xy(panel('0', '约剩7小时/9小时')), xiyan).a.warnings.map((w) => w.text)).toEqual([
+      '总时长与注入值不一致：写的是9小时，注入的是8小时',
+    ]);
+    expect(check(xy(panel('0', '天亮之前')), xiyan).kinds).toEqual(['limit']);
+    expect(check(xy(panel('0', '约剩7小时')), xiyan).kinds).toEqual(['limit']);
+  });
+
+  it('优先使用快照里记录的注入值', () => {
+    const c = xy(panel('0', '约剩7小时/8小时'));
+    expect(check(c, xiyan).kinds).toEqual([]);
+    snap(c, 3, { text: '约剩6小时/8小时', minutes: 360, total: 480 });
+    expect(check(c, xiyan).a.warnings.map((w) => w.text)).toEqual(['剩余时间比注入值多：写的是7小时，注入的是6小时']);
+  });
+
+  it('只警告，不改原文', () => {
+    const c = xy(panel('0', '约剩9小时/9小时'));
+    const before = JSON.stringify(c);
+    check(c, xiyan);
+    expect(JSON.stringify(c)).toBe(before);
   });
 
   it('比较时忽略空白标点，允许补充说明', () => {
-    expect(limitMatches('剩余 3 夜（以钟楼为准）', '剩余3夜')).toBe(true);
-    expect(limitMatches('剩余2夜', '剩余3夜')).toBe(false);
+    expect(limitMatches('至第四日日出 · 剩余3夜（塔内无钟）', '至第四日日出·剩余3夜')).toBe(true);
+    expect(limitMatches('剩余3夜', '至第四日日出·剩余3夜')).toBe(false);
   });
 
-  it('没有轮数表的副本不注入时限', () => {
-    const basic = BUILTIN_PACKS.find((p) => p.id === 'kaoshi')!;
-    const c: ChatMessage[] = [user('开始'), ai('「副本简报 - 考试」'), user(), ai(panel('0', '一小时'))];
+  it('没有轮数表的副本不核对时限', () => {
+    const basic = BUILTIN_PACKS.find((p) => p.id === 'jingjie')!;
+    const c: ChatMessage[] = [user('开始'), ai('「副本简报 - 境界游乐园」'), user(), ai(panel('0', '一小时'))];
     const r = check(c, basic);
-    expect(r.p.limitText).toBeUndefined();
+    expect(r.p.limit).toBeUndefined();
     expect(r.kinds).toEqual([]);
-    expect(buildInjection(basic, r.p, r.s, { audit: r.a }).turn).not.toContain('时限一栏');
   });
 });
 

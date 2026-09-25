@@ -1,7 +1,7 @@
 {
   "id": "xiyan",
   "name": "喜宴",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "level": "D",
   "token": "【副本进行中：喜宴】",
   "legacyKeys": [],
@@ -9,12 +9,21 @@
     "briefingName": "喜宴"
   },
   "time": {
-    "type": "none"
+    "type": "countdown",
+    "minutesPerRound": 3
   },
   "remaining": {
     "type": "fromPanel"
   },
-  "phases": [],
+  "deadline": "至天亮",
+  "phases": [
+    {
+      "id": "main",
+      "name": "喜宴",
+      "cap": 160,
+      "next": null
+    }
+  ],
   "events": [],
   "docs": []
 }

@@ -1,7 +1,7 @@
 {
   "id": "youxi",
   "name": "游戏",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "level": "C",
   "token": "【副本进行中：游戏】",
   "legacyKeys": [],
@@ -9,12 +9,21 @@
     "briefingName": "游戏"
   },
   "time": {
-    "type": "none"
+    "type": "countdown",
+    "minutesPerRound": 8
   },
   "remaining": {
     "type": "fromPanel"
   },
-  "phases": [],
+  "deadline": "至结算",
+  "phases": [
+    {
+      "id": "main",
+      "name": "游戏",
+      "cap": 90,
+      "next": null
+    }
+  ],
   "events": [],
   "docs": []
 }

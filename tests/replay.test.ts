@@ -146,7 +146,7 @@ describe('本轮事件选择', () => {
     expect(inj.turn).toContain('- E02：在本阶段第2到60轮之间发生：林默独自读完');
     expect(inj.turn).not.toContain('<角色登记>');
     expect(buildInjection(zhonglou, p, session()).turn).toContain('<角色登记>死者=姓名｜布局者=姓名');
-    expect(inj.progress).toContain('本轮：第2/72轮　钟时：12:05　剩余3夜');
+    expect(inj.progress).toContain('本轮：第2/72轮　剩余298/300轮　钟时：12:05　时限：至第四日日出·剩余3夜');
     expect(inj.progress).toContain('已发生事件：E01');
   });
 
@@ -239,6 +239,7 @@ describe('注入', () => {
     expect(inj.turn).toContain('- E11：周遥在5F西侧外壁抄下铭文');
     expect(inj.turn).toContain('（条件：周遥已到达5F西侧且未被阻止。若条件已不成立，此事件不发生，也不补写替代事件）');
     expect(inj.turn).toContain('{{user}}');
-    expect(inj.progress).toContain('本轮：第31/72轮　钟时：2:30　剩余2夜');
+    // 第二日第31轮 = 总第131轮，剩余 300 − 131 = 169 轮
+    expect(inj.progress).toContain('本轮：第31/72轮　剩余169/300轮　钟时：2:30　时限：至第四日日出·剩余2夜');
   });
 });

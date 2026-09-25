@@ -1,7 +1,7 @@
 {
   "id": "wuming",
   "name": "污名",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "level": "B",
   "players": "4-8",
   "token": "【副本进行中：污名】",
@@ -19,17 +19,18 @@
     "type": "countdown",
     "template": "剩余{m}分钟"
   },
+  "deadline": "至收播",
   "phases": [
     {
       "id": "normal",
       "name": "常规",
-      "cap": 50,
+      "cap": 60,
       "next": "final"
     },
     {
       "id": "final",
       "name": "定稿",
-      "cap": 10,
+      "cap": 20,
       "next": null
     }
   ],
@@ -53,8 +54,8 @@
     {
       "id": "E03",
       "phase": "final",
-      "from": 10,
-      "to": 10,
+      "from": 20,
+      "to": 20,
       "kind": "event",
       "text": "收播：直播结束。按世界书F1第九节判定失败或评价，在正文末尾输出<副本结算>。"
     }

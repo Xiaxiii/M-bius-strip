@@ -12,6 +12,8 @@ export interface Phase {
   night?: boolean;
   byTag?: boolean;
   frozen?: boolean;
+  /** 截止条件，覆盖包级 deadline（如钟楼调查阶段「至审判结束」） */
+  deadline?: string;
 }
 
 export interface PackEvent {
@@ -59,6 +61,8 @@ export interface Pack {
   phases: Phase[];
   events: PackEvent[];
   docs: PackDoc[];
+  /** 截止条件，如「至天亮」（CLAUDE.md 12.2） */
+  deadline?: string;
   /** 预留：第三期直播功能在该副本中关闭 */
   disableLive?: boolean;
 }
@@ -70,6 +74,8 @@ export interface BriefingInfo {
   goal?: string;
   limit?: string;
   players?: string;
+  /** 通用副本包：入场时确定的轮数上限（CLAUDE.md 12.4） */
+  rounds?: number;
 }
 
 export type ManualAction =
@@ -96,6 +102,8 @@ export interface Snapshot {
   round: number;
   clock?: string;
   injected: string[];
+  /** 本楼注入的时限：文字，及倒计时的约剩/总时长分钟（CLAUDE.md 12.5） */
+  limit?: { text: string; minutes?: number; total?: number };
   /** 仅入场消息：所属会话 id */
   entry?: string;
 }

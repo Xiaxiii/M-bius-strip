@@ -31,6 +31,9 @@ const snapshots = computed(() => {
   return rows.reverse().slice(0, 60);
 });
 
+/** 有时限警告的楼层，快照表里标黄 */
+const limitWarned = computed(() => new Set((state.audit?.warnings ?? []).filter((w) => w.kind === 'limit').map((w) => w.index)));
+
 const progressView = computed(() => {
   const p = state.progress;
   if (!p) return null;
@@ -126,13 +129,14 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
       <details class="rlzc-card">
         <summary>每楼快照（最近60条）</summary>
         <table class="rlzc-table">
-          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>事件</th></tr></thead>
+          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>时限</th><th>事件</th></tr></thead>
           <tbody>
-            <tr v-for="row in snapshots" :key="row.index">
+            <tr v-for="row in snapshots" :key="row.index" :class="{ 'rlzc-row-warn': limitWarned.has(row.index) }">
               <td>{{ row.index }}{{ row.snap.entry ? '★' : '' }}</td>
               <td>{{ row.snap.phase }}</td>
               <td>{{ row.snap.round }}</td>
               <td>{{ row.snap.clock ?? '' }}</td>
+              <td>{{ row.snap.limit?.text ?? '' }}</td>
               <td>{{ row.snap.injected.join(' ') }}</td>
             </tr>
           </tbody>

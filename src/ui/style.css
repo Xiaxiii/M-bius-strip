@@ -134,3 +134,4 @@
 .rlzc-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
 .rlzc-table th, .rlzc-table td { text-align: left; padding: 3px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .rlzc-warns li { align-items: flex-start; font-size: 13px; }
+.rlzc-row-warn td { background: color-mix(in srgb, #e0b000 22%, transparent); }

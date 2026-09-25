@@ -1,7 +1,7 @@
 {
   "id": "kaoshi",
   "name": "考试",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "level": "A",
   "token": "【副本进行中：考试】",
   "legacyKeys": [],
@@ -9,12 +9,21 @@
     "briefingName": "考试"
   },
   "time": {
-    "type": "none"
+    "type": "countdown",
+    "minutesPerRound": 3
   },
   "remaining": {
     "type": "fromPanel"
   },
-  "phases": [],
+  "deadline": "至考试结束",
+  "phases": [
+    {
+      "id": "main",
+      "name": "考试",
+      "cap": 100,
+      "next": null
+    }
+  ],
   "events": [],
   "docs": []
 }

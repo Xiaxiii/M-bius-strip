@@ -19,7 +19,7 @@ const roundText = computed(() => {
 const remaining = computed(() => {
   const pr = p.value;
   if (!pr) return '';
-  if (state.pack?.remaining.type !== 'fromPanel' && pr.currentRemainingText) return pr.currentRemainingText;
+  if (pr.limit?.text) return pr.limit.text;
   return pr.panel?.limit || state.session?.briefing?.limit || '—';
 });
 
@@ -51,6 +51,7 @@ async function choose() {
         <div class="rlzc-stat" v-if="hasPhases"><span>阶段</span><b>{{ p.phase.name }}</b></div>
         <div class="rlzc-stat" :class="{ warn: p.warn }"><span>轮次</span><b>{{ roundText }}</b></div>
         <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
+        <div v-if="p.limit" class="rlzc-stat"><span>剩余轮数</span><b>{{ p.limit.x }}/{{ p.limit.y }}</b></div>
         <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
       </div>
 
