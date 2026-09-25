@@ -90,12 +90,12 @@ async function choose() {
 
     <div v-else class="rlzc-card rlzc-rest">
       <h3>休整中</h3>
-      <p>当前在回廊里，没有进行中的副本，也不会注入任何提示词。</p>
+      <p>当前没有进行中的副本，不会注入任何提示词。</p>
     </div>
 
     <!-- 手动选择副本：只在回廊中（没有进行中的副本）显示 -->
     <div v-if="!active" class="rlzc-card">
-      <label class="rlzc-label">手动选择副本（以最新一条AI回复为第1轮）</label>
+      <label class="rlzc-label">手动选择副本</label>
       <div class="rlzc-row">
         <select v-model="pickId" class="rlzc-input">
           <option value="">选择副本…</option>
