@@ -19,7 +19,8 @@ import {
   reconcileSession,
   resolvePack,
 } from './core/session';
-import { hideTagsInAll, hideTagsInMessage } from './core/hideTags';
+import { HIDDEN_TAGS, hideTagsInAll as hideAllWith, hideTagsInMessage as hideOneWith } from './core/hideTags';
+import { auditPanels, type AuditResult } from './core/audit';
 import { confirmBox, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toast } from './st/context';
 
 export const SETTINGS_KEY = 'rlzc';
@@ -30,6 +31,8 @@ export interface Settings {
   showBall: boolean;
   debug: boolean;
   customPacks: Pack[];
+  /** 副本信息显示位置：panel = 扩展面板（隐藏 <副本>）；statusbar = 正文状态栏（保留 <副本>） */
+  panelDisplay: 'panel' | 'statusbar';
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -38,6 +41,7 @@ const DEFAULT_SETTINGS: Settings = {
   showBall: true,
   debug: false,
   customPacks: [],
+  panelDisplay: 'panel',
 };
 
 export type TabId = 'system' | 'docs' | 'memo' | 'settings' | 'debug';
@@ -47,6 +51,7 @@ export const state = reactive({
   session: null as Session | null,
   pack: null as Pack | null,
   progress: null as Progress | null,
+  audit: null as AuditResult | null,
   memo: '',
   settings: structuredClone(DEFAULT_SETTINGS) as Settings,
   packs: [] as Pack[],
@@ -78,6 +83,7 @@ export function loadSettings(): void {
     depths: { ...DEFAULT_SETTINGS.depths, ...(saved.depths ?? {}) },
     ball: { ...DEFAULT_SETTINGS.ball, ...(saved.ball ?? {}) },
     customPacks: Array.isArray(saved.customPacks) ? saved.customPacks.filter((p) => validatePack(p).length === 0) : [],
+    panelDisplay: saved.panelDisplay === 'statusbar' ? 'statusbar' : 'panel',
   };
   all[SETTINGS_KEY] = merged;
   state.settings = merged;
@@ -143,13 +149,15 @@ interface Computed {
   session: Session | null;
   pack: Pack | null;
   progress: Progress | null;
+  audit: AuditResult | null;
 }
 
 function compute(chat: ChatMessage[], session: Session | null): Computed {
-  if (!session) return { session: null, pack: null, progress: null };
+  if (!session) return { session: null, pack: null, progress: null, audit: null };
   const pack = resolvePack(session, state.packs);
-  if (!pack) return { session, pack: null, progress: null };
-  return { session, pack, progress: replay(chat, session, pack) };
+  if (!pack) return { session, pack: null, progress: null, audit: null };
+  const progress = replay(chat, session, pack);
+  return { session, pack, progress, audit: progress ? auditPanels(chat, pack, progress) : null };
 }
 
 /** 重放并刷新面板；同时处理“入场消息被删除 → 会话作废”与结算状态同步 */
@@ -172,6 +180,7 @@ export function refresh(): void {
   state.session = c.session;
   state.pack = c.pack;
   state.progress = c.progress;
+  state.audit = c.audit;
   state.tick++;
 }
 
@@ -191,9 +200,11 @@ let lastInjectionIndex = -1;
 function injectFor(type: string | undefined): void {
   const chat = chatForGeneration(type);
   const session = readSession();
-  const { pack, progress } = compute(chat, session);
+  const { pack, progress, audit } = compute(chat, session);
   const roles = session ? effectiveRoles(session, progress?.rolesFromChat) : undefined;
-  const inj = pack ? buildInjection(pack, progress, session, { roles, briefing: session?.briefing, panelLimit: progress?.panel?.limit }) : EMPTY_INJECTION;
+  const inj = pack
+    ? buildInjection(pack, progress, session, { roles, briefing: session?.briefing, panelLimit: progress?.panel?.limit, audit: audit ?? undefined })
+    : EMPTY_INJECTION;
   clearInjection();
   const d = state.settings.depths;
   if (inj.token) setPrompt(KEY_TOKEN, inj.token, d.token, true);
@@ -443,11 +454,30 @@ export function onChatChanged(): void {
   state.memo = typeof memo === 'string' ? memo : '';
   refresh();
   checkGreeting();
-  setTimeout(hideTagsInAll, 50);
+  setTimeout(() => hideTagsInAll(), 50);
 }
 
 export function onChatMutated(): void {
   refresh();
 }
 
-export { hideTagsInMessage, hideTagsInAll };
+/** 按「副本信息显示位置」决定要隐藏的标签：正文状态栏模式下保留 <副本> */
+export function hiddenTags(): readonly string[] {
+  return state.settings.panelDisplay === 'statusbar' ? HIDDEN_TAGS.filter((t) => t !== '副本') : HIDDEN_TAGS;
+}
+
+export function hideTagsInMessage(id: number): void {
+  hideOneWith(id, hiddenTags());
+}
+
+/** force：切换显示位置后，把所有带机器标签的消息按新设置重新渲染 */
+export function hideTagsInAll(force = false): void {
+  hideAllWith(hiddenTags(), force);
+}
+
+export function setPanelDisplay(mode: Settings['panelDisplay']): void {
+  if (state.settings.panelDisplay === mode) return;
+  state.settings.panelDisplay = mode;
+  saveSettings();
+  hideTagsInAll(true);
+}

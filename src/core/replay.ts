@@ -54,6 +54,8 @@ export interface Progress {
   remainingText?: string;
   /** 剩余时间（按已完成的这一轮计算，面板用） */
   currentRemainingText?: string;
+  /** 即将生成这一轮 <副本> 时限一栏应写的内容（副本包有轮数表时） */
+  limitText?: string;
   ended: boolean;
   endedBy?: 'tag' | 'manual';
   firedEvents: string[];
@@ -172,6 +174,23 @@ export function remainingMinutes(pack: Pack, phase: Phase, round: number): numbe
   return rounds * pack.time.minutesPerRound;
 }
 
+/**
+ * 某阶段第 round 轮时，<副本> 时限一栏应写的内容，按副本包的计时方式计算：
+ * nights → 剩余N夜；countdown → 剩余M分钟；其余有上限的阶段（如调查、审判）→「阶段名剩余K轮」。
+ * 没有轮数表的副本返回 undefined。
+ */
+export function limitTextAt(pack: Pack, phase: Phase, round: number): string | undefined {
+  if (!pack.phases.some((p) => p.id === phase.id)) return undefined;
+  const r = pack.remaining;
+  if (r.type === 'nights' && !phase.byTag && !phase.frozen) return r.template.replace('{n}', String(remainingNights(pack, phase)));
+  if (r.type === 'countdown') {
+    const m = remainingMinutes(pack, phase, round);
+    if (m !== undefined) return r.template.replace('{m}', String(m));
+  }
+  if (phase.cap > 0) return `${phase.name}剩余${Math.max(0, phase.cap - round)}轮`;
+  return undefined;
+}
+
 export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progress | null {
   const entryIndex = session.entryIndex;
   if (!isCountable(chat[entryIndex])) return null;
@@ -287,6 +306,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     currentClock: phaseClock(pack, phase, round),
     remainingText,
     currentRemainingText,
+    limitText: ended ? undefined : limitTextAt(pack, phase, nextRound),
     ended,
     endedBy,
     firedEvents,

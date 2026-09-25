@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { importPack, removePack, saveSettings, state } from '../../app';
+import { importPack, removePack, saveSettings, setPanelDisplay, state, type Settings } from '../../app';
 import { confirmBox, toast } from '../../st/context';
 
 const errors = ref<string[]>([]);
@@ -25,6 +25,10 @@ async function remove(id: string, name: string) {
   if (await confirmBox(`确定删除自定义副本包《${name}》吗？`)) removePack(id);
 }
 
+function setDisplay(e: Event) {
+  setPanelDisplay((e.target as HTMLSelectElement).value as Settings['panelDisplay']);
+}
+
 function toggle(key: 'debug' | 'showBall', e: Event) {
   state.settings[key] = (e.target as HTMLInputElement).checked;
   saveSettings();
@@ -33,6 +37,20 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
 
 <template>
   <div class="rlzc-settings">
+    <div class="rlzc-card">
+      <h4>副本信息显示位置</h4>
+      <select class="rlzc-input" :value="state.settings.panelDisplay" @change="setDisplay">
+        <option value="panel">扩展面板（默认）</option>
+        <option value="statusbar">正文状态栏</option>
+      </select>
+      <p class="rlzc-hint">
+        {{ state.settings.panelDisplay === 'statusbar'
+          ? '正文中保留 <副本> 标签，由你的状态栏显示；系统页不再显示时限、进度条、任务和 ps。'
+          : '正文中隐藏 <副本> 标签，时限、进度条、任务和 ps 显示在系统页。' }}
+        两种方式下扩展都会读取 <副本> 做核对。
+      </p>
+    </div>
+
     <div class="rlzc-card">
       <h4>注入深度</h4>
       <label class="rlzc-field"><span>暗号 rlzc_token</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" /></label>

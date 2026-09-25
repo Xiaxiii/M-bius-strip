@@ -88,6 +88,19 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
       </div>
 
       <div class="rlzc-card">
+        <h4>&lt;副本&gt; 核对</h4>
+        <p v-if="!state.audit?.warnings.length" class="rlzc-hint">没有发现问题。</p>
+        <template v-else>
+          <p class="rlzc-hint">共 {{ state.audit.warnings.length }} 条，显示最近 30 条。只作提示，不会改动消息。</p>
+          <ul class="rlzc-list rlzc-warns">
+            <li v-for="(w, i) in state.audit.warnings.slice(-30).reverse()" :key="i">
+              <span><small>#{{ w.index }}｜{{ w.phase }}第{{ w.round }}轮</small><br />⚠️ {{ w.text }}</span>
+            </li>
+          </ul>
+        </template>
+      </div>
+
+      <div class="rlzc-card">
         <h4>手动操作记录</h4>
         <ul v-if="state.session.manual.length" class="rlzc-list">
           <li v-for="(a, i) in state.session.manual" :key="i">
