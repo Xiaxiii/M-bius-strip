@@ -274,3 +274,40 @@ describe('通用副本包', () => {
     expect(inj.progress).not.toContain('目标');
   });
 });
+
+describe('系统页的剩余轮数（已完成这一轮之后）', () => {
+  it('入场第1轮后显示 299/300；注入仍按即将生成的一轮（298/300）', () => {
+    const p = zl(chatWithRounds(1));
+    expect(p.roundsLeft).toEqual({ x: 299, y: 300 });
+    expect([p.limit!.x, p.limit!.y]).toEqual([298, 300]);
+  });
+
+  it('第72轮后（进入第一夜）显示 228/300；调查开始前显示 100/100', () => {
+    expect(zl(chatWithRounds(72)).roundsLeft).toEqual({ x: 228, y: 300 });
+    const chat = chatWithRounds(201);
+    chat.push(user(), ai('<阶段切换>调查</阶段切换>'));
+    expect(zl(chat).roundsLeft).toEqual({ x: 100, y: 100 });
+    chat.push(user(), ai());
+    expect(zl(chat).roundsLeft).toEqual({ x: 99, y: 100 });
+  });
+
+  it('已结束时不显示', () => {
+    const chat = chatWithRounds(3);
+    chat.push(user(), ai('<副本结算>结果=通关</副本结算>'));
+    expect(zl(chat).roundsLeft).toBeUndefined();
+  });
+});
+
+describe('兼容与预留', () => {
+  it('会话记着旧版本号时照常用新版本运行，不报错', () => {
+    const p = replay(chatFor('污名', ['……']), session({ packId: 'wuming', packVersion: '1.0.0', entryIndex: 1 }), wuming)!;
+    expect(p.limit).toMatchObject({ y: 80 });
+  });
+
+  it('副本包可选字段 casino 通过校验，类型不对时报错', async () => {
+    const { validatePack } = await import('../src/packs/loader');
+    expect(validatePack({ ...xiyan, id: 'c1', casino: true })).toEqual([]);
+    expect(validatePack({ ...xiyan, id: 'c2', casino: 'yes' }).join()).toContain('casino');
+    expect(BUILTIN_PACKS.every((p) => p.casino === undefined)).toBe(true);
+  });
+});

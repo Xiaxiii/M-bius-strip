@@ -66,6 +66,8 @@ export interface Pack {
   deadline?: string;
   /** 预留：第三期直播功能在该副本中关闭 */
   disableLive?: boolean;
+  /** 预留：第四期赌坊是否在该副本内开放（默认不开放，赌坊只在回廊营业） */
+  casino?: boolean;
 }
 
 /** 通用副本包的简报信息（名称、等级、目标、时限） */
@@ -103,7 +105,7 @@ export interface Snapshot {
   round: number;
   clock?: string;
   injected: string[];
-  /** 本楼注入的时限：文字，及倒计时的约剩/总时长分钟（CLAUDE.md 12.5） */
+  /** 本楼注入的时限：文字，及倒计时的约剩/总时长分钟（CLAUDE.md 12.6） */
   limit?: { text: string; minutes?: number; total?: number };
   /** 仅入场消息：所属会话 id */
   entry?: string;

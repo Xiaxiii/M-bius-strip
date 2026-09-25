@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { endManually, skipToPhaseEnd, startManual, state } from '../../app';
+import PackDocs from '../PackDocs.vue';
 
 const pickId = ref('');
 const inDungeon = computed(() => !!state.session && !!state.pack);
 const p = computed(() => state.progress);
+/** 有进行中的副本（已结束的算回廊） */
+const active = computed(() => inDungeon.value && !!p.value && !p.value.ended);
+/** 回廊中下拉框选中、还没进入的副本：预览它的资料 */
+const picked = computed(() => state.packs.find((pk) => pk.id === pickId.value) ?? null);
 const hasPhases = computed(() => !!state.pack?.phases.length);
 /** 正文状态栏模式：时限、进度条、任务、ps 由正文显示，系统页不重复 */
 const inPanel = computed(() => state.settings.panelDisplay !== 'statusbar');
@@ -51,7 +56,7 @@ async function choose() {
         <div class="rlzc-stat" v-if="hasPhases"><span>阶段</span><b>{{ p.phase.name }}</b></div>
         <div class="rlzc-stat" :class="{ warn: p.warn }"><span>轮次</span><b>{{ roundText }}</b></div>
         <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
-        <div v-if="p.limit" class="rlzc-stat"><span>剩余轮数</span><b>{{ p.limit.x }}/{{ p.limit.y }}</b></div>
+        <div v-if="p.roundsLeft" class="rlzc-stat"><span>剩余轮数</span><b>{{ p.roundsLeft.x }}/{{ p.roundsLeft.y }}</b></div>
         <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
       </div>
 
@@ -76,6 +81,9 @@ async function choose() {
         <button class="rlzc-btn" :disabled="!canSkip" @click="skipToPhaseEnd">跳过（到本阶段结束）</button>
         <button class="rlzc-btn ghost" :disabled="p.ended" @click="endManually">手动结束副本</button>
       </div>
+
+      <!-- 副本资料：进行中且有资料时显示在状态下方，整页一起滚动 -->
+      <PackDocs v-if="active && state.pack!.docs?.length" :pack="state.pack!" />
     </template>
 
     <div v-else class="rlzc-card rlzc-rest">
@@ -83,7 +91,8 @@ async function choose() {
       <p>当前在回廊里，没有进行中的副本，也不会注入任何提示词。</p>
     </div>
 
-    <div class="rlzc-card">
+    <!-- 手动选择副本：只在回廊中（没有进行中的副本）显示 -->
+    <div v-if="!active" class="rlzc-card">
       <label class="rlzc-label">手动选择副本（以最新一条AI回复为第1轮）</label>
       <div class="rlzc-row">
         <select v-model="pickId" class="rlzc-input">
@@ -93,5 +102,6 @@ async function choose() {
         <button class="rlzc-btn" :disabled="!pickId" @click="choose">进入</button>
       </div>
     </div>
+    <PackDocs v-if="!active && picked?.docs?.length" :pack="picked" />
   </div>
 </template>

@@ -115,7 +115,8 @@
 .rlzc-rest { text-align: center; padding: 24px 12px; }
 .rlzc-rest p { color: var(--muted); font-size: 13px; margin: 0; }
 
-/* ── 资料页 ── */
+/* ── 副本资料（系统页下方）── */
+.rlzc-docs { border: 1px solid var(--line); border-radius: 10px; padding: 2px 12px 10px; background: var(--soft); }
 .rlzc-subtabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); }
 .rlzc-subtabs button { flex: 0 0 auto; }
 .rlzc-subtabs button.on { color: var(--fg); border-bottom-color: var(--accent); }
@@ -126,9 +127,6 @@
 .rlzc-md blockquote { margin: 6px 0; padding-left: 10px; border-left: 3px solid var(--line); color: var(--muted); }
 .rlzc-img { display: block; max-width: 100%; margin: 8px auto; background: #fff; border-radius: 8px; }
 
-/* ── 备忘录 ── */
-.rlzc-memo { height: 100%; }
-.rlzc-textarea { min-height: 50vh; flex: 1; resize: vertical; line-height: 1.6; }
 
 /* ── 调试页 ── */
 .rlzc-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }

@@ -2,15 +2,11 @@
 import { state, type TabId } from '../app';
 import { confirmBox } from '../st/context';
 import SystemTab from './tabs/SystemTab.vue';
-import DocsTab from './tabs/DocsTab.vue';
-import MemoTab from './tabs/MemoTab.vue';
 import SettingsTab from './tabs/SettingsTab.vue';
 import DebugTab from './tabs/DebugTab.vue';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'system', label: '系统' },
-  { id: 'docs', label: '副本资料' },
-  { id: 'memo', label: '备忘录' },
   { id: 'settings', label: '设置' },
   { id: 'debug', label: '调试' },
 ];
@@ -36,8 +32,6 @@ async function pick(id: TabId) {
       </nav>
       <div class="rlzc-body">
         <SystemTab v-if="state.tab === 'system'" />
-        <DocsTab v-else-if="state.tab === 'docs'" />
-        <MemoTab v-else-if="state.tab === 'memo'" />
         <SettingsTab v-else-if="state.tab === 'settings'" />
         <DebugTab v-else-if="state.tab === 'debug' && state.debugUnlocked" />
       </div>
