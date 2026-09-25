@@ -14,6 +14,17 @@ export interface Injection {
   turn: string;
   /** 本轮注入的事件 id */
   injected: string[];
+  /** 本轮注入的时限（写进快照，用于核对） */
+  limit?: InjectedLimit;
+}
+
+/** 快照里记录的本楼注入时限 */
+export interface InjectedLimit {
+  text: string;
+  /** 约剩分钟（仅倒计时） */
+  minutes?: number;
+  /** 总时长分钟（仅倒计时） */
+  total?: number;
 }
 
 export const EMPTY_INJECTION: Injection = { token: '', progress: '', turn: '', injected: [] };
@@ -79,20 +90,26 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
 
   // ── 进度块 ──
   const head: string[] = [`副本：${pack.name}（${pack.level}级）`];
+  const limit = progress.limit;
   if (hasPhases) {
     head.push(`阶段：${progress.phase.name}`);
+    // 轮次写「当前阶段轮次/当前阶段上限」（污名 <直播> 面板照抄）
     head.push(`本轮：第${progress.nextRound}/${progress.phase.cap}轮`);
+    if (limit) head.push(`剩余${limit.x}/${limit.y}轮`);
+    if (progress.clock) head.push(`钟时：${progress.clock}`);
+    if (limit?.text) head.push(`时限：${limit.text}`);
+    // 倒计时包的「剩余M分钟」= 约剩分钟（污名 <直播> 面板照抄）
+    if (pack.remaining.type === 'countdown' && progress.remainingText) head.push(progress.remainingText);
+    if (limit?.deadline && !limit.text?.includes(limit.deadline)) head.push(`截止：${limit.deadline}`);
   } else {
     head.push(`本轮：第${progress.nextRound}轮`);
-  }
-  if (progress.clock) head.push(`钟时：${progress.clock}`);
-  if (progress.remainingText) head.push(progress.remainingText);
-  else {
-    const limit = opts.panelLimit || opts.briefing?.limit;
-    if (limit) head.push(`时限：${limit}`);
+    if (progress.clock) head.push(`钟时：${progress.clock}`);
+    const panelLimit = opts.panelLimit || opts.briefing?.limit;
+    if (panelLimit) head.push(`时限：${panelLimit}`);
   }
   const progressLines = ['［副本进度·仅供AI］', head.join('　')];
-  if (!hasPhases && opts.briefing?.goal) progressLines.push(`目标：${opts.briefing.goal}`);
+  // 简报的「目标」行可有可无（CLAUDE.md 11.8），读到才写
+  if (opts.briefing?.goal && (!hasPhases || pack.id === 'generic')) progressLines.push(`目标：${opts.briefing.goal}`);
   if (pack.roles?.length) {
     const registered = pack.roles.filter((r) => roles?.[r]);
     progressLines.push(
@@ -125,7 +142,6 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
   // ── <副本> 面板核对 ──
   if (opts.audit?.missingLast) turn.push('上一轮缺少<副本>面板，本轮必须完整输出。');
   if (opts.audit && !opts.audit.hasPanel) turn.push('本轮<副本>的进度条写0。');
-  if (progress.limitText) turn.push(`本轮<副本>的时限一栏写：${progress.limitText}`);
 
   if (pack.roles?.length && !pack.roles.some((r) => roles?.[r])) {
     let ask = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${pack.roles.map((r) => `${r}=姓名`).join('｜')}</角色登记>。按世界书规定生成NPC。`;
@@ -133,10 +149,25 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
     turn.push(ask);
   }
 
+  // ── 时限（末尾一行，CLAUDE.md 12.3）──
+  let injectedLimit: InjectedLimit | undefined;
+  if (limit?.text) {
+    if (limit.minutes !== undefined) {
+      turn.push(
+        `本轮<副本>的时限一栏写：${limit.text}。正文里提到的时间也以此为准。本轮剧情若跳过了时间，约剩时间可以写得更少，不能更多；总时长照抄。`,
+      );
+      injectedLimit = { text: limit.text, minutes: limit.minutes, total: limit.total };
+    } else {
+      turn.push(`本轮<副本>的时限一栏写：${limit.text}（照抄）。`);
+      injectedLimit = { text: limit.text };
+    }
+  }
+
   return {
     token: pack.token,
     progress: progressLines.join('\n'),
     turn: turn.length ? ['［本轮指令·仅供AI］', ...turn].join('\n') : '',
     injected: next.events.map((e) => e.id),
+    limit: injectedLimit,
   };
 }

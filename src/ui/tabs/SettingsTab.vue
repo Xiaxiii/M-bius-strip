@@ -25,6 +25,14 @@ async function remove(id: string, name: string) {
   if (await confirmBox(`确定删除自定义副本包《${name}》吗？`)) removePack(id);
 }
 
+const LEVELS = ['D', 'C', 'B', 'A', 'S'] as const;
+function setCap(level: (typeof LEVELS)[number], e: Event) {
+  const v = Math.floor(Number((e.target as HTMLInputElement).value));
+  if (!Number.isFinite(v) || v < 1) return;
+  state.settings.genericCaps = { ...state.settings.genericCaps, [level]: v };
+  saveSettings();
+}
+
 function setDisplay(e: Event) {
   setPanelDisplay((e.target as HTMLSelectElement).value as Settings['panelDisplay']);
 }
@@ -56,6 +64,15 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
       <label class="rlzc-field"><span>暗号 rlzc_token</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" /></label>
       <label class="rlzc-field"><span>进度 rlzc_progress</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" /></label>
       <label class="rlzc-field"><span>本轮 rlzc_turn</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" /></label>
+    </div>
+
+    <div class="rlzc-card">
+      <h4>通用副本默认轮数上限</h4>
+      <p class="rlzc-hint">未收录的副本按等级取轮数上限；简报时限一行写了「（最多N轮）」时以简报为准。只影响之后进入的副本。</p>
+      <label v-for="lv in LEVELS" :key="lv" class="rlzc-field">
+        <span>{{ lv }} 级</span>
+        <input type="number" min="1" class="rlzc-input" :value="state.settings.genericCaps[lv]" @change="setCap(lv, $event)" />
+      </label>
     </div>
 
     <div class="rlzc-card">

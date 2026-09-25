@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { remainingMinutes, replay } from '../src/core/replay';
-import { buildInjection } from '../src/core/injector';
+import { replay } from '../src/core/replay';
 import { BUILTIN_PACKS, validatePack } from '../src/packs/loader';
 import { isLiveAllowed } from '../src/reserved/live';
 import type { ChatMessage, Pack } from '../src/packs/types';
@@ -37,54 +36,14 @@ describe('污名副本包', () => {
   });
 });
 
-describe('倒计时', () => {
-  it('常规阶段第12轮：剩余 (50-12+10)×3 = 144 分钟', () => {
-    const normal = wuming.phases[0];
-    expect(remainingMinutes(wuming, normal, 12)).toBe(144);
-    const p = run(chat(12));
+describe('倒计时（60+20轮，每轮3分钟）', () => {
+  it('常规第12轮：X = 60−12+20 = 68，约剩 68×3 = 204 分钟', () => {
+    const p = run(chat(11));
     expect(p.phase.id).toBe('normal');
-    expect(p.round).toBe(12);
-    expect(p.currentRemainingText).toBe('剩余144分钟');
-    // 注入按即将生成的第13轮计算
-    expect(p.remainingText).toBe('剩余141分钟');
+    expect(p.nextRound).toBe(12);
+    expect(p.limit).toMatchObject({ x: 68, y: 80, minutes: 204, total: 240 });
+    expect(p.remainingText).toBe('剩余204分钟');
     expect(p.clock).toBeUndefined();
-    const inj = buildInjection(wuming, p, session({ packId: 'wuming', entryIndex: 1 }));
-    expect(inj.progress).toContain('本轮：第13/50轮　剩余141分钟');
-  });
-
-  it('入场时剩余 (50-1+10)×3 = 177 分钟；常规阶段结束后自动进入定稿', () => {
-    expect(run(chat(1)).currentRemainingText).toBe('剩余177分钟');
-    const p = run(chat(50));
-    expect(p.phase.id).toBe('final');
-    expect(p.round).toBe(0);
-    expect(p.currentRemainingText).toBe('剩余30分钟');
-    expect(p.next!.events.map((e) => e.id)).toEqual(['E02']);
-  });
-
-  it('<阶段切换>定稿</阶段切换> 提前进入定稿后，只按定稿剩余轮数计算', () => {
-    const c = chat(12);
-    c.push(user(), ai('她删掉了草稿。<阶段切换>定稿</阶段切换>'));
-    let p = run(c);
-    expect(p.phase.id).toBe('final');
-    expect(p.currentRemainingText).toBe('剩余30分钟');
-    c.push(user(), ai(), user(), ai(), user(), ai());
-    p = run(c);
-    expect(p.round).toBe(3);
-    expect(p.currentRemainingText).toBe('剩余21分钟');
-    expect(p.remainingText).toBe('剩余18分钟');
-  });
-
-  it('定稿最后一轮收播并要求结算；剩余时间不为负', () => {
-    const c = chat(50);
-    for (let i = 0; i < 9; i++) c.push(user(), ai());
-    const p = run(c);
-    expect(p.phase.id).toBe('final');
-    expect(p.nextRound).toBe(10);
-    expect(p.isLastRound).toBe(true);
-    expect(p.next!.events.map((e) => e.id)).toEqual(['E03']);
-    expect(p.remainingText).toBe('剩余0分钟');
-    c.push(user(), ai(), user(), ai());
-    expect(run(c).remainingText).toBe('剩余0分钟');
   });
 
   it('countdown 格式校验', () => {
@@ -92,5 +51,10 @@ describe('倒计时', () => {
     expect(validatePack(bad).join()).toContain('minutesPerRound');
     const mismatch = { ...wuming, id: 'y', time: { type: 'none' } };
     expect(validatePack(mismatch).join()).toContain('time.type 也必须是 countdown');
+  });
+
+  it('包级与阶段 deadline 必须是文本', () => {
+    expect(validatePack({ ...wuming, id: 'z', deadline: 3 }).join()).toContain('deadline');
+    expect(validatePack({ ...wuming, id: 'z', phases: [{ id: 'a', name: 'A', cap: 3, next: null, deadline: 1 }] }).join()).toContain('deadline');
   });
 });

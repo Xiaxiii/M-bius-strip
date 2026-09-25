@@ -6,6 +6,7 @@ import xiyan from './builtin/xiyan.json';
 import youxi from './builtin/youxi.json';
 import wuming from './builtin/wuming.json';
 import zhonglouMap from './builtin/zhonglou-map.svg?raw';
+import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from '../core/timeLimit';
 
 export const GENERIC_PACK_ID = 'generic';
 
@@ -59,6 +60,7 @@ export function validatePack(input: unknown): string[] {
   else if (r.type !== 'fromPanel' && typeof r.template !== 'string') errors.push('remaining.template 必须是文本');
   if (r?.type === 'countdown' && t?.type !== 'countdown') errors.push('remaining.type 为 countdown 时，time.type 也必须是 countdown');
 
+  if (p.deadline !== undefined && typeof p.deadline !== 'string') errors.push('deadline 必须是文本');
   if (p.roles !== undefined && (!Array.isArray(p.roles) || p.roles.some((x: unknown) => typeof x !== 'string' || !x))) errors.push('roles 必须是文本数组');
 
   const phaseIds = new Set<string>();
@@ -73,6 +75,7 @@ export function validatePack(input: unknown): string[] {
       phaseNames.add(ph.name);
       if (typeof ph.cap !== 'number' || ph.cap < 1 || !Number.isInteger(ph.cap)) errors.push(`阶段 ${ph.id} 的 cap 必须是正整数`);
       if (ph.next !== null && typeof ph.next !== 'string') errors.push(`阶段 ${ph.id} 的 next 必须是阶段 id 或 null`);
+      if (ph.deadline !== undefined && typeof ph.deadline !== 'string') errors.push(`阶段 ${ph.id} 的 deadline 必须是文本`);
     });
     p.phases.forEach((ph: any) => {
       if (ph && typeof ph.next === 'string' && !phaseIds.has(ph.next)) errors.push(`阶段 ${ph.id} 的 next 指向不存在的阶段：${ph.next}`);
@@ -104,9 +107,20 @@ export function validatePack(input: unknown): string[] {
   return errors;
 }
 
-/** 通用副本包：没有阶段表，名称、等级来自简报 */
-export function buildGenericPack(info: BriefingInfo): Pack {
-  const level = (LEVELS as string[]).includes(info.level ?? '') ? (info.level as Level) : 'D';
+/** 通用副本包的等级：简报里读不出时按 D 处理 */
+export function genericLevel(info: BriefingInfo): Level {
+  return (LEVELS as string[]).includes(info.level ?? '') ? (info.level as Level) : 'D';
+}
+
+/**
+ * 通用副本包（CLAUDE.md 12.4）：名称、等级、时限来自简报；单阶段，轮数上限优先用入场时记下的 info.rounds。
+ * 读得到总时长时按倒计时计时，读不到只计轮。
+ */
+export function buildGenericPack(info: BriefingInfo, caps: GenericCaps = DEFAULT_GENERIC_CAPS): Pack {
+  const level = genericLevel(info);
+  const timing = genericTiming(info.limit, level, caps);
+  const rounds = info.rounds && info.rounds > 0 ? info.rounds : timing.rounds;
+  const minutesPerRound = timing.totalMinutes ? Math.max(1, Math.round(timing.totalMinutes / rounds)) : undefined;
   return {
     id: GENERIC_PACK_ID,
     name: info.name,
@@ -115,9 +129,9 @@ export function buildGenericPack(info: BriefingInfo): Pack {
     token: `【副本进行中：${info.name}】`,
     legacyKeys: [],
     detect: { briefingName: info.name },
-    time: { type: 'none' },
+    time: minutesPerRound ? { type: 'countdown', minutesPerRound } : { type: 'none' },
     remaining: { type: 'fromPanel' },
-    phases: [],
+    phases: [{ id: 'main', name: info.name, cap: rounds, next: null }],
     events: [],
     docs: [],
   };

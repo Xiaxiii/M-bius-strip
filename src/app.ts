@@ -3,7 +3,8 @@
  */
 import { reactive } from 'vue';
 import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs/types';
-import { allPacks, buildGenericPack, findPackByBriefing, validatePack } from './packs/loader';
+import { allPacks, buildGenericPack, findPackByBriefing, genericLevel, validatePack } from './packs/loader';
+import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
 import { buildInjection, EMPTY_INJECTION, ALL_KEYS, KEY_PROGRESS, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget } from './core/detector';
@@ -33,6 +34,8 @@ export interface Settings {
   customPacks: Pack[];
   /** 副本信息显示位置：panel = 扩展面板（隐藏 <副本>）；statusbar = 正文状态栏（保留 <副本>） */
   panelDisplay: 'panel' | 'statusbar';
+  /** 通用副本包按等级的默认轮数上限（CLAUDE.md 12.4） */
+  genericCaps: GenericCaps;
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -42,6 +45,7 @@ const DEFAULT_SETTINGS: Settings = {
   debug: false,
   customPacks: [],
   panelDisplay: 'panel',
+  genericCaps: { ...DEFAULT_GENERIC_CAPS },
 };
 
 export type TabId = 'system' | 'docs' | 'memo' | 'settings' | 'debug';
@@ -84,6 +88,7 @@ export function loadSettings(): void {
     ball: { ...DEFAULT_SETTINGS.ball, ...(saved.ball ?? {}) },
     customPacks: Array.isArray(saved.customPacks) ? saved.customPacks.filter((p) => validatePack(p).length === 0) : [],
     panelDisplay: saved.panelDisplay === 'statusbar' ? 'statusbar' : 'panel',
+    genericCaps: { ...DEFAULT_GENERIC_CAPS, ...(saved.genericCaps ?? {}) },
   };
   all[SETTINGS_KEY] = merged;
   state.settings = merged;
@@ -287,7 +292,11 @@ async function askEntry(index: number, remember = false): Promise<void> {
     toast('warning', '简报消息已变化，未启用。');
     return;
   }
-  startSession(pack ?? buildGenericPack(info), index, info);
+  if (!pack) {
+    // 通用副本包：轮数上限在入场时确定并记入会话，之后改设置不影响进行中的副本
+    info.rounds = genericTiming(info.limit, genericLevel(info), state.settings.genericCaps).rounds;
+  }
+  startSession(pack ?? buildGenericPack(info, state.settings.genericCaps), index, info);
 }
 
 /**
@@ -432,12 +441,22 @@ export function onMessageReceived(index: number): void {
     if (time.type === 'clock' && phase?.clock && !phase.night && !phase.frozen) {
       snap.clock = clockAt(time.dayStart, time.minutesPerRound, rec.round);
     }
+    // 本楼注入的时限：优先取这次生成实际注入的值，否则用重放算出的值
+    const limit =
+      lastInjectionIndex === index
+        ? state.lastInjection.limit
+        : rec.limit?.text
+          ? { text: rec.limit.text, minutes: rec.limit.minutes, total: rec.limit.total }
+          : undefined;
+    if (limit) snap.limit = limit;
     const entry = msg.extra?.rlzc?.entry;
     if (entry) snap.entry = entry;
     msg.extra = msg.extra ?? {};
     // 写进聊天数据的必须是普通对象：ST 会 structuredClone 消息，Vue 的响应式代理无法被克隆
     msg.extra.rlzc = plain(snap);
     saveMeta();
+    // 核对要用到刚写入的快照
+    refresh();
   }
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);

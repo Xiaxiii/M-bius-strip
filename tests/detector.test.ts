@@ -18,7 +18,9 @@ describe('识别', () => {
     expect(pack.name).toBe('雾港');
     expect(pack.level).toBe('B');
     expect(pack.token).toBe('【副本进行中：雾港】');
-    expect(pack.phases).toEqual([]);
+    // 「三天」读不出数字时长：只按等级默认值计轮（B 级 110 轮），不计约剩时间
+    expect(pack.phases).toEqual([{ id: 'main', name: '雾港', cap: 110, next: null }]);
+    expect(pack.time).toEqual({ type: 'none' });
     expect(validatePack({ ...pack, id: 'wugang' })).toEqual([]);
   });
 
@@ -72,7 +74,7 @@ describe('内置包与 packs/ 同步', () => {
 
   it('钟楼为 1.1.0，第三夜事件已更新', () => {
     const zl = BUILTIN_PACKS.find((p) => p.id === 'zhonglou')!;
-    expect(zl.version).toBe('1.1.0');
+    expect(zl.version).toBe('1.2.0');
     expect(zl.events.find((e) => e.id === 'E27')!.text).toContain('成为钟守');
   });
 });

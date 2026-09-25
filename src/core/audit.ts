@@ -1,6 +1,7 @@
 import type { ChatMessage, Pack } from '../packs/types';
 import { detectPanel } from './detector';
-import { limitTextAt, type Progress } from './replay';
+import type { Progress } from './replay';
+import { formatMinutes, parseLimitPair } from './timeLimit';
 
 /**
  * <副本> 面板核对。纯函数，每次重放后从聊天原文重新计算，不存结果，也不改消息原文。
@@ -98,11 +99,28 @@ export function auditPanels(chat: ChatMessage[], pack: Pack, progress: Progress)
     }
     hasPanel = true;
 
-    // ── 时限 ──
-    const expected = phase ? limitTextAt(pack, phase, rec.round) : undefined;
-    if (expected) {
-      if (!panel.limit) warn('limit', `<副本> 中没有时限一栏，应为「${expected}」`);
-      else if (!limitMatches(panel.limit, expected)) warn('limit', `时限与计算值不一致：写的是「${panel.limit}」，应为「${expected}」`);
+    // ── 时限：和本楼快照记录的注入值比较（旧楼没有快照时用重放算出的值）──
+    const snap = chat[index]?.extra?.rlzc?.limit;
+    const injected = snap?.text
+      ? snap
+      : rec.limit?.text
+        ? { text: rec.limit.text, minutes: rec.limit.minutes, total: rec.limit.total }
+        : undefined;
+    if (injected) {
+      const written = panel.limit;
+      if (injected.minutes !== undefined) {
+        const pair = parseLimitPair(written);
+        if (!written || pair.remaining === null || pair.total === null) {
+          warn('limit', `时限读不到「剩余时间/总时长」：写的是「${written ?? '（没有时限一栏）'}」，注入的是「${injected.text}」`);
+        } else {
+          if (pair.remaining > injected.minutes)
+            warn('limit', `剩余时间比注入值多：写的是${formatMinutes(pair.remaining)}，注入的是${formatMinutes(injected.minutes)}`);
+          if (injected.total !== undefined && pair.total !== injected.total)
+            warn('limit', `总时长与注入值不一致：写的是${formatMinutes(pair.total)}，注入的是${formatMinutes(injected.total)}`);
+        }
+      } else if (!written || !limitMatches(written, injected.text)) {
+        warn('limit', `时限与注入文字不一致：写的是「${written ?? '（没有时限一栏）'}」，注入的是「${injected.text}」`);
+      }
     }
   }
 
