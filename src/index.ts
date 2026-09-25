@@ -9,6 +9,7 @@ import {
   onChatChanged,
   onChatMutated,
   onMessageReceived,
+  onMessageSwiped,
   state,
 } from './app';
 import { onEvent } from './st/context';
@@ -29,7 +30,7 @@ function init() {
   onEvent('CHARACTER_MESSAGE_RENDERED', (id: number) => hideTagsInMessage(Number(id)));
   onEvent('MESSAGE_DELETED', () => onChatMutated());
   onEvent('MESSAGE_SWIPED', (id: number) => {
-    onChatMutated();
+    onMessageSwiped(Number(id));
     hideTagsInMessage(Number(id));
   });
   onEvent('MESSAGE_EDITED', () => onChatMutated());

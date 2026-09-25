@@ -7,7 +7,18 @@ import { allPacks, buildGenericPack, findPackByBriefing, validatePack } from './
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
 import { buildInjection, EMPTY_INJECTION, ALL_KEYS, KEY_PROGRESS, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget } from './core/detector';
-import { createSession, effectiveRoles, META_KEY, MEMO_KEY, normalizeSession, reconcileSession, resolvePack } from './core/session';
+import {
+  createSession,
+  declineKey,
+  DECLINED_KEY,
+  effectiveRoles,
+  greetingEntryCandidate,
+  META_KEY,
+  MEMO_KEY,
+  normalizeSession,
+  reconcileSession,
+  resolvePack,
+} from './core/session';
 import { hideTagsInAll, hideTagsInMessage } from './core/hideTags';
 import { confirmBox, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toast } from './st/context';
 
@@ -237,7 +248,8 @@ export async function interceptor(_chat: unknown[], _contextSize: number, _abort
 
 const askedEntry = new Set<string>();
 
-async function askEntry(index: number): Promise<void> {
+/** remember：拒绝时写进聊天元数据，之后加载这个聊天不再询问（用于开场白检查） */
+async function askEntry(index: number, remember = false): Promise<void> {
   const chat = getChat();
   const msg = chat[index];
   const info = detectBriefing(msg?.mes ?? '');
@@ -249,7 +261,15 @@ async function askEntry(index: number): Promise<void> {
   const text = pack
     ? `检测到进入《${pack.name}》，是否启用？`
     : `检测到进入《${info.name}》，是否启用？（未收录的副本，将使用通用副本包）`;
-  if (!(await confirmBox(text))) return;
+  if (!(await confirmBox(text))) {
+    if (remember) {
+      const meta = getMeta();
+      const list: string[] = Array.isArray(meta[DECLINED_KEY]) ? meta[DECLINED_KEY] : [];
+      meta[DECLINED_KEY] = [...list.filter((k) => k !== declineKey(index, info.name)), declineKey(index, info.name)];
+      saveMeta();
+    }
+    return;
+  }
   // 弹窗期间消息可能已被删改，重新确认
   const now = getChat()[index];
   if (!isCountable(now) || detectBriefing(now.mes)?.name !== info.name) {
@@ -257,6 +277,25 @@ async function askEntry(index: number): Promise<void> {
     return;
   }
   startSession(pack ?? buildGenericPack(info), index, info);
+}
+
+/**
+ * 开场白里的简报：ST 只在新建的单条聊天里对开场白发 MESSAGE_RECEIVED，
+ * 切换开场白（滑动）、加载已有聊天、扩展晚于聊天加载时都不会发。
+ * 所以在切换/加载聊天、滑动时主动检查第一条AI消息，以它为第1轮。
+ */
+export function checkGreeting(): void {
+  const meta = getMeta();
+  const declined = Array.isArray(meta[DECLINED_KEY]) ? (meta[DECLINED_KEY] as string[]) : [];
+  const hit = greetingEntryCandidate(getChat(), readSession(), declined);
+  if (hit) void askEntry(hit.index, true);
+}
+
+/** 滑动的是第一条AI消息（开场白）时检查 */
+export function onMessageSwiped(id: number): void {
+  refresh();
+  const first = getChat().findIndex((m) => isCountable(m));
+  if (id === first) checkGreeting();
 }
 
 function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefing']): void {
@@ -358,7 +397,9 @@ export function onMessageReceived(index: number): void {
   const session = readSession();
 
   if ((!session || session.status === 'ended') && detectBriefing(msg.mes)) {
-    void askEntry(index);
+    // 第一条AI消息（通常是开场白）走开场白检查，拒绝会被记住
+    if (index === chat.findIndex((m) => isCountable(m))) checkGreeting();
+    else void askEntry(index);
     return;
   }
   if (!session) return;
@@ -401,6 +442,7 @@ export function onChatChanged(): void {
   const memo = getMeta()[MEMO_KEY];
   state.memo = typeof memo === 'string' ? memo : '';
   refresh();
+  checkGreeting();
   setTimeout(hideTagsInAll, 50);
 }
 

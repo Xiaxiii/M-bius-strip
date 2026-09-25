@@ -1,5 +1,6 @@
-import type { ChatMessage, ManualAction, Pack, Session } from '../packs/types';
+import type { BriefingInfo, ChatMessage, ManualAction, Pack, Session } from '../packs/types';
 import { buildGenericPack, GENERIC_PACK_ID } from '../packs/loader';
+import { detectBriefing } from './detector';
 
 /** 会话数据的纯逻辑部分；读写 chatMetadata 的部分在 src/st/ 与 src/index.ts */
 
@@ -76,4 +77,30 @@ export function effectiveRoles(session: Session, fromChat?: Record<string, strin
   const manual = session.roles && Object.keys(session.roles).length ? session.roles : undefined;
   if (!manual && !fromChat) return undefined;
   return { ...(fromChat ?? {}), ...(manual ?? {}) };
+}
+
+/** 玩家拒绝过的开场白简报记录（chatMetadata.rlzc_declined），避免每次加载聊天都弹窗 */
+export const DECLINED_KEY = 'rlzc_declined';
+
+export function declineKey(index: number, name: string): string {
+  return `${index}:${name}`;
+}
+
+/**
+ * 开场白入场检查：取聊天中第一条AI消息，若其中有副本简报，且当前没有进行中的会话、
+ * 也不是某个已结束会话的入场消息、玩家也没有拒绝过，就返回它（以它为第1轮）。
+ */
+export function greetingEntryCandidate(
+  chat: ChatMessage[],
+  session: Session | null,
+  declined: string[] = [],
+): { index: number; info: BriefingInfo } | null {
+  if (session?.status === 'active') return null;
+  const index = chat.findIndex((m) => !!m && !m.is_user && !m.is_system);
+  if (index < 0) return null;
+  if (session && session.entryIndex === index) return null;
+  const info = detectBriefing(String(chat[index].mes ?? ''));
+  if (!info) return null;
+  if (declined.includes(declineKey(index, info.name))) return null;
+  return { index, info };
 }
