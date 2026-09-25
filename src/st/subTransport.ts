@@ -6,8 +6,7 @@
  *    chat_completion_source = 'custom'，custom_url = 地址；密钥用 custom_include_headers 覆盖 Authorization
  *    （服务端先写 'Authorization: Bearer <ST保存的密钥>'，再合并 custom_include_headers），不改动 ST 自己保存的密钥。
  *    模型列表：POST /api/backends/chat-completions/status（同样的参数）。
- *  - 酒馆连接配置：getContext().ConnectionManagerRequestService.sendRequest(profileId, messages, maxTokens, { signal })，
- *    配置列表来自 getSupportedProfiles()（连接配置扩展被禁用时不可用）。
+ * 界面上把「独立接口」叫作「自设API」。
  */
 import { ctx } from './context';
 import { SubTimeoutError, type SubMessages } from '../core/subapi';
@@ -20,12 +19,12 @@ export interface SubPreset {
   model: string;
 }
 
-export type SubSource = 'off' | 'main' | 'preset' | 'profile';
+/** 关闭 / 跟随主API / 自设API（接口预设） */
+export type SubSource = 'off' | 'main' | 'preset';
 
 export interface SubTarget {
   source: Exclude<SubSource, 'off'>;
   preset?: SubPreset;
-  profileId?: string;
   timeoutMs: number;
 }
 
@@ -103,28 +102,10 @@ async function callMain(m: SubMessages): Promise<string> {
   return String(await c.generateRaw({ prompt: m.user, systemPrompt: m.system }));
 }
 
-async function callProfile(profileId: string, m: SubMessages, signal: AbortSignal): Promise<string> {
-  const svc = (ctx() as any).ConnectionManagerRequestService;
-  if (!svc) throw new Error('当前酒馆版本没有连接配置接口');
-  const r = await svc.sendRequest(
-    profileId,
-    [
-      { role: 'system', content: m.system },
-      { role: 'user', content: m.user },
-    ],
-    MAX_TOKENS,
-    { stream: false, signal, extractData: true, includePreset: true, includeInstruct: true },
-  );
-  const content = typeof r === 'string' ? r : r?.content;
-  if (typeof content !== 'string') throw new Error('返回里没有正文');
-  return content;
-}
-
 /** 按设置发一次请求，返回模型的原始文字 */
 export function callSub(target: SubTarget, m: SubMessages): Promise<string> {
   return withTimeout(target.timeoutMs, (signal) => {
     if (target.source === 'main') return callMain(m);
-    if (target.source === 'profile') return callProfile(target.profileId ?? '', m, signal);
     if (!target.preset) throw new Error('没有选择接口预设');
     return callPreset(target.preset, m, signal);
   });
@@ -151,15 +132,4 @@ export async function testPreset(p: SubPreset, timeoutMs: number): Promise<{ mod
     callPreset(probe, { system: '只回复 OK。', user: 'ping' }, signal, 5),
   );
   return { models, reply };
-}
-
-/** 酒馆连接配置列表；连接配置扩展不可用时返回 null */
-export function listProfiles(): { id: string; name: string }[] | null {
-  try {
-    const svc = (ctx() as any).ConnectionManagerRequestService;
-    if (!svc?.getSupportedProfiles) return null;
-    return svc.getSupportedProfiles().map((p: any) => ({ id: String(p.id), name: String(p.name ?? p.id) }));
-  } catch {
-    return null;
-  }
 }

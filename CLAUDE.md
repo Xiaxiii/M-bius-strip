@@ -156,7 +156,7 @@ interface Progress {
 ```
 
 规则：
-1. 只统计 `is_user === false` 且非系统消息的 AI 消息。`entryIndex` 那条消息算第一日第1轮。
+1. 只统计 `is_user === false` 且非系统消息的 AI 消息。`entryIndex` 那条消息算第一日第1轮。（实现说明：被 `/hide` 隐藏的AI回复——`is_system` 为 true 但没有 `extra.type`——照样计轮；柏宝书、Horae 等记忆扩展会隐藏旧楼层，不算的话轮次会倒退、入场消息会被当成已删除。只有 ST 原生系统消息（/sys、/comment、帮助页等，带 `extra.type`）不计。）
 2. 在 AI 消息正文中遇到 `<阶段切换>X</阶段切换>`：该消息仍属于旧阶段，下一条 AI 消息起进入名为 X 的阶段（按 `phase.name` 匹配），轮次从0开始计。
 3. 某条 AI 消息使该阶段轮次达到 `cap`：下一条起进入 `next` 阶段。`next` 为 null 时保持在该阶段，等待结算标签。
 4. 遇到 `<副本结算>…</副本结算>`：`status` 视为 ended。
@@ -383,9 +383,13 @@ interface Progress {
 - **入场消息：** 从聊天开头（或上一个副本结算之后）起，第一条命中任一信号、且没被拒绝过的AI消息，算第1轮；是开场白就以开场白为第1轮。
 - **拒绝：** 玩家点「否」时在 `chatMetadata.rlzc.declined` 记下「消息下标:副本名」，同一条消息（包括重新生成后仍在同一楼）不再弹窗；更晚的消息再命中时可以再问一次。没有会话时 `chatMetadata.rlzc` 只含这一项；旧版的 `chatMetadata.rlzc_declined` 照常读取。
 
-## 14. 副API「记录员」（第二期，覆盖第10节第二期与决定 10）
+## 14. 副本事件检测（第二期「副API」，覆盖第10节第二期与决定 10）
+
+> 界面上叫「副本事件检测」，不叫「副API」；来源只有 关闭 / 跟随主API / 自设API（界面名，内部 source 值为 `preset`）。「使用酒馆连接配置」按作者要求不做。注入深度卡片用白话说明，界面不显示 `rlzc_*` 这类内部名。
 
 副本进行中，每条新的AI回复生成后调用一次，读正文、整理状态，不写剧情。回廊中不调用；`continue` 不调用；重新生成、滑动产生的新消息照常调用。
+
+> 实现说明（端到端测试后补充）：ST 1.19.0 打开只有开场白的聊天时会对开场白补发 `MESSAGE_RECEIVED`（type = `first_message`），开场白不是新回复，不调用也不重写它的快照。「同一次生成只检测一次」按 楼层 + ST 记录的生成时间（send_date / gen_started / gen_finished）+ 正文 判断，文字完全相同的重新生成也算新的一次。
 
 ### 14.1 一次调用做三件事，只返回 JSON
 ```
@@ -393,7 +397,7 @@ interface Progress {
  "state":{…},
  "next":[{"id":"E12","ok":true,"reason":"…"}]}
 ```
-1. 事件核对：本轮注入的每个后台事件在正文里是已发生 / 未发生 / 条件不成立。
+1. 事件核对：本轮注入的每个后台事件在正文里是已发生 / 未发生 / 条件不成立。只核对后台事件（`kind: 'event'`），「本轮写作要求」（`directive`，如「本日须呈现至少两条破绽」）管的是一整段剧情，不送去核对；「第X到Y轮之间」的区间事件在提示词里标明轮次范围，本轮没写到、也没写反就算已发生。
 2. 隐藏状态：在上一轮状态的基础上更新副本包 `stateFields`（`{ key, label, hint }[]`）；没有 stateFields 的副本只维护 `summary`（不超过150字）。钟楼 1.3.0 的字段：crank 曲柄当前在谁手里、watcher 当夜值班者、positions 各角色所在位置、victim 死者目前状态、clues 已被发现的关键线索、theories 已公开讨论过的推理。
 3. 条件预判：下一轮将注入、且带 if 条件的事件，条件是否仍成立。
 
@@ -403,15 +407,14 @@ interface Progress {
 - 存进这条消息的 `chat[i].extra.rlzc.sub`（events、state、next、耗时 ms、来源 via、时间 at；玩家跳过时为 `{ skipped: true, error }`）。
 - 当前状态 = 从入场起最近一条带 sub.state（且未跳过）的AI消息里的 state。删楼、滑动自然回滚，不另存。
 - 注入 key `rlzc_state`（深度同 rlzc_progress，scan=false），标题「［副本状态·仅供AI］」。
-- 上一条AI消息的 `next` 判为 ok=false 的事件本轮不注入，记入生成出的那一楼快照 `skippedEvents`，调试页显示「条件不成立，已跳过」；ok=true 的事件照常注入且不再附条件原文；没有预判结果时（关闭、失败、跳过）照第一期把条件原文交给主AI。
+- 上一条AI消息的 `next` 判为 ok=false 的事件本轮不注入，记入生成出的那一楼快照 `skippedEvents`，调试页显示「条件不成立，已跳过」；ok=true 的事件照常注入且不再附条件原文；没有预判结果时（关闭、失败、跳过）照第一期把条件原文交给主AI。被跳过的事件没有注入过，不计入进度块的「已发生事件」（重放时按该楼的 `skippedEvents` 排除）。
 - events 里有 missed：调试页该楼标黄，第一期不自动补写、不改正文。
 - 系统页只显示一行：「副本记录：已更新（第N轮）」或「第N轮状态未更新」（进行中时「整理中…」）。隐藏状态只在调试页显示。
 
-### 14.3 来源（设置页「副API」卡，位于「注入深度」之后）
+### 14.3 来源（设置页「副本事件检测」卡，位于「注入深度」之后）
 - 关闭（默认）。
 - 跟随主API：`getContext().generateRaw({ prompt, systemPrompt })`。只发传入的提示词，不带聊天记录、世界书和扩展注入，不经过生成拦截器，不会递归。
-- 独立接口：经 ST 服务端转发 `POST /api/backends/chat-completions/generate`，`chat_completion_source: 'custom'`、`custom_url`，密钥用 `custom_include_headers` 覆盖 Authorization（不改 ST 自己保存的密钥）；模型列表 `POST /api/backends/chat-completions/status`。接口预设（名字、地址、密钥、模型）存在 `extensionSettings.rlzc.subApi.presets`，记住上次用的预设和每条预设的模型。
-- 使用酒馆连接配置：`getContext().ConnectionManagerRequestService.getSupportedProfiles()` 列出配置，`sendRequest(profileId, messages, maxTokens, { signal })` 发送。连接配置扩展被禁用时不可选。
+- 自设API：经 ST 服务端转发 `POST /api/backends/chat-completions/generate`，`chat_completion_source: 'custom'`、`custom_url`，密钥用 `custom_include_headers` 覆盖 Authorization（不改 ST 自己保存的密钥）；模型列表 `POST /api/backends/chat-completions/status`。接口预设（名字、地址、密钥、模型）存在 `extensionSettings.rlzc.subApi.presets`，记住上次用的预设和每条预设的模型。
 - 省钱模式（默认关）：只在本轮有注入事件、或下一轮有带条件的事件时调用，其余轮沿用上一轮状态。
 - 等待整理（默认开）：生成下一轮前等本轮整理完成，发送按钮旁显示「整理中…」；关闭时不等。
 - 超时默认60秒。

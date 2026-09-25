@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   buildSubPrompt,
+  generationKey,
   callWithRetry,
   classifyError,
   formatState,
@@ -8,6 +9,7 @@ import {
   latestSubState,
   parseSubResponse,
   shouldCallSub,
+  subEventsToCheck,
   stripPanels,
   SubFormatError,
   SubTimeoutError,
@@ -19,7 +21,7 @@ import { buildInjection } from '../src/core/injector';
 import { auditPanels } from '../src/core/audit';
 import { BUILTIN_PACKS, validatePack } from '../src/packs/loader';
 import type { ChatMessage, Pack } from '../src/packs/types';
-import { ai, chatWithRounds, session, user, zhonglou } from './helpers';
+import { ai, chatWithRounds, hidden, session, user, zhonglou } from './helpers';
 
 const GOOD: SubResult = {
   events: [{ id: 'E11', status: 'done', reason: '写到了抄铭文' }],
@@ -93,12 +95,27 @@ describe('调用与重试（副API用假函数模拟）', () => {
   });
 });
 
+describe('这一楼这一次生成的标识（同一次生成只检测一次）', () => {
+  const msg = (over: Partial<ChatMessage> = {}): ChatMessage => ({ mes: '正文', is_user: false, send_date: 'September 25, 2026 1:43pm', gen_started: '2026-09-25T13:43:17.100Z', gen_finished: '2026-09-25T13:43:18.200Z', ...over });
+  it('同一条消息得到同一个标识', () => expect(generationKey('c', 5, msg())).toBe(generationKey('c', 5, msg())));
+  it('重新生成或滑动出的回复即使文字完全一样，也是新的一次', () => {
+    expect(generationKey('c', 5, msg({ gen_started: '2026-09-25T13:44:00.000Z', gen_finished: '2026-09-25T13:44:01.000Z' }))).not.toBe(generationKey('c', 5, msg()));
+  });
+  it('正文被编辑或续写后标识改变', () => expect(generationKey('c', 5, msg({ mes: '正文。续写' }))).not.toBe(generationKey('c', 5, msg())));
+  it('不同聊天、不同楼层不混淆', () => {
+    expect(generationKey('c', 5, msg())).not.toBe(generationKey('d', 5, msg()));
+    expect(generationKey('c', 5, msg())).not.toBe(generationKey('c', 7, msg()));
+  });
+});
+
 describe('什么时候调用', () => {
   const base = { enabled: true, active: true, type: 'normal', saveMode: false, hasEvents: false, hasNextConditional: false };
   it('默认每轮都调用', () => expect(shouldCallSub(base)).toBe(true));
   it('关闭时不调用', () => expect(shouldCallSub({ ...base, enabled: false })).toBe(false));
   it('回廊中（没有进行中的副本）不调用', () => expect(shouldCallSub({ ...base, active: false })).toBe(false));
   it('continue 不调用', () => expect(shouldCallSub({ ...base, type: 'continue' })).toBe(false));
+  it('打开只有开场白的聊天时 ST 补发的 first_message 不调用（开场白不是新生成的回复）', () =>
+    expect(shouldCallSub({ ...base, type: 'first_message', hasEvents: true })).toBe(false));
   it('重新生成、滑动产生的新消息照常调用', () => {
     expect(shouldCallSub({ ...base, type: 'swipe' })).toBe(true);
     expect(shouldCallSub({ ...base, type: 'regenerate' })).toBe(true);
@@ -135,6 +152,18 @@ describe('隐藏状态的来源：最近一条带 sub 结果的AI消息', () => 
     expect(lastNextChecks(chat, 2)).toBeUndefined();
   });
 
+  it('带状态的楼层被 /hide 隐藏后仍然有效（记忆扩展会隐藏旧楼层）', () => {
+    const chat = chatWithRounds(4);
+    withSub(chat, 4, { ...GOOD, state: { crank: 'A' } });
+    withSub(chat, 6, { ...GOOD, state: { crank: 'B' } });
+    chat[6] = hidden(chat[6]);
+    expect(latestSubState(chat, 2)).toEqual({ index: 6, state: { crank: 'B' } });
+    expect(lastNextChecks(chat, 2)).toBeUndefined(); // 最后一条AI消息（第8楼）没有预判
+    withSub(chat, 8, { ...GOOD, state: { crank: 'C' } });
+    chat[8] = hidden(chat[8]);
+    expect(lastNextChecks(chat, 2)).toEqual(GOOD.next);
+  });
+
   it('入场之前的记录不算', () => {
     const chat = [ai('旧'), user(), ...chatWithRounds(2).slice(2)];
     withSub(chat, 0, { ...GOOD });
@@ -163,6 +192,13 @@ describe('下一轮事件的条件预判', () => {
     const p2 = replay(chat, session(), zhonglou)!;
     const w = auditPanels(chat, zhonglou, p2).warnings.filter((x) => x.kind === 'eventSkipped');
     expect(w.map((x) => x.text)).toEqual(['E11 条件不成立，已跳过：死者没去5F']);
+
+    // 跳过的事件没有注入过，进度块的「已发生事件」里不能有它
+    expect(p2.firedEvents).not.toContain('E11');
+    expect(p2.firedEvents).toContain('E10');
+    const inj2 = buildInjection(zhonglou, p2, session(), {});
+    expect(inj2.progress).toMatch(/已发生事件：E01–E10\n?/);
+    expect(inj2.progress).not.toContain('E11');
   });
 
   it('ok=true 时照常注入，条件已预判，不再把条件交给主AI', () => {
@@ -203,6 +239,20 @@ describe('提示词与状态注入', () => {
     const b = buildSubPrompt({ pack: basic, phaseName: '喜宴', round: 2, prevState: { summary: '到了村口' }, events: [], nextConditional: [], text: 'x' });
     expect(b.system).toContain('- summary（概况）：本副本目前的整体情况，不超过150字');
     expect(b.user).toContain('{"summary":"到了村口"}');
+  });
+
+  it('事件核对只发后台事件，不发「本轮写作要求」（directive 管的是整段剧情，单看一轮无从判断）', () => {
+    expect(subEventsToCheck(zhonglou, ['E02', 'E03']).map((e) => e.id)).toEqual(['E02']);
+    expect(subEventsToCheck(zhonglou, ['E03'])).toEqual([]);
+  });
+
+  it('区间事件在提示词里标明轮次范围：本轮没写到、也没写出相反的事实，算 done', () => {
+    const e02 = zhonglou.events.find((e) => e.id === 'E02')!;
+    const e11 = zhonglou.events.find((e) => e.id === 'E11')!;
+    const p = buildSubPrompt({ pack: zhonglou, phaseName: '第一日·白天', round: 2, prevState: null, events: [e02, e11], nextConditional: [], text: 'x' });
+    expect(p.user).toContain(`- E02（本阶段第2到60轮之间）：${e02.text}`);
+    expect(p.user).toContain(`- E11：${e11.text}（条件：${e11.if}）`);
+    expect(p.system).toContain('不一定在本轮写出');
   });
 
   it('rlzc_state 内容', () => {

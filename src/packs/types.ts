@@ -133,5 +133,9 @@ export interface ChatMessage {
   is_user?: boolean;
   is_system?: boolean;
   name?: string;
+  /** ST 每次生成（含每个滑动）各自的时间戳 */
+  send_date?: string | number;
+  gen_started?: string | number | Date;
+  gen_finished?: string | number | Date;
   extra?: Record<string, any> & { rlzc?: Snapshot };
 }

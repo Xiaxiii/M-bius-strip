@@ -1,0 +1,15 @@
+{
+  "name": "rlzc-e2e",
+  "private": true,
+  "type": "module",
+  "description": "回廊种菜系统的端到端测试：模拟 OpenAI 兼容接口 + SillyTavern 1.19.0 + Playwright。不参与扩展本身的构建。",
+  "scripts": {
+    "setup": "node setup.mjs",
+    "mock": "node mock-server.mjs",
+    "test": "node run.mjs"
+  },
+  "dependencies": {
+    "gpt-tokenizer": "^3.0.0",
+    "playwright": "^1.55.0"
+  }
+}

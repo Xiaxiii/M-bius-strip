@@ -1,14 +1,13 @@
 <script setup lang="ts">
-/** 设置页「副API」卡（CLAUDE.md 14） */
+/** 设置页「副本事件检测」卡（即第二期的副API，CLAUDE.md 14） */
 import { computed, ref } from 'vue';
 import { saveSettings, state } from '../app';
 import { confirmBox, inputBox, toast } from '../st/context';
-import { listModels, listProfiles, testPreset, type SubPreset, type SubSource } from '../st/subTransport';
+import { listModels, testPreset, type SubPreset, type SubSource } from '../st/subTransport';
 import { classifyError } from '../core/subapi';
 
 const sub = computed(() => state.settings.subApi);
 const preset = computed(() => sub.value.presets.find((p) => p.id === sub.value.presetId) ?? null);
-const profiles = ref(listProfiles());
 const models = ref<string[]>([]);
 const showKey = ref(false);
 const testing = ref(false);
@@ -20,7 +19,6 @@ function save() {
 
 function setSource(e: Event) {
   sub.value.source = (e.target as HTMLSelectElement).value as SubSource;
-  if (sub.value.source === 'profile') profiles.value = listProfiles();
   testResult.value = '';
   save();
 }
@@ -30,12 +28,13 @@ function newId() {
 }
 
 async function addPreset() {
-  const name = (await inputBox('新接口预设的名字：', `接口${sub.value.presets.length + 1}`))?.trim();
+  const name = (await inputBox('给这个API起个名字：', `我的API ${sub.value.presets.length + 1}`))?.trim();
   if (!name) return;
   const p: SubPreset = { id: newId(), name, url: '', key: '', model: '' };
   sub.value.presets = [...sub.value.presets, p];
   sub.value.presetId = p.id;
   models.value = [];
+  testResult.value = '';
   save();
 }
 
@@ -49,7 +48,7 @@ async function renamePreset() {
 
 async function removePreset() {
   if (!preset.value) return;
-  if (!(await confirmBox(`确定删除接口预设「${preset.value.name}」吗？`))) return;
+  if (!(await confirmBox(`确定删除「${preset.value.name}」吗？`))) return;
   sub.value.presets = sub.value.presets.filter((p) => p.id !== sub.value.presetId);
   sub.value.presetId = sub.value.presets[0]?.id ?? '';
   models.value = [];
@@ -103,34 +102,29 @@ function toggle(key: 'saveMode' | 'wait', e: Event) {
   sub.value[key] = (e.target as HTMLInputElement).checked;
   save();
 }
-
-function pickProfile(e: Event) {
-  sub.value.profileId = (e.target as HTMLSelectElement).value;
-  save();
-}
 </script>
 
 <template>
-  <div class="rlzc-card">
-    <h4>副API</h4>
+  <div class="rlzc-card rlzc-subapi">
+    <h4>副本事件检测</h4>
     <p class="rlzc-hint rlzc-intro">
-      副API是另请一个AI当记录员。副本里每轮，它会读一遍刚写好的正文，记下谁在哪、发生了什么，并检查该发生的事件有没有真的写出来。它不写剧情，只整理，主AI下一轮拿到的就是最新情况。不开也能玩，只是这些检查全靠主AI自觉。开启后每轮会多调用一次接口，会产生额外费用。
+      检测副本里预设的事件到底有没有发生。开启后，每轮AI写完正文，会另外请一个AI把这段正文读一遍：检查这一轮该发生的事件（比如「某人这一轮去了5楼」）有没有真的写出来，顺便记下谁在哪、发生了什么，下一轮提醒写正文的AI。它只检查、不写剧情。
     </p>
+    <p class="rlzc-hint">不开也能正常玩，只是没人帮你检查。开启后每轮会多调用一次AI，会多一点费用。</p>
 
     <label class="rlzc-field">
-      <span>来源</span>
+      <span>用哪个AI检测</span>
       <select class="rlzc-input" :value="sub.source" @change="setSource">
         <option value="off">关闭</option>
-        <option value="main">跟随主API</option>
-        <option value="preset">独立接口</option>
-        <option value="profile" :disabled="profiles === null">使用酒馆连接配置{{ profiles === null ? '（连接配置扩展不可用）' : '' }}</option>
+        <option value="main">跟随主API（和写正文的是同一个）</option>
+        <option value="preset">自设API（另填一个）</option>
       </select>
     </label>
 
     <template v-if="sub.source === 'preset'">
       <div class="rlzc-row">
         <select class="rlzc-input" :value="sub.presetId" @change="pickPreset">
-          <option v-if="!sub.presets.length" value="">还没有接口预设</option>
+          <option v-if="!sub.presets.length" value="">还没有保存的API</option>
           <option v-for="p in sub.presets" :key="p.id" :value="p.id">{{ p.name }}</option>
         </select>
         <button class="rlzc-btn small" @click="addPreset">新建</button>
@@ -159,25 +153,14 @@ function pickProfile(e: Event) {
         </label>
         <div class="rlzc-row">
           <button class="rlzc-btn small" :disabled="testing || !preset.url" @click="test">测试连接</button>
-          <small class="rlzc-hint">{{ testResult }}</small>
+          <small class="rlzc-hint rlzc-test-result">{{ testResult }}</small>
         </div>
       </template>
     </template>
 
-    <template v-if="sub.source === 'profile' && profiles">
-      <label class="rlzc-field">
-        <span>连接配置</span>
-        <select class="rlzc-input" :value="sub.profileId" @change="pickProfile">
-          <option value="">请选择…</option>
-          <option v-for="p in profiles" :key="p.id" :value="p.id">{{ p.name }}</option>
-        </select>
-      </label>
-      <p v-if="!profiles.length" class="rlzc-hint">还没有连接配置。可以在酒馆顶部「API 连接」里保存一个。</p>
-    </template>
-
     <template v-if="sub.source !== 'off'">
-      <label class="rlzc-check"><input type="checkbox" :checked="sub.saveMode" @change="toggle('saveMode', $event)" />省钱模式：只在本轮有后台事件、或下一轮有带条件的事件时调用，其余轮沿用上一轮状态</label>
-      <label class="rlzc-check"><input type="checkbox" :checked="sub.wait" @change="toggle('wait', $event)" />等待整理：生成下一轮前等本轮整理完成（关闭后主AI可能拿到晚一轮的状态）</label>
+      <label class="rlzc-check"><input type="checkbox" :checked="sub.saveMode" @change="toggle('saveMode', $event)" />省钱模式：只在这一轮或下一轮有预设事件时才检测，其余轮不调用</label>
+      <label class="rlzc-check"><input type="checkbox" :checked="sub.wait" @change="toggle('wait', $event)" />等检测完再写下一轮（关掉会更快，但写正文的AI可能拿到晚一轮的情况）</label>
       <label class="rlzc-field">
         <span>超时（秒）</span>
         <input type="number" min="5" class="rlzc-input" :value="sub.timeoutSec" @change="setNumber" />

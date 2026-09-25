@@ -4,7 +4,7 @@ import { buildInjection } from '../src/core/injector';
 import { locateEntry, reconcileSession } from '../src/core/session';
 import { resolveSkipTarget } from '../src/core/detector';
 import type { Pack } from '../src/packs/types';
-import { ai, chatWithRounds, session, sys, user, zhonglou } from './helpers';
+import { ai, chatWithRounds, hidden, session, sys, user, zhonglou } from './helpers';
 
 const phaseId = (chat = chatWithRounds(1), s = session()) => replay(chat, s, zhonglou)!;
 
@@ -51,8 +51,18 @@ describe('阶段与轮次', () => {
 
   it('用户消息、系统消息不计轮', () => {
     const chat = chatWithRounds(5);
-    chat.push(user(), sys(), user(), sys('隐藏的消息'));
+    chat.push(user(), sys(), user(), sys('/comment 备注', 'comment'));
     expect(phaseId(chat).round).toBe(5);
+  });
+
+  it('被 /hide 隐藏的AI回复仍然计轮（记忆扩展会隐藏旧楼层）', () => {
+    const chat = chatWithRounds(6);
+    // 柏宝书默认只留最近3条AI回复，更早的楼层（含入场简报、用户消息）都会被隐藏
+    for (let i = 0; i < chat.length - 6; i++) chat[i] = hidden(chat[i]);
+    const p = phaseId(chat);
+    expect(p.round).toBe(6);
+    expect(p.nextRound).toBe(7);
+    expect(p.perMessage[2]?.round).toBe(1);
   });
 
   it('删除最后一条 AI 消息后轮次减一', () => {
@@ -118,6 +128,20 @@ describe('入场消息', () => {
     chat.splice(1, 1); // 删掉入场消息本身
     expect(locateEntry(chat, s)).toBe(-1);
     expect(reconcileSession(chat, s)).toBe(false);
+  });
+
+  it('入场消息被 /hide 隐藏：会话照常，不当作删除', () => {
+    const chat = chatWithRounds(4);
+    const s = session({ id: 'abc' });
+    chat[2].extra = { rlzc: { phase: 'd1', round: 1, injected: [], entry: 'abc' } };
+    chat[2] = hidden(chat[2]);
+    expect(locateEntry(chat, s)).toBe(2);
+    expect(reconcileSession(chat, s)).toBe(true);
+    expect(replay(chat, s, zhonglou)!.round).toBe(4);
+    // 没有会话 id 的旧数据也一样
+    const old = session();
+    expect(locateEntry(chat, old)).toBe(2);
+    expect(replay(chat, old, zhonglou)!.round).toBe(4);
   });
 
   it('入场下标越界时重放返回 null', () => {

@@ -74,6 +74,11 @@ export interface PanelInfo {
   ps?: string;
 }
 
+/** 任务行前面的无序列表符号（- * • ·）去掉：面板自己会画圆点。编号（1. 2.）保留 */
+function taskItem(line: string): string {
+  return line.replace(/^[-*•·]\s*/, '').trim();
+}
+
 /** `<副本>` 面板：时限、进度条、任务（可多行）、ps */
 export function detectPanel(text: string): PanelInfo | null {
   const m = PANEL_RE.exec(text ?? '');
@@ -89,12 +94,12 @@ export function detectPanel(text: string): PanelInfo | null {
       const value = kv[2].trim();
       if (key === '时限') { info.limit = value; current = null; }
       else if (key === '进度条') { info.progressBar = value; current = null; }
-      else if (key === '任务') { if (value) info.tasks.push(value); current = 'tasks'; }
+      else if (key === '任务') { if (taskItem(value)) info.tasks.push(taskItem(value)); current = 'tasks'; }
       else { info.ps = value; current = 'ps'; }
       continue;
     }
     if (/^[^：:\s]{1,6}\s*[：:]/.test(line)) { current = null; continue; }
-    if (current === 'tasks') info.tasks.push(line);
+    if (current === 'tasks') { if (taskItem(line)) info.tasks.push(taskItem(line)); }
     else if (current === 'ps') info.ps = info.ps ? `${info.ps}\n${line}` : line;
   }
   return info;

@@ -15,7 +15,10 @@ export const BRIEFING = [
 
 export const ai = (mes = '……'): ChatMessage => ({ mes, is_user: false, extra: {} });
 export const user = (mes = '我继续。'): ChatMessage => ({ mes, is_user: true, extra: {} });
-export const sys = (mes = '系统'): ChatMessage => ({ mes, is_user: false, is_system: true, extra: {} });
+/** ST 原生系统消息（/sys 旁白、/comment、帮助页等）：带 extra.type */
+export const sys = (mes = '系统', type = 'narrator'): ChatMessage => ({ mes, is_user: false, is_system: true, extra: { type } });
+/** 被 /hide 隐藏的消息（柏宝书、Horae 等记忆扩展会隐藏旧楼层）：is_system 为 true，但没有 extra.type */
+export const hidden = (m: ChatMessage): ChatMessage => ({ ...m, is_system: true });
 
 /** 一段聊天：开场白 + 用户 + 简报(入场) + n-1 组 (用户, AI) */
 export function chatWithRounds(n: number): ChatMessage[] {
