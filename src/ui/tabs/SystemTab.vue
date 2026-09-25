@@ -56,7 +56,7 @@ async function choose() {
         <div class="rlzc-stat" v-if="hasPhases"><span>阶段</span><b>{{ p.phase.name }}</b></div>
         <div class="rlzc-stat" :class="{ warn: p.warn }"><span>轮次</span><b>{{ roundText }}</b></div>
         <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
-        <div v-if="p.roundsLeft" class="rlzc-stat"><span>剩余轮数</span><b>{{ p.roundsLeft.x }}/{{ p.roundsLeft.y }}</b></div>
+        <div v-if="p.roundsLeft" class="rlzc-stat"><span>最多剩余轮次</span><b>{{ p.roundsLeft.x }}/{{ p.roundsLeft.y }}</b></div>
         <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
       </div>
 

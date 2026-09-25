@@ -1,6 +1,6 @@
-import type { BriefingInfo, ChatMessage, ManualAction, Pack, Session } from '../packs/types';
-import { buildGenericPack, GENERIC_PACK_ID } from '../packs/loader';
-import { detectBriefing } from './detector';
+import type { ChatMessage, ManualAction, Pack, Session } from '../packs/types';
+import { BUILTIN_PACKS, buildGenericPack, GENERIC_PACK_ID } from '../packs/loader';
+import { detectEntry, type EntryHit } from './detector';
 
 /** 会话数据的纯逻辑部分；读写 chatMetadata 的部分在 src/st/ 与 src/index.ts */
 
@@ -80,28 +80,64 @@ export function effectiveRoles(session: Session, fromChat?: Record<string, strin
   return { ...(fromChat ?? {}), ...(manual ?? {}) };
 }
 
-/** 玩家拒绝过的开场白简报记录（chatMetadata.rlzc_declined），避免每次加载聊天都弹窗 */
+/** 旧版把拒绝记录放在 chatMetadata.rlzc_declined；现在放在 chatMetadata.rlzc.declined，旧记录照常读取 */
 export const DECLINED_KEY = 'rlzc_declined';
 
+/** 拒绝记录的键：这条消息 + 这个副本 */
 export function declineKey(index: number, name: string): string {
   return `${index}:${name}`;
 }
 
+export interface EntryCandidate extends EntryHit {
+  index: number;
+}
+
+function isAi(m: ChatMessage | undefined): boolean {
+  return !!m && !m.is_user && !m.is_system;
+}
+
+/** 某一楼是否带入场信号（只看AI消息） */
+export function entryCandidateAt(chat: ChatMessage[], index: number, packs: Pack[]): EntryCandidate | null {
+  if (!isAi(chat[index])) return null;
+  const hit = detectEntry(String(chat[index].mes ?? ''), packs);
+  return hit ? { ...hit, index } : null;
+}
+
 /**
- * 开场白入场检查：取聊天中第一条AI消息，若其中有副本简报，且当前没有进行中的会话、
- * 也不是某个已结束会话的入场消息、玩家也没有拒绝过，就返回它（以它为第1轮）。
+ * 从 from 到 to（含）找第一条带入场信号、且没被拒绝过的AI消息，作为入场消息（第1轮）。
+ * from = 聊天开头，或上一个副本结算之后。
+ */
+export function firstEntryCandidate(
+  chat: ChatMessage[],
+  packs: Pack[],
+  from: number,
+  to: number,
+  declined: string[] = [],
+): EntryCandidate | null {
+  for (let i = Math.max(0, from); i <= Math.min(to, chat.length - 1); i++) {
+    const c = entryCandidateAt(chat, i, packs);
+    if (c && !declined.includes(declineKey(i, c.info.name))) return c;
+  }
+  return null;
+}
+
+/**
+ * 切换/加载聊天、切换开场白时的检查：只看 from 之后的第一条AI消息（通常是开场白）。
+ * 已有进行中的会话、或玩家拒绝过这条消息时不返回。
  */
 export function greetingEntryCandidate(
   chat: ChatMessage[],
   session: Session | null,
   declined: string[] = [],
-): { index: number; info: BriefingInfo } | null {
+  packs: Pack[] = BUILTIN_PACKS,
+  from = 0,
+): EntryCandidate | null {
   if (session?.status === 'active') return null;
-  const index = chat.findIndex((m) => !!m && !m.is_user && !m.is_system);
+  let index = -1;
+  for (let i = Math.max(0, from); i < chat.length; i++) if (isAi(chat[i])) { index = i; break; }
   if (index < 0) return null;
   if (session && session.entryIndex === index) return null;
-  const info = detectBriefing(String(chat[index].mes ?? ''));
-  if (!info) return null;
-  if (declined.includes(declineKey(index, info.name))) return null;
-  return { index, info };
+  const c = entryCandidateAt(chat, index, packs);
+  if (!c || declined.includes(declineKey(index, c.info.name))) return null;
+  return c;
 }

@@ -3,7 +3,7 @@
  */
 import { reactive } from 'vue';
 import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs/types';
-import { allPacks, buildGenericPack, findPackByBriefing, genericLevel, validatePack } from './packs/loader';
+import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
 import { buildInjection, EMPTY_INJECTION, ALL_KEYS, KEY_PROGRESS, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
@@ -12,6 +12,9 @@ import {
   createSession,
   declineKey,
   DECLINED_KEY,
+  entryCandidateAt,
+  firstEntryCandidate,
+  type EntryCandidate,
   effectiveRoles,
   greetingEntryCandidate,
   META_KEY,
@@ -127,9 +130,28 @@ function readSession(): Session | null {
   return normalizeSession(getMeta()[META_KEY]);
 }
 
+/** 入场拒绝记录：chatMetadata.rlzc.declined（兼容旧版的 chatMetadata.rlzc_declined） */
+function readDeclined(): string[] {
+  const meta = getMeta();
+  const now = Array.isArray(meta[META_KEY]?.declined) ? (meta[META_KEY].declined as string[]) : [];
+  const legacy = Array.isArray(meta[DECLINED_KEY]) ? (meta[DECLINED_KEY] as string[]) : [];
+  return [...new Set([...legacy, ...now])];
+}
+
+function addDeclined(key: string): void {
+  const meta = getMeta();
+  const declined = [...readDeclined().filter((k) => k !== key), key];
+  meta[META_KEY] = { ...(meta[META_KEY] ?? {}), declined };
+  saveMeta();
+}
+
+/** 写会话时保留拒绝记录；没有会话时 chatMetadata.rlzc 只剩拒绝记录（没有就删除） */
 function writeSession(session: Session | null): void {
   const meta = getMeta();
-  if (session) meta[META_KEY] = JSON.parse(JSON.stringify(session));
+  const declined = readDeclined();
+  const extra = declined.length ? { declined } : {};
+  if (session) meta[META_KEY] = { ...JSON.parse(JSON.stringify(session)), ...extra };
+  else if (declined.length) meta[META_KEY] = extra;
   else delete meta[META_KEY];
   saveMeta();
 }
@@ -263,57 +285,58 @@ export async function interceptor(_chat: unknown[], _contextSize: number, _abort
 
 const askedEntry = new Set<string>();
 
-/** remember：拒绝时写进聊天元数据，之后加载这个聊天不再询问（用于开场白检查） */
-async function askEntry(index: number, remember = false): Promise<void> {
-  const chat = getChat();
-  const msg = chat[index];
-  const info = detectBriefing(msg?.mes ?? '');
-  if (!info) return;
+/** 找入场消息的起点：聊天开头，或上一个副本结算之后 */
+function entrySearchStart(): number {
+  const session = readSession();
+  if (!session || session.status !== 'ended') return 0;
+  const end = state.progress?.endIndex;
+  return end !== undefined ? end + 1 : session.entryIndex + 1;
+}
+
+/** 弹窗确认入场。点「否」会记入 chatMetadata.rlzc.declined，同一条消息不再询问 */
+async function askEntry(cand: EntryCandidate): Promise<void> {
+  const { index, info } = cand;
   const key = `${getChatId()}:${index}:${info.name}`;
   if (askedEntry.has(key)) return;
   askedEntry.add(key);
-  const pack = findPackByBriefing(state.packs, info.name);
-  const text = pack
-    ? `检测到进入《${pack.name}》，是否启用？`
+  const text = cand.pack
+    ? `检测到进入《${cand.pack.name}》，是否启用？`
     : `检测到进入《${info.name}》，是否启用？（未收录的副本，将使用通用副本包）`;
   if (!(await confirmBox(text))) {
-    if (remember) {
-      const meta = getMeta();
-      const list: string[] = Array.isArray(meta[DECLINED_KEY]) ? meta[DECLINED_KEY] : [];
-      meta[DECLINED_KEY] = [...list.filter((k) => k !== declineKey(index, info.name)), declineKey(index, info.name)];
-      saveMeta();
-    }
+    addDeclined(declineKey(index, info.name));
     return;
   }
   // 弹窗期间消息可能已被删改，重新确认
-  const now = getChat()[index];
-  if (!isCountable(now) || detectBriefing(now.mes)?.name !== info.name) {
-    toast('warning', '简报消息已变化，未启用。');
+  const now = entryCandidateAt(getChat(), index, state.packs);
+  if (!now || now.info.name !== info.name) {
+    toast('warning', '入场消息已变化，未启用。');
     return;
   }
-  if (!pack) {
+  // 已收录的副本用副本包自己的数据；简报里有目标、时限等就一并存下
+  const briefing = { ...info };
+  if (!cand.pack) {
     // 通用副本包：轮数上限在入场时确定并记入会话，之后改设置不影响进行中的副本
-    info.rounds = genericTiming(info.limit, genericLevel(info), state.settings.genericCaps).rounds;
+    briefing.rounds = genericTiming(info.limit, genericLevel(info), state.settings.genericCaps).rounds;
   }
-  startSession(pack ?? buildGenericPack(info, state.settings.genericCaps), index, info);
+  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), index, briefing);
 }
 
 /**
- * 开场白里的简报：ST 只在新建的单条聊天里对开场白发 MESSAGE_RECEIVED，
- * 切换开场白（滑动）、加载已有聊天、扩展晚于聊天加载时都不会发。
- * 所以在切换/加载聊天、滑动时主动检查第一条AI消息，以它为第1轮。
+ * 切换/加载聊天、切换开场白时检查第一条AI消息（ST 在这些时候不会对开场白发 MESSAGE_RECEIVED）。
+ * 命中入场信号就弹窗，确认后以它为第1轮。
  */
 export function checkGreeting(): void {
-  const meta = getMeta();
-  const declined = Array.isArray(meta[DECLINED_KEY]) ? (meta[DECLINED_KEY] as string[]) : [];
-  const hit = greetingEntryCandidate(getChat(), readSession(), declined);
-  if (hit) void askEntry(hit.index, true);
+  const hit = greetingEntryCandidate(getChat(), readSession(), readDeclined(), state.packs, entrySearchStart());
+  if (hit) void askEntry(hit);
 }
 
-/** 滑动的是第一条AI消息（开场白）时检查 */
+/** 滑动的是（起点之后的）第一条AI消息（开场白）时检查 */
 export function onMessageSwiped(id: number): void {
   refresh();
-  const first = getChat().findIndex((m) => isCountable(m));
+  const chat = getChat();
+  const start = entrySearchStart();
+  let first = -1;
+  for (let i = start; i < chat.length; i++) if (isCountable(chat[i])) { first = i; break; }
   if (id === first) checkGreeting();
 }
 
@@ -407,10 +430,12 @@ export function onMessageReceived(index: number): void {
   if (!isCountable(msg)) return;
   const session = readSession();
 
-  if ((!session || session.status === 'ended') && detectBriefing(msg.mes)) {
-    // 第一条AI消息（通常是开场白）走开场白检查，拒绝会被记住
-    if (index === chat.findIndex((m) => isCountable(m))) checkGreeting();
-    else void askEntry(index);
+  if (!session || session.status === 'ended') {
+    // 这条消息带入场信号时，入场消息取起点之后第一条带信号、没被拒绝过的AI消息
+    if (entryCandidateAt(chat, index, state.packs)) {
+      const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined());
+      if (cand) void askEntry(cand);
+    }
     return;
   }
   if (!session) return;

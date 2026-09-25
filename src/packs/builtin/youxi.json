@@ -6,7 +6,10 @@
   "token": "【副本进行中：游戏】",
   "legacyKeys": [],
   "detect": {
-    "briefingName": "游戏"
+    "briefingName": "游戏",
+    "patterns": [
+      "(本次|此次)副本《游戏》"
+    ]
   },
   "time": {
     "type": "countdown",

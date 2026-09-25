@@ -54,7 +54,8 @@ export interface Pack {
   players?: number | string;
   token: string;
   legacyKeys: string[];
-  detect: { briefingName: string };
+  /** briefingName：简报里的名字；patterns：额外的识别正则（字符串），命中即认为进入该副本 */
+  detect: { briefingName: string; patterns?: string[] };
   time: PackTime;
   remaining: PackRemaining;
   roles?: string[];
@@ -96,6 +97,8 @@ export interface Session {
   status: 'active' | 'ended';
   manual: ManualAction[];
   roles?: Record<string, string>;
+  /** 玩家拒绝入场的记录（declineKey：消息下标:副本名）。没有会话时 chatMetadata.rlzc 只含这一项 */
+  declined?: string[];
   /** 入场简报解析结果；通用副本包靠它重建 */
   briefing?: BriefingInfo;
 }

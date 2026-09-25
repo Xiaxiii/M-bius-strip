@@ -63,6 +63,8 @@ export interface Progress {
   chainStart?: string;
   ended: boolean;
   endedBy?: 'tag' | 'manual';
+  /** 结束于哪一楼（结算消息，或手动结束操作所在的楼） */
+  endIndex?: number;
   firedEvents: string[];
   warn: boolean;
   isLastRound: boolean;
@@ -162,6 +164,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   let prevLimit: string | undefined;
   let ended = false;
   let endedBy: 'tag' | 'manual' | undefined;
+  let endIndex: number | undefined;
   let skipGoal: SkipGoal | null = null;
   let settlement: Settlement | undefined;
   let panel: PanelInfo | undefined;
@@ -208,6 +211,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
       if (s) {
         ended = true;
         endedBy = 'tag';
+        endIndex = i;
         settlement = s;
       } else {
         const switchName = detectPhaseSwitch(text);
@@ -244,6 +248,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
         case 'end':
           ended = true;
           endedBy = 'manual';
+          endIndex = i;
           break;
       }
     }
@@ -276,6 +281,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     chainStart: pack.phases.length ? chainStart.id : undefined,
     ended,
     endedBy,
+    endIndex,
     firedEvents,
     warn: !ended && capped && nextRound >= phase.cap - 2,
     isLastRound: !ended && capped && nextRound === phase.cap,

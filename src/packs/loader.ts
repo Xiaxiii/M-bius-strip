@@ -48,6 +48,9 @@ export function validatePack(input: unknown): string[] {
   if (p.players !== undefined && typeof p.players !== 'number' && typeof p.players !== 'string') errors.push('players 必须是数字或文本');
   if (!Array.isArray(p.legacyKeys) || p.legacyKeys.some((k: unknown) => typeof k !== 'string')) errors.push('legacyKeys 必须是文本数组');
   if (!p.detect || typeof p.detect.briefingName !== 'string' || !p.detect.briefingName) errors.push('缺少 detect.briefingName');
+  // 非法正则不算格式错误：运行时跳过并在控制台警告
+  else if (p.detect.patterns !== undefined && (!Array.isArray(p.detect.patterns) || p.detect.patterns.some((x: unknown) => typeof x !== 'string')))
+    errors.push('detect.patterns 必须是文本数组');
 
   const t = p.time;
   if (!t || !['none', 'clock', 'countdown'].includes(t.type)) errors.push('time.type 必须是 clock、countdown 或 none');
