@@ -217,7 +217,29 @@ describe('通用副本包', () => {
     expect(genericTiming('10小时', 'C')).toEqual({ rounds: 90, totalMinutes: 600, minutesPerRound: 7 });
     const g = buildGenericPack({ name: '雾港', level: 'C', limit: '10小时' });
     expect(g.phases).toEqual([{ id: 'main', name: '雾港', cap: 90, next: null }]);
-    expect(g.time).toEqual({ type: 'countdown', minutesPerRound: 7 });
+    expect(g.time).toEqual({ type: 'countdown', minutesPerRound: 7, totalMinutes: 600 });
+  });
+
+  it('总时长按简报的值（10小时），约剩按剩余轮数比例折算，不超过总时长', () => {
+    const g = buildGenericPack({ name: '雾港', level: 'C', limit: '10小时' });
+    const entry = run(chatFor('雾港', []), g);
+    // 入场那一轮 X = 89：600 × 89/90 ≈ 593
+    expect(entry.perMessage[1].limit).toMatchObject({ x: 89, y: 90, minutes: 593, total: 600 });
+    // 第2轮 X = 88：600 × 88/90 ≈ 587
+    expect(entry.limit).toMatchObject({ x: 88, y: 90, minutes: 587, total: 600, text: '约剩9小时47分/10小时' });
+    const inj = buildInjection(g, entry, session({ packId: 'generic', entryIndex: 1 }));
+    expect(inj.turn.split('\n').pop()).toContain('本轮<副本>的时限一栏写：约剩9小时47分/10小时。');
+    // 只减不增：上一轮写了约剩9小时 → 540 − 7 = 533
+    const p = run(chatFor('雾港', [panel('约剩9小时/10小时')]), g);
+    expect(p.limit).toMatchObject({ minutes: 533, text: '约剩8小时53分/10小时' });
+    // 最后一轮归零
+    const last = run(chatFor('雾港', Array.from({ length: 88 }, () => '……')), g);
+    expect(last.limit).toMatchObject({ x: 0, minutes: 0, text: '约剩0分钟/10小时' });
+  });
+
+  it('能整除时与按轮计算一致（10小时、最多100轮 → 每轮6分钟）', () => {
+    const g = buildGenericPack({ name: '雾港', level: 'C', limit: '10小时（最多100轮）' });
+    expect(run(chatFor('雾港', []), g).limit).toMatchObject({ x: 98, minutes: 98 * 6, text: '约剩9小时48分/10小时' });
   });
 
   it('「时限：10小时（最多100轮）」→ 100轮、每轮6分钟', () => {

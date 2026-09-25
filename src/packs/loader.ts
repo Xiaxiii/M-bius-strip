@@ -54,6 +54,7 @@ export function validatePack(input: unknown): string[] {
   else {
     if (t.type === 'clock' && (typeof t.dayStart !== 'string' || !/^\d{1,2}:\d{2}$/.test(t.dayStart))) errors.push('time.dayStart 格式应为 HH:MM');
     if (t.type !== 'none' && (typeof t.minutesPerRound !== 'number' || t.minutesPerRound <= 0)) errors.push('time.minutesPerRound 必须是正数');
+    if (t.type === 'countdown' && t.totalMinutes !== undefined && (typeof t.totalMinutes !== 'number' || t.totalMinutes <= 0)) errors.push('time.totalMinutes 必须是正数');
   }
   const r = p.remaining;
   if (!r || !['nights', 'countdown', 'fromPanel'].includes(r.type)) errors.push('remaining.type 必须是 nights、countdown 或 fromPanel');
@@ -129,7 +130,8 @@ export function buildGenericPack(info: BriefingInfo, caps: GenericCaps = DEFAULT
     token: `【副本进行中：${info.name}】`,
     legacyKeys: [],
     detect: { briefingName: info.name },
-    time: minutesPerRound ? { type: 'countdown', minutesPerRound } : { type: 'none' },
+    // 总时长按简报的值；每轮分钟四舍五入只用于“每轮至少减去”的判断
+    time: minutesPerRound ? { type: 'countdown', minutesPerRound, totalMinutes: timing.totalMinutes } : { type: 'none' },
     remaining: { type: 'fromPanel' },
     phases: [{ id: 'main', name: info.name, cap: rounds, next: null }],
     events: [],

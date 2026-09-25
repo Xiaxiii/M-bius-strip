@@ -35,7 +35,8 @@ export interface PackDoc {
 export type PackTime =
   | { type: 'clock'; dayStart: string; minutesPerRound: number }
   /** 倒计时：每轮消耗 minutesPerRound 分钟，不显示钟时 */
-  | { type: 'countdown'; minutesPerRound: number }
+  /** totalMinutes：总时长的固定值（通用副本用简报里的时限）；不写时总时长 = 总轮数 × minutesPerRound */
+  | { type: 'countdown'; minutesPerRound: number; totalMinutes?: number }
   | { type: 'none' };
 
 export type PackRemaining =

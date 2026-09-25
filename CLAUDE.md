@@ -344,6 +344,7 @@ interface Progress {
 - 总时长：简报「时限：」一行里第一个「数字+天/小时/分钟」。
 - 轮数上限 N：时限一行里有「（最多N轮）」就用它，否则按等级默认值 D 70｜C 90｜B 110｜A 135｜S 200（设置里可改；入场时确定后记入会话）。
 - 单阶段 `{ id:'main', name:副本名, cap:N, next:null }`，countdown，minutesPerRound = round(总时长 ÷ N)。读不到总时长时仍按 N 计轮、写进进度块，但不注入约剩时间。
+- **总时长按简报的值**（`time.totalMinutes`），不用 Y × minutesPerRound（后者会因四舍五入偏离简报，如 10小时/90轮 → 630分钟）。此时约剩上限按比例折算 = round(总时长 × X ÷ Y)，不会超过总时长；「只减不增」仍按 读到的值 − minutesPerRound。内置包不设 totalMinutes，按 12.2 计算。
 
 ### 12.5 核对（调试页）
 收到AI消息后解析 `<副本>` 时限一栏，与该楼快照 `chat[i].extra.rlzc.limit`（本楼注入的时限文字与分钟数）比较：countdown 读不到「剩余/总时长」、剩余比注入值多、总时长不一致 → 警告；钟楼与注入文字不一致 → 警告。只警告，不改原文。
