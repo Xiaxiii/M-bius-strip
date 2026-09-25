@@ -2,6 +2,7 @@ import { createApp, watch } from 'vue';
 import App from './App.vue';
 import css from './style.css?inline';
 import { saveSettings, state } from '../app';
+import { checkForUpdate, runUpdate, type UpdateInfo } from '../st/updater';
 
 const HOST_ID = 'rlzc-host';
 const MENU_ID = 'rlzc-menu-btn';
@@ -72,7 +73,11 @@ function addSettingsDrawer(tries = 0): void {
   wrap.id = DRAWER_ID;
   const drawer = el('div', 'inline-drawer');
   const header = el('div', 'inline-drawer-toggle inline-drawer-header');
-  header.append(el('b', '', '回廊种菜系统'), el('div', 'inline-drawer-icon fa-solid fa-circle-chevron-down down'));
+  const title = el('div', 'flex-container alignitemscenter margin0');
+  const badge = el('small', 'rlzc-update-badge', '有更新');
+  badge.style.cssText = 'display:none;margin-left:6px;padding:0 6px;border-radius:8px;background:var(--SmartThemeQuoteColor,#d88a2a);color:#fff;font-weight:normal;';
+  title.append(el('b', '', '回廊种菜系统'), badge);
+  header.append(title, el('div', 'inline-drawer-icon fa-solid fa-circle-chevron-down down'));
   const content = el('div', 'inline-drawer-content');
 
   const open = el('div', 'menu_button menu_button_icon', '打开面板');
@@ -98,7 +103,63 @@ function addSettingsDrawer(tries = 0): void {
 
   const buttons = el('div', 'flex-container');
   buttons.append(open, reset);
-  content.append(buttons, label, el('small', '', '也可以从输入框左侧的魔棒菜单打开面板。'));
+
+  // ── 版本与更新 ──
+  const updateRow = el('div', 'flex-container alignitemscenter');
+  const status = el('small', '', '正在检查更新…');
+  const checkBtn = el('div', 'menu_button menu_button_icon', '检查更新');
+  const updateBtn = el('div', 'menu_button menu_button_icon', '立即更新');
+  const reloadBtn = el('div', 'menu_button menu_button_icon', '刷新页面');
+  updateBtn.style.display = 'none';
+  reloadBtn.style.display = 'none';
+  updateRow.append(status, checkBtn, updateBtn, reloadBtn);
+  let info: UpdateInfo | null = null;
+  let busy = false;
+
+  const check = async () => {
+    if (busy) return;
+    busy = true;
+    status.textContent = '正在检查更新…';
+    updateBtn.style.display = 'none';
+    try {
+      info = await checkForUpdate();
+      const ver = info.commit ? `（${info.commit}）` : '';
+      if (!info.isGit) status.textContent = '不是用仓库地址安装的，无法检查更新。';
+      else if (info.isUpToDate) status.textContent = `已是最新版本${ver}`;
+      else {
+        status.textContent = `有新版本可以更新，当前${ver || '版本较旧'}`;
+        updateBtn.style.display = '';
+      }
+      badge.style.display = info.isGit && !info.isUpToDate ? '' : 'none';
+    } catch (e) {
+      status.textContent = `检查更新失败：${(e as Error).message}`;
+    } finally {
+      busy = false;
+    }
+  };
+  checkBtn.addEventListener('click', () => void check());
+  updateBtn.addEventListener('click', async () => {
+    if (!info || busy) return;
+    busy = true;
+    status.textContent = '正在更新…';
+    updateBtn.style.display = 'none';
+    try {
+      await runUpdate(info);
+      badge.style.display = 'none';
+      status.textContent = '更新完成，刷新页面后生效。';
+      reloadBtn.style.display = '';
+    } catch (e) {
+      status.textContent = `更新失败：${(e as Error).message}`;
+      updateBtn.style.display = '';
+    } finally {
+      busy = false;
+    }
+  });
+  reloadBtn.addEventListener('click', () => location.reload());
+  // 页面加载后自动检查一次（服务器端 git fetch，不阻塞界面）
+  setTimeout(() => void check(), 3000);
+
+  content.append(buttons, label, updateRow, el('small', '', '也可以从输入框左侧的魔棒菜单打开面板。'));
   drawer.append(header, content);
   wrap.append(drawer);
   container.append(wrap);
