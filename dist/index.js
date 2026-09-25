@@ -1047,8 +1047,8 @@ function uo(e, t = !1, n = ft) {
 }
 function fo(e, t, n = J) {
   const { immediate: s, deep: A, once: i, scheduler: r, augmentJob: o, call: l } = n, c = (P) => A ? P : /* @__PURE__ */ ge(P) || A === !1 || A === 0 ? Ge(P, 1) : Ge(P);
-  let u, a, p, x, k = !1, w = !1;
-  if (/* @__PURE__ */ le(e) ? (a = () => e.value, k = /* @__PURE__ */ ge(e)) : /* @__PURE__ */ Xe(e) ? (a = () => c(e), k = !0) : D(e) ? (w = !0, k = e.some((P) => /* @__PURE__ */ Xe(P) || /* @__PURE__ */ ge(P)), a = () => e.map((P) => {
+  let u, a, p, x, k = !1, _ = !1;
+  if (/* @__PURE__ */ le(e) ? (a = () => e.value, k = /* @__PURE__ */ ge(e)) : /* @__PURE__ */ Xe(e) ? (a = () => c(e), k = !0) : D(e) ? (_ = !0, k = e.some((P) => /* @__PURE__ */ Xe(P) || /* @__PURE__ */ ge(P)), a = () => e.map((P) => {
     if (/* @__PURE__ */ le(P))
       return P.value;
     if (/* @__PURE__ */ Xe(P))
@@ -1085,12 +1085,12 @@ function fo(e, t, n = J) {
       return j(), we;
     };
   }
-  let O = w ? new Array(e.length).fill(xn) : xn;
+  let O = _ ? new Array(e.length).fill(xn) : xn;
   const L = (P) => {
     if (!(!(u.flags & 1) || !u.dirty && !P))
       if (t) {
         const ee = u.run();
-        if (P || A || k || (w ? ee.some((we, he) => Re(we, O[he])) : Re(ee, O))) {
+        if (P || A || k || (_ ? ee.some((we, he) => Re(we, O[he])) : Re(ee, O))) {
           p && p();
           const we = ft;
           ft = u;
@@ -1098,7 +1098,7 @@ function fo(e, t, n = J) {
             const he = [
               ee,
               // pass undefined as the old value when it's changed for the first time
-              O === xn ? void 0 : w && O[0] === xn ? [] : O,
+              O === xn ? void 0 : _ && O[0] === xn ? [] : O,
               x
             ];
             O = ee, l ? l(t, 3, he) : (
@@ -1365,7 +1365,7 @@ function vo(e, t, n = J) {
     }
   }
   const u = At;
-  o.call = (x, k, w) => je(x, u, k, w);
+  o.call = (x, k, _) => je(x, u, k, _);
   let a = !1;
   i === "post" ? o.scheduler = (x) => {
     ae(x, u && u.suspense);
@@ -1431,8 +1431,8 @@ const Cn = /* @__PURE__ */ new WeakMap();
 function Zt(e, t, n, s, A = !1) {
   if (D(e)) {
     e.forEach(
-      (w, B) => Zt(
-        w,
+      (_, B) => Zt(
+        _,
         t && (D(t) ? t[B] : t),
         n,
         s,
@@ -1445,34 +1445,34 @@ function Zt(e, t, n, s, A = !1) {
     s.shapeFlag & 512 && s.type.__asyncResolved && s.component.subTree.component && Zt(e, t, n, s.component.subTree);
     return;
   }
-  const i = s.shapeFlag & 4 ? Jn(s.component) : s.el, r = A ? null : i, { i: o, r: l } = e, c = t && t.r, u = o.refs === J ? o.refs = {} : o.refs, a = o.setupState, p = /* @__PURE__ */ W(a), x = a === J ? QA : (w) => aA(u, w) ? !1 : K(p, w), k = (w, B) => !(B && aA(u, B));
+  const i = s.shapeFlag & 4 ? Jn(s.component) : s.el, r = A ? null : i, { i: o, r: l } = e, c = t && t.r, u = o.refs === J ? o.refs = {} : o.refs, a = o.setupState, p = /* @__PURE__ */ W(a), x = a === J ? QA : (_) => aA(u, _) ? !1 : K(p, _), k = (_, B) => !(B && aA(u, B));
   if (c != null && c !== l) {
     if (uA(t), ne(c))
       u[c] = null, x(c) && (a[c] = null);
     else if (/* @__PURE__ */ le(c)) {
-      const w = t;
-      k(c, w.k) && (c.value = null), w.k && (u[w.k] = null);
+      const _ = t;
+      k(c, _.k) && (c.value = null), _.k && (u[_.k] = null);
     }
   }
   if (Y(l))
     un(l, o, 12, [r, u]);
   else {
-    const w = ne(l), B = /* @__PURE__ */ le(l);
-    if (w || B) {
+    const _ = ne(l), B = /* @__PURE__ */ le(l);
+    if (_ || B) {
       const j = () => {
         if (e.f) {
-          const O = w ? x(l) ? a[l] : u[l] : k() || !e.k ? l.value : u[e.k];
+          const O = _ ? x(l) ? a[l] : u[l] : k() || !e.k ? l.value : u[e.k];
           if (A)
             D(O) && qA(O, i);
           else if (D(O))
             O.includes(i) || O.push(i);
-          else if (w)
+          else if (_)
             u[l] = [i], x(l) && (a[l] = u[l]);
           else {
             const L = [i];
             k(l, e.k) && (l.value = L), e.k && (u[e.k] = L);
           }
-        } else w ? (u[l] = r, x(l) && (a[l] = r)) : B && (k(l, e.k) && (l.value = r), e.k && (u[e.k] = r));
+        } else _ ? (u[l] = r, x(l) && (a[l] = r)) : B && (k(l, e.k) && (l.value = r), e.k && (u[e.k] = r));
       };
       if (r) {
         const O = () => {
@@ -1764,7 +1764,7 @@ function fA(e) {
     data: p,
     setupState: x,
     ctx: k,
-    inheritAttrs: w
+    inheritAttrs: _
   } = e, B = En(e);
   let j, O;
   try {
@@ -1797,7 +1797,7 @@ function fA(e) {
     xt.length = 0, Hn(P, e, 1), j = Ye(Ke);
   }
   let L = j;
-  if (O && w !== !1) {
+  if (O && _ !== !1) {
     const P = Object.keys(O), { shapeFlag: ee } = L;
     P.length && ee & 7 && (i && P.some(Dn) && (O = No(
       O,
@@ -2011,14 +2011,14 @@ function Bo(e, t, n = !1) {
       const u = ye(c);
       if (pA(u)) {
         const a = i[c], p = r[u] = D(a) || Y(a) ? { type: a } : _e({}, a), x = p.type;
-        let k = !1, w = !0;
+        let k = !1, _ = !0;
         if (D(x))
           for (let B = 0; B < x.length; ++B) {
             const j = x[B], O = Y(j) && j.name;
             if (O === "Boolean") {
               k = !0;
               break;
-            } else O === "String" && (w = !1);
+            } else O === "String" && (_ = !1);
           }
         else
           k = Y(x) && x.name === "Boolean";
@@ -2028,7 +2028,7 @@ function Bo(e, t, n = !1) {
         ] = k, p[
           1
           /* shouldCastTrue */
-        ] = w, (k || K(p, "default")) && o.push(u);
+        ] = _, (k || K(p, "default")) && o.push(u);
       }
     }
   const l = [r, o];
@@ -2096,27 +2096,27 @@ function Yo(e, t) {
     nextSibling: p,
     setScopeId: x = mt,
     insertStaticContent: k
-  } = e, w = (f, d, g, _ = null, b = null, v = null, $ = void 0, S = null, z = !!d.dynamicChildren) => {
+  } = e, _ = (f, d, g, w = null, b = null, v = null, $ = void 0, S = null, z = !!d.dynamicChildren) => {
     if (f === d)
       return;
-    f && !Wt(f, d) && (_ = hn(f), De(f, b, v, !0), f = null), d.patchFlag === -2 && (z = !1, d.dynamicChildren = null), d.dynamicChildren && f && f.dynamicChildren && f.dynamicChildren.hasOnce && (d.dynamicChildren === pt && (d.dynamicChildren = []), d.dynamicChildren.hasOnce = !0);
+    f && !Wt(f, d) && (w = hn(f), De(f, b, v, !0), f = null), d.patchFlag === -2 && (z = !1, d.dynamicChildren = null), d.dynamicChildren && f && f.dynamicChildren && f.dynamicChildren.hasOnce && (d.dynamicChildren === pt && (d.dynamicChildren = []), d.dynamicChildren.hasOnce = !0);
     const { type: y, ref: N, shapeFlag: C } = d;
     switch (y) {
       case Zn:
-        B(f, d, g, _);
+        B(f, d, g, w);
         break;
       case Ke:
-        j(f, d, g, _);
+        j(f, d, g, w);
         break;
       case cs:
-        f == null && O(d, g, _, $);
+        f == null && O(d, g, w, $);
         break;
       case U:
         ce(
           f,
           d,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2129,7 +2129,7 @@ function Yo(e, t) {
           f,
           d,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2139,7 +2139,7 @@ function Yo(e, t) {
           f,
           d,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2149,7 +2149,7 @@ function Yo(e, t) {
           f,
           d,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2159,48 +2159,48 @@ function Yo(e, t) {
         );
     }
     N != null && b ? Zt(N, f && f.ref, v, d || f, !d) : N == null && f && f.ref != null && Zt(f.ref, null, v, f, !0);
-  }, B = (f, d, g, _) => {
+  }, B = (f, d, g, w) => {
     if (f == null)
       s(
         d.el = o(d.children),
         g,
-        _
+        w
       );
     else {
       const b = d.el = f.el;
       d.children !== f.children && c(b, d.children);
     }
-  }, j = (f, d, g, _) => {
+  }, j = (f, d, g, w) => {
     f == null ? s(
       d.el = l(d.children || ""),
       g,
-      _
+      w
     ) : d.el = f.el;
-  }, O = (f, d, g, _) => {
+  }, O = (f, d, g, w) => {
     [f.el, f.anchor] = k(
       f.children,
       d,
       g,
-      _,
+      w,
       f.el,
       f.anchor
     );
-  }, L = ({ el: f, anchor: d }, g, _) => {
+  }, L = ({ el: f, anchor: d }, g, w) => {
     let b;
     for (; f && f !== d; )
-      b = p(f), s(f, g, _), f = b;
-    s(d, g, _);
+      b = p(f), s(f, g, w), f = b;
+    s(d, g, w);
   }, P = ({ el: f, anchor: d }) => {
     let g;
     for (; f && f !== d; )
       g = p(f), A(f), f = g;
     A(d);
-  }, ee = (f, d, g, _, b, v, $, S, z) => {
+  }, ee = (f, d, g, w, b, v, $, S, z) => {
     if (d.type === "svg" ? $ = "svg" : d.type === "math" && ($ = "mathml"), f == null)
       we(
         d,
         g,
-        _,
+        w,
         b,
         v,
         $,
@@ -2223,7 +2223,7 @@ function Yo(e, t) {
         y && y._endPatch();
       }
     }
-  }, we = (f, d, g, _, b, v, $, S) => {
+  }, we = (f, d, g, w, b, v, $, S) => {
     let z, y;
     const { props: N, shapeFlag: C, transition: R, dirs: F } = f;
     if (z = f.el = r(
@@ -2235,28 +2235,28 @@ function Yo(e, t) {
       f.children,
       z,
       null,
-      _,
+      w,
       b,
       ls(f, v),
       $,
       S
-    ), F && at(f, null, _, "created"), he(z, f, f.scopeId, $, _), N) {
+    ), F && at(f, null, w, "created"), he(z, f, f.scopeId, $, w), N) {
       for (const H in N)
-        H !== "value" && !Ht(H) && i(z, H, null, N[H], v, _);
-      "value" in N && i(z, "value", null, N.value, v), (y = N.onVnodeBeforeMount) && Me(y, _, f);
+        H !== "value" && !Ht(H) && i(z, H, null, N[H], v, w);
+      "value" in N && i(z, "value", null, N.value, v), (y = N.onVnodeBeforeMount) && Me(y, w, f);
     }
-    F && at(f, null, _, "beforeMount");
+    F && at(f, null, w, "beforeMount");
     const V = Ho(b, R);
     V && R.beforeEnter(z), s(z, d, g), ((y = N && N.onVnodeMounted) || V || F) && ae(() => {
       try {
-        y && Me(y, _, f), V && R.enter(z), F && at(f, null, _, "mounted");
+        y && Me(y, w, f), V && R.enter(z), F && at(f, null, w, "mounted");
       } finally {
       }
     }, b);
-  }, he = (f, d, g, _, b) => {
-    if (g && x(f, g), _)
-      for (let v = 0; v < _.length; v++)
-        x(f, _[v]);
+  }, he = (f, d, g, w, b) => {
+    if (g && x(f, g), w)
+      for (let v = 0; v < w.length; v++)
+        x(f, w[v]);
     if (b) {
       let v = b.subTree;
       if (d === v || Gi(v.type) && (v.ssContent === d || v.ssFallback === d)) {
@@ -2270,22 +2270,22 @@ function Yo(e, t) {
         );
       }
     }
-  }, ke = (f, d, g, _, b, v, $, S, z = 0) => {
+  }, ke = (f, d, g, w, b, v, $, S, z = 0) => {
     for (let y = z; y < f.length; y++) {
       const N = f[y] = S ? Ve(f[y]) : Pe(f[y]);
-      w(
+      _(
         null,
         N,
         d,
         g,
-        _,
+        w,
         b,
         v,
         $,
         S
       );
     }
-  }, kt = (f, d, g, _, b, v, $) => {
+  }, kt = (f, d, g, w, b, v, $) => {
     const S = d.el = f.el;
     let { patchFlag: z, dynamicChildren: y, dirs: N } = d;
     z |= f.patchFlag & 16;
@@ -2298,7 +2298,7 @@ function Yo(e, t) {
       y,
       S,
       g,
-      _,
+      w,
       ls(d, b),
       v
     ) : $ || St(
@@ -2307,7 +2307,7 @@ function Yo(e, t) {
       S,
       null,
       g,
-      _,
+      w,
       ls(d, b),
       v,
       !1
@@ -2325,8 +2325,8 @@ function Yo(e, t) {
     } else !$ && y == null && Ot(S, C, R, g, b);
     ((F = R.onVnodeUpdated) || N) && ae(() => {
       F && Me(F, g, d, f), N && at(d, f, g, "updated");
-    }, _);
-  }, X = (f, d, g, _, b, v, $) => {
+    }, w);
+  }, X = (f, d, g, w, b, v, $) => {
     for (let S = 0; S < d.length; S++) {
       const z = f[S], y = d[S], N = (
         // oldVNode may be an errored async setup() component inside Suspense
@@ -2342,19 +2342,19 @@ function Yo(e, t) {
           g
         )
       );
-      w(
+      _(
         z,
         y,
         N,
         null,
-        _,
+        w,
         b,
         v,
         $,
         !0
       );
     }
-  }, Ot = (f, d, g, _, b) => {
+  }, Ot = (f, d, g, w, b) => {
     if (d !== g) {
       if (d !== J)
         for (const v in d)
@@ -2364,19 +2364,19 @@ function Yo(e, t) {
             d[v],
             null,
             b,
-            _
+            w
           );
       for (const v in g) {
         if (Ht(v)) continue;
         const $ = g[v], S = d[v];
-        $ !== S && v !== "value" && i(f, v, S, $, b, _);
+        $ !== S && v !== "value" && i(f, v, S, $, b, w);
       }
       "value" in g && i(f, "value", d.value, g.value, b);
     }
-  }, ce = (f, d, g, _, b, v, $, S, z) => {
+  }, ce = (f, d, g, w, b, v, $, S, z) => {
     const y = d.el = f ? f.el : o(""), N = d.anchor = f ? f.anchor : o("");
     let { patchFlag: C, dynamicChildren: R, slotScopeIds: F } = d;
-    F && (S = S ? S.concat(F) : F), f == null ? (s(y, g, _), s(N, g, _), ke(
+    F && (S = S ? S.concat(F) : F), f == null ? (s(y, g, w), s(N, g, w), ke(
       // #10007
       // such fragment like `<></>` will be compiled into
       // a fragment which doesn't have a children.
@@ -2419,26 +2419,26 @@ function Yo(e, t) {
       S,
       z
     );
-  }, ze = (f, d, g, _, b, v, $, S, z) => {
+  }, ze = (f, d, g, w, b, v, $, S, z) => {
     d.slotScopeIds = S, f == null ? d.shapeFlag & 512 ? b.ctx.activate(
       d,
       g,
-      _,
+      w,
       $,
       z
     ) : zt(
       d,
       g,
-      _,
+      w,
       b,
       v,
       $,
       z
     ) : dn(f, d, z);
-  }, zt = (f, d, g, _, b, v, $) => {
+  }, zt = (f, d, g, w, b, v, $) => {
     const S = f.component = el(
       f,
-      _,
+      w,
       b
     );
     if (Ci(f) && (S.ctx.renderer = Bt), nl(S, !1, $), S.asyncDep) {
@@ -2457,16 +2457,16 @@ function Yo(e, t) {
         $
       );
   }, dn = (f, d, g) => {
-    const _ = d.component = f.component;
+    const w = d.component = f.component;
     if (Fo(f, d, g))
-      if (_.asyncDep && !_.asyncResolved) {
-        d.el = f.el, Se(_, d, g);
+      if (w.asyncDep && !w.asyncResolved) {
+        d.el = f.el, Se(w, d, g);
         return;
       } else
-        _.next = d, _.update();
+        w.next = d, w.update();
     else
-      d.el = f.el, _.vnode = d;
-  }, jt = (f, d, g, _, b, v, $) => {
+      d.el = f.el, w.vnode = d;
+  }, jt = (f, d, g, w, b, v, $) => {
     const S = () => {
       if (f.isMounted) {
         let { next: C, bu: R, u: F, parent: V, vnode: H } = f;
@@ -2484,7 +2484,7 @@ function Yo(e, t) {
         let G = C, te;
         ut(f, !1), C ? (C.el = H.el, Se(f, C, $)) : C = H, R && vn(R), (te = C.props && C.props.onVnodeBeforeUpdate) && Me(te, V, C, H), ut(f, !0);
         const Ae = fA(f), $e = f.subTree;
-        f.subTree = Ae, w(
+        f.subTree = Ae, _(
           $e,
           Ae,
           // parent may have changed if it's in a teleport
@@ -2508,11 +2508,11 @@ function Yo(e, t) {
             f.parent ? f.parent.type : void 0
           );
           const Ee = f.subTree = fA(f);
-          w(
+          _(
             null,
             Ee,
             g,
-            _,
+            w,
             f,
             b,
             v
@@ -2525,7 +2525,7 @@ function Yo(e, t) {
             b
           );
         }
-        (d.shapeFlag & 256 || G && Jt(G.vnode) && G.vnode.shapeFlag & 256) && f.a && ae(f.a, b), f.isMounted = !0, d = g = _ = null;
+        (d.shapeFlag & 256 || G && Jt(G.vnode) && G.vnode.shapeFlag & 256) && f.a && ae(f.a, b), f.isMounted = !0, d = g = w = null;
       }
     };
     f.scope.on();
@@ -2535,9 +2535,9 @@ function Yo(e, t) {
     N.i = f, N.id = f.uid, z.scheduler = () => Bs(N), ut(f, !0), y();
   }, Se = (f, d, g) => {
     d.component = f;
-    const _ = f.vnode.props;
-    f.vnode = d, f.next = null, Do(f, d.props, _, g), Wo(f, d.children, g), tt(), cA(f), nt();
-  }, St = (f, d, g, _, b, v, $, S, z = !1) => {
+    const w = f.vnode.props;
+    f.vnode = d, f.next = null, Do(f, d.props, w, g), Wo(f, d.children, g), tt(), cA(f), nt();
+  }, St = (f, d, g, w, b, v, $, S, z = !1) => {
     const y = f && f.children, N = f ? f.shapeFlag : 0, C = d.children, { patchFlag: R, shapeFlag: F } = d;
     if (R > 0) {
       if (R & 128) {
@@ -2545,7 +2545,7 @@ function Yo(e, t) {
           y,
           C,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2558,7 +2558,7 @@ function Yo(e, t) {
           y,
           C,
           g,
-          _,
+          w,
           b,
           v,
           $,
@@ -2572,7 +2572,7 @@ function Yo(e, t) {
       y,
       C,
       g,
-      _,
+      w,
       b,
       v,
       $,
@@ -2581,20 +2581,20 @@ function Yo(e, t) {
     ) : Dt(y, b, v, !0) : (N & 8 && u(g, ""), F & 16 && ke(
       C,
       g,
-      _,
+      w,
       b,
       v,
       $,
       S,
       z
     ));
-  }, $t = (f, d, g, _, b, v, $, S, z) => {
+  }, $t = (f, d, g, w, b, v, $, S, z) => {
     f = f || pt, d = d || pt;
     const y = f.length, N = d.length, C = Math.min(y, N);
     let R;
     for (R = 0; R < C; R++) {
       const F = d[R] = z ? Ve(d[R]) : Pe(d[R]);
-      w(
+      _(
         f[R],
         F,
         g,
@@ -2616,7 +2616,7 @@ function Yo(e, t) {
     ) : ke(
       d,
       g,
-      _,
+      w,
       b,
       v,
       $,
@@ -2624,14 +2624,14 @@ function Yo(e, t) {
       z,
       C
     );
-  }, Qs = (f, d, g, _, b, v, $, S, z) => {
+  }, Qs = (f, d, g, w, b, v, $, S, z) => {
     let y = 0;
     const N = d.length;
     let C = f.length - 1, R = N - 1;
     for (; y <= C && y <= R; ) {
       const F = f[y], V = d[y] = z ? Ve(d[y]) : Pe(d[y]);
       if (Wt(F, V))
-        w(
+        _(
           F,
           V,
           g,
@@ -2649,7 +2649,7 @@ function Yo(e, t) {
     for (; y <= C && y <= R; ) {
       const F = f[C], V = d[R] = z ? Ve(d[R]) : Pe(d[R]);
       if (Wt(F, V))
-        w(
+        _(
           F,
           V,
           g,
@@ -2666,9 +2666,9 @@ function Yo(e, t) {
     }
     if (y > C) {
       if (y <= R) {
-        const F = R + 1, V = F < N ? d[F].el : _;
+        const F = R + 1, V = F < N ? d[F].el : w;
         for (; y <= R; )
-          w(
+          _(
             null,
             d[y] = z ? Ve(d[y]) : Pe(d[y]),
             g,
@@ -2709,7 +2709,7 @@ function Yo(e, t) {
               Ce = G;
               break;
             }
-        Ce === void 0 ? De(ue, b, v, !0) : (Lt[Ce - V] = y + 1, Ce >= Ee ? Ee = Ce : $e = !0, w(
+        Ce === void 0 ? De(ue, b, v, !0) : (Lt[Ce - V] = y + 1, Ce >= Ee ? Ee = Ce : $e = !0, _(
           ue,
           d[Ce],
           g,
@@ -2726,8 +2726,8 @@ function Yo(e, t) {
         const ue = V + y, Ce = d[ue], tA = d[ue + 1], nA = ue + 1 < N ? (
           // #13559, #14173 fallback to el placeholder for unresolved async component
           tA.el || Wi(tA)
-        ) : _;
-        Lt[y] === 0 ? w(
+        ) : w;
+        Lt[y] === 0 ? _(
           null,
           Ce,
           g,
@@ -2740,14 +2740,14 @@ function Yo(e, t) {
         ) : $e && (G < 0 || y !== eA[G] ? pn(Ce, g, nA, 2) : G--);
       }
     }
-  }, pn = (f, d, g, _, b = null) => {
+  }, pn = (f, d, g, w, b = null) => {
     const { el: v, type: $, transition: S, children: z, shapeFlag: y } = f;
     if (y & 6) {
-      pn(f.component.subTree, d, g, _);
+      pn(f.component.subTree, d, g, w);
       return;
     }
     if (y & 128) {
-      f.suspense.move(d, g, _);
+      f.suspense.move(d, g, w);
       return;
     }
     if (y & 64) {
@@ -2757,7 +2757,7 @@ function Yo(e, t) {
     if ($ === U) {
       s(v, d, g);
       for (let C = 0; C < z.length; C++)
-        pn(z[C], d, g, _);
+        pn(z[C], d, g, w);
       s(f.anchor, d, g);
       return;
     }
@@ -2765,8 +2765,8 @@ function Yo(e, t) {
       L(f, d, g);
       return;
     }
-    if (_ !== 2 && y & 1 && S)
-      if (_ === 0)
+    if (w !== 2 && y & 1 && S)
+      if (w === 0)
         S.persisted && !v[rs] ? s(v, d, g) : (S.beforeEnter(v), s(v, d, g), ae(() => S.enter(v), b));
       else {
         const { leave: C, delayLeave: R, afterLeave: F } = S, V = () => {
@@ -2784,7 +2784,7 @@ function Yo(e, t) {
       }
     else
       s(v, d, g);
-  }, De = (f, d, g, _ = !1, b = !1) => {
+  }, De = (f, d, g, w = !1, b = !1) => {
     const {
       type: v,
       props: $,
@@ -2804,10 +2804,10 @@ function Yo(e, t) {
     const H = N & 1 && R, G = !Jt(f);
     let te;
     if (G && (te = $ && $.onVnodeBeforeUnmount) && Me(te, d, f), N & 6)
-      zr(f.component, g, _);
+      zr(f.component, g, w);
     else {
       if (N & 128) {
-        f.suspense.unmount(g, _);
+        f.suspense.unmount(g, w);
         return;
       }
       H && at(f, null, d, "beforeUnmount"), N & 64 ? f.type.remove(
@@ -2815,7 +2815,7 @@ function Yo(e, t) {
         d,
         g,
         Bt,
-        _
+        w
       ) : y && // #5154
       // when v-once is used inside a block, setBlockTracking(-1) marks the
       // parent block with hasOnce: true
@@ -2828,16 +2828,16 @@ function Yo(e, t) {
         g,
         !1,
         !0
-      ) : (v === U && C & 384 || !b && N & 16) && Dt(z, d, g), _ && qs(f);
+      ) : (v === U && C & 384 || !b && N & 16) && Dt(z, d, g), w && qs(f);
     }
     const Ae = V != null && F == null;
     (G && (te = $ && $.onVnodeUnmounted) || H || Ae) && ae(() => {
       te && Me(te, d, f), H && at(f, null, d, "unmounted"), Ae && (f.el = null);
     }, g);
   }, qs = (f) => {
-    const { type: d, el: g, anchor: _, transition: b } = f;
+    const { type: d, el: g, anchor: w, transition: b } = f;
     if (d === U) {
-      kr(g, _);
+      kr(g, w);
       return;
     }
     if (d === cs) {
@@ -2858,13 +2858,13 @@ function Yo(e, t) {
       g = p(f), A(f), f = g;
     A(d);
   }, zr = (f, d, g) => {
-    const { bum: _, scope: b, job: v, subTree: $, um: S, m: z, a: y } = f;
-    hA(z), hA(y), _ && vn(_), b.stop(), v ? (v.flags |= 8, De($, f, d, g)) : f.vnode.el && $ && ($.transition = f.vnode.transition, De($, f, d, g)), S && ae(S, d), ae(() => {
+    const { bum: w, scope: b, job: v, subTree: $, um: S, m: z, a: y } = f;
+    hA(z), hA(y), w && vn(w), b.stop(), v ? (v.flags |= 8, De($, f, d, g)) : f.vnode.el && $ && ($.transition = f.vnode.transition, De($, f, d, g)), S && ae(S, d), ae(() => {
       f.isUnmounted = !0;
     }, d);
-  }, Dt = (f, d, g, _ = !1, b = !1, v = 0) => {
+  }, Dt = (f, d, g, w = !1, b = !1, v = 0) => {
     for (let $ = v; $ < f.length; $++)
-      De(f[$], d, g, _, b);
+      De(f[$], d, g, w, b);
   }, hn = (f) => {
     if (f.shapeFlag & 6)
       return hn(f.component.subTree);
@@ -2875,8 +2875,8 @@ function Yo(e, t) {
   };
   let es = !1;
   const Xs = (f, d, g) => {
-    let _;
-    f == null ? d._vnode && (De(d._vnode, null, null, !0), _ = d._vnode.component) : w(
+    let w;
+    f == null ? d._vnode && (De(d._vnode, null, null, !0), w = d._vnode.component) : _(
       d._vnode || null,
       f,
       d,
@@ -2884,9 +2884,9 @@ function Yo(e, t) {
       null,
       null,
       g
-    ), d._vnode = f, es || (es = !0, cA(_), zi(), es = !1);
+    ), d._vnode = f, es || (es = !0, cA(w), zi(), es = !1);
   }, Bt = {
-    p: w,
+    p: _,
     um: De,
     m: pn,
     r: qs,
@@ -4224,10 +4224,10 @@ function TA(e, t, n, s, A) {
   r < 0 && (i = on(e, t), r = 0);
   const o = i.reduce((a, p) => a + Math.max(0, p.cap), 0), l = Math.max(0, t.cap - s) + i.slice(r + 1).reduce((a, p) => a + Math.max(0, p.cap), 0), c = t.deadline ?? i[0].deadline ?? e.deadline, u = { x: l, y: o, deadline: c };
   if (e.time.type === "countdown") {
-    const a = e.time.minutesPerRound, p = o * a;
-    let x = l * a;
-    const k = qi(A).remaining;
-    k !== null && (x = Math.min(x, k - a)), x = Math.max(0, x), Object.assign(u, { minutes: x, total: p, text: `约剩${Mt(x)}/${Mt(p)}` });
+    const a = e.time.minutesPerRound, p = e.time.totalMinutes, x = p && p > 0 ? p : o * a;
+    let k = p && p > 0 && o > 0 ? Math.round(x * l / o) : l * a;
+    const _ = qi(A).remaining;
+    _ !== null && (k = Math.min(k, _ - a)), k = Math.max(0, k), Object.assign(u, { minutes: k, total: x, text: `约剩${Mt(k)}/${Mt(x)}` });
   } else if (e.time.type === "clock")
     if (t.frozen) u.text = `${e.name}停摆·${t.name}中`;
     else if (e.remaining.type === "nights") {
@@ -4261,7 +4261,7 @@ function nr(e) {
   };
   s("id"), s("name"), s("version"), s("token"), typeof n.id == "string" && !/^[A-Za-z0-9_-]+$/.test(n.id) && t.push("id 只能包含字母、数字、下划线和短横线"), n.id === Rn && t.push(`id 不能是保留字 ${Rn}`), tr.includes(n.level) || t.push("level 必须是 D/C/B/A/S 之一"), n.players !== void 0 && typeof n.players != "number" && typeof n.players != "string" && t.push("players 必须是数字或文本"), (!Array.isArray(n.legacyKeys) || n.legacyKeys.some((c) => typeof c != "string")) && t.push("legacyKeys 必须是文本数组"), (!n.detect || typeof n.detect.briefingName != "string" || !n.detect.briefingName) && t.push("缺少 detect.briefingName");
   const A = n.time;
-  !A || !["none", "clock", "countdown"].includes(A.type) ? t.push("time.type 必须是 clock、countdown 或 none") : (A.type === "clock" && (typeof A.dayStart != "string" || !/^\d{1,2}:\d{2}$/.test(A.dayStart)) && t.push("time.dayStart 格式应为 HH:MM"), A.type !== "none" && (typeof A.minutesPerRound != "number" || A.minutesPerRound <= 0) && t.push("time.minutesPerRound 必须是正数"));
+  !A || !["none", "clock", "countdown"].includes(A.type) ? t.push("time.type 必须是 clock、countdown 或 none") : (A.type === "clock" && (typeof A.dayStart != "string" || !/^\d{1,2}:\d{2}$/.test(A.dayStart)) && t.push("time.dayStart 格式应为 HH:MM"), A.type !== "none" && (typeof A.minutesPerRound != "number" || A.minutesPerRound <= 0) && t.push("time.minutesPerRound 必须是正数"), A.type === "countdown" && A.totalMinutes !== void 0 && (typeof A.totalMinutes != "number" || A.totalMinutes <= 0) && t.push("time.totalMinutes 必须是正数"));
   const i = n.remaining;
   !i || !["nights", "countdown", "fromPanel"].includes(i.type) ? t.push("remaining.type 必须是 nights、countdown 或 fromPanel") : i.type !== "fromPanel" && typeof i.template != "string" && t.push("remaining.template 必须是文本"), i?.type === "countdown" && A?.type !== "countdown" && t.push("remaining.type 为 countdown 时，time.type 也必须是 countdown"), n.deadline !== void 0 && typeof n.deadline != "string" && t.push("deadline 必须是文本"), n.roles !== void 0 && (!Array.isArray(n.roles) || n.roles.some((c) => typeof c != "string" || !c)) && t.push("roles 必须是文本数组");
   const r = /* @__PURE__ */ new Set(), o = /* @__PURE__ */ new Set();
@@ -4298,7 +4298,8 @@ function Ar(e, t = ln) {
     token: `【副本进行中：${e.name}】`,
     legacyKeys: [],
     detect: { briefingName: e.name },
-    time: i ? { type: "countdown", minutesPerRound: i } : { type: "none" },
+    // 总时长按简报的值；每轮分钟四舍五入只用于“每轮至少减去”的判断
+    time: i ? { type: "countdown", minutesPerRound: i, totalMinutes: s.totalMinutes } : { type: "none" },
     remaining: { type: "fromPanel" },
     phases: [{ id: "main", name: e.name, cap: A, next: null }],
     events: [],
@@ -4455,7 +4456,7 @@ function ja(e, t, n) {
   if (!it(e[s])) return null;
   const A = ar(n);
   let i = A[0], r = A[0], o = 0, l, c = !1, u, a = null, p, x, k;
-  const w = /* @__PURE__ */ new Set(), B = {}, j = /* @__PURE__ */ new Map();
+  const _ = /* @__PURE__ */ new Set(), B = {}, j = /* @__PURE__ */ new Map();
   for (const X of t.manual ?? [])
     j.has(X.atIndex) || j.set(X.atIndex, []), j.get(X.atIndex).push(X);
   const O = (X) => {
@@ -4465,7 +4466,7 @@ function ja(e, t, n) {
     const Ot = e[X];
     if (!c && it(Ot)) {
       const ce = OA(n, i, o, a);
-      o = ce.round, ce.events.forEach((Se) => w.add(Se.id)), B[X] = {
+      o = ce.round, ce.events.forEach((Se) => _.add(Se.id)), B[X] = {
         phase: i.id,
         round: o,
         events: ce.events.map((Se) => Se.id),
@@ -4510,7 +4511,7 @@ function ja(e, t, n) {
       }
     }
   }
-  const L = c ? null : OA(n, i, o, a), P = L ? L.round : o + 1, ee = i.cap > 0, we = n.events.filter((X) => w.has(X.id)).map((X) => X.id), he = c ? void 0 : TA(n, i, r, P, l);
+  const L = c ? null : OA(n, i, o, a), P = L ? L.round : o + 1, ee = i.cap > 0, we = n.events.filter((X) => _.has(X.id)).map((X) => X.id), he = c ? void 0 : TA(n, i, r, P, l);
   let ke;
   const kt = n.remaining;
   return !c && kt.type === "nights" && n.phases.length && !i.byTag && !i.frozen ? ke = kt.template.replace("{n}", String(Xi(n, i))) : !c && kt.type === "countdown" && he?.minutes !== void 0 && (ke = kt.template.replace("{m}", String(he.minutes))), {
@@ -4576,24 +4577,24 @@ function Wa(e, t, n, s = {}) {
     o.push(`阶段：${t.phase.name}`), o.push(`本轮：第${t.nextRound}/${t.phase.cap}轮`), l && o.push(`剩余${l.x}/${l.y}轮`), t.clock && o.push(`钟时：${t.clock}`), l?.text && o.push(`时限：${l.text}`), e.remaining.type === "countdown" && t.remainingText && o.push(t.remainingText), l?.deadline && !l.text?.includes(l.deadline) && o.push(`截止：${l.deadline}`);
   else {
     o.push(`本轮：第${t.nextRound}轮`), t.clock && o.push(`钟时：${t.clock}`);
-    const w = s.panelLimit || s.briefing?.limit;
-    w && o.push(`时限：${w}`);
+    const _ = s.panelLimit || s.briefing?.limit;
+    _ && o.push(`时限：${_}`);
   }
   const c = ["［副本进度·仅供AI］", o.join("　")];
   if (s.briefing?.goal && (!i || e.id === "generic") && c.push(`目标：${s.briefing.goal}`), e.roles?.length) {
-    const w = e.roles.filter((B) => A?.[B]);
+    const _ = e.roles.filter((B) => A?.[B]);
     c.push(
-      w.length ? `角色登记：${e.roles.map((B) => `${B}=${A?.[B] || "未登记"}`).join("｜")}` : "角色登记：尚未登记"
+      _.length ? `角色登记：${e.roles.map((B) => `${B}=${A?.[B] || "未登记"}`).join("｜")}` : "角色登记：尚未登记"
     );
   }
   const u = La(e, t.firedEvents);
   u && c.push(`已发生事件：${u}`);
   const a = [];
   r.skipFrom !== void 0 && a.push(`玩家选择快进：本轮从「${t.phase.name}」第${r.skipFrom}轮快进到第${r.round}轮。请用简短的过渡叙述带过这段时间；若途中出现必须由{{user}}亲自决定的事，就停在那里交给{{user}}。`);
-  const p = r.events.filter((w) => w.kind === "event"), x = r.events.filter((w) => w.kind === "directive");
-  if (p.length && (a.push("本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）："), p.forEach((w) => a.push(DA(w, e, A)))), x.length && (a.push("本轮写作要求："), x.forEach((w) => a.push(DA(w, e, A)))), t.isLastRound ? a.push(Va(t)) : t.overdue && a.push(`「${t.phase.name}」已到时限，请按副本规则在本轮完成结算。`), s.audit?.missingLast && a.push("上一轮缺少<副本>面板，本轮必须完整输出。"), s.audit && !s.audit.hasPanel && a.push("本轮<副本>的进度条写0。"), e.roles?.length && !e.roles.some((w) => A?.[w])) {
-    let w = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${e.roles.map((B) => `${B}=姓名`).join("｜")}</角色登记>。按世界书规定生成NPC。`;
-    e.roles.includes("死者") && (w += "死者不得是{{user}}或其同伴。"), a.push(w);
+  const p = r.events.filter((_) => _.kind === "event"), x = r.events.filter((_) => _.kind === "directive");
+  if (p.length && (a.push("本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）："), p.forEach((_) => a.push(DA(_, e, A)))), x.length && (a.push("本轮写作要求："), x.forEach((_) => a.push(DA(_, e, A)))), t.isLastRound ? a.push(Va(t)) : t.overdue && a.push(`「${t.phase.name}」已到时限，请按副本规则在本轮完成结算。`), s.audit?.missingLast && a.push("上一轮缺少<副本>面板，本轮必须完整输出。"), s.audit && !s.audit.hasPanel && a.push("本轮<副本>的进度条写0。"), e.roles?.length && !e.roles.some((_) => A?.[_])) {
+    let _ = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${e.roles.map((B) => `${B}=姓名`).join("｜")}</角色登记>。按世界书规定生成NPC。`;
+    e.roles.includes("死者") && (_ += "死者不得是{{user}}或其同伴。"), a.push(_);
   }
   let k;
   return l?.text && (l.minutes !== void 0 ? (a.push(
@@ -4604,7 +4605,7 @@ function Wa(e, t, n, s = {}) {
 `),
     turn: a.length ? ["［本轮指令·仅供AI］", ...a].join(`
 `) : "",
-    injected: r.events.map((w) => w.id),
+    injected: r.events.map((_) => _.id),
     limit: k
   };
 }
@@ -4766,8 +4767,8 @@ function ru(e, t, n) {
       continue;
     }
     o = !1;
-    const w = Au(x.progressBar);
-    x.progressBar === void 0 ? p("progressUnreadable", "<副本> 中没有进度条一栏") : w === null ? p("progressUnreadable", `进度条无法读出数值：「${x.progressBar}」`) : (!i && w !== 0 && p("progressStart", `入场后第一轮的进度条应为0，实际为 ${w}`), (w < 0 || w > 100) && p("progressRange", `进度条数值 ${w} 超出 0–100`), r !== null && w < r && p("progressDrop", `进度条比上一轮低：${r} → ${w}`), r = w), i = !0;
+    const _ = Au(x.progressBar);
+    x.progressBar === void 0 ? p("progressUnreadable", "<副本> 中没有进度条一栏") : _ === null ? p("progressUnreadable", `进度条无法读出数值：「${x.progressBar}」`) : (!i && _ !== 0 && p("progressStart", `入场后第一轮的进度条应为0，实际为 ${_}`), (_ < 0 || _ > 100) && p("progressRange", `进度条数值 ${_} 超出 0–100`), r !== null && _ < r && p("progressDrop", `进度条比上一轮低：${r} → ${_}`), r = _), i = !0;
     const B = e[l]?.extra?.rlzc?.limit, j = B?.text ? B : c.limit?.text ? { text: c.limit.text, minutes: c.limit.minutes, total: c.limit.total } : void 0;
     if (j) {
       const O = x.limit;
@@ -5577,19 +5578,19 @@ const Af = { class: "rlzc-docs" }, rf = {
     const i = se(() => {
       m.tick;
       const p = pe(), x = [], k = m.session?.entryIndex ?? 0;
-      for (let w = k; w < p.length; w++) {
-        const B = p[w]?.extra?.rlzc;
-        B && x.push({ index: w, snap: B });
+      for (let _ = k; _ < p.length; _++) {
+        const B = p[_]?.extra?.rlzc;
+        B && x.push({ index: _, snap: B });
       }
       return x.reverse().slice(0, 60);
     }), r = se(() => new Set((m.audit?.warnings ?? []).filter((p) => p.kind === "limit").map((p) => p.index))), o = se(() => {
       const p = m.progress;
       if (!p) return null;
-      const { perMessage: x, phase: k, next: w, ...B } = p;
+      const { perMessage: x, phase: k, next: _, ...B } = p;
       return {
         phase: k.id + " " + k.name,
         ...B,
-        next: w ? { round: w.round, skipFrom: w.skipFrom, events: w.events.map((j) => j.id) } : null,
+        next: _ ? { round: _.round, skipFrom: _.skipFrom, events: _.events.map((j) => j.id) } : null,
         messages: Object.keys(x).length
       };
     });
@@ -5660,7 +5661,7 @@ const Af = { class: "rlzc-docs" }, rf = {
           }, [
             h("span", null, I(k), 1),
             Tt(h("input", {
-              "onUpdate:modelValue": (w) => A[k] = w,
+              "onUpdate:modelValue": (_) => A[k] = _,
               class: "rlzc-input",
               disabled: !t.value,
               placeholder: "未登记"
@@ -5679,7 +5680,7 @@ const Af = { class: "rlzc-docs" }, rf = {
           T(m).audit?.warnings.length ? (E(), M(U, { key: 1 }, [
             h("p", rd, "共 " + I(T(m).audit.warnings.length) + " 条，显示最近 30 条。只作提示，不会改动消息。", 1),
             h("ul", od, [
-              (E(!0), M(U, null, fe(T(m).audit.warnings.slice(-30).reverse(), (k, w) => (E(), M("li", { key: w }, [
+              (E(!0), M(U, null, fe(T(m).audit.warnings.slice(-30).reverse(), (k, _) => (E(), M("li", { key: _ }, [
                 h("span", null, [
                   h("small", null, "#" + I(k.index) + "｜" + I(k.phase) + "第" + I(k.round) + "轮", 1),
                   x[6] || (x[6] = h("br", null, null, -1)),
@@ -5692,12 +5693,12 @@ const Af = { class: "rlzc-docs" }, rf = {
         h("div", ld, [
           x[8] || (x[8] = h("h4", null, "手动操作记录", -1)),
           T(m).session.manual.length ? (E(), M("ul", cd, [
-            (E(!0), M(U, null, fe(T(m).session.manual, (k, w) => (E(), M("li", { key: w }, [
+            (E(!0), M(U, null, fe(T(m).session.manual, (k, _) => (E(), M("li", { key: _ }, [
               h("code", null, "#" + I(k.atIndex) + " " + I(k.kind) + " " + I("phase" in k ? k.phase : "") + I("round" in k ? k.round : "") + I("targetPhase" in k ? `${k.targetPhase}:${k.targetRound}` : ""), 1),
               h("button", {
                 class: "rlzc-btn ghost small",
                 disabled: !t.value,
-                onClick: (B) => T(vu)(w)
+                onClick: (B) => T(vu)(_)
               }, "撤销", 8, ad)
             ]))), 128))
           ])) : (E(), M("p", ud, "无"))
@@ -5842,8 +5843,8 @@ function wr(e = 0) {
   }
   if (document.getElementById(ZA)) return;
   const n = (p, x = "", k = "") => {
-    const w = document.createElement(p);
-    return x && (w.className = x), k && (w.textContent = k), w;
+    const _ = document.createElement(p);
+    return x && (_.className = x), k && (_.textContent = k), _;
   }, s = n("div");
   s.id = ZA;
   const A = n("div", "inline-drawer"), i = n("div", "inline-drawer-toggle inline-drawer-header");

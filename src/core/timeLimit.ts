@@ -118,8 +118,10 @@ export function computeLimit(
 
   if (pack.time.type === 'countdown') {
     const mpr = pack.time.minutesPerRound;
-    const total = y * mpr;
-    let minutes = x * mpr;
+    const fixed = pack.time.totalMinutes;
+    // 总时长有固定值（通用副本按简报）时，约剩上限按剩余轮数比例折算，不会超过总时长
+    const total = fixed && fixed > 0 ? fixed : y * mpr;
+    let minutes = fixed && fixed > 0 && y > 0 ? Math.round((total * x) / y) : x * mpr;
     const read = parseLimitPair(prevLimit).remaining;
     if (read !== null) minutes = Math.min(minutes, read - mpr);
     minutes = Math.max(0, minutes);
