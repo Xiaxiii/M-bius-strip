@@ -6,7 +6,10 @@
   "token": "【副本进行中：喜宴】",
   "legacyKeys": [],
   "detect": {
-    "briefingName": "喜宴"
+    "briefingName": "喜宴",
+    "patterns": [
+      "6=5\\+1"
+    ]
   },
   "time": {
     "type": "countdown",

@@ -160,3 +160,95 @@ export function resolveSkipTarget(pack: Pack, current: Phase, round: number, wor
   if (target.id === current.id && targetRound <= round + 1) return null;
   return { phase: target.id, round: targetRound, label: `${target.name}第${targetRound}轮` };
 }
+
+// ───────────── 入场信号（CLAUDE.md 13）─────────────
+
+export const STATUS_RE = /<状态栏>([\s\S]*?)<\/状态栏>/;
+
+/** 入场信号：1 简报；2 <副本> 副本名；3 本次/此次副本《X》；4 <状态栏> 地点 副本《X》；5 副本包 detect.patterns */
+export type EntrySignal = 1 | 2 | 3 | 4 | 5;
+
+export interface EntryHit {
+  signal: EntrySignal;
+  /** 命中的已收录副本包；信号1且名字未收录时为 undefined（使用通用副本包） */
+  pack?: Pack;
+  info: BriefingInfo;
+}
+
+function cleanName(s: string): string {
+  return s.replace(/[《》「」『』【】"'“”]/g, '').trim();
+}
+
+function packByName(packs: Pack[], name: string): Pack | undefined {
+  const n = cleanName(name);
+  return n ? packs.find((p) => p.name === n || p.detect.briefingName === n) : undefined;
+}
+
+const patternCache = new Map<string, RegExp | null>();
+
+/** 编译副本包的 detect.patterns；非法正则跳过，并在控制台警告一次 */
+function compilePattern(packId: string, src: string): RegExp | null {
+  const key = `${packId}\u0000${src}`;
+  if (!patternCache.has(key)) {
+    let re: RegExp | null = null;
+    try {
+      re = new RegExp(src);
+    } catch (e) {
+      console.warn(`[rlzc] 副本包 ${packId} 的 detect.patterns 正则无效，已跳过：${src}`, e);
+    }
+    patternCache.set(key, re);
+  }
+  return patternCache.get(key)!;
+}
+
+/**
+ * 判断一条AI消息是否表明进入了某个副本，按 1→5 的顺序检查，返回第一个命中的信号。
+ * 只有信号1（副本简报）能认出未收录的副本；2–5 只认已收录的副本包。
+ */
+export function detectEntry(text: string, packs: Pack[]): EntryHit | null {
+  const t = String(text ?? '');
+  const known = (pack: Pack | undefined, signal: EntrySignal): EntryHit | null =>
+    pack ? { signal, pack, info: { name: pack.name, level: pack.level } } : null;
+
+  // 1. 副本简报 - 名称
+  const briefing = detectBriefing(t);
+  if (briefing) {
+    const pack = packs.find((p) => p.detect.briefingName === briefing.name);
+    return { signal: 1, pack, info: briefing };
+  }
+
+  // 2. <副本> 里的「副本名：X」
+  const panel = PANEL_RE.exec(t);
+  if (panel) {
+    const m = /副本名\s*[：:]\s*([^\n｜|]+)/.exec(panel[1]);
+    const hit = m && known(packByName(packs, m[1]), 2);
+    if (hit) return hit;
+  }
+
+  // 3. 正文中的「本次副本《X》」「此次副本《X》」（不认不带本次/此次的写法，避免闲聊误触发）
+  for (const m of t.matchAll(/(?:本次|此次)副本《([^》]+)》/g)) {
+    const hit = known(packByName(packs, m[1]), 3);
+    if (hit) return hit;
+  }
+
+  // 4. <状态栏> 的「地点」一行里的「副本《X》」
+  const status = STATUS_RE.exec(t);
+  if (status) {
+    for (const line of status[1].split('\n')) {
+      if (!line.includes('地点')) continue;
+      for (const m of line.matchAll(/副本《([^》]+)》/g)) {
+        const hit = known(packByName(packs, m[1]), 4);
+        if (hit) return hit;
+      }
+    }
+  }
+
+  // 5. 副本包自带的识别正则
+  for (const pack of packs) {
+    for (const src of pack.detect.patterns ?? []) {
+      const re = compilePattern(pack.id, src);
+      if (re && re.test(t)) return known(pack, 5);
+    }
+  }
+  return null;
+}
