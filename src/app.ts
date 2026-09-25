@@ -15,7 +15,6 @@ import {
   effectiveRoles,
   greetingEntryCandidate,
   META_KEY,
-  MEMO_KEY,
   normalizeSession,
   reconcileSession,
   resolvePack,
@@ -48,7 +47,8 @@ const DEFAULT_SETTINGS: Settings = {
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
 };
 
-export type TabId = 'system' | 'docs' | 'memo' | 'settings' | 'debug';
+/** 面板页签（CLAUDE.md 11.9）：第三期「账本」、第四期「黑市」以后加在 system 与 settings 之间 */
+export type TabId = 'system' | 'settings' | 'debug';
 
 export const state = reactive({
   chatId: '',
@@ -56,7 +56,6 @@ export const state = reactive({
   pack: null as Pack | null,
   progress: null as Progress | null,
   audit: null as AuditResult | null,
-  memo: '',
   settings: structuredClone(DEFAULT_SETTINGS) as Settings,
   packs: [] as Pack[],
   lastInjection: EMPTY_INJECTION as Injection,
@@ -400,14 +399,6 @@ export async function abandonSession(): Promise<void> {
   refresh();
 }
 
-// ───────────── 备忘录 ─────────────
-
-export function setMemo(text: string): void {
-  state.memo = text;
-  getMeta()[MEMO_KEY] = text;
-  saveMeta();
-}
-
 // ───────────── 事件 ─────────────
 
 export function onMessageReceived(index: number): void {
@@ -469,8 +460,6 @@ export function onChatChanged(): void {
   state.debugUnlocked = false;
   state.lastInjection = EMPTY_INJECTION;
   clearInjection();
-  const memo = getMeta()[MEMO_KEY];
-  state.memo = typeof memo === 'string' ? memo : '';
   refresh();
   checkGreeting();
   setTimeout(() => hideTagsInAll(), 50);

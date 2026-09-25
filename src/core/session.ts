@@ -5,6 +5,7 @@ import { detectBriefing } from './detector';
 /** 会话数据的纯逻辑部分；读写 chatMetadata 的部分在 src/st/ 与 src/index.ts */
 
 export const META_KEY = 'rlzc';
+/** 备忘录页签已删除（CLAUDE.md 11.9）；旧聊天里的 chatMetadata.rlzc_memo 原样保留，扩展不读也不删 */
 export const MEMO_KEY = 'rlzc_memo';
 
 export function newSessionId(): string {

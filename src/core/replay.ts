@@ -57,6 +57,8 @@ export interface Progress {
   remainingText?: string;
   /** 即将生成这一轮的时限：剩余X/Y轮、截止条件、<副本> 时限一栏应写的文字（CLAUDE.md 12.2） */
   limit?: LimitInfo;
+  /** 已完成这一轮之后的剩余轮数（面板显示用）：Y − 已完成轮数，入场第1轮后为 299/300 */
+  roundsLeft?: { x: number; y: number };
   /** 当前链的起点阶段 id */
   chainStart?: string;
   ended: boolean;
@@ -253,6 +255,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   const firedEvents = pack.events.filter((e) => fired.has(e.id)).map((e) => e.id);
 
   const limit = ended ? undefined : computeLimit(pack, phase, chainStart, nextRound, prevLimit);
+  const done = ended ? undefined : computeLimit(pack, phase, chainStart, round);
   let remainingText: string | undefined;
   const remaining = pack.remaining;
   if (!ended && remaining.type === 'nights' && pack.phases.length && !phase.byTag && !phase.frozen) {
@@ -269,6 +272,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     currentClock: phaseClock(pack, phase, round),
     remainingText,
     limit,
+    roundsLeft: done ? { x: done.x, y: done.y } : undefined,
     chainStart: pack.phases.length ? chainStart.id : undefined,
     ended,
     endedBy,
