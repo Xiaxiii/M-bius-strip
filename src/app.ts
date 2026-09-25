@@ -12,9 +12,11 @@ import {
   callWithRetry,
   classifyError,
   formatState,
+  generationKey,
   lastNextChecks,
   latestSubState,
   shouldCallSub,
+  subEventsToCheck,
   type SubMessages,
   type SubRecord,
 } from './core/subapi';
@@ -55,13 +57,11 @@ export interface Settings {
 }
 
 export interface SubApiSettings {
-  /** 关闭 / 跟随主API / 独立接口（接口预设）/ 酒馆连接配置 */
+  /** 关闭 / 跟随主API / 自设API（接口预设） */
   source: SubSource;
   presets: SubPreset[];
   /** 上次用的接口预设 */
   presetId: string;
-  /** 酒馆连接配置 id */
-  profileId: string;
   /** 省钱模式：只在本轮有注入事件、或下一轮有带条件的事件时调用 */
   saveMode: boolean;
   /** 等待整理：生成下一轮前等本轮整理完成 */
@@ -73,7 +73,6 @@ export const DEFAULT_SUB_API: SubApiSettings = {
   source: 'off',
   presets: [],
   presetId: '',
-  profileId: '',
   saveMode: false,
   wait: true,
   timeoutSec: 60,
@@ -139,6 +138,8 @@ export function loadSettings(): void {
       ...structuredClone(DEFAULT_SUB_API),
       ...(saved.subApi ?? {}),
       presets: Array.isArray(saved.subApi?.presets) ? saved.subApi!.presets : [],
+      // 旧版本里的「酒馆连接配置」来源已删除，按关闭处理
+      source: (['off', 'main', 'preset'] as SubSource[]).includes(saved.subApi?.source as SubSource) ? saved.subApi!.source : 'off',
     },
   };
   all[SETTINGS_KEY] = merged;
@@ -496,7 +497,6 @@ function subTarget(): SubTarget | null {
   const s = state.settings.subApi;
   const timeoutMs = Math.max(5, Number(s.timeoutSec) || 60) * 1000;
   if (s.source === 'main') return { source: 'main', timeoutMs };
-  if (s.source === 'profile') return s.profileId ? { source: 'profile', profileId: s.profileId, timeoutMs } : null;
   if (s.source === 'preset') {
     const preset = s.presets.find((p) => p.id === s.presetId);
     return preset ? { source: 'preset', preset, timeoutMs } : null;
@@ -506,8 +506,7 @@ function subTarget(): SubTarget | null {
 
 function targetLabel(t: SubTarget): string {
   if (t.source === 'main') return '跟随主API';
-  if (t.source === 'profile') return `连接配置 ${t.profileId}`;
-  return `预设「${t.preset?.name}」`;
+  return `自设API「${t.preset?.name}」`;
 }
 
 /** 系统页的一行小字 */
@@ -533,14 +532,8 @@ let subJob: SubJob | null = null;
 /** 同一轮不重复弹窗、跳过后不再自动重试 */
 const subDone = new Set<string>();
 
-function hashText(t: string): string {
-  let h = 0;
-  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
-  return `${t.length}.${h}`;
-}
-
 function subKey(index: number): string {
-  return `${getChatId()}:${index}:${hashText(String(getChat()[index]?.mes ?? ''))}`;
+  return generationKey(getChatId(), index, getChat()[index]);
 }
 
 /** 「整理中」：显示在发送按钮旁 */
@@ -555,8 +548,9 @@ function setSubBusy(busy: boolean): void {
       el = document.createElement('small');
       el.id = id;
       el.textContent = '整理中…';
-      el.title = '回廊种菜系统：副API正在整理本轮状态';
-      el.style.cssText = 'align-self:center;margin-right:6px;opacity:.75;white-space:nowrap;';
+      el.title = '回廊种菜系统：正在检测本轮的副本事件';
+      // #rightSendForm 里是图标按钮，字号很大；这里用正文字号的八成，手机上不挤占输入框
+      el.style.cssText = 'align-self:center;margin:0 6px;opacity:.75;white-space:nowrap;font-size:calc(var(--mainFontSize, 15px) * 0.8);line-height:1.2;';
       anchor.prepend(el);
     }
   } else el?.remove();
@@ -580,10 +574,9 @@ function startSub(index: number, type?: string): void {
   const msg = chat[index];
   const rec = progress?.perMessage[index];
   if (!pack || !progress || !rec || !msg) return;
-  const injected = new Set(msg.extra?.rlzc?.injected ?? []);
   const roles = currentRoles();
   const fill = (e: (typeof pack.events)[number]) => ({ ...e, text: fillRoles(e.text, pack, roles), if: e.if ? fillRoles(e.if, pack, roles) : undefined });
-  const events = pack.events.filter((e) => injected.has(e.id)).map(fill);
+  const events = subEventsToCheck(pack, msg.extra?.rlzc?.injected ?? []).map(fill);
   const nextConditional = (progress.next?.events ?? []).filter((e) => e.if).map(fill);
   const call = shouldCallSub({
     enabled: subEnabled(),
@@ -622,7 +615,7 @@ async function runSubJob(index: number, key: string, round: number, messages: Su
     let retries = 2;
     for (;;) {
       const target = subTarget();
-      if (!target) throw new Error('副API没有设置好：独立接口需要先选一个接口预设，连接配置需要先选一个配置');
+      if (!target) throw new Error('副本事件检测没有设置好：选了「自设API」时需要先选一个接口预设');
       const t0 = Date.now();
       try {
         const result = await callWithRetry((m) => callSub(target, m), messages, retries);
@@ -633,9 +626,9 @@ async function runSubJob(index: number, key: string, round: number, messages: Su
         if (subKey(index) !== key) return; // 这一楼已经变了，不再处理
         const reason = classifyError(e);
         const detail = String((e as Error)?.message ?? e).slice(0, 200);
-        log('副API失败', reason, e);
+        log('副本事件检测失败', reason, e);
         if (!state.settings.subApi.wait) {
-          toast('warning', `第${round}轮状态整理失败（${reason}），已沿用上一轮状态。`);
+          toast('warning', `第${round}轮事件检测失败（${reason}），已沿用上一轮状态。`);
           skipSub(index, key, reason);
           return;
         }
@@ -664,12 +657,12 @@ function skipSub(index: number, key: string, reason: string): void {
 async function askSubFailure(round: number, reason: string, detail: string): Promise<'retry' | 'skip'> {
   const c = ctx() as any;
   if (!c.Popup || !c.POPUP_TYPE) {
-    return window.confirm(`第${round}轮状态整理失败（${reason}）。重试吗？取消则这轮先跳过。`) ? 'retry' : 'skip';
+    return window.confirm(`第${round}轮事件检测失败（${reason}）。重试吗？取消则这轮先跳过。`) ? 'retry' : 'skip';
   }
   const s = state.settings.subApi;
   const box = document.createElement('div');
   const title = document.createElement('h3');
-  title.textContent = `第${round}轮状态整理失败`;
+  title.textContent = `第${round}轮事件检测失败`;
   const p = document.createElement('p');
   p.textContent = `原因：${reason}`;
   const small = document.createElement('small');
@@ -682,7 +675,7 @@ async function askSubFailure(round: number, reason: string, detail: string): Pro
   const select = document.createElement('select');
   select.className = 'text_pole';
   const options: { value: string; text: string }[] = [{ value: '', text: '请选择…' }];
-  for (const pr of s.presets) if (!(s.source === 'preset' && pr.id === s.presetId)) options.push({ value: `preset:${pr.id}`, text: `接口预设：${pr.name}` });
+  for (const pr of s.presets) if (!(s.source === 'preset' && pr.id === s.presetId)) options.push({ value: `preset:${pr.id}`, text: `自设API：${pr.name}` });
   if (s.source !== 'main') options.push({ value: 'main', text: '跟随主API' });
   for (const o of options) {
     const opt = document.createElement('option');
@@ -751,7 +744,9 @@ export function onMessageReceived(index: number, type?: string): void {
     }
     return;
   }
-  if (!session) return;
+  // ST 1.19.0 每次打开只有开场白的聊天都会对开场白补发 MESSAGE_RECEIVED（type = first_message）。
+  // 开场白不是新生成的回复：不重写它的快照（入场标记、检测记录都在上面），也不调用副本事件检测。
+  if (type === 'first_message') return;
 
   const roles = detectRoles(msg.mes);
   if (roles) session.roles = { ...(session.roles ?? {}), ...roles };

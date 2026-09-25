@@ -65,6 +65,7 @@ export interface Progress {
   endedBy?: 'tag' | 'manual';
   /** 结束于哪一楼（结算消息，或手动结束操作所在的楼） */
   endIndex?: number;
+  /** 已经注入过的事件 id（进度块「已发生事件」）；预判条件不成立、没有注入的不算 */
   firedEvents: string[];
   warn: boolean;
   isLastRound: boolean;
@@ -81,8 +82,15 @@ export interface Progress {
   entryIndex: number;
 }
 
+/**
+ * 这条消息是否算一条AI回复（计轮）。
+ * - 用户消息不算；ST 原生系统消息（/sys 旁白、/comment、帮助页等）带 extra.type，不算。
+ * - 被 /hide 隐藏的AI回复（is_system 为 true、没有 extra.type）照样算：柏宝书、Horae 等记忆扩展
+ *   会把旧楼层隐藏起来节省上下文，这些楼仍是已经发生过的轮次，不算的话轮次会倒退、入场消息会被当成已删除。
+ */
 export function isCountable(msg: ChatMessage | undefined): boolean {
-  return !!msg && !msg.is_user && !msg.is_system;
+  if (!msg || msg.is_user) return false;
+  return !(msg.is_system && msg.extra?.type);
 }
 
 function parseHM(s: string): number {
@@ -190,7 +198,11 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     if (!ended && isCountable(msg)) {
       const plan = planRound(pack, phase, round, skipGoal);
       round = plan.round;
-      plan.events.forEach((e) => fired.add(e.id));
+      // 生成这一楼时因预判条件不成立而没有注入的事件（记在这一楼的 skippedEvents），不算已发生
+      const notInjected = new Set((msg.extra?.rlzc?.skippedEvents ?? []).map((k) => k.id));
+      plan.events.forEach((e) => {
+        if (!notInjected.has(e.id)) fired.add(e.id);
+      });
       perMessage[i] = {
         phase: phase.id,
         round,

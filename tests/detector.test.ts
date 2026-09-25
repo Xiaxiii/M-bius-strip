@@ -36,6 +36,8 @@ describe('识别', () => {
     expect(p.progressBar).toBe('■■□□□');
     expect(p.tasks).toEqual(['1. 找到钥匙', '2. 活下来']);
     expect(p.ps).toBe('别回头');
+    // 「- 」「• 」这类无序列表符号去掉，面板自己会画圆点，不重复显示
+    expect(detectPanel('<副本>\n任务：- 存活三夜\n- 按时鸣钟\n• 留意值班的人\n</副本>')!.tasks).toEqual(['存活三夜', '按时鸣钟', '留意值班的人']);
   });
 
   it('跳过关键词', () => {

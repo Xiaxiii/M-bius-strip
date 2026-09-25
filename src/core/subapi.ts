@@ -4,6 +4,7 @@
  */
 import type { ChatMessage, Pack, PackEvent, StateField } from '../packs/types';
 import { HIDDEN_TAGS } from './hideTags';
+import { isCountable } from './replay';
 
 export type SubEventStatus = 'done' | 'missed' | 'void';
 
@@ -78,7 +79,7 @@ export function buildSubPrompt(input: SubInput): SubMessages {
   const system = [
     '你是角色扮演副本的记录员，不写剧情，只整理事实。',
     '根据本轮正文完成三件事：',
-    '1. 事件核对：逐条判断「本轮后台事件」在正文里是 done（已发生）、missed（该发生但没写出来）还是 void（条件已不成立，不该发生），各附一句理由。后台事件即使{{user}}看不到，只要正文与之不矛盾、且没有写出相反的事实，就算 done。',
+    '1. 事件核对：逐条判断「本轮后台事件」在正文里是 done（已发生）、missed（该发生但没写出来）还是 void（条件已不成立，不该发生），各附一句理由。后台事件即使{{user}}看不到，只要正文与之不矛盾、且没有写出相反的事实，就算 done。标明「第X到Y轮之间」的事件不一定在本轮写出：本轮没写到、也没写出相反的事实，同样算 done。',
     '2. 隐藏状态：在「上一轮状态」的基础上更新下列字段，只依据正文里已经发生的事实，没有变化就照抄上一轮：',
     ...fields.map((f) => `   - ${f.key}（${f.label}）：${f.hint}`),
     '3. 条件预判：逐条判断「下一轮事件」的条件现在是否仍成立（ok 为 true/false），附一句理由。',
@@ -87,8 +88,9 @@ export function buildSubPrompt(input: SubInput): SubMessages {
     '没有本轮事件时 events 为 []；没有下一轮事件时 next 为 []。',
   ].join('\n');
 
+  const range = (e: PackEvent) => (e.to > e.from ? `（本阶段第${e.from}到${e.to}轮之间）` : '');
   const eventLines = input.events.length
-    ? input.events.map((e) => `- ${e.id}：${e.text}${e.if ? `（条件：${e.if}）` : ''}`).join('\n')
+    ? input.events.map((e) => `- ${e.id}${range(e)}：${e.text}${e.if ? `（条件：${e.if}）` : ''}`).join('\n')
     : '（无）';
   const nextLines = input.nextConditional.length
     ? input.nextConditional.map((e) => `- ${e.id}：${e.text}（条件：${e.if}）`).join('\n')
@@ -101,6 +103,15 @@ export function buildSubPrompt(input: SubInput): SubMessages {
     `【本轮正文】\n${stripPanels(input.text)}`,
   ].join('\n\n');
   return { system, user };
+}
+
+/**
+ * 本轮要核对的事件：只核对注入过的后台事件（kind = event）。
+ * 「本轮写作要求」（directive，如「本日须呈现至少两条破绽」）管的是一整段剧情，单看一轮无从判断，不送去核对。
+ */
+export function subEventsToCheck(pack: Pack, injectedIds: string[]): PackEvent[] {
+  const ids = new Set(injectedIds);
+  return pack.events.filter((e) => ids.has(e.id) && e.kind !== 'directive');
 }
 
 // ───────────── 输出 ─────────────
@@ -133,21 +144,42 @@ export function parseSubResponse(raw: string): SubResult {
   return { events, state: data.state, next };
 }
 
+// ───────────── 同一次生成只检测一次 ─────────────
+
+function hashText(t: string): string {
+  let h = 0;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
+  return `${t.length}.${h}`;
+}
+
+/**
+ * 这一楼「这一次生成」的标识：聊天 + 楼层 + ST 记录的生成时间 + 正文。
+ * 重新生成、滑动出的新回复即使文字完全相同（温度为0的模型可能出现）也是新的一次，要重新检测；
+ * 正文被编辑、续写后标识也会变，检测结果就不再写回这一楼。
+ */
+export function generationKey(chatId: string, index: number, msg: ChatMessage | undefined): string {
+  const stamp = [msg?.send_date, msg?.gen_started, msg?.gen_finished].map((v) => String(v ?? '')).join('|');
+  return `${chatId}:${index}:${stamp}:${hashText(String(msg?.mes ?? ''))}`;
+}
+
 // ───────────── 调用与重试 ─────────────
 
 export interface ShouldCallInput {
   enabled: boolean;
   /** 有进行中的副本 */
   active: boolean;
-  /** MESSAGE_RECEIVED 的类型；continue 不调用 */
+  /** MESSAGE_RECEIVED 的类型；continue、first_message 不调用 */
   type?: string;
   saveMode: boolean;
   hasEvents: boolean;
   hasNextConditional: boolean;
 }
 
+/**
+ * first_message：ST 打开只有开场白的聊天时会对开场白补发一次 MESSAGE_RECEIVED，开场白不是新生成的回复。
+ */
 export function shouldCallSub(i: ShouldCallInput): boolean {
-  if (!i.enabled || !i.active || i.type === 'continue') return false;
+  if (!i.enabled || !i.active || i.type === 'continue' || i.type === 'first_message') return false;
   if (i.saveMode && !i.hasEvents && !i.hasNextConditional) return false;
   return true;
 }
@@ -197,7 +229,7 @@ export function latestSubState(
 ): { index: number; state: Record<string, unknown> } | null {
   for (let i = chat.length - 1; i >= entryIndex && i >= 0; i--) {
     const m = chat[i];
-    if (!m || m.is_user || m.is_system) continue;
+    if (!isCountable(m)) continue;
     const sub = snapOf(m)?.sub;
     if (sub?.state && !sub.skipped) return { index: i, state: sub.state };
   }
@@ -208,7 +240,7 @@ export function latestSubState(
 export function lastNextChecks(chat: ChatMessage[], entryIndex: number): SubNextCheck[] | undefined {
   for (let i = chat.length - 1; i >= entryIndex && i >= 0; i--) {
     const m = chat[i];
-    if (!m || m.is_user || m.is_system) continue;
+    if (!isCountable(m)) continue;
     const sub = snapOf(m)?.sub;
     return sub && !sub.skipped && Array.isArray(sub.next) ? sub.next : undefined;
   }

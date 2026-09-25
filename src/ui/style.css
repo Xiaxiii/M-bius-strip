@@ -137,3 +137,7 @@
 .rlzc-grow { flex: 1; margin: 0; }
 .rlzc-grow > .rlzc-input { flex: 1; min-width: 0; }
 .rlzc-subline { font-size: 12px; color: var(--muted); margin: 0; }
+.rlzc-depth .rlzc-field { align-items: flex-start; }
+.rlzc-depth .rlzc-field > span { display: flex; flex-direction: column; gap: 2px; }
+.rlzc-depth .rlzc-field > span small { color: var(--muted); font-size: 11px; line-height: 1.4; }
+.rlzc-depth .rlzc-field > .rlzc-input { flex: 0 0 72px; width: 72px; }

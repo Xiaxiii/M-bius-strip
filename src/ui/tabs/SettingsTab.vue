@@ -62,9 +62,23 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
 
     <div class="rlzc-card">
       <h4>注入深度</h4>
-      <label class="rlzc-field"><span>暗号 rlzc_token</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" /></label>
-      <label class="rlzc-field"><span>进度 rlzc_progress</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" /></label>
-      <label class="rlzc-field"><span>本轮 rlzc_turn</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" /></label>
+      <p class="rlzc-hint rlzc-intro">
+        在副本里，扩展每次生成前会往发给AI的内容里悄悄加三段说明（玩家看不到）。这里的数字决定每段插在聊天记录的哪个位置：0 = 紧跟在最新一条消息后面，数字越大越靠前（4 = 倒数第4条消息之前）。越靠后，AI越重视。一般不用改。
+      </p>
+      <div class="rlzc-depth">
+        <label class="rlzc-field">
+          <span>副本暗号<small>如「【副本进行中：钟楼】」，用来触发世界书里这个副本的条目</small></span>
+          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" />
+        </label>
+        <label class="rlzc-field">
+          <span>副本进度<small>副本名、阶段、第几轮、还剩多久、已发生的事件；开了事件检测时，检测到的副本状态也放在这个位置</small></span>
+          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" />
+        </label>
+        <label class="rlzc-field">
+          <span>本轮指令<small>这一轮必须发生的事件，以及状态栏时限一栏该写什么</small></span>
+          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
+        </label>
+      </div>
     </div>
 
     <SubApiCard />

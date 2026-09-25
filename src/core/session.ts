@@ -1,6 +1,7 @@
 import type { ChatMessage, ManualAction, Pack, Session } from '../packs/types';
 import { BUILTIN_PACKS, buildGenericPack, GENERIC_PACK_ID } from '../packs/loader';
 import { detectEntry, type EntryHit } from './detector';
+import { isCountable } from './replay';
 
 /** 会话数据的纯逻辑部分；读写 chatMetadata 的部分在 src/st/ 与 src/index.ts */
 
@@ -49,8 +50,7 @@ export function resolvePack(session: Session, packs: Pack[]): Pack | null {
 export function locateEntry(chat: ChatMessage[], session: Session): number {
   const isEntry = (m: ChatMessage | undefined) => !!m && !m.is_user && m.extra?.rlzc?.entry === session.id;
   if (!session.id) {
-    const m = chat[session.entryIndex];
-    return m && !m.is_user && !m.is_system ? session.entryIndex : -1;
+    return isCountable(chat[session.entryIndex]) ? session.entryIndex : -1;
   }
   if (isEntry(chat[session.entryIndex])) return session.entryIndex;
   for (let i = chat.length - 1; i >= 0; i--) if (isEntry(chat[i])) return i;
@@ -92,9 +92,8 @@ export interface EntryCandidate extends EntryHit {
   index: number;
 }
 
-function isAi(m: ChatMessage | undefined): boolean {
-  return !!m && !m.is_user && !m.is_system;
-}
+/** 算不算AI消息：与计轮口径一致（被 /hide 隐藏的AI回复也算） */
+const isAi = isCountable;
 
 /** 某一楼是否带入场信号（只看AI消息） */
 export function entryCandidateAt(chat: ChatMessage[], index: number, packs: Pack[]): EntryCandidate | null {

@@ -151,10 +151,10 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
       </div>
 
       <details v-if="subView && (subView.state || subView.record)" class="rlzc-card">
-        <summary>副API：隐藏状态与最近一次整理</summary>
+        <summary>副本事件检测：副本状态与最近一次检测</summary>
         <pre class="rlzc-pre">{{ subView.text || '（尚无状态）' }}</pre>
         <pre v-if="subView.record" class="rlzc-pre">{{ json(subView.record) }}</pre>
-        <p class="rlzc-hint">✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 副API预判条件不成立，没有注入</p>
+        <p class="rlzc-hint">✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 检测时判断条件已不成立，这一轮没有注入</p>
       </details>
 
       <details class="rlzc-card" open>
@@ -172,7 +172,7 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
       <details class="rlzc-card">
         <summary>每楼快照（最近60条）</summary>
         <table class="rlzc-table">
-          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>时限</th><th>事件</th><th>副API</th></tr></thead>
+          <thead><tr><th>楼</th><th>阶段</th><th>轮</th><th>钟时</th><th>时限</th><th>事件</th><th>检测</th></tr></thead>
           <tbody>
             <tr v-for="row in snapshots" :key="row.index" :class="{ 'rlzc-row-warn': limitWarned.has(row.index) }">
               <td>{{ row.index }}{{ row.snap.entry ? '★' : '' }}</td>
