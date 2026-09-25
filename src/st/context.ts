@@ -98,3 +98,15 @@ export async function confirmBox(text: string): Promise<boolean> {
   }
   return window.confirm(text);
 }
+
+/** 输入框：优先用 ST 的弹窗，缺失时退回浏览器 prompt；取消返回 null */
+export async function inputBox(text: string, value = ''): Promise<string | null> {
+  const c = ctx();
+  if (c.callGenericPopup && c.POPUP_TYPE) {
+    const el = document.createElement('div');
+    el.textContent = text;
+    const result = await c.callGenericPopup(el, c.POPUP_TYPE.INPUT, value, { okButton: '确定', cancelButton: '取消' });
+    return typeof result === 'string' ? result : null;
+  }
+  return window.prompt(text, value);
+}

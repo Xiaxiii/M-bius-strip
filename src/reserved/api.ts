@@ -1,8 +1,5 @@
-/** 第二期预留：副API（OpenAI 兼容接口经 ST 服务端转发，或跟随主API）。第一期不实现。 */
-export interface RlzcSideApi {
-  /** 读“上一轮状态＋本轮回复”，返回更新后的隐藏状态字段 */
-  updateHiddenState?(prevState: unknown, reply: string): Promise<unknown>;
-  /** 由扩展判断事件条件是否成立 */
-  judgeCondition?(condition: string, state: unknown): Promise<boolean>;
-}
-export const sideApi: RlzcSideApi = {};
+/**
+ * 第二期副API已实现：纯逻辑在 src/core/subapi.ts，发请求在 src/st/subTransport.ts，流程在 src/app.ts（CLAUDE.md 14）。
+ * 这里只保留旧的占位导出，避免外部引用失效。
+ */
+export type { SubRecord, SubResult } from '../core/subapi';

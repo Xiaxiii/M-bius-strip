@@ -8,7 +8,17 @@ import { formatMinutes, parseLimitPair } from './timeLimit';
  * 结果只用于两处：下一轮的注入提示，和调试页的警告列表。
  */
 
-export type AuditKind = 'missing' | 'progressStart' | 'progressRange' | 'progressDrop' | 'progressUnreadable' | 'limit';
+export type AuditKind =
+  | 'missing'
+  | 'progressStart'
+  | 'progressRange'
+  | 'progressDrop'
+  | 'progressUnreadable'
+  | 'limit'
+  /** 副API判定本轮后台事件没写出来 */
+  | 'eventMissed'
+  /** 副API预判条件不成立，生成这一楼时没有注入 */
+  | 'eventSkipped';
 
 export interface AuditWarning {
   index: number;
@@ -74,6 +84,11 @@ export function auditPanels(chat: ChatMessage[], pack: Pack, progress: Progress)
     const phase = pack.phases.find((p) => p.id === rec.phase);
     const phaseName = phase?.name ?? '进行中';
     const warn = (kind: AuditKind, text: string) => warnings.push({ index, phase: phaseName, round: rec.round, kind, text });
+    // ── 副API的事件核对与跳过记录 ──
+    const snapshot = chat[index]?.extra?.rlzc;
+    for (const e of snapshot?.sub?.events ?? []) if (e.status === 'missed') warn('eventMissed', `${e.id} 未写出来：${e.reason}`);
+    for (const k of snapshot?.skippedEvents ?? []) warn('eventSkipped', `${k.id} 条件不成立，已跳过：${k.reason}`);
+
     const panel = detectPanel(String(chat[index]?.mes ?? ''));
     const isEntry = index === progress.entryIndex;
 

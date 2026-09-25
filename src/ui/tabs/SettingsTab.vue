@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { importPack, removePack, saveSettings, setPanelDisplay, state, type Settings } from '../../app';
 import { confirmBox, toast } from '../../st/context';
+import SubApiCard from '../SubApiCard.vue';
 
 const errors = ref<string[]>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -65,6 +66,8 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
       <label class="rlzc-field"><span>进度 rlzc_progress</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" /></label>
       <label class="rlzc-field"><span>本轮 rlzc_turn</span><input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" /></label>
     </div>
+
+    <SubApiCard />
 
     <div class="rlzc-card">
       <h4>通用副本默认轮数上限</h4>

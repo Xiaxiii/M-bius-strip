@@ -67,6 +67,13 @@ export function validatePack(input: unknown): string[] {
   if (p.deadline !== undefined && typeof p.deadline !== 'string') errors.push('deadline 必须是文本');
   if (p.disableLive !== undefined && typeof p.disableLive !== 'boolean') errors.push('disableLive 必须是 true 或 false');
   if (p.casino !== undefined && typeof p.casino !== 'boolean') errors.push('casino 必须是 true 或 false');
+  if (p.stateFields !== undefined) {
+    if (!Array.isArray(p.stateFields)) errors.push('stateFields 必须是数组');
+    else p.stateFields.forEach((f: any, i: number) => {
+      if (!f || typeof f.key !== 'string' || !f.key || typeof f.label !== 'string' || typeof f.hint !== 'string')
+        errors.push(`stateFields[${i}] 需要 key、label、hint 三个文本`);
+    });
+  }
   if (p.roles !== undefined && (!Array.isArray(p.roles) || p.roles.some((x: unknown) => typeof x !== 'string' || !x))) errors.push('roles 必须是文本数组');
 
   const phaseIds = new Set<string>();

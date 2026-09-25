@@ -382,3 +382,42 @@ interface Progress {
 - **确认：** 命中后仍弹出「检测到进入《X》，是否启用？」，不自动进入。
 - **入场消息：** 从聊天开头（或上一个副本结算之后）起，第一条命中任一信号、且没被拒绝过的AI消息，算第1轮；是开场白就以开场白为第1轮。
 - **拒绝：** 玩家点「否」时在 `chatMetadata.rlzc.declined` 记下「消息下标:副本名」，同一条消息（包括重新生成后仍在同一楼）不再弹窗；更晚的消息再命中时可以再问一次。没有会话时 `chatMetadata.rlzc` 只含这一项；旧版的 `chatMetadata.rlzc_declined` 照常读取。
+
+## 14. 副API「记录员」（第二期，覆盖第10节第二期与决定 10）
+
+副本进行中，每条新的AI回复生成后调用一次，读正文、整理状态，不写剧情。回廊中不调用；`continue` 不调用；重新生成、滑动产生的新消息照常调用。
+
+### 14.1 一次调用做三件事，只返回 JSON
+```
+{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],
+ "state":{…},
+ "next":[{"id":"E12","ok":true,"reason":"…"}]}
+```
+1. 事件核对：本轮注入的每个后台事件在正文里是已发生 / 未发生 / 条件不成立。
+2. 隐藏状态：在上一轮状态的基础上更新副本包 `stateFields`（`{ key, label, hint }[]`）；没有 stateFields 的副本只维护 `summary`（不超过150字）。钟楼 1.3.0 的字段：crank 曲柄当前在谁手里、watcher 当夜值班者、positions 各角色所在位置、victim 死者目前状态、clues 已被发现的关键线索、theories 已公开讨论过的推理。
+3. 条件预判：下一轮将注入、且带 if 条件的事件，条件是否仍成立。
+
+输入：副本名、阶段、轮次；上一轮状态；本轮注入的事件（占位符已替换）；下一轮带条件的事件；本条正文（去掉 `<副本>`、`<状态栏>` 等面板标签）。解析前去掉 ``` 标记；解析失败按失败处理。
+
+### 14.2 结果的存放与使用
+- 存进这条消息的 `chat[i].extra.rlzc.sub`（events、state、next、耗时 ms、来源 via、时间 at；玩家跳过时为 `{ skipped: true, error }`）。
+- 当前状态 = 从入场起最近一条带 sub.state（且未跳过）的AI消息里的 state。删楼、滑动自然回滚，不另存。
+- 注入 key `rlzc_state`（深度同 rlzc_progress，scan=false），标题「［副本状态·仅供AI］」。
+- 上一条AI消息的 `next` 判为 ok=false 的事件本轮不注入，记入生成出的那一楼快照 `skippedEvents`，调试页显示「条件不成立，已跳过」；ok=true 的事件照常注入且不再附条件原文；没有预判结果时（关闭、失败、跳过）照第一期把条件原文交给主AI。
+- events 里有 missed：调试页该楼标黄，第一期不自动补写、不改正文。
+- 系统页只显示一行：「副本记录：已更新（第N轮）」或「第N轮状态未更新」（进行中时「整理中…」）。隐藏状态只在调试页显示。
+
+### 14.3 来源（设置页「副API」卡，位于「注入深度」之后）
+- 关闭（默认）。
+- 跟随主API：`getContext().generateRaw({ prompt, systemPrompt })`。只发传入的提示词，不带聊天记录、世界书和扩展注入，不经过生成拦截器，不会递归。
+- 独立接口：经 ST 服务端转发 `POST /api/backends/chat-completions/generate`，`chat_completion_source: 'custom'`、`custom_url`，密钥用 `custom_include_headers` 覆盖 Authorization（不改 ST 自己保存的密钥）；模型列表 `POST /api/backends/chat-completions/status`。接口预设（名字、地址、密钥、模型）存在 `extensionSettings.rlzc.subApi.presets`，记住上次用的预设和每条预设的模型。
+- 使用酒馆连接配置：`getContext().ConnectionManagerRequestService.getSupportedProfiles()` 列出配置，`sendRequest(profileId, messages, maxTokens, { signal })` 发送。连接配置扩展被禁用时不可选。
+- 省钱模式（默认关）：只在本轮有注入事件、或下一轮有带条件的事件时调用，其余轮沿用上一轮状态。
+- 等待整理（默认开）：生成下一轮前等本轮整理完成，发送按钮旁显示「整理中…」；关闭时不等。
+- 超时默认60秒。
+
+### 14.4 失败
+- 自动重试2次（网络错误、超时、JSON 解析失败都算）。
+- 仍失败：弹窗写明原因（超时 / 密钥无效 / 额度不足 / 返回格式不对 / 其他），按钮【重试】再调用一次；【换一个接口】弹窗内出现接口预设下拉框，选定后立即重试（并记为当前预设）；【这轮先跳过】沿用上一轮状态。
+- 开着「等待整理」时弹窗挡住生成；关着时只弹提示、不挡生成，这一轮记为跳过。
+- 同一轮不重复弹窗；跳过后这一轮不再自动重试。

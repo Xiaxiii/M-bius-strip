@@ -6,7 +6,9 @@ import type { Progress } from './replay';
 export const KEY_TOKEN = 'rlzc_token';
 export const KEY_PROGRESS = 'rlzc_progress';
 export const KEY_TURN = 'rlzc_turn';
-export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN] as const;
+/** 副API整理出的隐藏状态（深度同 rlzc_progress，CLAUDE.md 14） */
+export const KEY_STATE = 'rlzc_state';
+export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE] as const;
 
 export interface Injection {
   token: string;
@@ -16,6 +18,10 @@ export interface Injection {
   injected: string[];
   /** 本轮注入的时限（写进快照，用于核对） */
   limit?: InjectedLimit;
+  /** 副API预判「条件不成立」而没有注入的事件 */
+  skipped?: { id: string; reason: string }[];
+  /** rlzc_state：当前隐藏状态 */
+  state?: string;
 }
 
 /** 快照里记录的本楼注入时限 */
@@ -59,10 +65,11 @@ export function summarizeEvents(pack: Pack, ids: string[]): string {
   return parts.join('、');
 }
 
-function eventLine(e: PackEvent, pack: Pack, roles: Record<string, string> | undefined): string {
+/** prejudged：副API已判定条件成立，不再把条件交给主AI */
+function eventLine(e: PackEvent, pack: Pack, roles: Record<string, string> | undefined, prejudged = false): string {
   let text = fillRoles(e.text, pack, roles);
   if (e.to > e.from) text = `在本阶段第${e.from}到${e.to}轮之间发生：${text}`;
-  if (e.if) text += `（条件：${fillRoles(e.if, pack, roles)}。若条件已不成立，此事件不发生，也不补写替代事件）`;
+  if (e.if && !prejudged) text += `（条件：${fillRoles(e.if, pack, roles)}。若条件已不成立，此事件不发生，也不补写替代事件）`;
   return `- ${e.id}：${text}`;
 }
 
@@ -80,6 +87,10 @@ export interface BuildOptions {
   panelLimit?: string;
   /** `<副本>` 核对结果（见 core/audit.ts） */
   audit?: { missingLast: boolean; hasPanel: boolean };
+  /** 副API对本轮带条件事件的预判（上一条AI消息的 sub.next）；没有时条件原文交给主AI */
+  subNext?: { id: string; ok: boolean; reason: string }[];
+  /** rlzc_state 的内容（已格式化） */
+  stateText?: string;
 }
 
 export function buildInjection(pack: Pack, progress: Progress | null, session: Session | null, opts: BuildOptions = {}): Injection {
@@ -126,15 +137,20 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
   if (next.skipFrom !== undefined) {
     turn.push(`玩家选择快进：本轮从「${progress.phase.name}」第${next.skipFrom}轮快进到第${next.round}轮。请用简短的过渡叙述带过这段时间；若途中出现必须由{{user}}亲自决定的事，就停在那里交给{{user}}。`);
   }
-  const events = next.events.filter((e) => e.kind === 'event');
-  const directives = next.events.filter((e) => e.kind === 'directive');
+  // 副API预判条件不成立的事件：本轮不注入，记下来给调试页
+  const verdict = new Map((opts.subNext ?? []).map((n) => [n.id, n]));
+  const skipped = next.events.filter((e) => e.if && verdict.get(e.id)?.ok === false).map((e) => ({ id: e.id, reason: verdict.get(e.id)!.reason }));
+  const planned = next.events.filter((e) => !skipped.some((s) => s.id === e.id));
+  const prejudged = (e: PackEvent) => !!e.if && verdict.get(e.id)?.ok === true;
+  const events = planned.filter((e) => e.kind === 'event');
+  const directives = planned.filter((e) => e.kind === 'directive');
   if (events.length) {
     turn.push('本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）：');
-    events.forEach((e) => turn.push(eventLine(e, pack, roles)));
+    events.forEach((e) => turn.push(eventLine(e, pack, roles, prejudged(e))));
   }
   if (directives.length) {
     turn.push('本轮写作要求：');
-    directives.forEach((e) => turn.push(eventLine(e, pack, roles)));
+    directives.forEach((e) => turn.push(eventLine(e, pack, roles, prejudged(e))));
   }
   if (progress.isLastRound) turn.push(phaseEndLine(progress));
   else if (progress.overdue) turn.push(`「${progress.phase.name}」已到时限，请按副本规则在本轮完成结算。`);
@@ -167,7 +183,9 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
     token: pack.token,
     progress: progressLines.join('\n'),
     turn: turn.length ? ['［本轮指令·仅供AI］', ...turn].join('\n') : '',
-    injected: next.events.map((e) => e.id),
+    injected: planned.map((e) => e.id),
     limit: injectedLimit,
+    skipped: skipped.length ? skipped : undefined,
+    state: opts.stateText || undefined,
   };
 }
