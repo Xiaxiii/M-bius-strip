@@ -67,6 +67,8 @@ export interface BuildOptions {
   briefing?: BriefingInfo;
   /** `<副本>` 面板里的时限（没有 nights 计算时显示） */
   panelLimit?: string;
+  /** `<副本>` 核对结果（见 core/audit.ts） */
+  audit?: { missingLast: boolean; hasPanel: boolean };
 }
 
 export function buildInjection(pack: Pack, progress: Progress | null, session: Session | null, opts: BuildOptions = {}): Injection {
@@ -119,6 +121,11 @@ export function buildInjection(pack: Pack, progress: Progress | null, session: S
   }
   if (progress.isLastRound) turn.push(phaseEndLine(progress));
   else if (progress.overdue) turn.push(`「${progress.phase.name}」已到时限，请按副本规则在本轮完成结算。`);
+
+  // ── <副本> 面板核对 ──
+  if (opts.audit?.missingLast) turn.push('上一轮缺少<副本>面板，本轮必须完整输出。');
+  if (opts.audit && !opts.audit.hasPanel) turn.push('本轮<副本>的进度条写0。');
+  if (progress.limitText) turn.push(`本轮<副本>的时限一栏写：${progress.limitText}`);
 
   if (pack.roles?.length && !pack.roles.some((r) => roles?.[r])) {
     let ask = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${pack.roles.map((r) => `${r}=姓名`).join('｜')}</角色登记>。按世界书规定生成NPC。`;

@@ -6,6 +6,8 @@ const pickId = ref('');
 const inDungeon = computed(() => !!state.session && !!state.pack);
 const p = computed(() => state.progress);
 const hasPhases = computed(() => !!state.pack?.phases.length);
+/** 正文状态栏模式：时限、进度条、任务、ps 由正文显示，系统页不重复 */
+const inPanel = computed(() => state.settings.panelDisplay !== 'statusbar');
 
 const roundText = computed(() => {
   const pr = p.value;
@@ -49,7 +51,7 @@ async function choose() {
         <div class="rlzc-stat" v-if="hasPhases"><span>阶段</span><b>{{ p.phase.name }}</b></div>
         <div class="rlzc-stat" :class="{ warn: p.warn }"><span>轮次</span><b>{{ roundText }}</b></div>
         <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
-        <div class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
+        <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
       </div>
 
       <div v-if="p.skipGoal" class="rlzc-note">快进中：目标 {{ state.pack!.phases.find((x) => x.id === p!.skipGoal!.phase)?.name }} 第{{ p.skipGoal.round }}轮</div>
@@ -60,7 +62,7 @@ async function choose() {
       </div>
       <div v-else-if="p.ended" class="rlzc-note">副本已手动结束。</div>
 
-      <div v-if="p.panel" class="rlzc-card">
+      <div v-if="inPanel && p.panel" class="rlzc-card">
         <div v-if="p.panel.progressBar" class="rlzc-kv"><span>进度</span><b class="rlzc-mono">{{ p.panel.progressBar }}</b></div>
         <div v-if="p.panel.tasks.length" class="rlzc-tasks">
           <span>任务</span>
