@@ -141,3 +141,105 @@
 .rlzc-depth .rlzc-field > span { display: flex; flex-direction: column; gap: 2px; }
 .rlzc-depth .rlzc-field > span small { color: var(--muted); font-size: 11px; line-height: 1.4; }
 .rlzc-depth .rlzc-field > .rlzc-input { flex: 0 0 72px; width: 72px; }
+
+/* ── 副本事件检测卡 ── */
+.rlzc-subapi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.rlzc-subapi-head h4 { margin: 0; }
+
+/* 状态圆点标签 */
+.rlzc-dot { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.rlzc-dot::before {
+  content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--muted);
+}
+.rlzc-dot[data-kind="on"]   { color: #4caf72; }
+.rlzc-dot[data-kind="on"]::before   { background: #4caf72; }
+.rlzc-dot[data-kind="warn"] { color: #c9833a; }
+.rlzc-dot[data-kind="warn"]::before { background: #c9833a; }
+
+/* 三段式来源按钮 */
+.rlzc-segsrc {
+  display: flex; width: 100%; border: 1px solid var(--line); border-radius: 8px;
+  overflow: hidden; margin: 8px 0;
+}
+.rlzc-segsrc button {
+  flex: 1; padding: 8px 4px; font: inherit; font-size: 13px;
+  background: none; border: none; border-right: 1px solid var(--line);
+  color: var(--muted); cursor: pointer; min-height: 44px;
+}
+.rlzc-segsrc button:last-child { border-right: none; }
+.rlzc-segsrc button.on { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--fg); font-weight: 600; }
+.rlzc-segsrc button:hover:not(.on) { background: var(--soft); color: var(--fg); }
+
+/* 自设API内嵌区域 */
+.rlzc-preset-area {
+  background: color-mix(in srgb, var(--bg) 50%, transparent);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;
+}
+.rlzc-preset-row { display: flex; gap: 6px; align-items: center; }
+.rlzc-preset-row .rlzc-input { flex: 1; min-width: 0; }
+
+/* 图标方形按钮 44×44 */
+.rlzc-icon-btn {
+  flex: 0 0 44px; width: 44px; height: 44px; display: grid; place-items: center;
+  background: none; border: 1px solid var(--line); border-radius: 8px;
+  color: var(--muted); cursor: pointer; padding: 0;
+}
+.rlzc-icon-btn:hover:not(:disabled) { color: var(--fg); border-color: var(--fg); }
+.rlzc-icon-btn.rlzc-danger { color: #c9534f; border-color: color-mix(in srgb, #c9534f 40%, transparent); }
+.rlzc-icon-btn.rlzc-danger:hover:not(:disabled) { background: color-mix(in srgb, #c9534f 12%, transparent); border-color: #c9534f; }
+.rlzc-icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* 标签在上方的字段 */
+.rlzc-stacked-field { display: flex; flex-direction: column; gap: 4px; }
+
+/* 密钥输入框带眼睛按钮 */
+.rlzc-key-wrap { position: relative; display: flex; }
+.rlzc-key-wrap .rlzc-input { padding-right: 44px; width: 100%; }
+.rlzc-eye-btn {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 44px;
+  display: grid; place-items: center; background: none; border: none;
+  color: var(--muted); cursor: pointer; padding: 0;
+}
+.rlzc-eye-btn:hover { color: var(--fg); }
+
+/* 只读占位输入框 */
+.rlzc-input-disabled { color: var(--muted); cursor: default; }
+
+/* 连接状态行 */
+.rlzc-conn-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
+
+/* 选项列表（省钱模式等） */
+.rlzc-option-list { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; display: flex; flex-direction: column; }
+.rlzc-option-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  min-height: 44px;
+}
+.rlzc-option-row:last-child { border-bottom: none; }
+.rlzc-option-label { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.rlzc-option-label small { font-size: 11px; color: var(--muted); }
+.rlzc-option-row-timeout { justify-content: flex-start; gap: 16px; }
+.rlzc-option-row-timeout > span { font-size: 13px; }
+.rlzc-timeout-wrap { display: flex; align-items: center; gap: 6px; }
+.rlzc-input-num { width: 72px; }
+.rlzc-unit { font-size: 13px; color: var(--muted); }
+
+/* 拨动开关 */
+.rlzc-toggle {
+  flex: 0 0 44px; height: 26px; border-radius: 13px;
+  background: color-mix(in srgb, var(--muted) 30%, transparent);
+  border: 1px solid var(--line); cursor: pointer; padding: 0; position: relative;
+  transition: background 150ms;
+}
+.rlzc-toggle.on { background: color-mix(in srgb, var(--accent) 70%, transparent); border-color: var(--accent); }
+.rlzc-toggle span {
+  position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--fg); transition: transform 150ms;
+}
+.rlzc-toggle.on span { transform: translateX(18px); }
+.rlzc-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 密钥提示（设置页底部） */
+.rlzc-key-notice { text-align: center; margin-top: 4px; }

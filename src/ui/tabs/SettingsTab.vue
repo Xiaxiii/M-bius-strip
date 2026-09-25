@@ -52,30 +52,23 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
         <option value="panel">扩展面板（默认）</option>
         <option value="statusbar">正文状态栏</option>
       </select>
-      <p class="rlzc-hint">
-        {{ state.settings.panelDisplay === 'statusbar'
-          ? '正文中保留 <副本> 标签，由你的状态栏显示；系统页不再显示时限、进度条、任务和 ps。'
-          : '正文中隐藏 <副本> 标签，时限、进度条、任务和 ps 显示在系统页。' }}
-        两种方式下扩展都会读取 <副本> 做核对。
-      </p>
+      <p class="rlzc-hint">选「正文状态栏」时，时限和任务由状态栏显示，系统页不重复。</p>
     </div>
 
     <div class="rlzc-card">
       <h4>注入深度</h4>
-      <p class="rlzc-hint rlzc-intro">
-        在副本里，扩展每次生成前会往发给AI的内容里悄悄加三段说明（玩家看不到）。这里的数字决定每段插在聊天记录的哪个位置：0 = 紧跟在最新一条消息后面，数字越大越靠前（4 = 倒数第4条消息之前）。越靠后，AI越重视。一般不用改。
-      </p>
+      <p class="rlzc-hint">数字越小越靠近最新消息，AI 越重视。一般不用改。</p>
       <div class="rlzc-depth">
         <label class="rlzc-field">
-          <span>副本暗号<small>如「【副本进行中：钟楼】」，用来触发世界书里这个副本的条目</small></span>
+          <span>副本暗号<small>触发世界书的副本条目</small></span>
           <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" />
         </label>
         <label class="rlzc-field">
-          <span>副本进度<small>副本名、阶段、第几轮、还剩多久、已发生的事件；开了事件检测时，检测到的副本状态也放在这个位置</small></span>
+          <span>副本进度<small>阶段、轮次、时限、副本状态</small></span>
           <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" />
         </label>
         <label class="rlzc-field">
-          <span>本轮指令<small>这一轮必须发生的事件，以及状态栏时限一栏该写什么</small></span>
+          <span>本轮指令<small>本轮事件与时限写法</small></span>
           <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
         </label>
       </div>
@@ -85,7 +78,7 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
 
     <div class="rlzc-card">
       <h4>通用副本默认轮数上限</h4>
-      <p class="rlzc-hint">未收录的副本按等级取轮数上限；简报时限一行写了「（最多N轮）」时以简报为准。只影响之后进入的副本。</p>
+      <p class="rlzc-hint">未收录副本按等级取轮数上限，简报里写了「（最多N轮）」时以简报为准。</p>
       <label v-for="lv in LEVELS" :key="lv" class="rlzc-field">
         <span>{{ lv }} 级</span>
         <input type="number" min="1" class="rlzc-input" :value="state.settings.genericCaps[lv]" @change="setCap(lv, $event)" />
@@ -108,8 +101,10 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
 
     <div class="rlzc-card">
       <h4>其他</h4>
-      <label class="rlzc-check"><input type="checkbox" :checked="state.settings.showBall" @change="toggle('showBall', $event)" />显示悬浮球（关闭后可从扩展菜单打开面板）</label>
-      <label class="rlzc-check"><input type="checkbox" :checked="state.settings.debug" @change="toggle('debug', $event)" />调试模式（调试页允许手动修改，并在控制台输出日志）</label>
+      <label class="rlzc-check"><input type="checkbox" :checked="state.settings.showBall" @change="toggle('showBall', $event)" />显示悬浮球</label>
+      <label class="rlzc-check"><input type="checkbox" :checked="state.settings.debug" @change="toggle('debug', $event)" />调试模式</label>
     </div>
   </div>
+
+  <p class="rlzc-hint rlzc-key-notice">密钥保存在本机酒馆设置里，分享设置或截图时注意别带出去。</p>
 </template>
