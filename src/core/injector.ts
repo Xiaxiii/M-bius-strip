@@ -8,7 +8,9 @@ export const KEY_PROGRESS = 'rlzc_progress';
 export const KEY_TURN = 'rlzc_turn';
 /** 副API整理出的隐藏状态（深度同 rlzc_progress，CLAUDE.md 14） */
 export const KEY_STATE = 'rlzc_state';
-export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE] as const;
+/** 积分余额注入（第三期，预留） */
+export const KEY_BALANCE = 'rlzc_balance';
+export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE, KEY_BALANCE] as const;
 
 export interface Injection {
   token: string;

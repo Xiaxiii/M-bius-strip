@@ -8,6 +8,8 @@ export const SETTLEMENT_RE = /<副本结算>([\s\S]*?)<\/副本结算>/;
 export const PANEL_RE = /<副本>([\s\S]*?)<\/副本>/;
 export const ROLES_RE = /<角色登记>([\s\S]*?)<\/角色登记>/;
 export const SKIP_RE = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|日出|晚饭|夜里|明天)/;
+/** 积分变动标签（CLAUDE.md 第三期）：<积分变动>+300（说明）</积分变动> */
+export const SCORE_TAG_RE = /<积分变动>([\s\S]*?)<\/积分变动>/g;
 
 /** 读取简报：名称，以及后续几行的等级、目标、时限、人数 */
 export function detectBriefing(text: string): BriefingInfo | null {

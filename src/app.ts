@@ -21,7 +21,9 @@ import {
   type SubRecord,
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
-import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget } from './core/detector';
+import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
+import { LEDGER_META_KEY, parseDelta, formatTime, reconcileLedger } from './core/ledger';
+import type { LedgerEntry } from './packs/types';
 import {
   createSession,
   declineKey,
@@ -89,8 +91,8 @@ const DEFAULT_SETTINGS: Settings = {
   subApi: structuredClone(DEFAULT_SUB_API),
 };
 
-/** 面板页签（CLAUDE.md 11.9）：第三期「账本」、第四期「黑市」以后加在 system 与 settings 之间 */
-export type TabId = 'system' | 'settings' | 'debug';
+/** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
+export type TabId = 'system' | 'ledger' | 'settings' | 'debug';
 
 export const state = reactive({
   chatId: '',
@@ -110,6 +112,8 @@ export const state = reactive({
   debugUnlocked: false,
   /** 刷新计数，调试页据此重读每楼快照 */
   tick: 0,
+  /** 积分账本流水（按聊天保存，chatMetadata.rlzc_ledger，CLAUDE.md 第三期） */
+  ledger: [] as import('./packs/types').LedgerEntry[],
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -173,6 +177,47 @@ export function importPack(json: string): string[] {
 export function removePack(id: string): void {
   state.settings.customPacks = state.settings.customPacks.filter((p) => p.id !== id);
   saveSettings();
+}
+
+// ───────────── 积分账本（第三期） ─────────────
+
+function readLedger(): LedgerEntry[] {
+  const raw = getMeta()[LEDGER_META_KEY];
+  return Array.isArray(raw) ? (raw as LedgerEntry[]) : [];
+}
+
+function writeLedger(entries: LedgerEntry[]): void {
+  getMeta()[LEDGER_META_KEY] = entries;
+  saveMeta();
+}
+
+/** 扫描消息正文里的 <积分变动> 标签，追加流水 */
+function processLedgerTags(index: number): void {
+  const chat = getChat();
+  const msg = chat[index];
+  if (!msg || msg.is_user) return;
+  const text = msg.mes ?? '';
+  const entries = readLedger().filter((e) => e.mesIndex !== index); // 先清除这一楼的旧条目
+  const re = new RegExp(SCORE_TAG_RE.source, 'g');
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const parsed = parseDelta(m[1]);
+    if (!parsed) continue;
+    entries.push({
+      mesIndex: index,
+      delta: parsed.delta,
+      note: parsed.note,
+      time: formatTime(msg.send_date ?? msg.gen_finished ?? undefined),
+    });
+  }
+  writeLedger(entries);
+  state.ledger = entries;
+}
+
+export function deleteLedgerEntry(mesIndex: number): void {
+  const entries = readLedger().filter((e) => e.mesIndex !== mesIndex);
+  writeLedger(entries);
+  state.ledger = entries;
 }
 
 // ───────────── 会话读写 ─────────────
@@ -788,6 +833,9 @@ export function onMessageReceived(index: number, type?: string): void {
   }
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);
+
+  // 积分账本：扫描本楼的 <积分变动> 标签
+  processLedgerTags(index);
 }
 
 export function onChatChanged(): void {
@@ -797,6 +845,7 @@ export function onChatChanged(): void {
   state.debugUnlocked = false;
   state.lastInjection = EMPTY_INJECTION;
   clearInjection();
+  state.ledger = readLedger();
   refresh();
   checkGreeting();
   setTimeout(() => hideTagsInAll(), 50);

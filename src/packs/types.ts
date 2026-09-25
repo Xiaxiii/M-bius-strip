@@ -127,6 +127,17 @@ export interface Snapshot {
   entry?: string;
 }
 
+/** 积分账本流水条目（CLAUDE.md 第三期） */
+export interface LedgerEntry {
+  /** 来源AI消息在 chat 中的下标（用于删楼回滚） */
+  mesIndex: number;
+  delta: number;
+  /** 变动说明，如"直播打赏500×60%"，可为空字符串 */
+  note: string;
+  /** 格式化时间，如 "9/24 13:02" */
+  time: string;
+}
+
 /** 简化的聊天消息（只列出本扩展用到的字段） */
 export interface ChatMessage {
   mes: string;
