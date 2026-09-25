@@ -5893,7 +5893,7 @@ function zo(e = 0) {
   }), a.append(p, n("span", "", "显示悬浮球")), vt(() => m.settings.showBall, (ee) => p.checked = ee, { immediate: !0 });
   const x = n("div", "flex-container");
   x.append(c, u);
-  const k = n("div", "flex-container alignitemscenter"), v = n("small", "", "正在检查更新…"), B = n("div", "menu_button menu_button_icon", "检查更新"), O = n("div", "menu_button menu_button_icon", "立即更新"), N = n("div", "menu_button menu_button_icon", "刷新页面");
+  const k = n("div", "flex-container alignitemscenter"), v = n("small", "rlzc-update-status", "正在检查更新…"), B = n("div", "menu_button menu_button_icon", "检查更新"), O = n("div", "menu_button menu_button_icon", "立即更新"), N = n("div", "menu_button menu_button_icon", "刷新页面");
   O.style.display = "none", N.style.display = "none", k.append(v, B, O, N);
   let j = null, I = !1;
   const q = async () => {

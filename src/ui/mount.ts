@@ -106,7 +106,7 @@ function addSettingsDrawer(tries = 0): void {
 
   // ── 版本与更新 ──
   const updateRow = el('div', 'flex-container alignitemscenter');
-  const status = el('small', '', '正在检查更新…');
+  const status = el('small', 'rlzc-update-status', '正在检查更新…');
   const checkBtn = el('div', 'menu_button menu_button_icon', '检查更新');
   const updateBtn = el('div', 'menu_button menu_button_icon', '立即更新');
   const reloadBtn = el('div', 'menu_button menu_button_icon', '刷新页面');
