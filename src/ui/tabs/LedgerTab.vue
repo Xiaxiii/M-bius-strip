@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** 积分账本页（CLAUDE.md 第三期） */
 import { computed } from 'vue';
-import { getInitBalance, state } from '../../app';
+import { getInitBalance, playerLevel, state } from '../../app';
 import { computeBalance, isPendingClearance, KILL_THRESHOLDS, runningBalances } from '../../core/ledger';
 import { getChat } from '../../st/context';
 
@@ -14,7 +14,11 @@ const rows = computed(() => {
   const after = runningBalances(initBal.value.value, entries.value);
   return entries.value.map((e, k) => ({ e, after: after[k] })).reverse();
 });
-const level = computed(() => state.pack?.level ?? 'D');
+// 玩家等级（校正或状态栏），不是副本等级
+const level = computed(() => {
+  void state.tick;
+  return playerLevel(chat.value);
+});
 const threshold = computed(() => KILL_THRESHOLDS[level.value]);
 const pending = computed(() => isPendingClearance(initBal.value.value, entries.value, threshold.value));
 const distToKill = computed(() => Math.max(0, threshold.value - balance.value));

@@ -1,14 +1,18 @@
 <script setup lang="ts">
 /** 积分摘要，供系统页回廊卡片和副本进行中卡片复用 */
 import { computed } from 'vue';
-import { getInitBalance, state } from '../app';
+import { getInitBalance, playerLevel, state } from '../app';
 import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../core/ledger';
 import { getChat } from '../st/context';
 
 const chat = computed(() => getChat());
 const initBal = computed(() => getInitBalance(chat.value));
 const balance = computed(() => computeBalance(initBal.value.value, state.ledger));
-const level = computed(() => state.pack?.level ?? 'D');
+// 玩家等级（校正或状态栏），不是副本等级
+const level = computed(() => {
+  void state.tick;
+  return playerLevel(chat.value);
+});
 const threshold = computed(() => KILL_THRESHOLDS[level.value]);
 const pending = computed(() => isPendingClearance(initBal.value.value, state.ledger, threshold.value));
 const hasData = computed(() => state.ledger.length > 0 || initBal.value.source !== '默认值');

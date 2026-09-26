@@ -317,6 +317,20 @@ export function getInitBalance(chat: ChatMessage[]): { value: number; source: st
   return { value: 1000, source: '默认值' };
 }
 
+/** 玩家等级：优先待生效的校正 fix.level，其次最近一条状态栏的「等级」，找不到按 D（不是副本等级，CLAUDE.md 补正4） */
+export function playerLevel(chat: ChatMessage[] = getChat()): Level {
+  const fixLvl = readLedgerMeta().fix?.level;
+  if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) return fixLvl as Level;
+  for (let i = chat.length - 1; i >= 0; i--) {
+    if (chat[i].is_user || !chat[i].mes) continue;
+    const sm = /<状态栏>([\s\S]*?)<\/状态栏>/.exec(chat[i].mes!);
+    if (!sm) continue;
+    const pl = parsePlayerLevelFromStatusBar(sm[1]);
+    if (pl) return pl;
+  }
+  return 'D';
+}
+
 /** 构建账户注入文本（回廊和副本内都注入；没有任何账本数据时返回空字符串）*/
 function buildLedgerInjection(chat: ChatMessage[]): string {
   const meta = readLedgerMeta();
@@ -324,21 +338,7 @@ function buildLedgerInjection(chat: ChatMessage[]): string {
   if (!hasData) return '';
   const initBal = getInitBalance(chat);
   const balance = computeBalance(initBal.value, state.ledger);
-  // 玩家等级：优先 fix.level，其次最近状态栏，找不到按 D（不是副本等级，CLAUDE.md 补正4）
-  const STATUS_RE_LI = /<状态栏>([\s\S]*?)<\/状态栏>/;
-  let level: Level = 'D';
-  const fixLvl = meta.fix?.level;
-  if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
-    level = fixLvl as Level;
-  } else {
-    for (let i = chat.length - 1; i >= 0; i--) {
-      if (chat[i].is_user || !chat[i].mes) continue;
-      const sm = STATUS_RE_LI.exec(chat[i].mes!);
-      if (!sm) continue;
-      const pl = parsePlayerLevelFromStatusBar(sm[1]);
-      if (pl) { level = pl; break; }
-    }
-  }
+  const level = playerLevel(chat);
   const threshold = KILL_THRESHOLDS[level];
   const pending = isPendingClearance(initBal.value, state.ledger, threshold);
   const text = formatBalanceInjection(balance, pending, level, threshold);

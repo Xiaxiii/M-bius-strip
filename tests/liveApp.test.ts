@@ -294,3 +294,20 @@ describe('入场弹窗开着时切换聊天', () => {
     expect(app.state.session?.packId).toBe('zhonglou');
   });
 });
+
+describe('账本页、账户校正卡的等级：玩家等级，不是副本等级', () => {
+  it('进S级钟楼后仍按状态栏的D级算；有待生效的校正时按校正', async () => {
+    await enterZhonglou(false);
+    user();
+    await reply('第二轮。\n<状态栏>\n林默：\n等级：D\n积分：1000\n</状态栏>');
+    expect(app.state.pack?.level).toBe('S');
+    expect(app.playerLevel()).toBe('D');
+    app.settingsSaveLevelFix('C');
+    expect(app.playerLevel()).toBe('C');
+  });
+
+  it('没有状态栏也没有校正时按 D', () => {
+    st.chat.push({ mes: '开场白', is_user: false, extra: {} });
+    expect(app.playerLevel()).toBe('D');
+  });
+});
