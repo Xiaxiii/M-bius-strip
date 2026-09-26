@@ -238,12 +238,21 @@ describe('drawDanmaku', () => {
     recentTexts: [], names: NAMES, whoNames: [], rand: Math.random,
   };
 
-  it('每轮5–8条', () => {
-    for (let t = 0; t < 10; t++) {
-      const r = drawDanmaku({ ...baseOpts, rand: Math.random });
-      expect(r.length).toBeGreaterThanOrEqual(5);
-      expect(r.length).toBeLessThanOrEqual(8);
+  it('每轮10–13条', () => {
+    const big: PoolItem[] = Array.from({ length: 40 }, (_, i) => ({ type: 'discuss', text: `弹幕${i}` }));
+    const seen = new Set<number>();
+    for (let t = 0; t < 40; t++) {
+      const r = drawDanmaku({ ...baseOpts, pool: big, templates: [], rand: Math.random });
+      expect(r.length).toBeGreaterThanOrEqual(10);
+      expect(r.length).toBeLessThanOrEqual(13);
+      seen.add(r.length);
     }
+    expect(seen.size).toBeGreaterThan(1);
+  });
+
+  it('指定条数时按指定抽', () => {
+    const big: PoolItem[] = Array.from({ length: 40 }, (_, i) => ({ type: 'discuss', text: `弹幕${i}` }));
+    expect(drawDanmaku({ ...baseOpts, pool: big, templates: [], count: 13, rand: Math.random })).toHaveLength(13);
   });
 
   it('scope=inst 只在副本内出现', () => {

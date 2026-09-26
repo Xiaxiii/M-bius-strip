@@ -111,7 +111,9 @@ describe('rlzc_live 注入内容', () => {
 const st = installFakeSt();
 let stamp = 0;
 const SUB_JSON = '{"events":[{"id":"E02","status":"done","reason":"写了"}],"state":{"crank":"曲柄在谈缘手里（隐藏状态）"},"next":[],"hype":35,"hurt":false}';
-const DANMAKU_JSON = JSON.stringify(Array.from({ length: 8 }, (_, i) => ({ type: 'praise', name: `AI观众${i}`, text: `AI弹幕${i}` })));
+/** 模拟 AI 一次返回几条弹幕 */
+let dmCount = 8;
+const danmakuJson = () => JSON.stringify(Array.from({ length: dmCount }, (_, i) => ({ type: 'praise', name: `AI观众${i}`, text: `AI弹幕${i}` })));
 
 let calls: { system: string; user: string }[] = [];
 let danmakuFails = false;
@@ -132,11 +134,12 @@ function reset() {
   st.ctx.extensionSettings = {};
   calls = [];
   danmakuFails = false;
+  dmCount = 8;
   st.ctx.generateRaw = vi.fn(async ({ prompt, systemPrompt }: { prompt: string; systemPrompt: string }) => {
     calls.push({ system: systemPrompt, user: prompt });
     if (systemPrompt.includes('回廊直播间')) {
       if (danmakuFails) throw new Error('500 upstream error');
-      return DANMAKU_JSON;
+      return danmakuJson();
     }
     return SUB_JSON;
   });
@@ -186,12 +189,67 @@ describe('AI 弹幕接入', () => {
     expect(danmakuCalls()).toHaveLength(1);
     const rec = live(i)!;
     expect(rec.ai).toMatchObject({ ok: true, count: 8 });
-    const ai = rec.feed.filter((f) => f.text.startsWith('AI弹幕'));
-    expect(ai).toHaveLength(8);
-    const localMax = Math.max(...rec.feed.filter((f) => !f.text.startsWith('AI弹幕')).map((f) => f.id));
-    expect(Math.min(...ai.map((f) => f.id))).toBeGreaterThan(localMax);
+    // AI 返回8条：全部用上，不足10条用本地池补到 10–13 条
+    const msgs = rec.feed.filter((f) => f.t === 'msg');
+    expect(msgs.filter((f) => f.text.startsWith('AI弹幕'))).toHaveLength(8);
+    expect(msgs.length).toBeGreaterThanOrEqual(10);
+    expect(msgs.length).toBeLessThanOrEqual(13);
+    // 整轮 id 连续，接在入场之后
+    const ids = rec.feed.map((f) => f.id);
+    expect(ids).toEqual(ids.map((_, k) => ids[0] + k));
+    expect(rec.pending).toBeUndefined();
     // 事件检测的 hype 直接用
     expect(rec.hype).toBe(35);
+  });
+
+  it('AI 返回超过13条时截到13条；没有 AI 的轮次本地池抽 10–13 条', async () => {
+    app.state.settings.subApi.source = 'main';
+    app.state.settings.live.source = 'local';
+    app.state.settings.live.freq = 1;
+    dmCount = 15;
+    await enter();
+    user();
+    const i = await reply('平静的一轮。');
+    expect(danmakuCalls()).toHaveLength(0);
+    const local = live(i)!.feed.filter((f) => f.t === 'msg');
+    expect(local.length).toBeGreaterThanOrEqual(10);
+    expect(local.length).toBeLessThanOrEqual(13);
+    app.state.settings.live.source = 'ai';
+    user();
+    const j = await reply('又一轮。');
+    expect(danmakuCalls()).toHaveLength(1);
+    const msgs = live(j)!.feed.filter((f) => f.t === 'msg');
+    expect(msgs).toHaveLength(13);
+    expect(msgs.every((f) => f.text.startsWith('AI弹幕'))).toBe(true);
+    expect(live(j)!.ai).toMatchObject({ ok: true, count: 13 });
+  });
+
+  it('等 AI 弹幕时打赏已记账；切换聊天后没等到的楼层用本地池补齐', async () => {
+    app.state.settings.subApi.source = 'main';
+    app.state.settings.live.source = 'ai';
+    app.state.settings.live.freq = 1;
+    await enter();
+    let release!: (v: string) => void;
+    st.ctx.generateRaw = vi.fn(({ systemPrompt }: { systemPrompt: string }) =>
+      systemPrompt.includes('回廊直播间') ? new Promise<string>((r) => (release = r)) : Promise.resolve(SUB_JSON),
+    );
+    user();
+    const i = await reply('平静的一轮。');
+    const rec = live(i)!;
+    expect(rec.pending).toBeTruthy();
+    expect(rec.feed).toHaveLength(0);
+    expect(st.chat[i].extra!.rlzc!.ledger?.filter((e) => e.type === 'tip').reduce((t, e) => t + e.delta, 0) ?? 0).toBe(rec.tipNet);
+    app.onChatChanged();
+    const done = live(i)!;
+    expect(done.pending).toBeUndefined();
+    expect(done.ai).toMatchObject({ ok: false });
+    const n = done.feed.filter((f) => f.t === 'msg').length;
+    expect(n).toBeGreaterThanOrEqual(10);
+    expect(n).toBeLessThanOrEqual(13);
+    // 晚到的结果不再写回
+    release(danmakuJson());
+    await settle();
+    expect(live(i)!.feed.some((f) => f.text.startsWith('AI弹幕'))).toBe(false);
   });
 
   it('请求里没有事件表、隐藏状态、副本资料、事件检测结果', async () => {
@@ -231,7 +289,10 @@ describe('AI 弹幕接入', () => {
     const rec = live(i)!;
     expect(rec.ai?.ok).toBe(false);
     expect(rec.ai?.error).toContain('500');
-    expect(rec.feed.filter((f) => f.t === 'msg').length).toBeGreaterThanOrEqual(1);
+    // 失败：这一轮只用本地池 10–13 条
+    const n = rec.feed.filter((f) => f.t === 'msg').length;
+    expect(n).toBeGreaterThanOrEqual(10);
+    expect(n).toBeLessThanOrEqual(13);
     // 下一轮照常生成
     user();
     const j = await reply('又一轮。');

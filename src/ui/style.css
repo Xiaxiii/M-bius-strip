@@ -282,6 +282,8 @@
   flex: 0 0 auto; font-size: 14px; font-variant-numeric: tabular-nums;
   font-weight: 600; text-align: right; white-space: nowrap;
 }
+.rlzc-ledger-item-right { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.rlzc-ledger-item-after { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rlzc-ledger-item-delta.pos { color: #4caf72; }
 .rlzc-ledger-item-delta.neg { color: #c9534f; }
 
@@ -303,5 +305,7 @@
 .rlzc-collapse-arrow.open { transform: rotate(90deg); }
 .rlzc-collapse-body { padding: 0 12px 10px; }
 
+/* 折叠头右侧的简要状态（调试页） */
+.rlzc-collapse-status { flex: 0 0 auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 /* SubApiCard 的 .rlzc-dot 在折叠头里 */
 .rlzc-collapse-head .rlzc-dot { font-size: 12px; }

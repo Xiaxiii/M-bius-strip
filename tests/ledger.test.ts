@@ -291,3 +291,27 @@ describe('buildFixSentence（账户校正句）', () => {
     expect(text).toContain('距斩杀线200分（C级斩杀线1000）');
   });
 });
+
+describe('流水余额（界面小改1）', () => {
+  it('每一笔记完之后的余额，从初始积分按顺序累加', async () => {
+    const { runningBalances } = await import('../src/core/ledger');
+    expect(runningBalances(1000, [{ delta: 18 }, { delta: -300 }, { delta: 51000 }])).toEqual([1018, 718, 51718]);
+    expect(runningBalances(500, [])).toEqual([]);
+  });
+
+  it('手动调整按时间排进楼层流水；楼层流水保持聊天顺序；时间读不到的放最后', async () => {
+    const { mergeByTime } = await import('../src/core/ledger');
+    const f = (n: string, ts?: number) => ({ n, ts });
+    const floor = [f('楼4', 100), f('楼6', 200), f('楼8', 300)];
+    const manual = [f('手动B', 250), f('手动A', 150), f('手动?', undefined), f('手动Z', 999)];
+    expect(mergeByTime(floor, manual).map((x) => x.n)).toEqual(['楼4', '手动A', '楼6', '手动B', '楼8', '手动Z', '手动?']);
+    // 比所有楼层都早
+    expect(mergeByTime(floor, [f('手动0', 1)]).map((x) => x.n)).toEqual(['手动0', '楼4', '楼6', '楼8']);
+  });
+
+  it('旧数据的「M/D HH:MM」能解析成时间', async () => {
+    const { parseAtTime } = await import('../src/core/ledger');
+    expect(parseAtTime('9/26 15:37', 2026)).toBe(new Date(2026, 8, 26, 15, 37).getTime());
+    expect(parseAtTime('随便写的', 2026)).toBeUndefined();
+  });
+});

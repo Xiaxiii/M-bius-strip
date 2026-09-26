@@ -1,15 +1,24 @@
 <script setup lang="ts">
 /** 积分账本页（CLAUDE.md 第三期） */
 import { computed } from 'vue';
-import { getInitBalance, state } from '../../app';
-import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/ledger';
+import { getInitBalance, playerLevel, state } from '../../app';
+import { computeBalance, isPendingClearance, KILL_THRESHOLDS, runningBalances } from '../../core/ledger';
 import { getChat } from '../../st/context';
 
 const chat = computed(() => getChat());
 const initBal = computed(() => getInitBalance(chat.value));
 const entries = computed(() => state.ledger);
 const balance = computed(() => computeBalance(initBal.value.value, entries.value));
-const level = computed(() => state.pack?.level ?? 'D');
+/** 流水按时间倒序显示，每一笔带上记完之后的余额 */
+const rows = computed(() => {
+  const after = runningBalances(initBal.value.value, entries.value);
+  return entries.value.map((e, k) => ({ e, after: after[k] })).reverse();
+});
+// 玩家等级（校正或状态栏），不是副本等级
+const level = computed(() => {
+  void state.tick;
+  return playerLevel(chat.value);
+});
 const threshold = computed(() => KILL_THRESHOLDS[level.value]);
 const pending = computed(() => isPendingClearance(initBal.value.value, entries.value, threshold.value));
 const distToKill = computed(() => Math.max(0, threshold.value - balance.value));
@@ -67,18 +76,21 @@ function fmtTime(at: string) {
       <template v-if="entries.length">
         <ul class="rlzc-ledger-list">
           <li
-            v-for="e in [...entries].reverse()"
-            :key="`${e.mesIndex}-${e.delta}-${e.at}`"
+            v-for="(r, k) in rows"
+            :key="`${k}-${r.e.mesIndex}-${r.e.delta}-${r.e.at}`"
             class="rlzc-ledger-item"
           >
             <div class="rlzc-ledger-item-left">
-              <span class="rlzc-ledger-item-src">{{ e.source }}</span>
-              <span class="rlzc-ledger-item-time">{{ fmtTime(e.at) }}</span>
+              <span class="rlzc-ledger-item-src">{{ r.e.source }}</span>
+              <span class="rlzc-ledger-item-time">{{ fmtTime(r.e.at) }}</span>
             </div>
-            <span
-              class="rlzc-ledger-item-delta"
-              :class="e.delta >= 0 ? 'pos' : 'neg'"
-            >{{ fmtDelta(e.delta) }}</span>
+            <div class="rlzc-ledger-item-right">
+              <span
+                class="rlzc-ledger-item-delta"
+                :class="r.e.delta >= 0 ? 'pos' : 'neg'"
+              >{{ fmtDelta(r.e.delta) }}</span>
+              <span class="rlzc-ledger-item-after">余额 {{ fmtNum(r.after) }}</span>
+            </div>
           </li>
         </ul>
       </template>

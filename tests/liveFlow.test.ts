@@ -3,7 +3,9 @@ import {
   appendLiveTipSentence,
   buildLiveRecord,
   buildLiveView,
+  composeDanmaku,
   entryLiveOption,
+  finalizeLiveRecord,
   liveLedgerEntries,
   liveTipSentence,
   normalizeLiveMeta,
@@ -237,5 +239,46 @@ describe('事件检测的 hype / hurt', () => {
     expect(r.hype).toBe(72);
     expect(r.hurt).toBe(true);
     expect(parseSubResponse('{"state":{},"hype":150,"hurt":"false"}')).toMatchObject({ hype: 100, hurt: false });
+  });
+});
+
+describe('每轮弹幕 10–13 条（含 AI 生成的）', () => {
+  const line = (p: string, n: number) => Array.from({ length: n }, (_, i) => ({ name: '观众', text: `${p}${i}`, type: 'discuss' }));
+
+  it('没有 AI：本地池取目标条数', () => {
+    expect(composeDanmaku(null, line('本地', 13), 11)).toHaveLength(11);
+    expect(composeDanmaku([], line('本地', 13), 10)).toHaveLength(10);
+  });
+
+  it('AI 不足10条：全用上，本地补到目标条数', () => {
+    const r = composeDanmaku(line('AI', 6), line('本地', 13), 12);
+    expect(r).toHaveLength(12);
+    expect(r.slice(0, 6).every((d) => d.text.startsWith('AI'))).toBe(true);
+  });
+
+  it('AI 10–13条：只用 AI 的；超过13条截到13条', () => {
+    expect(composeDanmaku(line('AI', 11), line('本地', 13), 13).every((d) => d.text.startsWith('AI'))).toBe(true);
+    expect(composeDanmaku(line('AI', 11), line('本地', 13), 13)).toHaveLength(11);
+    expect(composeDanmaku(line('AI', 20), line('本地', 13), 10)).toHaveLength(13);
+  });
+
+  it('没有 AI 的轮次一轮 10–13 条；等 AI 的轮次先不出 feed，合成后打赏夹在中间', () => {
+    const pool = Array.from({ length: 40 }, (_, i) => ({ type: 'discuss', text: `池${i}` }));
+    for (let t = 0; t < 20; t++) {
+      const n = buildLiveRecord(input({ pool, rand: Math.random })).feed.filter((f) => f.t === 'msg').length;
+      expect(n).toBeGreaterThanOrEqual(10);
+      expect(n).toBeLessThanOrEqual(13);
+    }
+    const wait = buildLiveRecord(input({ pool, awaitAi: true, text: '他从台阶上摔下来，重伤昏迷。' }));
+    expect(wait.feed).toEqual([]);
+    expect(wait.pending?.local.length).toBe(13);
+    const done = finalizeLiveRecord(wait, line('AI', 4), 100, Math.random);
+    const msgs = done.feed.filter((f) => f.t === 'msg');
+    expect(msgs.length).toBe(wait.pending!.target);
+    expect(msgs.filter((f) => f.text.startsWith('AI'))).toHaveLength(4);
+    expect(done.feed.filter((f) => f.t === 'tip').length).toBe(wait.pending!.tips.length);
+    expect(done.feed[0].t).toBe('msg');
+    expect(done.feed.map((f) => f.id)).toEqual(done.feed.map((_, k) => 100 + k));
+    expect(done.pending).toBeUndefined();
   });
 });
