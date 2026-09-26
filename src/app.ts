@@ -23,7 +23,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, parsePlayerLevelFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
+import { LEDGER_META_KEY, mergeByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, parsePlayerLevelFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -47,6 +47,8 @@ import {
   buildLiveRecord,
   buildLiveView,
   entryLiveOption,
+  finalizeLiveRecord,
+  roundHurt,
   LIVE_META_KEY,
   liveLedgerEntries,
   liveOf,
@@ -82,7 +84,18 @@ export interface Settings {
   /** 副API「记录员」（CLAUDE.md 14） */
   subApi: SubApiSettings;
   /** 设置页可折叠卡片的展开状态（CLAUDE.md 11.13） */
-  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean; accountFix: boolean; rolesDebug: boolean; live: boolean };
+  cardCollapsed: {
+    depths: boolean;
+    subApi: boolean;
+    genericCaps: boolean;
+    accountFix: boolean;
+    rolesDebug: boolean;
+    live: boolean;
+    /** 调试页：<副本> 核对、手动操作记录、本次注入 */
+    auditDebug: boolean;
+    manualDebug: boolean;
+    injectionDebug: boolean;
+  };
   /** 直播（第三期b） */
   live: LiveSettings;
 }
@@ -131,7 +144,7 @@ const DEFAULT_SETTINGS: Settings = {
   panelDisplay: 'panel',
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
   subApi: structuredClone(DEFAULT_SUB_API),
-  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true, live: true },
+  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true, live: true, auditDebug: true, manualDebug: true, injectionDebug: true },
   live: { ...DEFAULT_LIVE },
 };
 
@@ -196,6 +209,9 @@ export function loadSettings(): void {
       accountFix: (saved.cardCollapsed as any)?.accountFix ?? true,
       rolesDebug: (saved.cardCollapsed as any)?.rolesDebug ?? true,
       live: (saved.cardCollapsed as any)?.live ?? true,
+      auditDebug: (saved.cardCollapsed as any)?.auditDebug ?? true,
+      manualDebug: (saved.cardCollapsed as any)?.manualDebug ?? true,
+      injectionDebug: (saved.cardCollapsed as any)?.injectionDebug ?? true,
     },
     live: normalizeLiveSettings(saved.live),
   };
@@ -265,14 +281,20 @@ function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
     if (msg.is_user || msg.is_system) continue;
     const entries = msg.extra?.rlzc?.ledger;
     if (!Array.isArray(entries)) continue;
-    for (const e of entries) result.push({ ...e, mesIndex: i });
+    const t = [msg.send_date, msg.gen_finished].map((v) => (v instanceof Date ? v.getTime() : Date.parse(String(v ?? '')))).find((x) => Number.isFinite(x));
+    for (const e of entries) result.push({ ...e, mesIndex: i, ts: t });
   }
-  // 追加手动调整条目（不绑定楼层，mesIndex = -1）
+  // 手动调整（不绑定楼层，mesIndex = -1）按时间排进去
   const meta = readLedgerMeta();
-  for (const a of meta.adjust ?? []) {
-    result.push({ delta: a.amount, source: `手动：${a.note}`, type: 'manual', at: a.at, mesIndex: -1 });
-  }
-  return result;
+  const manual: LedgerDisplayEntry[] = (meta.adjust ?? []).map((a) => ({
+    delta: a.amount,
+    source: `手动：${a.note}`,
+    type: 'manual',
+    at: a.at,
+    mesIndex: -1,
+    ts: a.ts ?? parseAtTime(a.at),
+  }));
+  return mergeByTime(result, manual);
 }
 
 /** 获取初始余额：优先用已保存的 init，否则从最近的 <状态栏> 读取，找不到用 1000 */
@@ -410,11 +432,9 @@ export function deleteLedgerEntry(mesIndex: number): void {
 export function debugAdjustLedger(amount: number, note: string): void {
   const meta = readLedgerMeta();
   const at = formatTime(undefined);
-  const adjust = [...(meta.adjust ?? []), { amount, note, at }];
+  const adjust = [...(meta.adjust ?? []), { amount, note, at, ts: Date.now() }];
   writeLedgerMeta({ ...meta, adjust });
-  // adjust 条目作为一条虚拟流水追加到 state.ledger（mesIndex = -1 标识手动）
-  const entry: LedgerDisplayEntry = { delta: amount, source: `手动：${note}`, type: 'manual', at, mesIndex: -1 };
-  state.ledger = [...state.ledger, entry];
+  state.ledger = replayLedger(getChat());
 }
 
 /** 账户校正：追加一笔流水（改动会进流水，标注「手动」；不需要调试模式） */
@@ -1198,6 +1218,7 @@ export function onChatChanged(): void {
   state.lastInjection = EMPTY_INJECTION;
   clearInjection();
   releaseAll();
+  finalizePendingLive();
   state.ledger = replayLedger(getChat());
   refresh();
   checkGreeting();
@@ -1285,6 +1306,16 @@ export function applyLive(index: number, type?: string): void {
   const left = progress?.roundsLeft;
   const phaseSwitch = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(msg.mes ?? ''));
   const eventIds = new Set((pack?.events ?? []).filter((e) => e.kind !== 'directive').map((e) => e.id));
+  // AI 弹幕：每 N 轮一次，关键事件那轮加一次（阶段切换、有人受伤或死亡、注入事件判定已发生）
+  const genAi = shouldGenAiDanmaku({
+    aiSource: state.settings.live.source === 'ai',
+    subOn: subEnabled(),
+    roundInShow: before.length + 1,
+    freq: state.settings.live.freq,
+    phaseSwitch,
+    hurt: roundHurt(String(msg.mes ?? ''), sub),
+    eventDone: !!snap.sub && !snap.sub.skipped && (snap.sub.events ?? []).some((e) => e.status === 'done'),
+  });
   const rec = buildLiveRecord({
     show,
     scope,
@@ -1307,17 +1338,8 @@ export function applyLive(index: number, type?: string): void {
     recentTexts: recentFeedTexts(chat.slice(0, index)),
     firstId: maxFeedId(chat, meta) + 1,
     settle: settlement ? { died, tipsBefore: showTipTotal(chat.slice(0, index), show) } : undefined,
+    awaitAi: genAi,
     rand: Math.random,
-  });
-  // AI 弹幕：每 N 轮一次，关键事件那轮加一次（阶段切换、有人受伤或死亡、注入事件判定已发生）
-  const genAi = shouldGenAiDanmaku({
-    aiSource: state.settings.live.source === 'ai',
-    subOn: subEnabled(),
-    roundInShow: before.length + 1,
-    freq: state.settings.live.freq,
-    phaseSwitch,
-    hurt: rec.hurt,
-    eventDone: !!snap.sub && !snap.sub.skipped && (snap.sub.events ?? []).some((e) => e.status === 'done'),
   });
   if (genAi) rec.ai = { ok: false, pending: true };
   const at = formatTime(msg.send_date ?? msg.gen_finished ?? undefined);
@@ -1329,7 +1351,9 @@ export function applyLive(index: number, type?: string): void {
   writeLiveMeta(meta);
   state.ledger = replayLedger(getChat());
   state.tick++;
-  scheduleFeed(rec.feed, true);
+  // 打赏已记账；要等 AI 弹幕的轮次，弹幕和打赏等 AI 返回后一起放出
+  if (rec.feed.length) scheduleFeed(rec.feed, true);
+  else notifyLive();
   if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined);
 }
 
@@ -1366,23 +1390,42 @@ function startAiDanmaku(index: number, instanceName?: string): void {
     });
 }
 
-/** 生成的弹幕并入这一轮的弹幕，id 从当前最大值继续递增，一起按节奏放出 */
+/**
+ * AI 弹幕返回（或失败）后合成这一轮：先用 AI 的，不足10条用本地池补到 10–13 条，超过13条截到13条；
+ * 失败时只用本地池。id 从当前最大值继续递增，一起按节奏放出。
+ */
 function writeAiDanmaku(index: number, key: string, list: AiDanmaku[], error: string | null, ms: number): void {
   if (subKey(index) !== key) return; // 这一楼已被删改、滑动
   const chat = getChat();
   const msg = chat[index];
   const rec = liveOf(msg);
-  if (!rec || !msg.extra?.rlzc) return;
+  if (!rec?.pending || !msg.extra?.rlzc) return;
   const meta = readLiveMeta();
-  let id = maxFeedId(chat, meta);
-  const items = list.map((d) => ({ id: ++id, t: 'msg' as const, name: d.name, text: d.text, amount: 0, net: 0 }));
-  const next = { ...rec, feed: [...rec.feed, ...items], ai: error ? { ok: false, error, ms } : { ok: true, count: items.length, ms } };
+  const done = finalizeLiveRecord(rec, error ? null : list, maxFeedId(chat, meta) + 1, Math.random);
+  const aiUsed = error ? 0 : Math.min(list.length, 13);
+  const next = { ...done, ai: error ? { ok: false, error, ms } : { ok: true, count: aiUsed, ms } };
   msg.extra.rlzc = plain({ ...msg.extra.rlzc, live: next });
-  meta.seq = Math.max(meta.seq, id);
+  meta.seq = Math.max(meta.seq, ...next.feed.map((f) => f.id));
   writeLiveMeta(meta);
   state.tick++;
-  if (items.length) scheduleFeed(items);
-  else notifyLive();
+  scheduleFeed(next.feed, true);
+}
+
+/** 切换聊天、刷新页面时：还在等 AI 弹幕的楼层（请求已丢失）只用本地池合成 */
+function finalizePendingLive(): void {
+  const chat = getChat();
+  let changed = false;
+  for (const m of chat) {
+    const rec = liveOf(m);
+    if (!rec?.pending || !m.extra?.rlzc) continue;
+    const meta = readLiveMeta();
+    const done = finalizeLiveRecord(rec, null, maxFeedId(chat, meta) + 1, Math.random);
+    m.extra.rlzc = plain({ ...m.extra.rlzc, live: { ...done, ai: { ok: false, error: '没有等到结果' } } });
+    meta.seq = Math.max(meta.seq, ...done.feed.map((f) => f.id));
+    writeLiveMeta(meta);
+    changed = true;
+  }
+  if (changed) saveMeta();
 }
 
 function startViewers(): number {

@@ -166,6 +166,8 @@ export interface LedgerEntry {
 /** 账本流水的展示形态（重放时附加消息下标，仅用于 UI 撤销） */
 export interface LedgerDisplayEntry extends LedgerEntry {
   mesIndex: number;
+  /** 记账时间（毫秒），用来把手动调整按时间排进流水；读不到时为 undefined */
+  ts?: number;
 }
 
 /** chatMetadata.rlzc_ledger 的存储结构（CLAUDE.md 第三期） */
@@ -173,7 +175,7 @@ export interface LedgerMeta {
   /** 初始余额（来自状态栏读取或手动设置） */
   init?: { value: number; source: string; at: string };
   /** 手动补录的调整条目（不对应具体消息楼层） */
-  adjust?: { amount: number; note: string; at: string }[];
+  adjust?: { amount: number; note: string; at: string; ts?: number }[];
   /** 待生效的等级/位格校正（CLAUDE.md 甲二.2） */
   fix?: { level?: string; rank?: string; at: string; afterIndex: number };
 }

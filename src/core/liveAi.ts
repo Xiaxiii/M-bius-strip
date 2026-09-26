@@ -120,7 +120,7 @@ export function parseDanmakuResponse(raw: string): AiDanmaku[] {
       name: typeof d.name === 'string' && d.name.trim() ? d.name.trim().slice(0, 16) : '匿名',
       text: d.text.trim(),
     }))
-    .slice(0, 12);
+    .slice(0, 13);
   if (!out.length) throw new SubFormatError('返回的弹幕为空');
   return out;
 }
