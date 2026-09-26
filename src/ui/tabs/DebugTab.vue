@@ -4,6 +4,7 @@ import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSe
 import type { Snapshot } from '../../packs/types';
 import { getChat } from '../../st/context';
 import { formatState, latestSubState } from '../../core/subapi';
+import { liveOf, type LiveRecord } from '../../core/liveFlow';
 
 const editable = computed(() => state.settings.debug);
 const phaseSel = ref('');
@@ -63,6 +64,31 @@ const subView = computed(() => {
     record,
   };
 });
+
+/** 直播：每楼的精彩度、热度、人数、打赏明细、AI 弹幕结果（最近60楼） */
+const liveRows = computed(() => {
+  void state.tick;
+  const chat = getChat();
+  const rows: { index: number; rec: LiveRecord }[] = [];
+  for (let i = chat.length - 1; i >= 0 && rows.length < 60; i--) {
+    const rec = liveOf(chat[i]);
+    if (rec) rows.push({ index: i, rec });
+  }
+  return rows;
+});
+
+function tipCell(rec: LiveRecord): string {
+  const parts = rec.feed.filter((f) => f.t === 'tip').map((f) => `${f.name} ${f.amount}→${f.net}`);
+  if (rec.revoke) parts.push(`撤回 −${rec.revoke}`);
+  return parts.join('；');
+}
+
+function aiCell(rec: LiveRecord): string {
+  const ai = rec.ai;
+  if (!ai) return '';
+  if (ai.pending) return '生成中…';
+  return ai.ok ? `${ai.count}条（${ai.ms}ms）` : `失败：${ai.error ?? ''}`;
+}
 
 const MARK = { done: '✓', missed: '✗', void: '–' } as const;
 function subCell(snap: Snapshot): string {
@@ -210,5 +236,22 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
       </details>
       <button class="rlzc-btn ghost" :disabled="!editable" @click="abandonSession">删除副本会话</button>
     </template>
+
+    <details v-if="liveRows.length" class="rlzc-card">
+      <summary>直播（每楼，最近60条）</summary>
+      <table class="rlzc-table">
+        <thead><tr><th>楼</th><th>精彩度</th><th>热度</th><th>人数</th><th>打赏</th><th>AI弹幕</th></tr></thead>
+        <tbody>
+          <tr v-for="row in liveRows" :key="row.index" :class="{ 'rlzc-row-warn': row.rec.ai && !row.rec.ai.ok && !row.rec.ai.pending }">
+            <td>{{ row.index }}{{ row.rec.scope === 'corridor' ? '·回廊' : '' }}</td>
+            <td>{{ row.rec.hype }}{{ row.rec.hurt ? '·伤' : '' }}</td>
+            <td>{{ row.rec.heat }}</td>
+            <td>{{ row.rec.viewers }}</td>
+            <td>{{ tipCell(row.rec) }}</td>
+            <td>{{ aiCell(row.rec) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
   </div>
 </template>

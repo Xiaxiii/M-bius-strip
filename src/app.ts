@@ -6,7 +6,8 @@ import type { ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from '
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, type Injection } from './core/injector';
+import { buildDanmakuPrompt, callDanmakuWithRetry, formatLiveInjection, pickSamples, shouldGenAiDanmaku, type AiDanmaku } from './core/liveAi';
 import {
   buildSubPrompt,
   callWithRetry,
@@ -69,7 +70,7 @@ import { notifyLive, releaseAll, scheduleFeed } from './st/liveApi';
 export const SETTINGS_KEY = 'rlzc';
 
 export interface Settings {
-  depths: { token: number; progress: number; turn: number; ledger: number };
+  depths: { token: number; progress: number; turn: number; ledger: number; live: number };
   ball: { x: number | null; y: number | null };
   showBall: boolean;
   debug: boolean;
@@ -122,7 +123,7 @@ export const DEFAULT_SUB_API: SubApiSettings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
-  depths: { token: 4, progress: 4, turn: 0, ledger: 4 },
+  depths: { token: 4, progress: 4, turn: 0, ledger: 4, live: 4 },
   ball: { x: null, y: null },
   showBall: true,
   debug: false,
@@ -578,6 +579,11 @@ function injectFor(type: string | undefined): void {
     if (sentence) ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
   }
   if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
+  // 直播：弹幕传给主AI（默认关）；没在播时不注入
+  if (state.settings.live.injectToAI) {
+    const liveText = formatLiveInjection(liveView(new Set(), chat));
+    if (liveText) setPrompt(KEY_LIVE, liveText, d.live, false);
+  }
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
@@ -1271,6 +1277,7 @@ export function applyLive(index: number, type?: string): void {
   const settlement = scope === 'instance' && progress?.endIndex === index && progress.endedBy === 'tag' ? detectSettlement(msg.mes) : null;
   const died = !!settlement && ['死亡', '阵亡'].includes(String(settlement.result ?? '').trim());
   const left = progress?.roundsLeft;
+  const phaseSwitch = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(msg.mes ?? ''));
   const eventIds = new Set((pack?.events ?? []).filter((e) => e.kind !== 'directive').map((e) => e.id));
   const rec = buildLiveRecord({
     show,
@@ -1282,7 +1289,7 @@ export function applyLive(index: number, type?: string): void {
     roundsInShow: before.length,
     text: String(msg.mes ?? ''),
     hasEvents: (snap.injected ?? []).some((id) => eventIds.has(id)),
-    hasPhaseSwitch: /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(msg.mes ?? '')),
+    hasPhaseSwitch: phaseSwitch,
     sub,
     isEnd: scope === 'instance' && !!left && left.y > 0 && left.x < left.y * 0.1,
     phaseId: scope === 'instance' ? progress?.perMessage[index]?.phase : undefined,
@@ -1296,6 +1303,17 @@ export function applyLive(index: number, type?: string): void {
     settle: settlement ? { died, tipsBefore: showTipTotal(chat.slice(0, index), show) } : undefined,
     rand: Math.random,
   });
+  // AI 弹幕：每 N 轮一次，关键事件那轮加一次（阶段切换、有人受伤或死亡、注入事件判定已发生）
+  const genAi = shouldGenAiDanmaku({
+    aiSource: state.settings.live.source === 'ai',
+    subOn: subEnabled(),
+    roundInShow: before.length + 1,
+    freq: state.settings.live.freq,
+    phaseSwitch,
+    hurt: rec.hurt,
+    eventDone: !!snap.sub && !snap.sub.skipped && (snap.sub.events ?? []).some((e) => e.status === 'done'),
+  });
+  if (genAi) rec.ai = { ok: false, pending: true };
   const at = formatTime(msg.send_date ?? msg.gen_finished ?? undefined);
   const others = (snap.ledger ?? []).filter((e) => e.type !== 'tip');
   const ledger = [...others, ...liveLedgerEntries(rec, at)];
@@ -1306,6 +1324,59 @@ export function applyLive(index: number, type?: string): void {
   state.ledger = replayLedger(getChat());
   state.tick++;
   scheduleFeed(rec.feed);
+  if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined);
+}
+
+/**
+ * AI 生成弹幕：独立调用，接口跟随「副本事件检测」卡的来源与预设。
+ * 输入只有最近两轮AI正文（去掉面板与机器标签）、副本名、在场角色名、风格说明、10条语气示例。
+ * 失败重试1次；仍失败不弹窗、不阻塞，这一轮只用本地池，调试页记原因。不受「等检测完再写下一轮」影响。
+ */
+function startAiDanmaku(index: number, instanceName?: string): void {
+  const chat = getChat();
+  const key = subKey(index);
+  const target = subTarget();
+  if (!target) {
+    writeAiDanmaku(index, key, [], '副本事件检测没有设置好', 0);
+    return;
+  }
+  const texts: string[] = [];
+  for (let i = index; i >= 0 && texts.length < 2; i--) if (isCountable(chat[i])) texts.unshift(String(chat[i].mes ?? ''));
+  const raw = buildDanmakuPrompt({
+    scene: instanceName ?? '回廊',
+    texts,
+    cast: parseCastNames(latestStatusBar(chat, index + 1), String((ctx() as any).name1 ?? '')),
+    samples: pickSamples(POOL.pool, 10, Math.random),
+  });
+  const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
+  const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
+  const t0 = Date.now();
+  callDanmakuWithRetry((m) => callSub(target, m, { temperature: 0.9 }), messages, 1)
+    .then((list) => writeAiDanmaku(index, key, list, null, Date.now() - t0))
+    .catch((e) => {
+      log('AI 弹幕生成失败', e);
+      const detail = String((e as Error)?.message ?? e).slice(0, 120);
+      writeAiDanmaku(index, key, [], `${classifyError(e)}：${detail}`, Date.now() - t0);
+    });
+}
+
+/** 生成的弹幕并入这一轮的弹幕，id 从当前最大值继续递增，一起按节奏放出 */
+function writeAiDanmaku(index: number, key: string, list: AiDanmaku[], error: string | null, ms: number): void {
+  if (subKey(index) !== key) return; // 这一楼已被删改、滑动
+  const chat = getChat();
+  const msg = chat[index];
+  const rec = liveOf(msg);
+  if (!rec || !msg.extra?.rlzc) return;
+  const meta = readLiveMeta();
+  let id = maxFeedId(chat, meta);
+  const items = list.map((d) => ({ id: ++id, t: 'msg' as const, name: d.name, text: d.text, amount: 0, net: 0 }));
+  const next = { ...rec, feed: [...rec.feed, ...items], ai: error ? { ok: false, error, ms } : { ok: true, count: items.length, ms } };
+  msg.extra.rlzc = plain({ ...msg.extra.rlzc, live: next });
+  meta.seq = Math.max(meta.seq, id);
+  writeLiveMeta(meta);
+  state.tick++;
+  if (items.length) scheduleFeed(items);
+  else notifyLive();
 }
 
 function startViewers(): number {
@@ -1317,11 +1388,11 @@ function startViewers(): number {
 }
 
 /** RLZC_LIVE.get() */
-export function liveView(hidden: ReadonlySet<number>): LiveView {
+export function liveView(hidden: ReadonlySet<number>, chat: ChatMessage[] = getChat()): LiveView {
   const session = state.session;
   const inInstance = session?.status === 'active';
   return buildLiveView(
-    getChat(),
+    chat,
     readLiveMeta(),
     {
       inInstance,

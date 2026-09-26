@@ -10,7 +10,9 @@ export const KEY_TURN = 'rlzc_turn';
 export const KEY_STATE = 'rlzc_state';
 /** 积分账本注入（第三期，回廊和副本内都注入） */
 export const KEY_LEDGER = 'rlzc_ledger';
-export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE, KEY_LEDGER] as const;
+/** 直播：在看人数与最近弹幕（默认不注入，设置里开「弹幕传给AI」才注入） */
+export const KEY_LIVE = 'rlzc_live';
+export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE, KEY_LEDGER, KEY_LIVE] as const;
 
 export interface Injection {
   token: string;

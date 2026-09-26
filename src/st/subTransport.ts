@@ -66,7 +66,7 @@ function responseError(status: number, data: any): Error {
   return err;
 }
 
-async function callPreset(p: SubPreset, m: SubMessages, signal: AbortSignal, maxTokens = MAX_TOKENS): Promise<string> {
+async function callPreset(p: SubPreset, m: SubMessages, signal: AbortSignal, maxTokens = MAX_TOKENS, temperature = 0.2): Promise<string> {
   const res = await fetch('/api/backends/chat-completions/generate', {
     method: 'POST',
     headers: headers(),
@@ -79,7 +79,7 @@ async function callPreset(p: SubPreset, m: SubMessages, signal: AbortSignal, max
         { role: 'user', content: m.user },
       ],
       max_tokens: maxTokens,
-      temperature: 0.2,
+      temperature,
       stream: false,
     }),
   });
@@ -103,11 +103,11 @@ async function callMain(m: SubMessages): Promise<string> {
 }
 
 /** 按设置发一次请求，返回模型的原始文字 */
-export function callSub(target: SubTarget, m: SubMessages): Promise<string> {
+export function callSub(target: SubTarget, m: SubMessages, opts: { temperature?: number } = {}): Promise<string> {
   return withTimeout(target.timeoutMs, (signal) => {
     if (target.source === 'main') return callMain(m);
     if (!target.preset) throw new Error('没有选择接口预设');
-    return callPreset(target.preset, m, signal);
+    return callPreset(target.preset, m, signal, MAX_TOKENS, opts.temperature ?? 0.2);
   });
 }
 

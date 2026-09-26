@@ -240,6 +240,13 @@
 }
 .rlzc-toggle.on span { transform: translateX(18px); }
 .rlzc-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* 开关本体 26px 高，点击区域向上下扩到 44px */
+.rlzc-toggle::after { content: ''; position: absolute; left: 0; right: 0; top: -10px; bottom: -10px; }
+.rlzc-segsrc button:disabled { opacity: 0.4; cursor: not-allowed; }
+.rlzc-segsrc button:disabled:hover { background: none; color: var(--muted); }
+.rlzc-option-row-stack { flex-direction: column; align-items: stretch; gap: 0; }
+.rlzc-option-row-stack .rlzc-segsrc { margin: 6px 0 2px; }
+.rlzc-option-row-stack .rlzc-hint { margin: 2px 0 0; }
 
 /* 密钥提示（设置页底部） */
 .rlzc-key-notice { text-align: center; margin-top: 4px; }

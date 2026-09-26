@@ -65,7 +65,7 @@ export interface LiveRecord {
   /** 死亡撤回的数额（正数），本局打赏合计 */
   revoke?: number;
   /** AI 生成弹幕的结果（第4段） */
-  ai?: { ok: boolean; count?: number; error?: string; ms?: number };
+  ai?: { ok: boolean; pending?: boolean; count?: number; error?: string; ms?: number };
 }
 
 export interface SysItem extends FeedItem {
