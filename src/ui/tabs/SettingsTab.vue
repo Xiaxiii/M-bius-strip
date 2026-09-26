@@ -7,7 +7,7 @@ import SubApiCard from '../SubApiCard.vue';
 const errors = ref<string[]>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
 
-function setDepth(key: 'token' | 'progress' | 'turn', e: Event) {
+function setDepth(key: 'token' | 'progress' | 'turn' | 'ledger', e: Event) {
   const v = Math.max(0, Math.min(10000, Math.floor(Number((e.target as HTMLInputElement).value) || 0)));
   state.settings.depths[key] = v;
   saveSettings();
@@ -70,6 +70,10 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
         <label class="rlzc-field">
           <span>本轮指令<small>本轮事件与时限写法</small></span>
           <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
+        </label>
+        <label class="rlzc-field">
+          <span>账户<small>积分余额与清算状态</small></span>
+          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.ledger" @change="setDepth('ledger', $event)" />
         </label>
       </div>
     </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSetRoles, debugSetRound, state } from '../../app';
+import { abandonSession, currentRoles, debugAdjustLedger, debugRemoveAction, debugSetInitBalance, debugSetPhase, debugSetRoles, debugSetRound, getInitBalance, state } from '../../app';
+import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/ledger';
 import { getChat } from '../../st/context';
 import type { Snapshot } from '../../packs/types';
 import { formatState, latestSubState } from '../../core/subapi';
@@ -91,6 +92,27 @@ function applyRound() {
 function saveRoles() {
   debugSetRoles({ ...roles });
 }
+
+const adjustAmount = ref<number | null>(null);
+const adjustNote = ref('');
+const initBalInput = ref<number | null>(null);
+const currentInitBal = computed(() => getInitBalance(getChat()));
+const ledgerBalance = computed(() => computeBalance(currentInitBal.value.value, state.ledger));
+const ledgerPending = computed(() => {
+  if (!state.pack) return false;
+  return isPendingClearance(currentInitBal.value.value, state.ledger, KILL_THRESHOLDS[state.pack.level]);
+});
+function applyAdjust() {
+  if (adjustAmount.value === null) return;
+  debugAdjustLedger(adjustAmount.value, adjustNote.value || '手动调整');
+  adjustAmount.value = null;
+  adjustNote.value = '';
+}
+function applyInitBal() {
+  if (initBalInput.value === null) return;
+  debugSetInitBalance(initBalInput.value);
+  initBalInput.value = null;
+}
 const json = (v: unknown) => JSON.stringify(v, null, 2);
 </script>
 
@@ -124,6 +146,21 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
           <span>{{ r }}</span><input v-model="roles[r]" class="rlzc-input" :disabled="!editable" placeholder="未登记" />
         </label>
         <button class="rlzc-btn small" :disabled="!editable" @click="saveRoles">保存登记</button>
+      </div>
+
+      <div class="rlzc-card">
+        <h4>手动调整账本</h4>
+        <div class="rlzc-row">
+          <input v-model.number="adjustAmount" type="number" class="rlzc-input" placeholder="金额（可正可负）" :disabled="!editable" />
+          <input v-model="adjustNote" class="rlzc-input" placeholder="备注" :disabled="!editable" />
+          <button class="rlzc-btn small" :disabled="!editable || adjustAmount === null" @click="applyAdjust">追加流水</button>
+        </div>
+        <div class="rlzc-row" style="margin-top:4px">
+          <input v-model.number="initBalInput" type="number" class="rlzc-input" placeholder="修改初始余额" :disabled="!editable" />
+          <button class="rlzc-btn small" :disabled="!editable || initBalInput === null" @click="applyInitBal">设置初始余额</button>
+        </div>
+        <p class="rlzc-hint">当前初始余额：{{ currentInitBal.value }}（{{ currentInitBal.source }}）</p>
+        <p v-if="ledgerBalance !== null" class="rlzc-hint">账本余额：{{ ledgerBalance }}　待清算：{{ ledgerPending ? '是' : '否' }}</p>
       </div>
 
       <div class="rlzc-card">

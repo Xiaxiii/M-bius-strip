@@ -166,17 +166,16 @@ describe('isPendingClearance', () => {
   });
 });
 
-// ───────────── formatBalanceInjection ─────────────
+// ───────────── formatBalanceInjection（第二部分：新注入格式）─────────────
 
-describe('formatBalanceInjection', () => {
-  it('正常余额无待清算', () => {
-    const text = formatBalanceInjection(1500, false);
-    expect(text).toContain('当前积分：1500');
-    expect(text).not.toContain('待清算');
+describe('buildLedgerInjection 格式', () => {
+  it('无待清算时输出简短格式', () => {
+    const text = formatBalanceInjection(2600, false);
+    expect(text).toBe('［账户·仅供AI］积分：2600　待清算：无');
   });
 
-  it('待清算时包含说明', () => {
-    const text = formatBalanceInjection(200, true);
+  it('待清算时包含斩杀线说明', () => {
+    const text = formatBalanceInjection(120, true);
     expect(text).toContain('待清算：是');
   });
 });

@@ -122,9 +122,11 @@ export function formatEntry(e: LedgerDisplayEntry): string {
   return `${e.at} ${sign}${e.delta}${src}`;
 }
 
-/** 生成注入给 AI 的积分余额文本 */
+/** 生成注入给 AI 的积分账户文本（格式：「［账户·仅供AI］积分：X　待清算：X」）
+ *  供 app.ts 的 buildLedgerInjection 调用；第二参数需外部传入，便于单元测试 */
 export function formatBalanceInjection(balance: number, pendingClearance: boolean): string {
-  const lines = [`当前积分：${balance}`];
-  if (pendingClearance) lines.push('待清算：是（余额曾低于斩杀线，需通关结算后清除）');
-  return `［积分余额·仅供AI］\n${lines.join('\n')}`;
+  if (!pendingClearance) {
+    return `［账户·仅供AI］积分：${balance}　待清算：无`;
+  }
+  return `［账户·仅供AI］积分：${balance}　待清算：是`;
 }

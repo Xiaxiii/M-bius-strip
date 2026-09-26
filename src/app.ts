@@ -6,7 +6,7 @@ import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_BALANCE, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, type Injection } from './core/injector';
 import {
   buildSubPrompt,
   callWithRetry,
@@ -22,7 +22,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, formatBalanceInjection, isPendingClearance, KILL_THRESHOLDS } from './core/ledger';
+import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -45,7 +45,7 @@ import { confirmBox, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toas
 export const SETTINGS_KEY = 'rlzc';
 
 export interface Settings {
-  depths: { token: number; progress: number; turn: number };
+  depths: { token: number; progress: number; turn: number; ledger: number };
   ball: { x: number | null; y: number | null };
   showBall: boolean;
   debug: boolean;
@@ -81,7 +81,7 @@ export const DEFAULT_SUB_API: SubApiSettings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
-  depths: { token: 4, progress: 4, turn: 0 },
+  depths: { token: 4, progress: 4, turn: 0, ledger: 4 },
   ball: { x: null, y: null },
   showBall: true,
   debug: false,
@@ -133,7 +133,7 @@ export function loadSettings(): void {
   const merged: Settings = {
     ...structuredClone(DEFAULT_SETTINGS),
     ...saved,
-    depths: { ...DEFAULT_SETTINGS.depths, ...(saved.depths ?? {}) },
+    depths: { ...DEFAULT_SETTINGS.depths, ...(saved.depths ?? {}), ledger: (saved.depths as any)?.ledger ?? DEFAULT_SETTINGS.depths.ledger },
     ball: { ...DEFAULT_SETTINGS.ball, ...(saved.ball ?? {}) },
     customPacks: Array.isArray(saved.customPacks) ? saved.customPacks.filter((p) => validatePack(p).length === 0) : [],
     panelDisplay: saved.panelDisplay === 'statusbar' ? 'statusbar' : 'panel',
@@ -193,7 +193,7 @@ function writeLedgerMeta(meta: LedgerMeta): void {
   saveMeta();
 }
 
-/** 从聊天记录重放积分流水，删楼/滑动自动回滚 */
+/** 从聊天记录重放积分流水，删楼/滑动自动回滚；同时追加 LedgerMeta.adjust 手动条目 */
 function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
   const result: LedgerDisplayEntry[] = [];
   for (let i = 0; i < chat.length; i++) {
@@ -202,6 +202,11 @@ function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
     const entries = msg.extra?.rlzc?.ledger;
     if (!Array.isArray(entries)) continue;
     for (const e of entries) result.push({ ...e, mesIndex: i });
+  }
+  // 追加手动调整条目（不绑定楼层，mesIndex = -1）
+  const meta = readLedgerMeta();
+  for (const a of meta.adjust ?? []) {
+    result.push({ delta: a.amount, source: `手动：${a.note}`, type: 'manual', at: a.at, mesIndex: -1 });
   }
   return result;
 }
@@ -224,6 +229,24 @@ export function getInitBalance(chat: ChatMessage[]): { value: number; source: st
     }
   }
   return { value: 1000, source: '默认值' };
+}
+
+/** 构建账户注入文本（回廊和副本内都注入；没有任何账本数据时返回空字符串）*/
+function buildLedgerInjection(chat: ChatMessage[]): string {
+  const meta = readLedgerMeta();
+  const hasData = meta.init != null || state.ledger.length > 0;
+  if (!hasData) return '';
+  const initBal = getInitBalance(chat);
+  const balance = computeBalance(initBal.value, state.ledger);
+  const level = state.pack?.level ?? 'D';
+  const threshold = KILL_THRESHOLDS[level];
+  const pending = isPendingClearance(initBal.value, state.ledger, threshold);
+  if (!pending) {
+    return `［账户·仅供AI］积分：${balance}　待清算：无`;
+  }
+  const diff = threshold - balance;
+  const diffText = diff > 0 ? `距斩杀线${diff}分（${level}级斩杀线${threshold}）` : `斩杀线${threshold}，当前${balance}`;
+  return `［账户·仅供AI］积分：${balance}　待清算：已标记，${diffText}。商城价格上浮30%，下一场副本为清算副本。`;
 }
 
 /** 扫描消息正文里的 <积分变动> 标签与结算奖励，写入该楼快照 */
@@ -270,6 +293,25 @@ export function deleteLedgerEntry(mesIndex: number): void {
   if (!msg?.extra?.rlzc) return;
   msg.extra.rlzc = plain({ ...msg.extra.rlzc, ledger: undefined });
   saveMeta();
+  state.ledger = replayLedger(getChat());
+}
+
+/** 调试：手动添加一笔积分调整（存入 LedgerMeta.adjust，不绑定具体楼层） */
+export function debugAdjustLedger(amount: number, note: string): void {
+  const meta = readLedgerMeta();
+  const at = formatTime(undefined);
+  const adjust = [...(meta.adjust ?? []), { amount, note, at }];
+  writeLedgerMeta({ ...meta, adjust });
+  // adjust 条目作为一条虚拟流水追加到 state.ledger（mesIndex = -1 标识手动）
+  const entry: LedgerDisplayEntry = { delta: amount, source: `手动：${note}`, type: 'manual', at, mesIndex: -1 };
+  state.ledger = [...state.ledger, entry];
+}
+
+/** 调试：修改初始余额 */
+export function debugSetInitBalance(value: number): void {
+  const meta = readLedgerMeta();
+  const at = formatTime(undefined);
+  writeLedgerMeta({ ...meta, init: { value, source: '手动设置', at } });
   state.ledger = replayLedger(getChat());
 }
 
@@ -397,14 +439,9 @@ function injectFor(type: string | undefined): void {
   if (inj.progress) setPrompt(KEY_PROGRESS, inj.progress, d.progress, false);
   if (inj.turn) setPrompt(KEY_TURN, inj.turn, d.turn, false);
   if (inj.state) setPrompt(KEY_STATE, inj.state, d.progress, false);
-  // 积分余额注入（第三期，副本进行中时注入）
-  if (pack && session?.status === 'active') {
-    const initBal = getInitBalance(chat);
-    const balance = computeBalance(initBal.value, state.ledger);
-    const level = pack.level;
-    const pending = isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[level]);
-    setPrompt(KEY_BALANCE, formatBalanceInjection(balance, pending), d.progress, false);
-  }
+  // 积分账本注入（第三期，回廊和副本内都注入；没有任何账本数据时不注入）
+  const ledgerText = buildLedgerInjection(chat);
+  if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
@@ -895,8 +932,33 @@ export function onMessageReceived(index: number, type?: string): void {
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);
 
-  // 积分账本：扫描本楼的 <积分变动> 标签
+  // 积分账本：扫描本楼的 <积分变动> 标签，并核对状态栏积分
   processLedgerTags(index);
+  auditLedgerBalance(index);
+}
+
+/** 收到AI消息后，核对状态栏积分与账本余额；不一致时在调试页标黄 */
+function auditLedgerBalance(index: number): void {
+  const chat = getChat();
+  const msg = chat[index];
+  if (!msg || msg.is_user || !msg.mes) return;
+  // 读状态栏积分
+  const STATUS_RE = /<状态栏>([\s\S]*?)<\/状态栏>/;
+  const m = STATUS_RE.exec(msg.mes);
+  if (!m) return;
+  const statusBalance = parseBalanceFromStatusBar(m[1]);
+  if (statusBalance === null) return;
+  // 本楼记账后的余额
+  const initBal = getInitBalance(chat);
+  const balance = computeBalance(initBal.value, replayLedger(chat));
+  if (statusBalance !== balance) {
+    log(`积分核对不符（楼层${index}）：状态栏 ${statusBalance}，账本 ${balance}`);
+    // 写入快照的警告字段，调试页据此标黄
+    if (msg.extra?.rlzc) {
+      msg.extra.rlzc = plain({ ...msg.extra.rlzc, ledgerMismatch: { status: statusBalance, ledger: balance } });
+      saveMeta();
+    }
+  }
 }
 
 export function onChatChanged(): void {
