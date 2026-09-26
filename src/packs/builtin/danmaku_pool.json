@@ -1,0 +1,1014 @@
+{
+ "说明": [
+  "回廊直播弹幕池。第三期b，交给扩展作为数据文件。",
+  "type：praise夸赞 bless祝福 discuss讨论 cold泼冷水 envy嫉妒 smear抹黑 rumor造谣。",
+  "scope：不写=副本和回廊都可用；inst=只在副本内；corr=只在回廊直播。",
+  "when：不写=任何时候；open=开播后前两轮；hurt=本轮有人受伤或死亡（只在这时出）；calm=本轮精彩度低（只在这时出）；end=剩余轮次不足一成。",
+  "templates 里的 {who} 填当前在场、知道名字的角色（不含主播），没有可填的就不用这类。",
+  "弹幕对主播一律不用性别代词。",
+  "文字内容由作者维护，不要改写。"
+ ],
+ "version": 1,
+ "names": [
+  "小满",
+  "好运来",
+  "路过的D级",
+  "一个路过的A级",
+  "数据党",
+  "理性讨论",
+  "吃瓜",
+  "夜班保安",
+  "柠檬汁",
+  "阿柒",
+  "东区卖菜的",
+  "西区摆摊的",
+  "情报社小号",
+  "失眠第三天",
+  "房租交不起",
+  "今天也在种土豆",
+  "匿名",
+  "光幕前的咸鱼",
+  "刚通关的C级",
+  "排行榜第九十九",
+  "不想进本",
+  "炸鱼被抓过",
+  "黑市常客",
+  "训练场打卡人",
+  "药剂站熬夜班",
+  "公会跑腿的",
+  "一个路人",
+  "今日份幸运",
+  "积分快见底",
+  "刚升B级",
+  "看录像长大的",
+  "老观众",
+  "新来的",
+  "别叫我大佬",
+  "蹲一个结算",
+  "白开水",
+  "半夜不睡",
+  "又是我",
+  "打工人",
+  "瓜田里的猹",
+  "慢热",
+  "晴天",
+  "阿九",
+  "十一",
+  "小绿",
+  "老周",
+  "木子",
+  "苏苏",
+  "七七",
+  "一颗橘子",
+  "等天亮",
+  "北风",
+  "不吃香菜",
+  "没抢到号",
+  "退役S级",
+  "D级万岁",
+  "靠运气活着",
+  "只看不说",
+  "路过打个卡",
+  "最后一排"
+ ],
+ "pool": [
+  {
+   "type": "praise",
+   "text": "这反应速度，不愧是主播"
+  },
+  {
+   "type": "praise",
+   "text": "冷静得不像第一次进这个级别的本",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "刚才那个判断绝了"
+  },
+  {
+   "type": "praise",
+   "text": "主播脑子转得是真快"
+  },
+  {
+   "type": "praise",
+   "text": "这波我服"
+  },
+  {
+   "type": "praise",
+   "text": "稳，太稳了"
+  },
+  {
+   "type": "praise",
+   "text": "讲道理，换我早慌了"
+  },
+  {
+   "type": "praise",
+   "text": "这就是高手吗"
+  },
+  {
+   "type": "praise",
+   "text": "看得我手心出汗，主播还面不改色"
+  },
+  {
+   "type": "praise",
+   "text": "刚才那句话说得漂亮"
+  },
+  {
+   "type": "praise",
+   "text": "细节拉满，这都注意到了",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "主播说话好有条理"
+  },
+  {
+   "type": "praise",
+   "text": "这才叫会玩"
+  },
+  {
+   "type": "praise",
+   "text": "就冲这个判断，关注了"
+  },
+  {
+   "type": "praise",
+   "text": "有勇有谋"
+  },
+  {
+   "type": "praise",
+   "text": "比上一个主播强多了"
+  },
+  {
+   "type": "praise",
+   "text": "队友拖后腿，主播一个人在带",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "这个位置站得好",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "我宣布这是本周最佳直播"
+  },
+  {
+   "type": "praise",
+   "text": "主播镇定得让我也镇定了"
+  },
+  {
+   "type": "praise",
+   "text": "那个眼神，太帅了"
+  },
+  {
+   "type": "praise",
+   "text": "心态真好，要是我早骂人了"
+  },
+  {
+   "type": "praise",
+   "text": "这个节奏把握得好",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "看出来是做过功课的"
+  },
+  {
+   "type": "praise",
+   "text": "夸一句，主播是真的会说话"
+  },
+  {
+   "type": "praise",
+   "text": "一句话就把场面稳住了",
+   "scope": "inst"
+  },
+  {
+   "type": "praise",
+   "text": "这份胆量我是没有"
+  },
+  {
+   "type": "praise",
+   "text": "学到了，下次我也这么干"
+  },
+  {
+   "type": "praise",
+   "text": "主播好好看"
+  },
+  {
+   "type": "praise",
+   "text": "声音也好听，别下播"
+  },
+  {
+   "type": "praise",
+   "text": "越看越顺眼"
+  },
+  {
+   "type": "praise",
+   "text": "这气质，放在哪个本都是主角"
+  },
+  {
+   "type": "praise",
+   "text": "能屈能伸，佩服"
+  },
+  {
+   "type": "praise",
+   "text": "刚才那一下我起立鼓掌"
+  },
+  {
+   "type": "praise",
+   "text": "不慌不忙，高手风范"
+  },
+  {
+   "type": "praise",
+   "text": "回廊里也过得这么讲究，爱了",
+   "scope": "corr"
+  },
+  {
+   "type": "praise",
+   "text": "主播种的菜看着真水灵",
+   "scope": "corr"
+  },
+  {
+   "type": "praise",
+   "text": "这手艺可以去西区摆摊了",
+   "scope": "corr"
+  },
+  {
+   "type": "praise",
+   "text": "休整都不忘练，怪不得排名涨",
+   "scope": "corr"
+  },
+  {
+   "type": "praise",
+   "text": "房间收拾得真干净",
+   "scope": "corr"
+  },
+  {
+   "type": "bless",
+   "text": "祝平安出来！！",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "主播一定要活着回来",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "保佑保佑"
+  },
+  {
+   "type": "bless",
+   "text": "冲啊主播！"
+  },
+  {
+   "type": "bless",
+   "text": "这把一定能过",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "结算见！",
+   "scope": "inst",
+   "when": "end"
+  },
+  {
+   "type": "bless",
+   "text": "平安就好，评级无所谓",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "等你出来请你吃饭",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "好运加满，霉运退散"
+  },
+  {
+   "type": "bless",
+   "text": "希望别再有人出事了",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "bless",
+   "text": "主播加油，我在东区超市门口看着呢"
+  },
+  {
+   "type": "bless",
+   "text": "撑住，天总会亮的",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "别怕，我们都在"
+  },
+  {
+   "type": "bless",
+   "text": "好人一生平安"
+  },
+  {
+   "type": "bless",
+   "text": "这波过了就能歇歇了",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "下个副本抽个简单的吧",
+   "scope": "corr"
+  },
+  {
+   "type": "bless",
+   "text": "注意安全，别逞强",
+   "scope": "inst"
+  },
+  {
+   "type": "bless",
+   "text": "保重身体啊",
+   "when": "hurt"
+  },
+  {
+   "type": "bless",
+   "text": "受伤了先处理伤口",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "bless",
+   "text": "一路绿灯，一路绿灯"
+  },
+  {
+   "type": "bless",
+   "text": "今天也要好好活着"
+  },
+  {
+   "type": "bless",
+   "text": "愿系统对你手下留情"
+  },
+  {
+   "type": "bless",
+   "text": "别哭，我们陪你",
+   "when": "hurt"
+  },
+  {
+   "type": "bless",
+   "text": "等着看你升级"
+  },
+  {
+   "type": "bless",
+   "text": "最后一口气了，撑住",
+   "scope": "inst",
+   "when": "end"
+  },
+  {
+   "type": "bless",
+   "text": "最后几轮，稳住！",
+   "scope": "inst",
+   "when": "end"
+  },
+  {
+   "type": "bless",
+   "text": "主播今天早点睡",
+   "scope": "corr"
+  },
+  {
+   "type": "bless",
+   "text": "休息好了再进本",
+   "scope": "corr"
+  },
+  {
+   "type": "bless",
+   "text": "希望房租别涨",
+   "scope": "corr"
+  },
+  {
+   "type": "bless",
+   "text": "回廊安稳一天是一天",
+   "scope": "corr"
+  },
+  {
+   "type": "discuss",
+   "text": "现在什么情况，我刚进来"
+  },
+  {
+   "type": "discuss",
+   "text": "来了来了，这把什么本",
+   "scope": "inst",
+   "when": "open"
+  },
+  {
+   "type": "discuss",
+   "text": "开播了开播了",
+   "when": "open"
+  },
+  {
+   "type": "discuss",
+   "text": "新主播？没见过",
+   "when": "open"
+  },
+  {
+   "type": "discuss",
+   "text": "先别吵，看局势"
+  },
+  {
+   "type": "discuss",
+   "text": "我觉得还有线索没找到",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "按往届，这本不好打",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "有没有人看过这本的录像",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "黑市那种录像别全信"
+  },
+  {
+   "type": "discuss",
+   "text": "这队人各怀心思吧",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "现在还剩几个人？",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "前面说的那个我也注意到了"
+  },
+  {
+   "type": "discuss",
+   "text": "理性讨论，别带节奏"
+  },
+  {
+   "type": "discuss",
+   "text": "我赌主播能过"
+  },
+  {
+   "type": "discuss",
+   "text": "有人算过这把能拿什么评吗",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "主播刚才是不是话里有话"
+  },
+  {
+   "type": "discuss",
+   "text": "这个人说话一直留半句",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "注意细节，刚才那句不对劲",
+   "scope": "inst"
+  },
+  {
+   "type": "discuss",
+   "text": "我在光幕前面站了一个小时了"
+  },
+  {
+   "type": "discuss",
+   "text": "回放能看吗，刚才没看清"
+  },
+  {
+   "type": "discuss",
+   "text": "有没有懂的解释一下"
+  },
+  {
+   "type": "discuss",
+   "text": "你们看出来了吗，我看不出来"
+  },
+  {
+   "type": "discuss",
+   "text": "这一段要是剪进录像会卖爆"
+  },
+  {
+   "type": "discuss",
+   "text": "楼上别剧透……虽然我也不知道"
+  },
+  {
+   "type": "discuss",
+   "text": "好无聊，快进",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "主播在发呆吗",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "挂着当背景音了",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "去泡了碗面回来还是这样",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "这么安静，要出事了吧",
+   "scope": "inst",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "暴风雨前的宁静",
+   "scope": "inst",
+   "when": "calm"
+  },
+  {
+   "type": "discuss",
+   "text": "啊啊啊有人倒了",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "discuss",
+   "text": "刚才那一下我没敢看",
+   "when": "hurt"
+  },
+  {
+   "type": "discuss",
+   "text": "又走一个……",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "discuss",
+   "text": "手在抖吧，换我也抖",
+   "when": "hurt"
+  },
+  {
+   "type": "discuss",
+   "text": "快结束了吧",
+   "scope": "inst",
+   "when": "end"
+  },
+  {
+   "type": "discuss",
+   "text": "结算前最后几轮最容易出事",
+   "scope": "inst",
+   "when": "end"
+  },
+  {
+   "type": "discuss",
+   "text": "今天种什么？",
+   "scope": "corr"
+  },
+  {
+   "type": "discuss",
+   "text": "回廊直播也有人看，我服了我自己",
+   "scope": "corr"
+  },
+  {
+   "type": "discuss",
+   "text": "排行榜又变了，你们看了吗",
+   "scope": "corr"
+  },
+  {
+   "type": "discuss",
+   "text": "下个本打算报哪个？",
+   "scope": "corr"
+  },
+  {
+   "type": "cold",
+   "text": "别高兴太早"
+  },
+  {
+   "type": "cold",
+   "text": "我看悬"
+  },
+  {
+   "type": "cold",
+   "text": "这把凉了吧"
+  },
+  {
+   "type": "cold",
+   "text": "就这？"
+  },
+  {
+   "type": "cold",
+   "text": "也就一般"
+  },
+  {
+   "type": "cold",
+   "text": "运气好而已"
+  },
+  {
+   "type": "cold",
+   "text": "换个人也能做到"
+  },
+  {
+   "type": "cold",
+   "text": "等着翻车吧"
+  },
+  {
+   "type": "cold",
+   "text": "这种判断，迟早出事"
+  },
+  {
+   "type": "cold",
+   "text": "看了半天也没看出哪里厉害"
+  },
+  {
+   "type": "cold",
+   "text": "太磨叽了"
+  },
+  {
+   "type": "cold",
+   "text": "说了这么多，一点用没有"
+  },
+  {
+   "type": "cold",
+   "text": "我押失败",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "评级能拿个C就不错了",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "队友再强也带不动",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "太自信了，这本专治自信",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "往届比这厉害的都栽在这",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "真以为能全身而退？",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "没意思，我换台了"
+  },
+  {
+   "type": "cold",
+   "text": "这操作也就D级水平"
+  },
+  {
+   "type": "cold",
+   "text": "这不是冷静，是反应慢"
+  },
+  {
+   "type": "cold",
+   "text": "别吹了，看结算",
+   "scope": "inst"
+  },
+  {
+   "type": "cold",
+   "text": "种菜有什么好看的",
+   "scope": "corr"
+  },
+  {
+   "type": "cold",
+   "text": "回廊里直播，缺积分缺疯了吧",
+   "scope": "corr"
+  },
+  {
+   "type": "cold",
+   "text": "天天摆烂，等着被清算吧",
+   "scope": "corr"
+  },
+  {
+   "type": "envy",
+   "text": "凭什么这种人能上热门"
+  },
+  {
+   "type": "envy",
+   "text": "我直播三天没人看，这也行？"
+  },
+  {
+   "type": "envy",
+   "text": "长得好就是占便宜"
+  },
+  {
+   "type": "envy",
+   "text": "又是这种运气好的"
+  },
+  {
+   "type": "envy",
+   "text": "打赏的是托吧"
+  },
+  {
+   "type": "envy",
+   "text": "我也想有人给我刷"
+  },
+  {
+   "type": "envy",
+   "text": "这点本事也能拿打赏"
+  },
+  {
+   "type": "envy",
+   "text": "同样是D级进来的，差距怎么这么大"
+  },
+  {
+   "type": "envy",
+   "text": "分到这么好的队友，换我我也行",
+   "scope": "inst"
+  },
+  {
+   "type": "envy",
+   "text": "酸了，真的酸了"
+  },
+  {
+   "type": "envy",
+   "text": "一进来就有大佬带，羡慕不来",
+   "scope": "inst"
+  },
+  {
+   "type": "envy",
+   "text": "这热度买的吧"
+  },
+  {
+   "type": "envy",
+   "text": "凭什么打赏都往这边跑"
+  },
+  {
+   "type": "envy",
+   "text": "我通关都没人看"
+  },
+  {
+   "type": "envy",
+   "text": "排行榜上那些名字，一半靠运气"
+  },
+  {
+   "type": "envy",
+   "text": "有人天生就是被偏爱的"
+  },
+  {
+   "type": "envy",
+   "text": "我要是有这配置，比这还稳",
+   "scope": "inst"
+  },
+  {
+   "type": "envy",
+   "text": "住的地方比我好十倍",
+   "scope": "corr"
+  },
+  {
+   "type": "envy",
+   "text": "在回廊都能开播赚积分，羡慕哭了",
+   "scope": "corr"
+  },
+  {
+   "type": "envy",
+   "text": "这菜种得，比我吃的还好",
+   "scope": "corr"
+  },
+  {
+   "type": "smear",
+   "text": "装什么装"
+  },
+  {
+   "type": "smear",
+   "text": "演的吧，这反应太假了"
+  },
+  {
+   "type": "smear",
+   "text": "人设立得挺好"
+  },
+  {
+   "type": "smear",
+   "text": "会说话而已，真打起来就露馅"
+  },
+  {
+   "type": "smear",
+   "text": "这种人最会卖队友"
+  },
+  {
+   "type": "smear",
+   "text": "表面客气，背地里肯定算计着"
+  },
+  {
+   "type": "smear",
+   "text": "我不信真这么淡定"
+  },
+  {
+   "type": "smear",
+   "text": "刚才那个眼神，心虚了吧"
+  },
+  {
+   "type": "smear",
+   "text": "故意卖惨要打赏"
+  },
+  {
+   "type": "smear",
+   "text": "刚才明明可以救，没救",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "smear",
+   "text": "自私，只顾自己",
+   "scope": "inst"
+  },
+  {
+   "type": "smear",
+   "text": "队友出事了还这么冷静，冷血吧",
+   "scope": "inst",
+   "when": "hurt"
+  },
+  {
+   "type": "smear",
+   "text": "这是在拿别人探路",
+   "scope": "inst"
+  },
+  {
+   "type": "smear",
+   "text": "满嘴好话，一件实事没干"
+  },
+  {
+   "type": "smear",
+   "text": "装新人的吧"
+  },
+  {
+   "type": "smear",
+   "text": "就是冲着打赏来的"
+  },
+  {
+   "type": "smear",
+   "text": "看着就不是好人"
+  },
+  {
+   "type": "smear",
+   "text": "别被骗了，都是算计好的"
+  },
+  {
+   "type": "smear",
+   "text": "下了本也要直播，吃相难看",
+   "scope": "corr"
+  },
+  {
+   "type": "smear",
+   "text": "种田人设，炒给谁看",
+   "scope": "corr"
+  },
+  {
+   "type": "rumor",
+   "text": "听说积分是借的，真的假的"
+  },
+  {
+   "type": "rumor",
+   "text": "肯定是抱大腿进来的"
+  },
+  {
+   "type": "rumor",
+   "text": "我朋友说在黑市见过这人"
+  },
+  {
+   "type": "rumor",
+   "text": "据说上一个本是被人带飞的"
+  },
+  {
+   "type": "rumor",
+   "text": "听说欠了一屁股积分"
+  },
+  {
+   "type": "rumor",
+   "text": "有人说是买了攻略才敢进的",
+   "scope": "inst"
+  },
+  {
+   "type": "rumor",
+   "text": "听说被公会踢出来过"
+  },
+  {
+   "type": "rumor",
+   "text": "情报社的人说，这人被抽查过"
+  },
+  {
+   "type": "rumor",
+   "text": "有人在西区看到这人跟黑市贩子说话"
+  },
+  {
+   "type": "rumor",
+   "text": "据说是走后门才越级的"
+  },
+  {
+   "type": "rumor",
+   "text": "听说上个本的队友都没出来"
+  },
+  {
+   "type": "rumor",
+   "text": "有人说这人其实早就待清算了"
+  },
+  {
+   "type": "rumor",
+   "text": "我听说排名是刷的"
+  },
+  {
+   "type": "rumor",
+   "text": "传闻进本前偷偷买了防抽查道具"
+  },
+  {
+   "type": "rumor",
+   "text": "听说有人专门花钱买这人的录像"
+  }
+ ],
+ "templates": [
+  {
+   "type": "praise",
+   "text": "{who}刚才那下好帅"
+  },
+  {
+   "type": "praise",
+   "text": "{who}挺靠谱的"
+  },
+  {
+   "type": "bless",
+   "text": "{who}别出事啊"
+  },
+  {
+   "type": "bless",
+   "text": "心疼{who}"
+  },
+  {
+   "type": "bless",
+   "text": "{who}还好吗",
+   "when": "hurt"
+  },
+  {
+   "type": "discuss",
+   "text": "{who}靠谱吗，我看不透"
+  },
+  {
+   "type": "discuss",
+   "text": "{who}又不说话了"
+  },
+  {
+   "type": "discuss",
+   "text": "{who}刚才那句什么意思"
+  },
+  {
+   "type": "discuss",
+   "text": "盯紧{who}"
+  },
+  {
+   "type": "discuss",
+   "text": "{who}和主播配合挺默契"
+  },
+  {
+   "type": "discuss",
+   "text": "{who}好像知道点什么"
+  },
+  {
+   "type": "cold",
+   "text": "{who}也就那样"
+  },
+  {
+   "type": "cold",
+   "text": "指望{who}？算了吧"
+  },
+  {
+   "type": "envy",
+   "text": "凭什么{who}也有人喜欢"
+  },
+  {
+   "type": "smear",
+   "text": "我就说{who}有问题"
+  },
+  {
+   "type": "smear",
+   "text": "{who}在演"
+  },
+  {
+   "type": "smear",
+   "text": "{who}那个表情不对劲"
+  },
+  {
+   "type": "rumor",
+   "text": "听说{who}在排行榜上挂过名"
+  },
+  {
+   "type": "rumor",
+   "text": "我听说{who}以前出过事"
+  },
+  {
+   "type": "rumor",
+   "text": "{who}跟主播是不是早就认识"
+  }
+ ]
+}

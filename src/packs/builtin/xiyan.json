@@ -1,32 +1,80 @@
 {
-  "id": "xiyan",
-  "name": "喜宴",
-  "version": "1.1.0",
-  "level": "D",
-  "token": "【副本进行中：喜宴】",
-  "legacyKeys": [],
-  "detect": {
-    "briefingName": "喜宴",
-    "patterns": [
-      "6=5\\+1"
-    ]
+ "id": "xiyan",
+ "name": "喜宴",
+ "version": "1.1.1",
+ "level": "D",
+ "token": "【副本进行中：喜宴】",
+ "legacyKeys": [],
+ "detect": {
+  "briefingName": "喜宴",
+  "patterns": [
+   "6=5\\+1"
+  ]
+ },
+ "time": {
+  "type": "countdown",
+  "minutesPerRound": 3
+ },
+ "remaining": {
+  "type": "fromPanel"
+ },
+ "deadline": "至天亮",
+ "phases": [
+  {
+   "id": "main",
+   "name": "喜宴",
+   "cap": 160,
+   "next": null
+  }
+ ],
+ "events": [],
+ "docs": [],
+ "danmaku": [
+  {
+   "type": "praise",
+   "text": "D级本就是好，还管饭",
+   "when": "open"
   },
-  "time": {
-    "type": "countdown",
-    "minutesPerRound": 3
+  {
+   "type": "discuss",
+   "text": "村民也太热情了吧，热情得我发毛"
   },
-  "remaining": {
-    "type": "fromPanel"
+  {
+   "type": "discuss",
+   "text": "新人在你们之中？谁结婚啊"
   },
-  "deadline": "至天亮",
-  "phases": [
-    {
-      "id": "main",
-      "name": "喜宴",
-      "cap": 160,
-      "next": null
-    }
-  ],
-  "events": [],
-  "docs": []
+  {
+   "type": "discuss",
+   "text": "那身喜服别穿！别穿！"
+  },
+  {
+   "type": "discuss",
+   "text": "唢呐一响，我鸡皮疙瘩起来了"
+  },
+  {
+   "type": "bless",
+   "text": "撑到天亮就行吧？应该吧？"
+  },
+  {
+   "type": "discuss",
+   "text": "六个人，谁心里有鬼"
+  },
+  {
+   "type": "discuss",
+   "text": "吃席吃出一身冷汗"
+  },
+  {
+   "type": "discuss",
+   "text": "红纸贴满墙，看久了眼花"
+  },
+  {
+   "type": "cold",
+   "text": "D级而已，大佬们别笑"
+  },
+  {
+   "type": "discuss",
+   "text": "喜事别变丧事啊……",
+   "when": "hurt"
+  }
+ ]
 }

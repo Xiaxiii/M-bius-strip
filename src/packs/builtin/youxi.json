@@ -1,32 +1,80 @@
 {
-  "id": "youxi",
-  "name": "游戏",
-  "version": "1.1.0",
-  "level": "C",
-  "token": "【副本进行中：游戏】",
-  "legacyKeys": [],
-  "detect": {
-    "briefingName": "游戏",
-    "patterns": [
-      "(本次|此次)副本《游戏》"
-    ]
+ "id": "youxi",
+ "name": "游戏",
+ "version": "1.1.1",
+ "level": "C",
+ "token": "【副本进行中：游戏】",
+ "legacyKeys": [],
+ "detect": {
+  "briefingName": "游戏",
+  "patterns": [
+   "(本次|此次)副本《游戏》"
+  ]
+ },
+ "time": {
+  "type": "countdown",
+  "minutesPerRound": 8
+ },
+ "remaining": {
+  "type": "fromPanel"
+ },
+ "deadline": "至结算",
+ "phases": [
+  {
+   "id": "main",
+   "name": "游戏",
+   "cap": 90,
+   "next": null
+  }
+ ],
+ "events": [],
+ "docs": [],
+ "danmaku": [
+  {
+   "type": "discuss",
+   "text": "小时候玩的游戏，现在要拿命玩",
+   "when": "open"
   },
-  "time": {
-    "type": "countdown",
-    "minutesPerRound": 8
+  {
+   "type": "discuss",
+   "text": "喊数抱团，手快有手慢无"
   },
-  "remaining": {
-    "type": "fromPanel"
+  {
+   "type": "bless",
+   "text": "数清人数啊！"
   },
-  "deadline": "至结算",
-  "phases": [
-    {
-      "id": "main",
-      "name": "游戏",
-      "cap": 90,
-      "next": null
-    }
-  ],
-  "events": [],
-  "docs": []
+  {
+   "type": "discuss",
+   "text": "那群小孩一直在看这边"
+  },
+  {
+   "type": "discuss",
+   "text": "十二个人，最后能剩几个"
+  },
+  {
+   "type": "discuss",
+   "text": "三场游戏，现在第几场了"
+  },
+  {
+   "type": "cold",
+   "text": "C级本，老观众都说别小看"
+  },
+  {
+   "type": "discuss",
+   "text": "村子里太安静了，就小孩在笑"
+  },
+  {
+   "type": "bless",
+   "text": "别掉队，跟紧人"
+  },
+  {
+   "type": "smear",
+   "text": "拉人凑数的时候，真看出人品了"
+  },
+  {
+   "type": "discuss",
+   "text": "又少了一个……",
+   "when": "hurt"
+  }
+ ]
 }

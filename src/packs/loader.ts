@@ -120,6 +120,33 @@ export function validatePack(input: unknown): string[] {
     else if (d.image !== undefined && typeof d.image !== 'string') errors.push(`docs[${i}].image 必须是文本`);
   });
 
+  if (p.danmaku !== undefined) {
+    if (!Array.isArray(p.danmaku)) {
+      errors.push('danmaku 必须是数组');
+    } else {
+      p.danmaku.forEach((d: any, i: number) => {
+        if (!d || typeof d.type !== 'string' || typeof d.text !== 'string') {
+          errors.push(`danmaku[${i}] 需要 type 和 text`);
+          return;
+        }
+        if (d.when !== undefined && typeof d.when !== 'string') errors.push(`danmaku[${i}].when 必须是文本`);
+        if (d.scope !== undefined && typeof d.scope !== 'string') errors.push(`danmaku[${i}].scope 必须是文本`);
+        if (d.phase !== undefined) {
+          if (!Array.isArray(d.phase) || d.phase.some((x: unknown) => typeof x !== 'string')) {
+            errors.push(`danmaku[${i}].phase 必须是文本数组`);
+          } else {
+            // 非法 phase id 跳过并在控制台警告（不算格式错误）
+            d.phase.forEach((ph: string) => {
+              if (phaseIds.size > 0 && !phaseIds.has(ph)) {
+                console.warn(`[rlzc] danmaku[${i}] 的 phase "${ph}" 不在阶段表中，已跳过`);
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+
   return errors;
 }
 

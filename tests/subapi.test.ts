@@ -264,8 +264,8 @@ describe('提示词与状态注入', () => {
     expect(inj.state).toBe('［副本状态·仅供AI］\n概况：x');
   });
 
-  it('钟楼 1.3.0 带 stateFields，格式校验通过；类型不对时报错', () => {
-    expect(zhonglou.version).toBe('1.3.0');
+  it('钟楼 1.3.1 带 stateFields，格式校验通过；类型不对时报错', () => {
+    expect(zhonglou.version).toBe('1.3.1');
     expect(zhonglou.stateFields?.map((f) => f.key)).toEqual(['crank', 'watcher', 'positions', 'victim', 'clues', 'theories']);
     expect(validatePack(zhonglou)).toEqual([]);
     expect(validatePack({ ...zhonglou, id: 'x', stateFields: [{ key: 'a' }] }).join()).toContain('stateFields');

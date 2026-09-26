@@ -74,9 +74,9 @@ describe('内置包与 packs/ 同步', () => {
     for (const n of names) expect(built[`../src/packs/builtin/${n}`], n).toBe(src[`../packs/${n}`]);
   });
 
-  it('钟楼为 1.3.0，第三夜事件已更新', () => {
+  it('钟楼为 1.3.1，含 danmaku', () => {
     const zl = BUILTIN_PACKS.find((p) => p.id === 'zhonglou')!;
-    expect(zl.version).toBe('1.3.0');
+    expect(zl.version).toBe('1.3.1');
     expect(zl.events.find((e) => e.id === 'E27')!.text).toContain('成为钟守');
   });
 });

@@ -80,6 +80,16 @@ export interface Pack {
   casino?: boolean;
   /** 休整副本：没有评级、奖励和失败扣分；不算清算副本（CLAUDE.md 第16节） */
   rest?: boolean;
+  /** 副本专属弹幕（第三期直播）；phase 写了阶段 id 时只在这些阶段可抽 */
+  danmaku?: DanmakuItem[];
+}
+
+export interface DanmakuItem {
+  type: string;
+  text: string;
+  when?: string;
+  scope?: string;
+  phase?: string[];
 }
 
 /** 通用副本包的简报信息（名称、等级、目标、时限） */
