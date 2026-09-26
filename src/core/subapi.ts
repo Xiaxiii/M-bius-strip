@@ -25,6 +25,10 @@ export interface SubResult {
   events: SubEventCheck[];
   state: Record<string, unknown>;
   next: SubNextCheck[];
+  /** 直播精彩度：0–100 整数（不注入主AI；缺少不算失败） */
+  hype?: number;
+  /** 本轮正文是否有人受伤或死亡（不注入主AI；缺少不算失败） */
+  hurt?: boolean;
 }
 
 /** 存进 chat[i].extra.rlzc.sub 的记录 */
@@ -83,8 +87,9 @@ export function buildSubPrompt(input: SubInput): SubMessages {
     '2. 隐藏状态：在「上一轮状态」的基础上更新下列字段，只依据正文里已经发生的事实，没有变化就照抄上一轮：',
     ...fields.map((f) => `   - ${f.key}（${f.label}）：${f.hint}`),
     '3. 条件预判：逐条判断「下一轮事件」的条件现在是否仍成立（ok 为 true/false），附一句理由。',
+    '4. hype：0–100 整数，按本轮正文的紧张、冲突、转折打分；hurt：true/false，本轮正文是否有人受伤或死亡。这两项只写数字和真假，不写理由。',
     '只输出一个 JSON 对象，不要任何解释，格式：',
-    '{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],"state":{…},"next":[{"id":"E12","ok":true,"reason":"…"}]}',
+    '{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],"state":{…},"next":[{"id":"E12","ok":true,"reason":"…"}],"hype":50,"hurt":false}',
     '没有本轮事件时 events 为 []；没有下一轮事件时 next 为 []。',
   ].join('\n');
 
@@ -141,7 +146,12 @@ export function parseSubResponse(raw: string): SubResult {
   const next: SubNextCheck[] = (Array.isArray(data.next) ? data.next : [])
     .filter((n: any) => n && typeof n.id === 'string' && typeof n.ok === 'boolean')
     .map((n: any) => ({ id: n.id, ok: n.ok, reason: String(n.reason ?? '') }));
-  return { events, state: data.state, next };
+  const result: SubResult = { events, state: data.state, next };
+  const hype = typeof data.hype === 'number' ? data.hype : typeof data.hype === 'string' && data.hype.trim() !== '' ? Number(data.hype) : NaN;
+  if (Number.isFinite(hype)) result.hype = Math.max(0, Math.min(100, Math.round(hype)));
+  if (typeof data.hurt === 'boolean') result.hurt = data.hurt;
+  else if (data.hurt === 'true' || data.hurt === 'false') result.hurt = data.hurt === 'true';
+  return result;
 }
 
 // ───────────── 同一次生成只检测一次 ─────────────

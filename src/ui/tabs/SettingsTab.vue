@@ -5,6 +5,7 @@ import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/
 import { confirmBox, toast } from '../../st/context';
 import { getChat } from '../../st/context';
 import SubApiCard from '../SubApiCard.vue';
+import LiveCard from '../LiveCard.vue';
 
 const errors = ref<string[]>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -43,7 +44,7 @@ function applyLevelFix() {
   toast('success', '校正已保存，下一轮生成时写入状态栏。');
 }
 
-function setDepth(key: 'token' | 'progress' | 'turn' | 'ledger', e: Event) {
+function setDepth(key: 'token' | 'progress' | 'turn' | 'ledger' | 'live', e: Event) {
   const v = Math.max(0, Math.min(10000, Math.floor(Number((e.target as HTMLInputElement).value) || 0)));
   state.settings.depths[key] = v;
   saveSettings();
@@ -182,12 +183,19 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
             <span>账户<small>积分余额与清算状态</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.ledger" @change="setDepth('ledger', $event)" />
           </label>
+          <label class="rlzc-field">
+            <span>直播<small>在看人数与最近弹幕</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.live" @change="setDepth('live', $event)" />
+          </label>
         </div>
       </div>
     </div>
 
     <!-- 副本事件检测（SubApiCard 自带折叠） -->
     <SubApiCard />
+
+    <!-- 直播（LiveCard 自带折叠） -->
+    <LiveCard />
 
     <!-- 通用副本默认轮数上限（可折叠） -->
     <div class="rlzc-card rlzc-collapsible">

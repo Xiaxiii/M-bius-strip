@@ -6,7 +6,8 @@ import type { ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from '
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, type Injection } from './core/injector';
+import { buildDanmakuPrompt, callDanmakuWithRetry, formatLiveInjection, pickSamples, shouldGenAiDanmaku, type AiDanmaku } from './core/liveAi';
 import {
   buildSubPrompt,
   callWithRetry,
@@ -40,12 +41,36 @@ import {
 } from './core/session';
 import { HIDDEN_TAGS, hideTagsInAll as hideAllWith, hideTagsInMessage as hideOneWith } from './core/hideTags';
 import { auditPanels, type AuditResult } from './core/audit';
-import { confirmBox, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toast } from './st/context';
+import { confirmBox, confirmWithCheck, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toast } from './st/context';
+import {
+  appendLiveTipSentence,
+  buildLiveRecord,
+  buildLiveView,
+  entryLiveOption,
+  LIVE_META_KEY,
+  liveLedgerEntries,
+  liveOf,
+  maxFeedId,
+  normalizeLiveMeta,
+  parseCastNames,
+  latestStatusBar,
+  playerLevelOf,
+  recentFeedTexts,
+  showRecords,
+  showTipTotal,
+  SYS_TEXT,
+  type LiveMeta,
+  type LiveView,
+  type SysItem,
+} from './core/liveFlow';
+import { calcViewers, type PoolItem, type TemplateItem } from './core/live';
+import danmakuPool from './packs/builtin/danmaku_pool.json';
+import { notifyLive, releaseAll, scheduleFeed } from './st/liveApi';
 
 export const SETTINGS_KEY = 'rlzc';
 
 export interface Settings {
-  depths: { token: number; progress: number; turn: number; ledger: number };
+  depths: { token: number; progress: number; turn: number; ledger: number; live: number };
   ball: { x: number | null; y: number | null };
   showBall: boolean;
   debug: boolean;
@@ -57,8 +82,23 @@ export interface Settings {
   /** 副API「记录员」（CLAUDE.md 14） */
   subApi: SubApiSettings;
   /** 设置页可折叠卡片的展开状态（CLAUDE.md 11.13） */
-  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean; accountFix: boolean; rolesDebug: boolean };
+  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean; accountFix: boolean; rolesDebug: boolean; live: boolean };
+  /** 直播（第三期b） */
+  live: LiveSettings;
 }
+
+export interface LiveSettings {
+  /** 入场弹窗「开启直播」上次的选择 */
+  optIn: boolean;
+  /** 弹幕传给主AI */
+  injectToAI: boolean;
+  /** 弹幕来源：本地 / 本地+AI */
+  source: 'local' | 'ai';
+  /** AI 生成弹幕的频率：每 N 轮 */
+  freq: number;
+}
+
+export const DEFAULT_LIVE: LiveSettings = { optIn: false, injectToAI: false, source: 'local', freq: 3 };
 
 export interface SubApiSettings {
   /** 关闭 / 跟随主API / 自设API（接口预设） */
@@ -83,7 +123,7 @@ export const DEFAULT_SUB_API: SubApiSettings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
-  depths: { token: 4, progress: 4, turn: 0, ledger: 4 },
+  depths: { token: 4, progress: 4, turn: 0, ledger: 4, live: 4 },
   ball: { x: null, y: null },
   showBall: true,
   debug: false,
@@ -91,7 +131,8 @@ const DEFAULT_SETTINGS: Settings = {
   panelDisplay: 'panel',
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
   subApi: structuredClone(DEFAULT_SUB_API),
-  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true },
+  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true, live: true },
+  live: { ...DEFAULT_LIVE },
 };
 
 /** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
@@ -154,11 +195,24 @@ export function loadSettings(): void {
       genericCaps: (saved.cardCollapsed as any)?.genericCaps ?? true,
       accountFix: (saved.cardCollapsed as any)?.accountFix ?? true,
       rolesDebug: (saved.cardCollapsed as any)?.rolesDebug ?? true,
+      live: (saved.cardCollapsed as any)?.live ?? true,
     },
+    live: normalizeLiveSettings(saved.live),
   };
   all[SETTINGS_KEY] = merged;
   state.settings = merged;
   state.packs = allPacks(merged.customPacks);
+}
+
+export function normalizeLiveSettings(raw: Partial<LiveSettings> | undefined): LiveSettings {
+  const r = raw ?? {};
+  const freq = Math.floor(Number(r.freq));
+  return {
+    optIn: typeof r.optIn === 'boolean' ? r.optIn : DEFAULT_LIVE.optIn,
+    injectToAI: typeof r.injectToAI === 'boolean' ? r.injectToAI : DEFAULT_LIVE.injectToAI,
+    source: r.source === 'ai' ? 'ai' : 'local',
+    freq: Number.isFinite(freq) ? Math.max(1, Math.min(10, freq)) : DEFAULT_LIVE.freq,
+  };
 }
 
 export function saveSettings(): void {
@@ -265,11 +319,15 @@ function buildLedgerInjection(chat: ChatMessage[]): string {
   }
   const threshold = KILL_THRESHOLDS[level];
   const pending = isPendingClearance(initBal.value, state.ledger, threshold);
-  return formatBalanceInjection(balance, pending, level, threshold);
+  const text = formatBalanceInjection(balance, pending, level, threshold);
+  // 副本内直播：本局打赏副本内不可使用
+  const session = readSession();
+  if (session?.status === 'active' && session.live) return appendLiveTipSentence(text, showTipTotal(chat, session.id));
+  return text;
 }
 
 /** 扫描消息正文里的 <积分变动> 标签与结算奖励，写入该楼快照 */
-function processLedgerTags(index: number): void {
+function processLedgerTags(index: number, allowSettle = true): void {
   const chat = getChat();
   const msg = chat[index];
   if (!msg || msg.is_user) return;
@@ -283,7 +341,7 @@ function processLedgerTags(index: number): void {
     if (!parsed) continue;
     newEntries.push({ delta: parsed.delta, source: parsed.source, type: 'tag', at });
   }
-  const settlement = detectSettlement(text);
+  const settlement = allowSettle ? detectSettlement(text) : null;
   if (settlement && state.pack) {
     // 休整副本（rest: true）不计算结算奖惩（CLAUDE.md 第16节）
     if (!state.pack.rest) {
@@ -330,7 +388,9 @@ function processLedgerTags(index: number): void {
   if (newEntries.length || msg.extra?.rlzc?.ledger?.length) {
     msg.extra = msg.extra ?? {};
     const snap: Snapshot = msg.extra.rlzc ?? { phase: '', round: 0, injected: [] };
-    msg.extra.rlzc = plain({ ...snap, ledger: newEntries.length ? newEntries : undefined });
+    // 直播打赏与撤回（类型 tip）由直播流程写入，这里保留
+    const all = [...newEntries, ...(snap.ledger ?? []).filter((e) => e.type === 'tip')];
+    msg.extra.rlzc = plain({ ...snap, ledger: all.length ? all : undefined });
     saveMeta();
   }
   state.ledger = replayLedger(getChat());
@@ -468,7 +528,9 @@ export function refresh(): void {
   state.progress = c.progress;
   state.audit = c.audit;
   state.subLine = subStatusLine(chat, c.progress);
+  state.ledger = replayLedger(chat);
   state.tick++;
+  notifyLive();
 }
 
 export function currentRoles(): Record<string, string> | undefined {
@@ -517,6 +579,11 @@ function injectFor(type: string | undefined): void {
     if (sentence) ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
   }
   if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
+  // 直播：弹幕传给主AI（默认关）；没在播时不注入
+  if (state.settings.live.injectToAI) {
+    const liveText = formatLiveInjection(liveView(new Set(), chat));
+    if (liveText) setPrompt(KEY_LIVE, liveText, d.live, false);
+  }
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
@@ -578,16 +645,26 @@ function entrySearchStart(): number {
 /** 弹窗确认入场。点「否」会记入 chatMetadata.rlzc.declined，同一条消息不再询问 */
 async function askEntry(cand: EntryCandidate): Promise<void> {
   const { index, info } = cand;
-  const key = `${getChatId()}:${index}:${info.name}`;
+  const chatId = getChatId();
+  const key = `${chatId}:${index}:${info.name}`;
   if (askedEntry.has(key)) return;
   askedEntry.add(key);
   const text = cand.pack
     ? `检测到进入《${cand.pack.name}》，是否启用？`
     : `检测到进入《${info.name}》，是否启用？（未收录的副本，将使用通用副本包）`;
-  if (!(await confirmBox(text))) {
+  // 通用副本也可以直播，只是没有专属弹幕；disableLive 副本不显示勾选框
+  const opt = entryLiveOption(cand.pack ?? ({} as Pack), state.settings.live.optIn);
+  const answer = await confirmWithCheck(text, opt.show ? { label: '开启直播', checked: opt.checked } : null);
+  // 弹窗开着时玩家切到了别的聊天：这次回答不算，也不记拒绝（切回来会再问）
+  if (getChatId() !== chatId) {
+    askedEntry.delete(key);
+    return;
+  }
+  if (!answer.ok) {
     addDeclined(declineKey(index, info.name));
     return;
   }
+  if (opt.show) rememberLiveChoice(answer.checked);
   // 弹窗期间消息可能已被删改，重新确认
   const now = entryCandidateAt(getChat(), index, state.packs);
   if (!now || now.info.name !== info.name) {
@@ -600,7 +677,13 @@ async function askEntry(cand: EntryCandidate): Promise<void> {
     // 通用副本包：轮数上限在入场时确定并记入会话，之后改设置不影响进行中的副本
     briefing.rounds = genericTiming(info.limit, genericLevel(info), state.settings.genericCaps).rounds;
   }
-  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), index, briefing);
+  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), index, briefing, opt.show && answer.checked);
+}
+
+function rememberLiveChoice(checked: boolean): void {
+  if (state.settings.live.optIn === checked) return;
+  state.settings.live.optIn = checked;
+  saveSettings();
 }
 
 /**
@@ -622,10 +705,21 @@ export function onMessageSwiped(id: number): void {
   if (id === first) checkGreeting();
 }
 
-function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefing']): void {
+function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefing'], live = false): void {
   const chat = getChat();
   const msg = chat[entryIndex];
   const session = createSession(pack, entryIndex, briefing);
+  // 直播：进入任何副本时回廊直播自动结束；本局是否直播只看入场勾选框（disableLive 副本不直播）
+  const lm = readLiveMeta();
+  if (lm.corridor.on) {
+    lm.corridor.on = false;
+    pushSys(lm, lm.corridor.show, SYS_TEXT.enterOff);
+  }
+  if (live && !pack.disableLive) {
+    session.live = true;
+    pushSys(lm, session.id, SYS_TEXT.instanceOn);
+  }
+  writeLiveMeta(lm);
   // 入场确认时判定待清算（CLAUDE.md 补正5）：那一刻账户已标记待清算，就记 clearance: true
   if (!pack.rest) {
     const initBal = getInitBalance(chat);
@@ -670,8 +764,11 @@ export async function startManual(packId: string): Promise<void> {
   }
   const existing = readSession();
   if (existing?.status === 'active' && !(await confirmBox('当前已有进行中的副本，确定要替换吗？'))) return;
-  if (!(await confirmBox(`以最新一条AI回复作为《${pack.name}》的第1轮，确定进入吗？`))) return;
-  startSession(pack, idx, detectBriefing(chat[idx].mes) ?? { name: pack.name });
+  const opt = entryLiveOption(pack, state.settings.live.optIn);
+  const answer = await confirmWithCheck(`以最新一条AI回复作为《${pack.name}》的第1轮，确定进入吗？`, opt.show ? { label: '开启直播', checked: opt.checked } : null);
+  if (!answer.ok) return;
+  if (opt.show) rememberLiveChoice(answer.checked);
+  startSession(pack, idx, detectBriefing(chat[idx].mes) ?? { name: pack.name }, opt.show && answer.checked);
 }
 
 function addAction(action: ManualAction): void {
@@ -698,6 +795,11 @@ export async function skipToPhaseEnd(): Promise<void> {
 export async function endManually(): Promise<void> {
   if (!state.session || state.progress?.ended) return;
   if (!(await confirmBox('确定要手动结束当前副本吗？'))) return;
+  if (state.session.live) {
+    const lm = readLiveMeta();
+    pushSys(lm, state.session.id, SYS_TEXT.instanceOff);
+    writeLiveMeta(lm);
+  }
   addAction({ kind: 'end', atIndex: lastIndex() });
 }
 
@@ -807,13 +909,13 @@ function writeSub(index: number, key: string, record: SubRecord): void {
 }
 
 /** 收到AI消息后调用（MESSAGE_RECEIVED）：按设置决定是否整理这一楼 */
-function startSub(index: number, type?: string): void {
+function startSub(index: number, type?: string): Promise<void> | null {
   const chat = getChat();
   const progress = state.progress;
   const pack = state.pack;
   const msg = chat[index];
   const rec = progress?.perMessage[index];
-  if (!pack || !progress || !rec || !msg) return;
+  if (!pack || !progress || !rec || !msg) return null;
   const roles = currentRoles();
   const fill = (e: (typeof pack.events)[number]) => ({ ...e, text: fillRoles(e.text, pack, roles), if: e.if ? fillRoles(e.if, pack, roles) : undefined });
   const events = subEventsToCheck(pack, msg.extra?.rlzc?.injected ?? []).map(fill);
@@ -826,9 +928,9 @@ function startSub(index: number, type?: string): void {
     hasEvents: events.length > 0,
     hasNextConditional: nextConditional.length > 0,
   });
-  if (!call) return;
+  if (!call) return null;
   const key = subKey(index);
-  if (subDone.has(key)) return;
+  if (subDone.has(key)) return null;
   const phase = pack.phases.find((p) => p.id === rec.phase);
   const prev = latestSubState(chat.slice(0, index), progress.entryIndex);
   const raw = buildSubPrompt({
@@ -847,6 +949,7 @@ function startSub(index: number, type?: string): void {
   void promise.finally(() => {
     if (subJob?.key === key) subJob = null;
   });
+  return promise;
 }
 
 async function runSubJob(index: number, key: string, round: number, messages: SubMessages): Promise<void> {
@@ -982,12 +1085,20 @@ export function onMessageReceived(index: number, type?: string): void {
       const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined());
       if (cand) void askEntry(cand);
     }
+    if (type === 'first_message') return;
+    // 回廊：账本照常记账（<积分变动>），直播照常计算
+    refresh();
+    processLedgerTags(index, false);
+    auditLedgerBalance(index);
+    applyLive(index, type);
+    clearLevelFix();
     return;
   }
   // ST 1.19.0 每次打开只有开场白的聊天都会对开场白补发 MESSAGE_RECEIVED（type = first_message）。
   // 开场白不是新生成的回复：不重写它的快照（入场标记、检测记录都在上面），也不调用副本事件检测。
   if (type === 'first_message') return;
 
+  let subPromise: Promise<void> | null = null;
   const roles = detectRoles(msg.mes);
   if (roles) session.roles = { ...(session.roles ?? {}), ...roles };
   writeSession(session);
@@ -1016,15 +1127,18 @@ export function onMessageReceived(index: number, type?: string): void {
     const entry = msg.extra?.rlzc?.entry;
     if (entry) snap.entry = entry;
     if (lastInjectionIndex === index && state.lastInjection.skipped?.length) snap.skippedEvents = state.lastInjection.skipped;
-    // 继续（continue）不重新整理，保留这一楼原来的整理结果
+    // 继续（continue）不重新整理，保留这一楼原来的整理结果；也不算新一轮直播
     if (type === 'continue' && msg.extra?.rlzc?.sub) snap.sub = msg.extra.rlzc.sub;
+    if (type === 'continue' && msg.extra?.rlzc?.live) snap.live = msg.extra.rlzc.live;
+    const tipEntries = (msg.extra?.rlzc?.ledger ?? []).filter((e) => e.type === 'tip');
+    if (type === 'continue' && tipEntries.length) snap.ledger = tipEntries;
     msg.extra = msg.extra ?? {};
     // 写进聊天数据的必须是普通对象：ST 会 structuredClone 消息，Vue 的响应式代理无法被克隆
     msg.extra.rlzc = plain(snap);
     saveMeta();
     // 核对要用到刚写入的快照
     refresh();
-    startSub(index, type);
+    subPromise = startSub(index, type);
   }
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);
@@ -1032,7 +1146,18 @@ export function onMessageReceived(index: number, type?: string): void {
   // 积分账本：扫描本楼的 <积分变动> 标签，并核对状态栏积分
   processLedgerTags(index);
   auditLedgerBalance(index);
-  // 账户校正：收到 AI 回复后清除待生效的校正（CLAUDE.md 甲二.2）
+  // 直播：有事件检测时等检测结果（精彩度、受伤）出来再算
+  if (subPromise) {
+    const key = subKey(index);
+    void subPromise.then(() => {
+      if (subKey(index) === key) applyLive(index, type);
+    });
+  } else applyLive(index, type);
+  clearLevelFix();
+}
+
+/** 账户校正：收到 AI 回复后清除待生效的校正（CLAUDE.md 甲二.2） */
+function clearLevelFix(): void {
   const fixMeta = readLedgerMeta();
   if (fixMeta.fix) {
     writeLedgerMeta({ ...fixMeta, fix: undefined });
@@ -1052,7 +1177,8 @@ function auditLedgerBalance(index: number): void {
   if (statusBalance === null) return;
   // 本楼记账后的余额
   const initBal = getInitBalance(chat);
-  const balance = computeBalance(initBal.value, replayLedger(chat));
+  // 本楼的直播打赏在回复写完之后才到账，AI 写状态栏时还不知道，不参与核对
+  const balance = computeBalance(initBal.value, replayLedger(chat).filter((e) => !(e.mesIndex === index && e.type === 'tip')));
   if (statusBalance !== balance) {
     log(`积分核对不符（楼层${index}）：状态栏 ${statusBalance}，账本 ${balance}`);
     // 写入快照的警告字段，调试页据此标黄
@@ -1071,6 +1197,7 @@ export function onChatChanged(): void {
   state.debugUnlocked = false;
   state.lastInjection = EMPTY_INJECTION;
   clearInjection();
+  releaseAll();
   state.ledger = replayLedger(getChat());
   refresh();
   checkGreeting();
@@ -1100,4 +1227,208 @@ export function setPanelDisplay(mode: Settings['panelDisplay']): void {
   state.settings.panelDisplay = mode;
   saveSettings();
   hideTagsInAll(true);
+}
+
+// ───────────── 直播（第三期b-第3段）─────────────
+
+const POOL = danmakuPool as unknown as { names: string[]; pool: PoolItem[]; templates: TemplateItem[] };
+
+export function readLiveMeta(): LiveMeta {
+  return normalizeLiveMeta(getMeta()[LIVE_META_KEY]);
+}
+
+function writeLiveMeta(meta: LiveMeta): void {
+  getMeta()[LIVE_META_KEY] = plain(meta);
+  saveMeta();
+}
+
+/** 系统消息：一句话；id 从当前最大值继续递增 */
+function pushSys(meta: LiveMeta, show: string, text: string): void {
+  if (!show) return;
+  const id = maxFeedId(getChat(), meta) + 1;
+  const item: SysItem = { id, t: 'sys', name: '', text, amount: 0, net: 0, show };
+  meta.sys = [...meta.sys, item].slice(-100);
+  meta.seq = id;
+  scheduleFeed([item]);
+}
+
+function newShowId(): string {
+  return 'c' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36);
+}
+
+/** 这条消息属于哪一场直播；不在播时为 null */
+function liveTarget(index: number): { show: string; scope: 'instance' | 'corridor'; pack: Pack | null } | null {
+  const session = state.session;
+  const progress = state.progress;
+  const inInstance = !!session && index > session.entryIndex && (!progress?.ended || (progress.endIndex !== undefined && index <= progress.endIndex));
+  if (inInstance) return session!.live && state.pack ? { show: session!.id, scope: 'instance', pack: state.pack } : null;
+  const meta = readLiveMeta();
+  return meta.corridor.on && meta.corridor.show ? { show: meta.corridor.show, scope: 'corridor', pack: null } : null;
+}
+
+/** 每条新AI回复（直播中）：算出精彩度、热度、人数、弹幕、打赏，存进 extra.rlzc.live 并记账 */
+export function applyLive(index: number, type?: string): void {
+  if (type === 'continue' || type === 'first_message') return;
+  const chat = getChat();
+  const msg = chat[index];
+  if (!isCountable(msg) || liveOf(msg)) return;
+  const target = liveTarget(index);
+  if (!target) return;
+  const meta = readLiveMeta();
+  const { show, scope, pack } = target;
+  const progress = state.progress;
+  const snap: Snapshot = msg.extra?.rlzc ?? { phase: '', round: 0, injected: [] };
+  const before = showRecords(chat, show, index);
+  const sub = snap.sub && !snap.sub.skipped ? { hype: snap.sub.hype, hurt: snap.sub.hurt } : undefined;
+  const settlement = scope === 'instance' && progress?.endIndex === index && progress.endedBy === 'tag' ? detectSettlement(msg.mes) : null;
+  const died = !!settlement && ['死亡', '阵亡'].includes(String(settlement.result ?? '').trim());
+  const left = progress?.roundsLeft;
+  const phaseSwitch = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(msg.mes ?? ''));
+  const eventIds = new Set((pack?.events ?? []).filter((e) => e.kind !== 'directive').map((e) => e.id));
+  const rec = buildLiveRecord({
+    show,
+    scope,
+    packLevel: pack?.level ?? null,
+    playerLevel: playerLevelOf(chat, index + 1),
+    isRest: !!pack?.rest,
+    prevHeat: before.length ? before[before.length - 1].rec.heat : null,
+    roundsInShow: before.length,
+    text: String(msg.mes ?? ''),
+    hasEvents: (snap.injected ?? []).some((id) => eventIds.has(id)),
+    hasPhaseSwitch: phaseSwitch,
+    sub,
+    isEnd: scope === 'instance' && !!left && left.y > 0 && left.x < left.y * 0.1,
+    phaseId: scope === 'instance' ? progress?.perMessage[index]?.phase : undefined,
+    pool: POOL.pool,
+    templates: POOL.templates,
+    packDanmaku: pack?.danmaku,
+    names: POOL.names,
+    whoNames: parseCastNames(latestStatusBar(chat, index + 1), String((ctx() as any).name1 ?? '')),
+    recentTexts: recentFeedTexts(chat.slice(0, index)),
+    firstId: maxFeedId(chat, meta) + 1,
+    settle: settlement ? { died, tipsBefore: showTipTotal(chat.slice(0, index), show) } : undefined,
+    rand: Math.random,
+  });
+  // AI 弹幕：每 N 轮一次，关键事件那轮加一次（阶段切换、有人受伤或死亡、注入事件判定已发生）
+  const genAi = shouldGenAiDanmaku({
+    aiSource: state.settings.live.source === 'ai',
+    subOn: subEnabled(),
+    roundInShow: before.length + 1,
+    freq: state.settings.live.freq,
+    phaseSwitch,
+    hurt: rec.hurt,
+    eventDone: !!snap.sub && !snap.sub.skipped && (snap.sub.events ?? []).some((e) => e.status === 'done'),
+  });
+  if (genAi) rec.ai = { ok: false, pending: true };
+  const at = formatTime(msg.send_date ?? msg.gen_finished ?? undefined);
+  const others = (snap.ledger ?? []).filter((e) => e.type !== 'tip');
+  const ledger = [...others, ...liveLedgerEntries(rec, at)];
+  msg.extra = msg.extra ?? {};
+  msg.extra.rlzc = plain({ ...snap, live: rec, ledger: ledger.length ? ledger : undefined });
+  meta.seq = Math.max(meta.seq, ...rec.feed.map((f) => f.id));
+  writeLiveMeta(meta);
+  state.ledger = replayLedger(getChat());
+  state.tick++;
+  scheduleFeed(rec.feed, true);
+  if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined);
+}
+
+/**
+ * AI 生成弹幕：独立调用，接口跟随「副本事件检测」卡的来源与预设。
+ * 输入只有最近两轮AI正文（去掉面板与机器标签）、副本名、在场角色名、风格说明、10条语气示例。
+ * 失败重试1次；仍失败不弹窗、不阻塞，这一轮只用本地池，调试页记原因。不受「等检测完再写下一轮」影响。
+ */
+function startAiDanmaku(index: number, instanceName?: string): void {
+  const chat = getChat();
+  const key = subKey(index);
+  const target = subTarget();
+  if (!target) {
+    writeAiDanmaku(index, key, [], '副本事件检测没有设置好', 0);
+    return;
+  }
+  const texts: string[] = [];
+  for (let i = index; i >= 0 && texts.length < 2; i--) if (isCountable(chat[i])) texts.unshift(String(chat[i].mes ?? ''));
+  const raw = buildDanmakuPrompt({
+    scene: instanceName ?? '回廊',
+    texts,
+    cast: parseCastNames(latestStatusBar(chat, index + 1), String((ctx() as any).name1 ?? '')),
+    samples: pickSamples(POOL.pool, 10, Math.random),
+  });
+  const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
+  const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
+  const t0 = Date.now();
+  callDanmakuWithRetry((m) => callSub(target, m, { temperature: 0.9 }), messages, 1)
+    .then((list) => writeAiDanmaku(index, key, list, null, Date.now() - t0))
+    .catch((e) => {
+      log('AI 弹幕生成失败', e);
+      const detail = String((e as Error)?.message ?? e).slice(0, 120);
+      writeAiDanmaku(index, key, [], `${classifyError(e)}：${detail}`, Date.now() - t0);
+    });
+}
+
+/** 生成的弹幕并入这一轮的弹幕，id 从当前最大值继续递增，一起按节奏放出 */
+function writeAiDanmaku(index: number, key: string, list: AiDanmaku[], error: string | null, ms: number): void {
+  if (subKey(index) !== key) return; // 这一楼已被删改、滑动
+  const chat = getChat();
+  const msg = chat[index];
+  const rec = liveOf(msg);
+  if (!rec || !msg.extra?.rlzc) return;
+  const meta = readLiveMeta();
+  let id = maxFeedId(chat, meta);
+  const items = list.map((d) => ({ id: ++id, t: 'msg' as const, name: d.name, text: d.text, amount: 0, net: 0 }));
+  const next = { ...rec, feed: [...rec.feed, ...items], ai: error ? { ok: false, error, ms } : { ok: true, count: items.length, ms } };
+  msg.extra.rlzc = plain({ ...msg.extra.rlzc, live: next });
+  meta.seq = Math.max(meta.seq, id);
+  writeLiveMeta(meta);
+  state.tick++;
+  if (items.length) scheduleFeed(items);
+  else notifyLive();
+}
+
+function startViewers(): number {
+  const meta = readLiveMeta();
+  if (state.session?.status === 'active' && state.pack) {
+    return calcViewers({ packLevel: state.pack.level, playerLevel: playerLevelOf(getChat()), isRest: !!state.pack.rest, heat: 20, rand: 1 });
+  }
+  return meta.corridor.viewers ?? 0;
+}
+
+/** RLZC_LIVE.get() */
+export function liveView(hidden: ReadonlySet<number>, chat: ChatMessage[] = getChat()): LiveView {
+  const session = state.session;
+  const inInstance = session?.status === 'active';
+  return buildLiveView(
+    chat,
+    readLiveMeta(),
+    {
+      inInstance,
+      instanceLive: !!(inInstance && session?.live),
+      instanceShow: session?.id,
+      startViewers: startViewers(),
+      injectToAI: state.settings.live.injectToAI,
+    },
+    hidden,
+  );
+}
+
+/** RLZC_LIVE.toggle()：回廊中开播/下播；副本内返回 false */
+export function toggleCorridorLive(): boolean {
+  if (state.session?.status === 'active') return false;
+  const meta = readLiveMeta();
+  if (meta.corridor.on) {
+    meta.corridor.on = false;
+    pushSys(meta, meta.corridor.show, SYS_TEXT.corridorOff);
+  } else {
+    const show = newShowId();
+    meta.corridor = {
+      on: true,
+      show,
+      viewers: calcViewers({ packLevel: null, playerLevel: playerLevelOf(getChat()), isRest: false, heat: 20, rand: 0.9 + Math.random() * 0.2 }),
+    };
+    pushSys(meta, show, SYS_TEXT.corridorOn);
+  }
+  writeLiveMeta(meta);
+  state.tick++;
+  notifyLive();
+  return true;
 }

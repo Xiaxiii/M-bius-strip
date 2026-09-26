@@ -110,3 +110,35 @@ export async function inputBox(text: string, value = ''): Promise<string | null>
   }
   return window.prompt(text, value);
 }
+
+/** 带一个勾选框的确认框（入场弹窗的「开启直播」）；check 为 null 时不显示勾选框 */
+export async function confirmWithCheck(
+  text: string,
+  check: { label: string; checked: boolean } | null,
+): Promise<{ ok: boolean; checked: boolean }> {
+  const c = ctx();
+  const el = document.createElement('div');
+  const p = document.createElement('div');
+  p.textContent = text;
+  el.append(p);
+  let box: HTMLInputElement | null = null;
+  if (check) {
+    const label = document.createElement('label');
+    label.className = 'checkbox_label rlzc-live-optin';
+    label.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;min-height:44px;padding:0 8px;cursor:pointer;';
+    box = document.createElement('input');
+    box.type = 'checkbox';
+    box.id = 'rlzc-live-optin';
+    box.checked = check.checked;
+    const span = document.createElement('span');
+    span.textContent = check.label;
+    label.append(box, span);
+    el.append(label);
+  }
+  if (c.callGenericPopup && c.POPUP_TYPE && c.POPUP_RESULT) {
+    const result = await c.callGenericPopup(el, c.POPUP_TYPE.CONFIRM, '', { okButton: '确定', cancelButton: '取消' });
+    return { ok: result === c.POPUP_RESULT.AFFIRMATIVE, checked: !!box?.checked };
+  }
+  const ok = window.confirm(text);
+  return { ok, checked: ok && !!check?.checked };
+}

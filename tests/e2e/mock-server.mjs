@@ -7,11 +7,12 @@
  * 控制接口（测试脚本用）：
  *  POST /__control  合并设置，例如 {"sub":{"mode":"timeout","count":3,"delayMs":3000,"nextFalse":["E08"]}}
  *                   sub.mode：ok | 401 | timeout | garbage | fence；count>0 表示只对接下来 count 次副API调用生效
+ *                   {"danmaku":{"mode":"fail","count":2}}：AI 弹幕调用返回 500（mode：ok | fail | garbage）
  *  POST /__plan     追加主AI的回复计划（数组），见 mainReply()；?replace=1 先清空未用完的计划
  *  GET  /__log      全部调用记录；GET /__log?since=N 只取序号大于 N 的
  *  POST /__reset    清空记录与设置
  *
- * 每次调用记一行：时间、调用方（main / sub / sub-test / models）、模型、密钥末四位、输入输出 token（o200k 与 cl100k 两种分词器）。
+ * 每次调用记一行：时间、调用方（main / sub / danmaku / sub-test / models）、模型、密钥末四位、输入输出 token（o200k 与 cl100k 两种分词器）。
  */
 import http from 'node:http';
 import fs from 'node:fs';
@@ -26,11 +27,14 @@ const LOG_FILE = process.env.MOCK_LOG || path.join(OUT, 'mock-log.jsonl');
 fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
 
 const RECORDER_MARK = '你是角色扮演副本的记录员';
+/** 直播：AI 生成弹幕的调用（第三期b） */
+const DANMAKU_MARK = '你在写回廊直播间的观众弹幕';
 /** 柏宝书（共存检查用）的摘要请求：按它的输出协议回一个 <thinking> + JSON */
 const BAIBAI_MARK = /【检查记录与最终结果输出协议】|summary 是必填/;
 
 const defaults = () => ({
   sub: { mode: 'ok', count: 0, delayMs: 0, nextFalse: [], forceStatus: {} },
+  danmaku: { mode: 'ok', count: 0 },
   mainDelayMs: 0,
 });
 let control = defaults();
@@ -70,15 +74,62 @@ function parseTurn(all) {
 }
 
 /**
+ * <状态栏>：{{user}}的详情块照抄［账户·仅供AI］的积分与待清算（本轮有 <积分变动> 时写成「新余额（↑/↓变化）」），
+ * 注入里有账户校正句时按它写等级、位格；另有两个角色详情块（供直播弹幕的 {who}）。
+ */
+function statusBar(all, loc, plan = {}) {
+  const acc = /［账户·仅供AI］积分：(-?\d+)　待清算：([^\n。]*)/.exec(all);
+  // ST 发出请求前已把 {{user}} 换成玩家名字
+  const fix = /本轮状态栏里.{0,16}?的((?:等级写[DCBAS]|位格写[^、，]+)(?:、(?:等级写[DCBAS]|位格写[^、，]+))*)，之后按剧情照常。/.exec(all);
+  let level = plan.level ?? 'D';
+  let rank = plan.rank ?? '见习';
+  if (fix) {
+    const lv = /等级写([DCBAS])/.exec(fix[1]);
+    const rk = /位格写([^、，]+)/.exec(fix[1]);
+    if (lv) level = lv[1];
+    if (rk) rank = rk[1];
+  }
+  let score = acc ? acc[1] : '1000';
+  if (acc && plan.scoreDelta) {
+    const n = Number(acc[1]) + plan.scoreDelta;
+    score = `${n}（${plan.scoreDelta > 0 ? '↑' : '↓'}${Math.abs(plan.scoreDelta)}）`;
+  }
+  if (plan.statusScore !== undefined) score = String(plan.statusScore);
+  const pending = acc ? (/已标记/.test(acc[2]) ? '已标记' : '无') : '无';
+  return [
+    '<状态栏>',
+    `地点：${loc}`,
+    '{{user}}：',
+    `等级：${level}`,
+    `位格：${rank}`,
+    `积分：${score}`,
+    `待清算：${pending}`,
+    '在场：林默、周遥、路人玩家若干',
+    '林默：',
+    '等级：C',
+    '状态：警惕',
+    '周遥：',
+    '等级：D',
+    '状态：平静',
+    '</状态栏>',
+  ].join('\n');
+}
+
+/**
  * 主AI的一条回复。plan：
  *  { type: 'text', text }                              原样返回（开场白等）
- *  { type: 'corridor' }                                 回廊闲聊，不带任何面板
+ *  { type: 'corridor', status = false }                回廊闲聊，默认不带任何面板；status: true 时带 <状态栏>
  *  { type: 'story', writeEvents = true | false | ['E02'], panel = true, status = true, extra = '' }
  */
 function mainReply(all, plan) {
   if (plan.type === 'text') return plan.text;
   const turn = parseTurn(all);
-  if (plan.type === 'corridor' || !turn.pack) return CORRIDOR.slice(0, 3).join('\n\n');
+  if (plan.type === 'corridor' || !turn.pack) {
+    const text = [CORRIDOR.slice(0, 3).join('\n\n')];
+    if (plan.extra) text.push(plan.extra);
+    if (plan.status) text.push(statusBar(all, '回廊·休息室', plan));
+    return text.join('\n\n');
+  }
   const round = turn.round || 1;
   const parts = [narrative(turn.pack, round)];
   const write = plan.writeEvents ?? true;
@@ -108,7 +159,8 @@ function mainReply(all, plan) {
   }
   if (plan.status !== false) {
     const locs = LOCATIONS[turn.pack] ?? [`副本《${turn.pack}》`];
-    parts.push(['<状态栏>', `地点：${locs[round % locs.length]}`, '状态：轻微疲惫', '在场：林默、周遥、路人玩家若干', '</状态栏>'].join('\n'));
+    if (plan.fullStatus) parts.push(statusBar(all, locs[round % locs.length], plan));
+    else parts.push(['<状态栏>', `地点：${locs[round % locs.length]}`, '状态：轻微疲惫', '在场：林默、周遥、路人玩家若干', '</状态栏>'].join('\n'));
   }
   if (plan.extra) parts.push(plan.extra);
   return parts.join('\n\n');
@@ -169,7 +221,30 @@ function subReply(messages) {
   } else {
     state = { summary: `第${round}轮（第${subCalls}次检测）：众人仍在${pack}里，暂时没有人出事。` };
   }
-  return { events, state, next };
+  // 直播：精彩度与受伤（第三期b）
+  const hurt = /受伤|重伤|流血|昏迷|死了|身亡/.test(body);
+  return { events, state, next, hype: hurt ? 80 : events.length ? 45 : 25, hurt };
+}
+
+// ───────────── AI 弹幕 ─────────────
+
+const DM = [
+  ['praise', '路过的D级', '主播这一手稳'],
+  ['bless', '小满', '平安出来啊'],
+  ['discuss', '理性讨论', '先看清楚再说'],
+  ['cold', '夜班保安', '也就那样吧'],
+  ['envy', '柠檬汁', '凭什么运气这么好'],
+  ['smear', '匿名', '演的吧'],
+  ['rumor', '路人甲', '听说积分是借的'],
+  ['praise', '好运来', '冲啊主播'],
+  ['discuss', '数据党', '按往届这里要出事'],
+  ['bless', '阿柒', '别一个人走'],
+];
+let dmCalls = 0;
+function danmakuReply(user) {
+  dmCalls++;
+  const cast = (/【在场角色】(.*)/.exec(user)?.[1] ?? '').split('、').filter((x) => x && x !== '（无）');
+  return DM.map(([type, name, text], k) => ({ type, name, text: k === 2 && cast[0] ? `${cast[0]}刚才那一下有点怪（第${dmCalls}次）` : `${text}（第${dmCalls}次）` }));
 }
 
 // ───────────── HTTP ─────────────
@@ -219,7 +294,7 @@ const server = http.createServer((req, res) => {
     try {
       // ── 控制接口 ──
       if (url.pathname === '/__control') {
-        const merged = { ...control, ...body, sub: { ...control.sub, ...(body.sub ?? {}) } };
+        const merged = { ...control, ...body, sub: { ...control.sub, ...(body.sub ?? {}) }, danmaku: { ...control.danmaku, ...(body.danmaku ?? {}) } };
         control = merged;
         return send(res, 200, control);
       }
@@ -233,6 +308,7 @@ const server = http.createServer((req, res) => {
         plans = [];
         log = [];
         subCalls = 0;
+        dmCalls = 0;
         return send(res, 200, { ok: true });
       }
       if (url.pathname === '/__log') {
@@ -258,9 +334,10 @@ const server = http.createServer((req, res) => {
         const messages = body.messages ?? [];
         const all = textOf(messages);
         const isSub = all.includes(RECORDER_MARK);
-        const isTest = !isSub && /只回复 OK/.test(all);
-        const isBaibai = !isSub && !isTest && BAIBAI_MARK.test(all);
-        const caller = isSub ? 'sub' : isTest ? 'sub-test' : isBaibai ? 'baibai' : 'main';
+        const isDanmaku = !isSub && all.includes(DANMAKU_MARK);
+        const isTest = !isSub && !isDanmaku && /只回复 OK/.test(all);
+        const isBaibai = !isSub && !isDanmaku && !isTest && BAIBAI_MARK.test(all);
+        const caller = isSub ? 'sub' : isDanmaku ? 'danmaku' : isTest ? 'sub-test' : isBaibai ? 'baibai' : 'main';
         const base = { t0: t0.toISOString(), caller, model: body.model, key4, stream: !!body.stream, inTok: tok(all) };
 
         if ((isSub || isTest) && /bad/.test(auth)) {
@@ -271,7 +348,22 @@ const server = http.createServer((req, res) => {
         let text;
         let status = 200;
         let note;
-        if (isTest) text = 'OK';
+        if (isDanmaku) {
+          const d = control.danmaku;
+          const mode = d.mode;
+          const active = mode !== 'ok' && d.count !== 0;
+          if (active && d.count > 0) {
+            d.count--;
+            if (d.count === 0) d.mode = 'ok';
+          }
+          if (active && mode === 'fail') {
+            record({ ...base, t1: new Date().toISOString(), status: 500, outTok: tok(''), note: 'mode=fail', request: messages });
+            return send(res, 500, { error: { message: 'mock upstream error' } });
+          }
+          const user = messages.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
+          text = active && mode === 'garbage' ? '今天的弹幕就不写了。' : JSON.stringify(danmakuReply(user));
+          note = active ? `mode=${mode}` : 'danmaku';
+        } else if (isTest) text = 'OK';
         else if (isBaibai) {
           text =
             '<thinking>核对：本楼只有塔内日常与观察，没有新物品和新地点。</thinking>\n' +
