@@ -58,7 +58,7 @@ function fmtTime(at: string) {
           </span>
         </div>
       </div>
-      <p v-if="isDefaultInit" class="rlzc-ledger-init-hint">初始积分按 1000 计，可在调试页修改</p>
+      <p v-if="isDefaultInit" class="rlzc-ledger-init-hint">初始积分按 1000 计，可在设置页修改</p>
     </div>
 
     <!-- 流水 -->

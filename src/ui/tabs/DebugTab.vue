@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { abandonSession, currentRoles, debugAdjustLedger, debugRemoveAction, debugSetInitBalance, debugSetPhase, debugSetRoles, debugSetRound, getInitBalance, state } from '../../app';
-import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/ledger';
-import { getChat } from '../../st/context';
+import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSetRoles, debugSetRound, saveSettings, state } from '../../app';
 import type { Snapshot } from '../../packs/types';
+import { getChat } from '../../st/context';
 import { formatState, latestSubState } from '../../core/subapi';
 
 const editable = computed(() => state.settings.debug);
@@ -33,11 +32,16 @@ const snapshots = computed(() => {
   return rows.reverse().slice(0, 60);
 });
 
-/** 有时限警告的楼层，快照表里标黄 */
-/** 时限不符、副API判定事件没写出来的楼层，快照表里标黄 */
-const limitWarned = computed(
-  () => new Set((state.audit?.warnings ?? []).filter((w) => w.kind === 'limit' || w.kind === 'eventMissed').map((w) => w.index)),
-);
+/** 时限不符、副API判定事件没写出来、积分核对不符的楼层，快照表里标黄 */
+const limitWarned = computed(() => {
+  const set = new Set((state.audit?.warnings ?? []).filter((w) => w.kind === 'limit' || w.kind === 'eventMissed').map((w) => w.index));
+  const chat = getChat();
+  const start = state.session?.entryIndex ?? 0;
+  for (let i = start; i < chat.length; i++) {
+    if (chat[i]?.extra?.rlzc?.ledgerMismatch) set.add(i);
+  }
+  return set;
+});
 
 /** 副API：当前隐藏状态与最近一次整理记录 */
 const subView = computed(() => {
@@ -93,27 +97,12 @@ function saveRoles() {
   debugSetRoles({ ...roles });
 }
 
-const adjustAmount = ref<number | null>(null);
-const adjustNote = ref('');
-const initBalInput = ref<number | null>(null);
-const currentInitBal = computed(() => getInitBalance(getChat()));
-const ledgerBalance = computed(() => computeBalance(currentInitBal.value.value, state.ledger));
-const ledgerPending = computed(() => {
-  if (!state.pack) return false;
-  return isPendingClearance(currentInitBal.value.value, state.ledger, KILL_THRESHOLDS[state.pack.level]);
-});
-function applyAdjust() {
-  if (adjustAmount.value === null) return;
-  debugAdjustLedger(adjustAmount.value, adjustNote.value || '手动调整');
-  adjustAmount.value = null;
-  adjustNote.value = '';
-}
-function applyInitBal() {
-  if (initBalInput.value === null) return;
-  debugSetInitBalance(initBalInput.value);
-  initBalInput.value = null;
-}
 const json = (v: unknown) => JSON.stringify(v, null, 2);
+
+function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
+  state.settings.cardCollapsed[key] = !state.settings.cardCollapsed[key];
+  saveSettings();
+}
 </script>
 
 <template>
@@ -140,27 +129,21 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
         </div>
       </div>
 
-      <div v-if="state.pack?.roles?.length" class="rlzc-card">
-        <h4>角色登记</h4>
-        <label v-for="r in state.pack.roles" :key="r" class="rlzc-field">
-          <span>{{ r }}</span><input v-model="roles[r]" class="rlzc-input" :disabled="!editable" placeholder="未登记" />
-        </label>
-        <button class="rlzc-btn small" :disabled="!editable" @click="saveRoles">保存登记</button>
-      </div>
-
-      <div class="rlzc-card">
-        <h4>手动调整账本</h4>
-        <div class="rlzc-row">
-          <input v-model.number="adjustAmount" type="number" class="rlzc-input" placeholder="金额（可正可负）" :disabled="!editable" />
-          <input v-model="adjustNote" class="rlzc-input" placeholder="备注" :disabled="!editable" />
-          <button class="rlzc-btn small" :disabled="!editable || adjustAmount === null" @click="applyAdjust">追加流水</button>
+      <div v-if="state.pack?.roles?.length" class="rlzc-card rlzc-collapsible">
+        <button
+          class="rlzc-collapse-head"
+          :aria-expanded="!state.settings.cardCollapsed.rolesDebug"
+          @click="toggleCard('rolesDebug')"
+        >
+          <h4>角色登记</h4>
+          <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.rolesDebug }">▸</span>
+        </button>
+        <div v-if="!state.settings.cardCollapsed.rolesDebug" class="rlzc-collapse-body">
+          <label v-for="r in state.pack.roles" :key="r" class="rlzc-field">
+            <span>{{ r }}</span><input v-model="roles[r]" class="rlzc-input" :disabled="!editable" placeholder="未登记" />
+          </label>
+          <button class="rlzc-btn small" :disabled="!editable" @click="saveRoles">保存登记</button>
         </div>
-        <div class="rlzc-row" style="margin-top:4px">
-          <input v-model.number="initBalInput" type="number" class="rlzc-input" placeholder="修改初始余额" :disabled="!editable" />
-          <button class="rlzc-btn small" :disabled="!editable || initBalInput === null" @click="applyInitBal">设置初始余额</button>
-        </div>
-        <p class="rlzc-hint">当前初始余额：{{ currentInitBal.value }}（{{ currentInitBal.source }}）</p>
-        <p v-if="ledgerBalance !== null" class="rlzc-hint">账本余额：{{ ledgerBalance }}　待清算：{{ ledgerPending ? '是' : '否' }}</p>
       </div>
 
       <div class="rlzc-card">
@@ -219,6 +202,8 @@ const json = (v: unknown) => JSON.stringify(v, null, 2);
               <td>{{ row.snap.limit?.text ?? '' }}</td>
               <td>{{ row.snap.injected.join(' ') }}</td>
               <td>{{ subCell(row.snap) }}</td>
+              <td v-if="row.snap.ledgerMismatch" class="rlzc-warn-text">状态栏 {{ row.snap.ledgerMismatch.status }} / 账本 {{ row.snap.ledgerMismatch.ledger }}</td>
+              <td v-else></td>
             </tr>
           </tbody>
         </table>

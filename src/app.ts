@@ -22,7 +22,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS } from './core/ledger';
+import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -57,7 +57,7 @@ export interface Settings {
   /** 副API「记录员」（CLAUDE.md 14） */
   subApi: SubApiSettings;
   /** 设置页可折叠卡片的展开状态（CLAUDE.md 11.13） */
-  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean };
+  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean; accountFix: boolean; rolesDebug: boolean };
 }
 
 export interface SubApiSettings {
@@ -91,7 +91,7 @@ const DEFAULT_SETTINGS: Settings = {
   panelDisplay: 'panel',
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
   subApi: structuredClone(DEFAULT_SUB_API),
-  cardCollapsed: { depths: true, subApi: true, genericCaps: true },
+  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true },
 };
 
 /** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
@@ -152,6 +152,8 @@ export function loadSettings(): void {
       depths: (saved.cardCollapsed as any)?.depths ?? true,
       subApi: (saved.cardCollapsed as any)?.subApi ?? true,
       genericCaps: (saved.cardCollapsed as any)?.genericCaps ?? true,
+      accountFix: (saved.cardCollapsed as any)?.accountFix ?? true,
+      rolesDebug: (saved.cardCollapsed as any)?.rolesDebug ?? true,
     },
   };
   all[SETTINGS_KEY] = merged;
@@ -249,12 +251,7 @@ function buildLedgerInjection(chat: ChatMessage[]): string {
   const level = state.pack?.level ?? 'D';
   const threshold = KILL_THRESHOLDS[level];
   const pending = isPendingClearance(initBal.value, state.ledger, threshold);
-  if (!pending) {
-    return `［账户·仅供AI］积分：${balance}　待清算：无`;
-  }
-  const diff = threshold - balance;
-  const diffText = diff > 0 ? `距斩杀线${diff}分（${level}级斩杀线${threshold}）` : `斩杀线${threshold}，当前${balance}`;
-  return `［账户·仅供AI］积分：${balance}　待清算：已标记，${diffText}。商城价格上浮30%，下一场副本为清算副本。`;
+  return formatBalanceInjection(balance, pending, level, threshold);
 }
 
 /** 扫描消息正文里的 <积分变动> 标签与结算奖励，写入该楼快照 */
@@ -318,12 +315,31 @@ export function debugAdjustLedger(amount: number, note: string): void {
   state.ledger = [...state.ledger, entry];
 }
 
-/** 调试：修改初始余额 */
-export function debugSetInitBalance(value: number): void {
+/** 账户校正：追加一笔流水（改动会进流水，标注「手动」；不需要调试模式） */
+export function settingsAdjustLedger(amount: number, note: string): void {
+  debugAdjustLedger(amount, note);
+}
+
+/** 账户校正：修改初始余额（不需要调试模式） */
+export function settingsSetInitBalance(value: number): void {
   const meta = readLedgerMeta();
   const at = formatTime(undefined);
   writeLedgerMeta({ ...meta, init: { value, source: '手动设置', at } });
   state.ledger = replayLedger(getChat());
+}
+
+/** 账户校正：存一条待生效的等级/位格校正（下一次正常生成时注入一句） */
+export function settingsSaveLevelFix(level?: string, rank?: string): void {
+  if (!level && !rank) return;
+  const meta = readLedgerMeta();
+  const chat = getChat();
+  const at = formatTime(undefined);
+  writeLedgerMeta({ ...meta, fix: { level, rank, at, afterIndex: chat.length - 1 } });
+}
+
+/** 调试：修改初始余额 */
+export function debugSetInitBalance(value: number): void {
+  settingsSetInitBalance(value);
 }
 
 // ───────────── 会话读写 ─────────────
@@ -451,7 +467,19 @@ function injectFor(type: string | undefined): void {
   if (inj.turn) setPrompt(KEY_TURN, inj.turn, d.turn, false);
   if (inj.state) setPrompt(KEY_STATE, inj.state, d.progress, false);
   // 积分账本注入（第三期，回廊和副本内都注入；没有任何账本数据时不注入）
-  const ledgerText = buildLedgerInjection(chat);
+  const ledgerMeta = readLedgerMeta();
+  let ledgerText = buildLedgerInjection(chat);
+  // 账户校正句：待生效的等级/位格校正（CLAUDE.md 甲二.2）
+  if (ledgerMeta.fix) {
+    const { level: fixLevel, rank: fixRank } = ledgerMeta.fix;
+    const parts: string[] = [];
+    if (fixLevel) parts.push(`等级写${fixLevel}`);
+    if (fixRank) parts.push(`位格写${fixRank}`);
+    if (parts.length) {
+      const sentence = `本轮状态栏里{{user}}的${parts.join('、')}，之后按剧情照常。`;
+      ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
+    }
+  }
   if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
@@ -946,6 +974,11 @@ export function onMessageReceived(index: number, type?: string): void {
   // 积分账本：扫描本楼的 <积分变动> 标签，并核对状态栏积分
   processLedgerTags(index);
   auditLedgerBalance(index);
+  // 账户校正：收到 AI 回复后清除待生效的校正（CLAUDE.md 甲二.2）
+  const fixMeta = readLedgerMeta();
+  if (fixMeta.fix) {
+    writeLedgerMeta({ ...fixMeta, fix: undefined });
+  }
 }
 
 /** 收到AI消息后，核对状态栏积分与账本余额；不一致时在调试页标黄 */

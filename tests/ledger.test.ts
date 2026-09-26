@@ -175,7 +175,7 @@ describe('buildLedgerInjection 格式', () => {
   });
 
   it('待清算时包含斩杀线说明', () => {
-    const text = formatBalanceInjection(120, true);
-    expect(text).toContain('待清算：是');
+    const text = formatBalanceInjection(120, true, 'D');
+    expect(text).toBe('［账户·仅供AI］积分：120　待清算：已标记，距斩杀线180分（D级斩杀线300）。商城价格上浮30%，下一场副本为清算副本。');
   });
 });

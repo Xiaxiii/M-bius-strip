@@ -154,6 +154,8 @@ export interface LedgerMeta {
   init?: { value: number; source: string; at: string };
   /** 手动补录的调整条目（不对应具体消息楼层） */
   adjust?: { amount: number; note: string; at: string }[];
+  /** 待生效的等级/位格校正（CLAUDE.md 甲二.2） */
+  fix?: { level?: string; rank?: string; at: string; afterIndex: number };
 }
 
 /** 简化的聊天消息（只列出本扩展用到的字段） */

@@ -1,11 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { importPack, removePack, saveSettings, setPanelDisplay, state, type Settings } from '../../app';
+import { computed, ref } from 'vue';
+import { importPack, removePack, saveSettings, setPanelDisplay, settingsAdjustLedger, settingsSaveLevelFix, settingsSetInitBalance, state, getInitBalance, type Settings } from '../../app';
+import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/ledger';
 import { confirmBox, toast } from '../../st/context';
+import { getChat } from '../../st/context';
 import SubApiCard from '../SubApiCard.vue';
 
 const errors = ref<string[]>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
+
+// 账户校正相关
+const fixInitInput = ref<number | null>(null);
+const fixAmount = ref<number | null>(null);
+const fixNote = ref('');
+const fixLevel = ref('');
+const fixRank = ref('');
+
+const LEVELS = ['D', 'C', 'B', 'A', 'S'] as const;
+
+const currentInitBal = computed(() => getInitBalance(getChat()));
+const currentBalance = computed(() => computeBalance(currentInitBal.value.value, state.ledger));
+const currentLevel = computed(() => state.pack?.level ?? 'D');
+const currentThreshold = computed(() => KILL_THRESHOLDS[currentLevel.value]);
+const currentPending = computed(() => isPendingClearance(currentInitBal.value.value, state.ledger, currentThreshold.value));
+
+function applyFixInit() {
+  if (fixInitInput.value === null) return;
+  settingsSetInitBalance(fixInitInput.value);
+  fixInitInput.value = null;
+}
+function applyFixAdjust() {
+  if (fixAmount.value === null) return;
+  settingsAdjustLedger(fixAmount.value, fixNote.value || '手动');
+  fixAmount.value = null;
+  fixNote.value = '';
+}
+function applyLevelFix() {
+  if (!fixLevel.value && !fixRank.value) return;
+  settingsSaveLevelFix(fixLevel.value || undefined, fixRank.value || undefined);
+  fixLevel.value = '';
+  fixRank.value = '';
+  toast('success', '校正已保存，下一轮生成时写入状态栏。');
+}
 
 function setDepth(key: 'token' | 'progress' | 'turn' | 'ledger', e: Event) {
   const v = Math.max(0, Math.min(10000, Math.floor(Number((e.target as HTMLInputElement).value) || 0)));
@@ -26,7 +62,6 @@ async function remove(id: string, name: string) {
   if (await confirmBox(`确定删除自定义副本包《${name}》吗？`)) removePack(id);
 }
 
-const LEVELS = ['D', 'C', 'B', 'A', 'S'] as const;
 function setCap(level: (typeof LEVELS)[number], e: Event) {
   const v = Math.floor(Number((e.target as HTMLInputElement).value));
   if (!Number.isFinite(v) || v < 1) return;
@@ -58,6 +93,64 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
         <option value="statusbar">正文状态栏</option>
       </select>
       <p class="rlzc-hint">选「正文状态栏」时，时限和任务由状态栏显示，系统页不重复。</p>
+    </div>
+
+    <!-- 账户校正（可折叠，默认收起） -->
+    <div class="rlzc-card rlzc-collapsible">
+      <button
+        class="rlzc-collapse-head"
+        :aria-expanded="!state.settings.cardCollapsed.accountFix"
+        @click="toggleCard('accountFix')"
+      >
+        <h4>账户校正</h4>
+        <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.accountFix }">▸</span>
+      </button>
+      <div v-if="!state.settings.cardCollapsed.accountFix" class="rlzc-collapse-body">
+        <p class="rlzc-hint">当账本与AI状态栏不同步时，在此手动校正积分或写入等级位格。</p>
+
+        <div class="rlzc-ledger-status">
+          <span>当前余额：<b>{{ currentBalance }}</b></span>
+          <span>{{ currentPending ? '⚠ 待清算' : '无待清算' }}</span>
+        </div>
+
+        <div class="rlzc-section-label">初始积分</div>
+        <div class="rlzc-row">
+          <input
+            v-model.number="fixInitInput"
+            type="number"
+            class="rlzc-input"
+            :placeholder="`当前：${currentInitBal.value}`"
+          />
+          <button class="rlzc-btn small" :disabled="fixInitInput === null" @click="applyFixInit">保存</button>
+        </div>
+
+        <div class="rlzc-section-label">追加一笔</div>
+        <div class="rlzc-row">
+          <input v-model.number="fixAmount" type="number" class="rlzc-input" placeholder="金额（正/负）" />
+          <input v-model="fixNote" class="rlzc-input" placeholder="备注（可选）" />
+          <button class="rlzc-btn small" :disabled="fixAmount === null" @click="applyFixAdjust">追加</button>
+        </div>
+
+        <div class="rlzc-section-label">等级 / 位格校正</div>
+        <p class="rlzc-hint">下一轮生成时在状态栏写入，之后按剧情照常。</p>
+        <div class="rlzc-row">
+          <div class="rlzc-seg-group">
+            <button
+              v-for="lv in LEVELS"
+              :key="lv"
+              class="rlzc-seg"
+              :class="{ active: fixLevel === lv }"
+              @click="fixLevel = fixLevel === lv ? '' : lv"
+            >{{ lv }}</button>
+          </div>
+          <input v-model="fixRank" class="rlzc-input" placeholder="位格（如：候补）" />
+          <button class="rlzc-btn small" :disabled="!fixLevel && !fixRank" @click="applyLevelFix">校正</button>
+        </div>
+
+        <p v-if="state.ledger.length === 0 && currentInitBal.source === '默认值'" class="rlzc-hint rlzc-warn-text">
+          初始积分使用默认值 1000，建议设置正确的初始值。
+        </p>
+      </div>
     </div>
 
     <!-- 注入深度（可折叠） -->

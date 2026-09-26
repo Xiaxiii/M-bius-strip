@@ -123,10 +123,17 @@ export function formatEntry(e: LedgerDisplayEntry): string {
 }
 
 /** 生成注入给 AI 的积分账户文本（格式：「［账户·仅供AI］积分：X　待清算：X」）
- *  供 app.ts 的 buildLedgerInjection 调用；第二参数需外部传入，便于单元测试 */
-export function formatBalanceInjection(balance: number, pendingClearance: boolean): string {
+ *  供 app.ts 的 buildLedgerInjection 调用；参数需外部传入，便于单元测试 */
+export function formatBalanceInjection(
+  balance: number,
+  pendingClearance: boolean,
+  level: Level = 'D',
+  threshold?: number,
+): string {
   if (!pendingClearance) {
     return `［账户·仅供AI］积分：${balance}　待清算：无`;
   }
-  return `［账户·仅供AI］积分：${balance}　待清算：是`;
+  const thr = threshold ?? KILL_THRESHOLDS[level];
+  const diff = Math.max(0, thr - balance);
+  return `［账户·仅供AI］积分：${balance}　待清算：已标记，距斩杀线${diff}分（${level}级斩杀线${thr}）。商城价格上浮30%，下一场副本为清算副本。`;
 }

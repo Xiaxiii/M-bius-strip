@@ -46,7 +46,7 @@ async function choose() {
     <template v-if="inDungeon && p">
       <div class="rlzc-card rlzc-hero">
         <div class="rlzc-hero-top">
-          <span class="rlzc-level">{{ state.pack!.level }}</span>
+          <span class="rlzc-level">{{ state.pack?.rest ? '—' : state.pack!.level }}</span>
           <h3>{{ state.pack!.name }}</h3>
           <span v-if="p.ended" class="rlzc-chip">已结束</span>
         </div>
