@@ -78,6 +78,8 @@ export interface Pack {
   stateFields?: StateField[];
   /** 预留：第四期赌坊是否在该副本内开放（默认不开放，赌坊只在回廊营业） */
   casino?: boolean;
+  /** 休整副本：没有评级、奖励和失败扣分；不算清算副本（CLAUDE.md 第16节） */
+  rest?: boolean;
 }
 
 /** 通用副本包的简报信息（名称、等级、目标、时限） */

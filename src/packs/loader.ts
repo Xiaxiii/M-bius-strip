@@ -5,12 +5,14 @@ import kaoshi from './builtin/kaoshi.json';
 import xiyan from './builtin/xiyan.json';
 import youxi from './builtin/youxi.json';
 import wuming from './builtin/wuming.json';
+import dusongshu from './builtin/dusongshu.json';
+import nongxian from './builtin/nongxian.json';
 import zhonglouMap from './builtin/zhonglou-map.svg?raw';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from '../core/timeLimit';
 
 export const GENERIC_PACK_ID = 'generic';
 
-export const BUILTIN_PACKS: Pack[] = [zhonglou, jingjie, kaoshi, xiyan, youxi, wuming] as Pack[];
+export const BUILTIN_PACKS: Pack[] = [zhonglou, jingjie, kaoshi, xiyan, youxi, wuming, dusongshu, nongxian] as Pack[];
 
 /** 内置包的图片：包 id → 包内路径 → 图片 URL */
 const BUILTIN_ASSETS: Record<string, Record<string, string>> = {
@@ -67,6 +69,7 @@ export function validatePack(input: unknown): string[] {
   if (p.deadline !== undefined && typeof p.deadline !== 'string') errors.push('deadline 必须是文本');
   if (p.disableLive !== undefined && typeof p.disableLive !== 'boolean') errors.push('disableLive 必须是 true 或 false');
   if (p.casino !== undefined && typeof p.casino !== 'boolean') errors.push('casino 必须是 true 或 false');
+  if (p.rest !== undefined && typeof p.rest !== 'boolean') errors.push('rest 必须是 true 或 false');
   if (p.stateFields !== undefined) {
     if (!Array.isArray(p.stateFields)) errors.push('stateFields 必须是数组');
     else p.stateFields.forEach((f: any, i: number) => {

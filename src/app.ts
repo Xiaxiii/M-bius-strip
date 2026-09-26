@@ -266,15 +266,18 @@ function processLedgerTags(index: number): void {
   }
   const settlement = detectSettlement(text);
   if (settlement && state.pack) {
-    const fields: Record<string, string> = {
-      结果: settlement.result ?? '',
-      评价: settlement.rating ?? '',
-      ...settlement.fields,
-    };
-    const delta = calcSettlementDelta(state.pack.level, fields);
-    if (delta !== 0) {
-      const ratingStr = settlement.rating ? `·${settlement.rating}` : '';
-      newEntries.push({ delta, source: `副本结算·${settlement.result ?? ''}${ratingStr}`, type: 'settle', at });
+    // 休整副本（rest: true）不计算结算奖惩（CLAUDE.md 第16节）
+    if (!state.pack.rest) {
+      const fields: Record<string, string> = {
+        结果: settlement.result ?? '',
+        评价: settlement.rating ?? '',
+        ...settlement.fields,
+      };
+      const delta = calcSettlementDelta(state.pack.level, fields);
+      if (delta !== 0) {
+        const ratingStr = settlement.rating ? `·${settlement.rating}` : '';
+        newEntries.push({ delta, source: `副本结算·${settlement.result ?? ''}${ratingStr}`, type: 'settle', at });
+      }
     }
   }
   if (newEntries.length || msg.extra?.rlzc?.ledger?.length) {
