@@ -67,8 +67,8 @@ function fmtTime(at: string) {
       <template v-if="entries.length">
         <ul class="rlzc-ledger-list">
           <li
-            v-for="e in [...entries].reverse()"
-            :key="`${e.mesIndex}-${e.delta}-${e.at}`"
+            v-for="(e, k) in [...entries].reverse()"
+            :key="`${k}-${e.mesIndex}-${e.delta}-${e.at}`"
             class="rlzc-ledger-item"
           >
             <div class="rlzc-ledger-item-left">

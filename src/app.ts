@@ -168,8 +168,8 @@ const DEFAULT_SETTINGS: Settings = {
   live: { ...DEFAULT_LIVE },
 };
 
-/** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
-export type TabId = 'system' | 'ledger' | 'settings' | 'debug';
+/** 面板页签（CLAUDE.md 11.9）：「黑市」在 ledger 与 settings 之间（第18节） */
+export type TabId = 'system' | 'ledger' | 'market' | 'settings' | 'debug';
 
 export const state = reactive({
   chatId: '',
