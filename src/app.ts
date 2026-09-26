@@ -22,7 +22,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
+import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, parsePlayerLevelFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -278,10 +278,22 @@ function processLedgerTags(index: number): void {
         评价: settlement.rating ?? '',
         ...settlement.fields,
       };
-      const delta = calcSettlementDelta(state.pack.level, fields);
-      if (delta !== 0) {
-        const ratingStr = settlement.rating ? `·${settlement.rating}` : '';
-        newEntries.push({ delta, source: `副本结算·${settlement.result ?? ''}${ratingStr}`, type: 'settle', at });
+      // 解析玩家等级（从最近的状态栏读取，找不到时退回副本等级）
+      const STATUS_RE_PL = /<状态栏>([\s\S]*?)<\/状态栏>/;
+      let playerLevel = state.pack.level;
+      for (let i = chat.length - 1; i >= 0; i--) {
+        if (chat[i].is_user || !chat[i].mes) continue;
+        const sm = STATUS_RE_PL.exec(chat[i].mes!);
+        if (!sm) continue;
+        const pl = parsePlayerLevelFromStatusBar(sm[1]);
+        if (pl) { playerLevel = pl; break; }
+      }
+      const initBal = getInitBalance(chat);
+      const curBalance = computeBalance(initBal.value, state.ledger);
+      const isClearance = isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[playerLevel]);
+      const settled = calcSettlementDelta(state.pack.level, playerLevel, fields, curBalance, isClearance);
+      if (settled.delta !== 0) {
+        newEntries.push({ delta: settled.delta, source: settled.source, type: 'settle', at });
       }
     }
   }

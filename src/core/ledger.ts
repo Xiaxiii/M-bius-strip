@@ -8,20 +8,13 @@ export const KILL_THRESHOLDS: Record<Level, number> = {
   D: 300, C: 1000, B: 3000, A: 10000, S: 30000,
 };
 
-/** 各等级副本通关基础奖励（B评价基准） */
-const BASE_REWARDS: Record<Level, number> = {
-  D: 500, C: 1500, B: 5000, A: 15000, S: 50000,
-};
-
-/** 结算评价倍率 */
-const RATING_MULT: Record<string, number> = {
-  S: 1.5, A: 1.2, B: 1.0, C: 0.8, D: 0.6,
-};
-
-/** 结算修正因子（来自 <副本结算> 字段） */
-const MODIFIER_MULT: Record<string, number> = {
-  越级: 0.6,
-  抽查: 0.5,
+/** 结算积分表：[副本等级][评价等级] → 基础奖励（CLAUDE.md 账本结算按积分表修正） */
+const SCORE_TABLE: Record<Level, Record<string, number>> = {
+  D: { D: 150,  C: 300,  B: 600,   A: 1000,  S: 1800  },
+  C: { D: 800,  C: 1400, B: 2200,  A: 3000,  S: 4200  },
+  B: { D: 3000, C: 4800, B: 6800,  A: 9000,  S: 12500 },
+  A: { D: 11000,C: 16000,B: 21500, A: 28000, S: 38000 },
+  S: { D: 36000,C: 48000,B: 64000, A: 85000, S: 115000},
 };
 
 /** 从 `<积分变动>` 标签正文解析变动量与来源。
@@ -64,6 +57,12 @@ export function formatTime(src: Date | string | number | undefined): string {
   return `${M}/${D} ${hh}:${mm}`;
 }
 
+/** 从 `<状态栏>` 正文中提取玩家等级（D/C/B/A/S）。找不到返回 null */
+export function parsePlayerLevelFromStatusBar(statusText: string): Level | null {
+  const m = /等级[：:]\s*([DCBAS])/.exec(statusText);
+  return m ? (m[1] as Level) : null;
+}
+
 /** 从 `<状态栏>` 正文中提取「积分」字段的数值。找不到返回 null */
 export function parseBalanceFromStatusBar(statusText: string): number | null {
   const m = /积分[：:]\s*([+-]?\d+)/.exec(statusText);
@@ -72,26 +71,69 @@ export function parseBalanceFromStatusBar(statusText: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** 根据等级与结算字段计算奖励/惩罚（CLAUDE.md 第三期）。
- *  fields 里需含 `结果`（通关/成功/失败/阵亡）和可选的 `评价`（S/A/B/C/D）、
- *  `越级`（是）、`抽查`（是）。返回整数；结果不明确时返回 0。 */
-export function calcSettlementDelta(level: Level, fields: Record<string, string>): number {
+/** 根据副本等级、玩家等级与结算字段计算奖励/惩罚（CLAUDE.md 账本结算按积分表修正）。
+ *
+ * 通关时：
+ *   base = SCORE_TABLE[packLevel][rating]（评价缺失按 B）
+ *   若抽查=是 → ×0.5（优先级最高）
+ *   否则若玩家等级 ≠ 副本等级 或 越级=是 → ×0.6
+ *
+ * 清算副本通关（isClearance=true）：
+ *   不给评价奖励；将余额补到 KILL_THRESHOLDS[playerLevel]+500；返回差值（最小为0）
+ *
+ * 失败/阵亡：
+ *   清算副本 → 不记账（返回 0）
+ *   普通失败 → 扣当前余额的 30%（floor，最小为0）
+ *
+ * 结果不明确 → 返回 { delta: 0 }
+ */
+export function calcSettlementDelta(
+  packLevel: Level,
+  playerLevel: Level,
+  fields: Record<string, string>,
+  balance: number,
+  isClearance: boolean,
+): { delta: number; source: string; warn?: string } {
   const result = fields['结果'] ?? '';
-  const rating = (fields['评价'] ?? '').toUpperCase();
-  if (result === '失败' || result === '阵亡') {
-    return -Math.round(BASE_REWARDS[level] * 0.3);
+  const rating = (fields['评价'] ?? 'B').toUpperCase();
+
+  const isWin = result === '通关' || result === '成功' || result === '胜利';
+  const isLoss = result === '失败' || result === '阵亡';
+
+  if (!isWin && !isLoss) {
+    return { delta: 0, source: '' };
   }
-  if (result !== '通关' && result !== '成功' && result !== '胜利') {
-    return 0;
+
+  if (isLoss) {
+    if (isClearance) return { delta: 0, source: '清算副本失败·不记账' };
+    const deduct = Math.floor(balance * 0.3);
+    return { delta: -deduct, source: `副本失败·扣30%` };
   }
-  let base = BASE_REWARDS[level];
-  base = Math.round(base * (RATING_MULT[rating] ?? 1.0));
-  for (const [key, mult] of Object.entries(MODIFIER_MULT)) {
-    if (fields[key] === '是' || fields[key] === 'true' || fields[key] === '1') {
-      base = Math.round(base * mult);
-    }
+
+  // isWin
+  if (isClearance) {
+    const target = KILL_THRESHOLDS[playerLevel] + 500;
+    const delta = Math.max(0, target - balance);
+    return { delta, source: `清算副本通关·补至${target}` };
   }
-  return base;
+
+  const tableRating = ['D', 'C', 'B', 'A', 'S'].includes(rating) ? rating : 'B';
+  let base = SCORE_TABLE[packLevel][tableRating];
+
+  const isSurvey = fields['抽查'] === '是' || fields['抽查'] === 'true' || fields['抽查'] === '1';
+  const isOverLevel = fields['越级'] === '是' || fields['越级'] === 'true' || fields['越级'] === '1';
+  const levelMismatch = packLevel !== playerLevel;
+
+  let source = `副本结算·通关·${tableRating}`;
+  if (isSurvey) {
+    base = Math.round(base * 0.5);
+    source += '·抽查×0.5';
+  } else if (isOverLevel || levelMismatch) {
+    base = Math.round(base * 0.6);
+    source += isOverLevel ? '·越级×0.6' : '·等级不符×0.6';
+  }
+
+  return { delta: base, source };
 }
 
 /** 计算当前积分余额 */

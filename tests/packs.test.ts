@@ -125,7 +125,7 @@ describe('农闲：休整副本', () => {
   it('副本结算时不记奖励（calcSettlementDelta 在 rest 包不应被调用，但调用也返回正常值）', () => {
     // 休整副本的结算由 app.ts 的 if(!state.pack.rest) 拦截，不调用 calcSettlementDelta
     // 这里只验证如果被意外调用，不会抛异常
-    expect(() => calcSettlementDelta(nx.level, { 结果: '通关', 评价: 'S' })).not.toThrow();
+    expect(() => calcSettlementDelta(nx.level, nx.level, { 结果: '通关', 评价: 'S' }, 1000, false)).not.toThrow();
   });
 });
 

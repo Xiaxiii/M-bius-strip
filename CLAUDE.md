@@ -465,6 +465,16 @@ interface Progress {
 
 待清算标记一旦打上，余额回到斩杀线以上也保持，直到通关结算（`type=settle && delta>0`）才摘除。
 
+### 甲·二·2 账户校正（账本等级/位格修正）
+
+扩展不永久存储玩家等级和位格；等级/位格仍以 `<状态栏>` 为准。「账户校正」卡里点击「确认校正」后：
+
+1. 把待生效校正存入 `chatMetadata.rlzc_ledger.fix: { level?, rank?, at, afterIndex }`（afterIndex = 当前最后一条消息下标）。
+2. 下一次普通生成（非 quiet / impersonate）时，在 `rlzc_ledger` 注入文字末尾追加校正句：「本轮状态栏里{{user}}的等级写C，之后按剧情照常。」（只写已填的字段，用 `buildFixSentence` 生成，CLAUDE.md 甲·二·4）。
+3. 收到下一条 AI 回复后，认为校正已生效，清除 `fix` 字段。
+4. 若 AI 未照做，调试页对该楼标黄警告，不改正文。
+5. 校正期间（fix 存在但尚未清除时），斩杀线判断和待清算状态使用 `fix.level` 对应的阈值；`formatBalanceInjection` 接受可选的 threshold 参数，调用方传入正确值。
+
 ## 16. 休整副本（rest: true）
 
 休整副本（如农闲）：没有评级、奖励和失败扣分。副本结算时账本不记奖励、不扣分，调试页不因评价为「无」而警告；不算清算副本，已标记的待清算保持原状。系统页的等级显示「—」。

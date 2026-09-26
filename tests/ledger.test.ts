@@ -64,34 +64,59 @@ describe('computeBalance', () => {
 // ───────────── calcSettlementDelta ─────────────
 
 describe('calcSettlementDelta', () => {
-  it('S级通关B评价', () => {
-    const d = calcSettlementDelta('S', { 结果: '通关', 评价: 'B' });
-    expect(d).toBe(50000);
+  it('D副本 C玩家 B评：等级不符×0.6 → 360', () => {
+    const r = calcSettlementDelta('D', 'C', { 结果: '通关', 评价: 'B' }, 1000, false);
+    expect(r.delta).toBe(360); // SCORE_TABLE[D][B]=600 × 0.6
   });
 
-  it('S级通关S评价', () => {
-    const d = calcSettlementDelta('S', { 结果: '通关', 评价: 'S' });
-    expect(d).toBe(75000); // 50000 * 1.5
+  it('同级 S副本 S玩家 S评：全额 → 115000', () => {
+    const r = calcSettlementDelta('S', 'S', { 结果: '通关', 评价: 'S' }, 5000, false);
+    expect(r.delta).toBe(115000);
   });
 
-  it('D级通关C评价', () => {
-    const d = calcSettlementDelta('D', { 结果: '通关', 评价: 'C' });
-    expect(d).toBe(400); // 500 * 0.8
+  it('B副本 B玩家 S评：全额 → 12500', () => {
+    const r = calcSettlementDelta('B', 'B', { 结果: '通关', 评价: 'S' }, 5000, false);
+    expect(r.delta).toBe(12500);
   });
 
-  it('越级折扣', () => {
-    const d = calcSettlementDelta('A', { 结果: '通关', 评价: 'B', 越级: '是' });
-    expect(d).toBe(9000); // 15000 * 0.6
+  it('越级×0.6：A副本 A玩家 越级=是 B评 → 12900', () => {
+    const r = calcSettlementDelta('A', 'A', { 结果: '通关', 评价: 'B', 越级: '是' }, 5000, false);
+    expect(r.delta).toBe(Math.round(21500 * 0.6)); // 12900
   });
 
-  it('失败扣分', () => {
-    const d = calcSettlementDelta('D', { 结果: '失败' });
-    expect(d).toBe(-150); // -500 * 0.3
+  it('抽查×0.5 优先于越级：S副本 S玩家 抽查=是 A评 → 42500', () => {
+    const r = calcSettlementDelta('S', 'S', { 结果: '通关', 评价: 'A', 抽查: '是', 越级: '是' }, 5000, false);
+    expect(r.delta).toBe(Math.round(85000 * 0.5)); // 42500
   });
 
-  it('结果不明确返回 0', () => {
-    expect(calcSettlementDelta('B', { 结果: '' })).toBe(0);
-    expect(calcSettlementDelta('B', {})).toBe(0);
+  it('普通失败扣当前余额30%：balance=1000 → -300', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '失败' }, 1000, false);
+    expect(r.delta).toBe(-300);
+  });
+
+  it('清算副本通关：补至斩杀线+500，余额=100，D级玩家 → delta=700', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '通关', 评价: 'S' }, 100, true);
+    expect(r.delta).toBe(700); // KILL_THRESHOLDS['D']+500=800, 800-100=700
+  });
+
+  it('清算副本通关：余额已高于目标时 delta=0', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '通关', 评价: 'S' }, 2000, true);
+    expect(r.delta).toBe(0);
+  });
+
+  it('清算副本失败：不记账，delta=0', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '失败' }, 1000, true);
+    expect(r.delta).toBe(0);
+  });
+
+  it('斩杀线按玩家等级：C级=1000，D级=300', () => {
+    expect(KILL_THRESHOLDS['C']).toBe(1000);
+    expect(KILL_THRESHOLDS['D']).toBe(300);
+  });
+
+  it('结果不明确返回 delta=0', () => {
+    expect(calcSettlementDelta('B', 'B', { 结果: '' }, 1000, false).delta).toBe(0);
+    expect(calcSettlementDelta('B', 'B', {}, 1000, false).delta).toBe(0);
   });
 });
 
