@@ -13,13 +13,14 @@
 | `fixtures.mjs` | 钟楼、喜宴、游戏的开场白，回廊闲聊，正文素材 |
 | `run.mjs` | 检查脚本：桌面 1280px、手机 390px、费用估算、与柏宝书和酒馆助手共存 |
 | `run-live.mjs` | 直播与账本的检查（第三期b）：装酒馆助手、导入状态栏正则，回廊开播 → 钟楼 → 结算 → 回廊、喜宴不开播、污名、死亡撤回、入场弹窗、账户校正、AI 弹幕的 token |
+| `run-market.mjs` | 黑市的检查（第四期）：钟楼开盘、下注、封盘、事件盘开奖、结算开奖、删结算与重新生成、死亡结算、检测关闭、农闲、赌坊四张桌、一次性提示、截图 |
 | `regex-huilang-statusbar.json` | 玩家用的状态栏正则（测试素材，不要改）；由酒馆助手渲染成 iframe，从主页面读 `window.RLZC_LIVE` |
 | `RLZC_LIVE_mock.js` | 直播接口的样例（测试素材），扩展的 `window.RLZC_LIVE` 按它的行为实现 |
 | `report.mjs` | 把结果整理成报告草稿 `out/report-draft.md` |
 | `lib/` | 路径与端口、启停进程、界面操作、结果登记 |
 | `shots/` | 报告里引用的几张关键截图（已压缩） |
 
-模拟主AI会读取本扩展注入的内容来写回复（`fullStatus` 时 `<状态栏>` 里照抄账户注入的积分、按校正句写等级位格）：把本轮后台事件写进正文（可以按脚本故意漏写）、第2轮输出 `<角色登记>`、`<副本>` 的时限一栏照抄注入值、带 `<状态栏>`。模拟检测AI按请求返回事件核对、隐藏状态和下一轮条件预判的 JSON，也可以切换成 401、超时、乱码、带 \`\`\` 的 JSON。AI 弹幕的调用返回 8–12 条弹幕 JSON，也可以按 `{"danmaku":{"mode":"fail","count":2}}` 返回 500。
+模拟主AI会读取本扩展注入的内容来写回复（`fullStatus` 时 `<状态栏>` 里照抄账户注入的积分、按校正句写等级位格）：把本轮后台事件写进正文（可以按脚本故意漏写）、第2轮输出 `<角色登记>`、`<副本>` 的时限一栏照抄注入值、带 `<状态栏>`。模拟检测AI按请求返回事件核对、隐藏状态和下一轮条件预判的 JSON，也可以切换成 401、超时、乱码、带 \`\`\` 的 JSON。AI 弹幕的调用返回 8–12 条弹幕 JSON，也可以按 `{"danmaku":{"mode":"fail","count":2}}` 返回 500。庄家怪盘出题返回 3 道题，也可以按 `{"freak":{"mode":"fail","count":2}}` 返回 500；检测 JSON 的 `markets` 按 `{"sub":{"marketsYes":["M2"]}}` 判真，`{"sub":{"omitMarkets":true}}` 时不带。
 
 ## 运行
 
@@ -33,6 +34,7 @@ node setup.mjs            # 第一次：拉 ST 1.19.0、装依赖、装扩展
 node run.mjs --fresh      # 清空 ST 用户数据后跑全部，约 7 分钟
 node report.mjs           # 生成报告草稿
 node run-live.mjs --fresh # 直播与账本（约 7 分钟，需要能访问 GitHub 装酒馆助手），结果在 out/live-results.json
+node run-market.mjs --fresh # 黑市（约 4 分钟），结果在 out/market-results.json
 ```
 
 - `--only=desktop,cost,mobile,coexist`：只跑其中几部分。

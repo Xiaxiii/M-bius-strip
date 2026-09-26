@@ -3,12 +3,14 @@ import { state, type TabId } from '../app';
 import { confirmBox } from '../st/context';
 import SystemTab from './tabs/SystemTab.vue';
 import LedgerTab from './tabs/LedgerTab.vue';
+import MarketTab from './tabs/MarketTab.vue';
 import SettingsTab from './tabs/SettingsTab.vue';
 import DebugTab from './tabs/DebugTab.vue';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'system', label: '系统' },
   { id: 'ledger', label: '账本' },
+  { id: 'market', label: '黑市' },
   { id: 'settings', label: '设置' },
   { id: 'debug', label: '调试' },
 ];
@@ -35,6 +37,7 @@ async function pick(id: TabId) {
       <div class="rlzc-body">
         <SystemTab v-if="state.tab === 'system'" />
         <LedgerTab v-else-if="state.tab === 'ledger'" />
+        <MarketTab v-else-if="state.tab === 'market'" />
         <SettingsTab v-else-if="state.tab === 'settings'" />
         <DebugTab v-else-if="state.tab === 'debug' && state.debugUnlocked" />
       </div>

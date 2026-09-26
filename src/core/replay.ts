@@ -79,6 +79,8 @@ export interface Progress {
   rolesFromChat?: Record<string, string>;
   /** 每条AI消息被重放时归属的阶段与轮次（调试页用） */
   perMessage: Record<number, MessageRecord>;
+  /** 各阶段第一次结束于哪一楼（离开该阶段时的那一楼；黑市事件盘的 by 用） */
+  phaseEnds: Record<string, number>;
   entryIndex: number;
 }
 
@@ -179,6 +181,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
   let rolesFromChat: Record<string, string> | undefined;
   const fired = new Set<string>();
   const perMessage: Record<number, MessageRecord> = {};
+  const phaseEnds: Record<string, number> = {};
 
   const actions = new Map<number, ManualAction[]>();
   for (const a of session.manual ?? []) {
@@ -186,7 +189,8 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     actions.get(a.atIndex)!.push(a);
   }
 
-  const enter = (next: Phase) => {
+  const enter = (next: Phase, at: number) => {
+    if (phaseEnds[phase.id] === undefined && next.id !== phase.id) phaseEnds[phase.id] = at;
     if (pack.phases.length) chainStart = nextChainStart(pack, chainStart, next);
     phase = next;
     round = 0;
@@ -229,10 +233,10 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
         const switchName = detectPhaseSwitch(text);
         const target = switchName ? phases.find((ph) => ph.name === switchName) : undefined;
         if (target && pack.phases.length) {
-          enter(target);
+          enter(target, i);
         } else if (phase.cap > 0 && round >= phase.cap && phase.next) {
           const next = findPhase(pack, phase.next);
-          if (next) enter(next);
+          if (next) enter(next, i);
         }
       }
     }
@@ -249,7 +253,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
           const target = findPhase(pack, a.phase);
           if (target) {
             skipGoal = null;
-            enter(target);
+            enter(target, i);
           }
           break;
         }
@@ -304,6 +308,7 @@ export function replay(chat: ChatMessage[], session: Session, pack: Pack): Progr
     panel,
     rolesFromChat,
     perMessage,
+    phaseEnds,
     entryIndex,
   };
 }

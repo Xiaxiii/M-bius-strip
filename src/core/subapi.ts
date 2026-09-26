@@ -29,6 +29,8 @@ export interface SubResult {
   hype?: number;
   /** 本轮正文是否有人受伤或死亡（不注入主AI；缺少不算失败） */
   hurt?: boolean;
+  /** 黑市盘口的判定：盘口 id（judgeNo 为 id:no）→ 本轮正文是否明确写到（缺少不算失败，这一轮对盘口算没检测） */
+  markets?: Record<string, boolean>;
 }
 
 /** 存进 chat[i].extra.rlzc.sub 的记录 */
@@ -71,6 +73,8 @@ export interface SubInput {
   nextConditional: PackEvent[];
   /** 本条AI正文（原文，函数内部会去掉面板） */
   text: string;
+  /** 黑市：还没开奖的事件盘、怪盘的判定陈述（judgeNo 另列一条，id 后加 :no）；没有时提示词不变 */
+  markets?: { id: string; judge: string }[];
 }
 
 export interface SubMessages {
@@ -80,6 +84,7 @@ export interface SubMessages {
 
 export function buildSubPrompt(input: SubInput): SubMessages {
   const fields = stateFieldsOf(input.pack);
+  const markets = input.markets ?? [];
   const system = [
     '你是角色扮演副本的记录员，不写剧情，只整理事实。',
     '根据本轮正文完成三件事：',
@@ -88,8 +93,11 @@ export function buildSubPrompt(input: SubInput): SubMessages {
     ...fields.map((f) => `   - ${f.key}（${f.label}）：${f.hint}`),
     '3. 条件预判：逐条判断「下一轮事件」的条件现在是否仍成立（ok 为 true/false），附一句理由。',
     '4. hype：0–100 整数，按本轮正文的紧张、冲突、转折打分；hurt：true/false，本轮正文是否有人受伤或死亡。这两项只写数字和真假，不写理由。',
+    ...(markets.length ? ['5. markets：逐条判断「盘口陈述」，只有本轮正文明确写到才填 true，否则填 false，不写理由。'] : []),
     '只输出一个 JSON 对象，不要任何解释，格式：',
-    '{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],"state":{…},"next":[{"id":"E12","ok":true,"reason":"…"}],"hype":50,"hurt":false}',
+    markets.length
+      ? `{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],"state":{…},"next":[{"id":"E12","ok":true,"reason":"…"}],"hype":50,"hurt":false,"markets":{${markets.map((m) => `"${m.id}":false`).join(',')}}}`
+      : '{"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],"state":{…},"next":[{"id":"E12","ok":true,"reason":"…"}],"hype":50,"hurt":false}',
     '没有本轮事件时 events 为 []；没有下一轮事件时 next 为 []。',
   ].join('\n');
 
@@ -105,6 +113,7 @@ export function buildSubPrompt(input: SubInput): SubMessages {
     `【上一轮状态】${input.prevState ? JSON.stringify(input.prevState) : '（尚无，请根据正文建立）'}`,
     `【本轮后台事件】\n${eventLines}`,
     `【下一轮事件】\n${nextLines}`,
+    ...(markets.length ? [`【盘口陈述】\n${markets.map((m) => `- ${m.id}：${m.judge}`).join('\n')}`] : []),
     `【本轮正文】\n${stripPanels(input.text)}`,
   ].join('\n\n');
   return { system, user };
@@ -151,6 +160,14 @@ export function parseSubResponse(raw: string): SubResult {
   if (Number.isFinite(hype)) result.hype = Math.max(0, Math.min(100, Math.round(hype)));
   if (typeof data.hurt === 'boolean') result.hurt = data.hurt;
   else if (data.hurt === 'true' || data.hurt === 'false') result.hurt = data.hurt === 'true';
+  if (data.markets && typeof data.markets === 'object' && !Array.isArray(data.markets)) {
+    const m: Record<string, boolean> = {};
+    for (const [k, v] of Object.entries(data.markets)) {
+      if (typeof v === 'boolean') m[k] = v;
+      else if (v === 'true' || v === 'false') m[k] = v === 'true';
+    }
+    result.markets = m;
+  }
   return result;
 }
 

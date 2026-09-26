@@ -9,6 +9,8 @@
   --muted: var(--SmartThemeEmColor, #919191);
   --solid: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);
   --soft: color-mix(in srgb, var(--fg) 7%, transparent);
+  --ok: #4caf72;
+  --bad: #c9534f;
   font-family: var(--mainFontFamily, system-ui, -apple-system, 'PingFang SC', 'Noto Sans SC', sans-serif);
   font-size: 14px;
   line-height: 1.55;
@@ -29,6 +31,11 @@
 .rlzc-ball.is-active .rlzc-ball-mark { color: var(--accent); }
 .rlzc-ball.is-warn { animation: rlzc-pulse 1.8s ease-in-out infinite; }
 @keyframes rlzc-pulse { 50% { transform: scale(1.08); } }
+.rlzc-ball-badge {
+  position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: var(--accent); color: var(--bg); font-size: 11px; font-weight: 700; line-height: 18px; text-align: center;
+  pointer-events: none;
+}
 
 /* ── 面板：手机为底部抽屉，宽屏为右侧卡片 ── */
 /* ST 给 <html> 加了 transform，fixed 元素的包含块变成 html，inset:0 会塌成0高，所以用视口单位 */
@@ -309,3 +316,73 @@
 .rlzc-collapse-status { flex: 0 0 auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 /* SubApiCard 的 .rlzc-dot 在折叠头里 */
 .rlzc-collapse-head .rlzc-dot { font-size: 12px; }
+
+/* ── 黑市 ── */
+.rlzc-market-tabs button { flex: 1 1 0; min-height: 44px; }
+.rlzc-mk-status { font-size: 14px; }
+.rlzc-mk-q { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; font-weight: 600; overflow-wrap: anywhere; }
+.rlzc-mk-tag {
+  flex: 0 0 auto; font-size: 11px; font-weight: 600; color: var(--accent); padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent); border-radius: 4px;
+}
+.rlzc-mk-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.rlzc-mk-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 44px; padding: 6px 10px;
+  font: inherit; color: var(--fg); background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--line); border-radius: 8px; cursor: pointer; text-align: left;
+}
+.rlzc-mk-opt b { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted); }
+.rlzc-mk-opt.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.rlzc-mk-opt.on b { color: var(--fg); }
+.rlzc-mk-opt:disabled { opacity: 0.55; cursor: not-allowed; }
+.rlzc-mk-bet { margin-top: 8px; }
+.rlzc-mk-bet .rlzc-input, .rlzc-mk-bet .rlzc-btn { min-height: 44px; }
+.rlzc-mk-bet .rlzc-btn { flex: 0 0 auto; min-width: 64px; }
+.rlzc-mk-red { color: var(--bad); font-size: 12px; margin: 2px 0; }
+.rlzc-mk-mine { list-style: none; margin: 8px 0 0; padding: 6px 0 0; border-top: 1px dashed var(--line); font-size: 12px; color: var(--muted); }
+.rlzc-mk-mine li { padding: 2px 0; font-variant-numeric: tabular-nums; }
+
+.rlzc-tk-list { list-style: none; margin: 0; padding: 0; }
+.rlzc-tk {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.rlzc-tk:last-child { border-bottom: none; }
+.rlzc-tk-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rlzc-tk-title { font-size: 13px; overflow-wrap: anywhere; }
+.rlzc-tk-left small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rlzc-stamp {
+  flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  font-weight: 800; font-size: 16px; border: 2px solid currentColor; transform: rotate(-14deg);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 18%, transparent);
+}
+.rlzc-stamp.win { color: var(--ok); }
+.rlzc-stamp.lose { color: var(--bad); }
+.rlzc-stamp.refund { color: var(--muted); }
+.rlzc-stamp.pending { color: var(--muted); border-style: dashed; border-width: 1px; box-shadow: none; transform: none; font-weight: 600; font-size: 14px; }
+
+.rlzc-cs-tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rlzc-cs-table {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 76px; text-align: left;
+  font: inherit; color: var(--fg); cursor: pointer;
+}
+.rlzc-cs-table b { font-size: 15px; }
+.rlzc-cs-table small { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.rlzc-cs-table.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.rlzc-cs-play h4 { margin-bottom: 4px; }
+.rlzc-cs-seg { margin: 6px 0; }
+.rlzc-cs-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin: 6px 0; }
+.rlzc-cs-grid.door { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.rlzc-cs-grid button {
+  min-height: 44px; padding: 0 2px; font: inherit; font-size: 13px; color: var(--muted); cursor: pointer;
+  background: none; border: 1px solid var(--line); border-radius: 8px; font-variant-numeric: tabular-nums;
+}
+.rlzc-cs-grid button.on { color: var(--fg); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, transparent); font-weight: 600; }
+.rlzc-cs-face {
+  margin-top: 10px; min-height: 52px; display: grid; place-items: center; font-size: 26px; font-weight: 800;
+  font-variant-numeric: tabular-nums; border: 1px dashed var(--line); border-radius: 10px;
+}
+.rlzc-cs-face.rolling { color: var(--muted); }
+.rlzc-cs-result { margin: 8px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.rlzc-cs-result.win { color: var(--ok); }
+.rlzc-cs-result.lose { color: var(--bad); }

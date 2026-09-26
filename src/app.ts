@@ -68,6 +68,39 @@ import {
 import { calcViewers, type PoolItem, type TemplateItem } from './core/live';
 import danmakuPool from './packs/builtin/danmaku_pool.json';
 import { notifyLive, releaseAll, scheduleFeed } from './st/liveApi';
+import {
+  addHint,
+  bookEntries,
+  briefingText,
+  buildFreakPrompt,
+  callFreakWithRetry,
+  checkStake,
+  clearHints,
+  freakMarkets,
+  freezeResults,
+  hintText,
+  judgeList,
+  MARKET_META_KEY,
+  normalizeMarketMeta,
+  openMarkets,
+  resolveMarkets,
+  roundChecks,
+  shouldClose,
+  stakedOn,
+  STAKE_CAP,
+  ticketResults,
+  type Book,
+  type FreakLog,
+  type Market,
+  type MarketMeta,
+  type MarketResult,
+  type Outcome,
+  type Resolution,
+  type RoundCheck,
+  type StakeCheck,
+  type Ticket,
+} from './core/market';
+import { casinoSource, ensureTables, playCasino, type CasinoOutcome } from './core/casino';
 
 export const SETTINGS_KEY = 'rlzc';
 
@@ -148,8 +181,8 @@ const DEFAULT_SETTINGS: Settings = {
   live: { ...DEFAULT_LIVE },
 };
 
-/** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
-export type TabId = 'system' | 'ledger' | 'settings' | 'debug';
+/** 面板页签（CLAUDE.md 11.9）：「黑市」在 ledger 与 settings 之间（第18节） */
+export type TabId = 'system' | 'ledger' | 'market' | 'settings' | 'debug';
 
 export const state = reactive({
   chatId: '',
@@ -171,6 +204,8 @@ export const state = reactive({
   tick: 0,
   /** 积分账本流水（重放自聊天快照，CLAUDE.md 第三期） */
   ledger: [] as LedgerDisplayEntry[],
+  /** 黑市（第四期）：本局盘口、赌票、摆桌 */
+  market: emptyMarketView(),
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -275,15 +310,22 @@ function writeLedgerMeta(meta: LedgerMeta): void {
 
 /** 从聊天记录重放积分流水，删楼/滑动自动回滚；同时追加 LedgerMeta.adjust 手动条目 */
 function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
-  const result: LedgerDisplayEntry[] = [];
+  // 排序键：楼层、同一楼内先楼层自己的条目，再赌票兑付/退还，最后按先后的下注与赌坊
+  const rows: { e: LedgerDisplayEntry; pos: number; g: number; seq: number }[] = [];
   for (let i = 0; i < chat.length; i++) {
     const msg = chat[i];
     if (msg.is_user || msg.is_system) continue;
     const entries = msg.extra?.rlzc?.ledger;
     if (!Array.isArray(entries)) continue;
     const t = [msg.send_date, msg.gen_finished].map((v) => (v instanceof Date ? v.getTime() : Date.parse(String(v ?? '')))).find((x) => Number.isFinite(x));
-    for (const e of entries) result.push({ ...e, mesIndex: i, ts: t });
+    for (const e of entries) rows.push({ e: { ...e, mesIndex: i, ts: t }, pos: i, g: 0, seq: 0 });
   }
+  // 黑市：下注、赌坊存在 chatMetadata（不随删楼撤销）；兑付、退还由重放得出
+  for (const { pos, seq, ...e } of marketLedgerEntries(chat)) {
+    rows.push({ e: { ...e, mesIndex: pos, ts: parseAtTime(e.at) }, pos: pos < 0 ? Number.MAX_SAFE_INTEGER : pos, g: seq === undefined ? 1 : 2, seq: seq ?? 0 });
+  }
+  rows.sort((a, b) => a.pos - b.pos || a.g - b.g || a.seq - b.seq);
+  const result: LedgerDisplayEntry[] = rows.map((r) => r.e);
   // 手动调整（不绑定楼层，mesIndex = -1）按时间排进去
   const meta = readLedgerMeta();
   const manual: LedgerDisplayEntry[] = (meta.adjust ?? []).map((a) => ({
@@ -533,6 +575,7 @@ export function refresh(): void {
   if (session) {
     const before = JSON.stringify(session);
     if (!reconcileSession(chat, session)) {
+      voidBook(session.id);
       writeSession(null);
       toast('info', '入场消息已不存在，副本会话已作废。');
       session = null;
@@ -548,6 +591,7 @@ export function refresh(): void {
   state.progress = c.progress;
   state.audit = c.audit;
   state.subLine = subStatusLine(chat, c.progress);
+  refreshMarket(chat, c.session);
   state.ledger = replayLedger(chat);
   state.tick++;
   notifyLive();
@@ -597,6 +641,16 @@ function injectFor(type: string | undefined): void {
   if (ledgerMeta.fix) {
     const sentence = buildFixSentence(ledgerMeta.fix);
     if (sentence) ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
+  }
+  // 黑市的一次性提示（押自己失败、赌坊输到斩杀线下、一局赢大钱）：加在末尾，收到下一条AI回复后清掉
+  const marketMeta = readMarketMeta();
+  if (marketMeta.hints.length) {
+    const t = marketMeta.hints.map(hintText).join('');
+    ledgerText = ledgerText ? `${ledgerText}\n${t}` : t;
+    if (marketMeta.hints.some((h) => !h.sent)) {
+      marketMeta.hints = marketMeta.hints.map((h) => ({ ...h, sent: true }));
+      writeMarketMeta(marketMeta);
+    }
   }
   if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
   // 直播：弹幕传给主AI（默认关）；没在播时不注入
@@ -728,6 +782,9 @@ export function onMessageSwiped(id: number): void {
 function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefing'], live = false): void {
   const chat = getChat();
   const msg = chat[entryIndex];
+  // 黑市：上一局的盘口本定格（已开奖的保留，还没开奖的全退）
+  const old = readSession();
+  if (old) freezeBook(old);
   const session = createSession(pack, entryIndex, briefing);
   // 直播：进入任何副本时回廊直播自动结束；本局是否直播只看入场勾选框（disableLive 副本不直播）
   const lm = readLiveMeta();
@@ -765,6 +822,8 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
   msg.extra = msg.extra ?? {};
   msg.extra.rlzc = { phase: pack.phases[0]?.name ?? '进行中', round: 1, injected: [], entry: session.id } satisfies Snapshot;
   writeSession(session);
+  // 黑市：入场确认后开盘（休整副本不开）
+  openBook(session, pack, entryIndex);
   refresh();
   if (state.progress) msg.extra.rlzc.injected = plain(state.progress.perMessage[entryIndex]?.events ?? []);
   saveMeta();
@@ -844,6 +903,7 @@ export function debugRemoveAction(index: number): void {
 export async function abandonSession(): Promise<void> {
   if (!state.session) return;
   if (!(await confirmBox('确定要删除当前副本会话吗？（不会改动聊天记录）'))) return;
+  voidBook(state.session.id);
   writeSession(null);
   refresh();
 }
@@ -953,6 +1013,8 @@ function startSub(index: number, type?: string): Promise<void> | null {
   if (subDone.has(key)) return null;
   const phase = pack.phases.find((p) => p.id === rec.phase);
   const prev = latestSubState(chat.slice(0, index), progress.entryIndex);
+  // 黑市：还没开奖的事件盘、怪盘交给这次检测一并判定（不注入主AI）
+  const book = state.session ? readMarketMeta().books[state.session.id] : undefined;
   const raw = buildSubPrompt({
     pack,
     phaseName: phase?.name ?? rec.phase,
@@ -961,6 +1023,7 @@ function startSub(index: number, type?: string): Promise<void> | null {
     events,
     nextConditional,
     text: String(msg.mes ?? ''),
+    markets: book ? judgeList(book, state.market.results) : [],
   });
   const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
   const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
@@ -1112,6 +1175,7 @@ export function onMessageReceived(index: number, type?: string): void {
     auditLedgerBalance(index);
     applyLive(index, type);
     clearLevelFix();
+    clearMarketHints();
     return;
   }
   // ST 1.19.0 每次打开只有开场白的聊天都会对开场白补发 MESSAGE_RECEIVED（type = first_message）。
@@ -1119,6 +1183,8 @@ export function onMessageReceived(index: number, type?: string): void {
   if (type === 'first_message') return;
 
   let subPromise: Promise<void> | null = null;
+  // 黑市：这一楼的事件检测还没开始，先按「检测中」处理，免得到期的盘口提前按「没检测」开奖
+  if (subEnabled()) marketHold = index;
   const roles = detectRoles(msg.mes);
   if (roles) session.roles = { ...(session.roles ?? {}), ...roles };
   writeSession(session);
@@ -1160,6 +1226,10 @@ export function onMessageReceived(index: number, type?: string): void {
     refresh();
     subPromise = startSub(index, type);
   }
+  if (marketHold >= 0) {
+    marketHold = -1;
+    if (!subPromise) refresh();
+  }
   const s = detectSettlement(msg.mes);
   if (s) toast('info', `副本结算：${s.result ?? '—'}${s.rating ? `，评价 ${s.rating}` : ''}`);
 
@@ -1174,6 +1244,7 @@ export function onMessageReceived(index: number, type?: string): void {
     });
   } else applyLive(index, type);
   clearLevelFix();
+  clearMarketHints();
 }
 
 /** 账户校正：收到 AI 回复后清除待生效的校正（CLAUDE.md 甲二.2） */
@@ -1198,7 +1269,9 @@ function auditLedgerBalance(index: number): void {
   // 本楼记账后的余额
   const initBal = getInitBalance(chat);
   // 本楼的直播打赏在回复写完之后才到账，AI 写状态栏时还不知道，不参与核对
-  const balance = computeBalance(initBal.value, replayLedger(chat).filter((e) => !(e.mesIndex === index && e.type === 'tip')));
+  // 赌票兑付、退还也是这一楼写完之后才开奖到账的
+  const lateEntry = (e: LedgerDisplayEntry) => e.mesIndex === index && (e.type === 'tip' || (e.type === 'bet' && /^赌票/.test(e.source)));
+  const balance = computeBalance(initBal.value, replayLedger(chat).filter((e) => !lateEntry(e)));
   if (statusBalance !== balance) {
     log(`积分核对不符（楼层${index}）：状态栏 ${statusBalance}，账本 ${balance}`);
     // 写入快照的警告字段，调试页据此标黄
@@ -1213,6 +1286,7 @@ export function onChatChanged(): void {
   askedSkip.clear();
   askedEntry.clear();
   lastInjectionIndex = -1;
+  marketHold = -1;
   state.chatId = getChatId();
   state.debugUnlocked = false;
   state.lastInjection = EMPTY_INJECTION;
@@ -1474,4 +1548,341 @@ export function toggleCorridorLive(): boolean {
   state.tick++;
   notifyLive();
   return true;
+}
+
+// ───────────── 黑市（第四期）─────────────
+
+export interface MarketTicketView {
+  ticket: Ticket;
+  book: Book;
+  market?: Market;
+  /** 兑 / 废 / 退；待开奖为 null */
+  res: Resolution | null;
+}
+
+export interface MarketView {
+  /** 当前进行中这一局的盘口本（没有副本、休整副本为 null） */
+  book: Book | null;
+  results: Record<string, MarketResult>;
+  /** 本聊天所有赌票，新的在上 */
+  tickets: MarketTicketView[];
+  /** 待开奖张数 */
+  pending: number;
+  /** 今晚摆的两张桌 */
+  tables: string[];
+  /** 赌坊营业：回廊中，或 casino: true 的副本内 */
+  casinoOpen: boolean;
+}
+
+function emptyMarketView(): MarketView {
+  return { book: null, results: {}, tickets: [], pending: 0, tables: [], casinoOpen: true };
+}
+
+export function readMarketMeta(): MarketMeta {
+  return normalizeMarketMeta(getMeta()[MARKET_META_KEY]);
+}
+
+function writeMarketMeta(meta: MarketMeta): void {
+  getMeta()[MARKET_META_KEY] = plain(meta);
+  saveMeta();
+}
+
+/** 收到AI回复时正在处理、事件检测还没开始的那一楼 */
+let marketHold = -1;
+
+function pendingChecks(): number[] {
+  return [marketHold, subJob?.index ?? -1].filter((i) => i >= 0);
+}
+
+/** 玩家等级，取法与账本相同：待生效的校正 → 最近的状态栏 → D */
+export function accountLevel(chat: ChatMessage[] = getChat()): Level {
+  return playerLevel(chat);
+}
+
+export function accountBalance(chat: ChatMessage[] = getChat()): number {
+  return computeBalance(getInitBalance(chat).value, state.ledger);
+}
+
+/**
+ * 第一次下注或开赌坊前把初始余额定下来：聊天里还没有状态栏时按默认值记下，
+ * 免得之后第一条状态栏（已经扣过押注的余额）被当成初始余额，押注被扣两次。
+ */
+function pinInitBalance(chat: ChatMessage[]): void {
+  if (readLedgerMeta().init) return;
+  const v = getInitBalance(chat);
+  const meta = readLedgerMeta();
+  if (!meta.init) writeLedgerMeta({ ...meta, init: { value: v.value, source: v.source, at: formatTime(undefined) } });
+}
+
+/** 副本内本局已到账的直播打赏（不可用）；回廊中为0 */
+function lockedTips(): number {
+  const s = readSession();
+  return s?.status === 'active' && s.live ? showTipTotal(getChat(), s.id) : 0;
+}
+
+/** 一局的开奖：会话还在就按重放；定格了用定格结果；会话已不在（作废）全部退 */
+function evalBook(chat: ChatMessage[], book: Book, session: Session | null): { results: Record<string, MarketResult>; tickets: Record<string, Resolution | null>; rounds: RoundCheck[] } {
+  if (book.frozen) return { results: {}, tickets: ticketResults(book, {}), rounds: [] };
+  let outcome: Outcome = { voided: true, ended: false };
+  let rounds: RoundCheck[] = [];
+  let phaseEnds: Record<string, number> = {};
+  if (session && session.id === book.session) {
+    const pack = resolvePack(session, state.packs);
+    const progress = pack ? replay(chat, session, pack) : null;
+    if (progress) {
+      outcome = {
+        ended: progress.ended,
+        endedBy: progress.endedBy,
+        endIndex: progress.endIndex,
+        result: progress.settlement?.result,
+        rating: progress.settlement?.rating,
+      };
+      rounds = roundChecks(chat, progress.perMessage, progress.entryIndex, pendingChecks());
+      phaseEnds = progress.phaseEnds;
+    }
+  }
+  const results = resolveMarkets({ markets: book.markets, rounds, outcome, phaseEnds });
+  return { results, tickets: ticketResults(book, results), rounds };
+}
+
+/** 黑市流水：每张赌票的下注、兑付、退还，以及赌坊每局 */
+function marketLedgerEntries(chat: ChatMessage[]) {
+  const meta = readMarketMeta();
+  const session = readSession();
+  const atOf = (i: number) => (chat[i] ? formatTime(chat[i].send_date ?? chat[i].gen_finished ?? undefined) : undefined);
+  const out = [];
+  for (const book of Object.values(meta.books)) out.push(...bookEntries(book, evalBook(chat, book, session).tickets, atOf));
+  for (const p of meta.casino.plays) {
+    out.push({ delta: p.net, source: casinoSource(p.table, p.label), type: 'bet' as const, at: p.at, pos: p.after, seq: p.seq ?? 0 });
+  }
+  return out;
+}
+
+/** 会话被替换时定格上一局：已开奖的保留，还没开奖的全退 */
+function freezeBook(session: Session): void {
+  const meta = readMarketMeta();
+  const book = meta.books[session.id];
+  if (!book || book.frozen) return;
+  const chat = getChat();
+  const frozen = freezeResults(book, evalBook(chat, book, session).results);
+  // 没对应楼层的退还排在定格那一刻、下注之后
+  for (const t of book.tickets) if (frozen[t.id].index < 0) frozen[t.id].index = Math.max(chat.length, t.after + 1);
+  book.frozen = frozen;
+  writeMarketMeta(meta);
+}
+
+/** 会话作废（入场消息被删、手动删除会话）：这一局的赌票全部退 */
+function voidBook(sessionId: string): void {
+  const meta = readMarketMeta();
+  const book = meta.books[sessionId];
+  if (!book || book.frozen) return;
+  const at = getChat().length;
+  book.frozen = Object.fromEntries(book.tickets.map((t) => [t.id, { stamp: 'refund' as const, index: Math.max(at, t.after + 1) }]));
+  writeMarketMeta(meta);
+}
+
+/** 入场确认后开盘：结局盘、评价盘，检测开着时加事件盘，并另发一次调用出庄家怪盘。休整副本不开 */
+function openBook(session: Session, pack: Pack, entryIndex: number): void {
+  if (pack.rest) return;
+  const chat = getChat();
+  const withSub = subEnabled();
+  const markets = openMarkets({ pack, playerLevel: accountLevel(chat), withEvents: withSub, rand: Math.random });
+  if (!markets.length) return;
+  const meta = readMarketMeta();
+  const book: Book = { session: session.id, packId: pack.id, packName: pack.name, openedAt: formatTime(undefined), markets, tickets: [] };
+  if (withSub) book.freak = { status: 'pending' };
+  meta.books[session.id] = book;
+  writeMarketMeta(meta);
+  if (withSub) startFreak(session.id, pack, entryIndex);
+}
+
+/**
+ * 庄家怪盘：独立调用，接口跟随事件检测卡的来源与预设；不等待、不阻塞。
+ * 输入只有副本名、等级、简报原文、副本包 docs 的公开资料；失败重试1次，仍失败这局不开怪盘，不弹窗，调试页记原因。
+ */
+function startFreak(sessionId: string, pack: Pack, entryIndex: number): void {
+  const finish = (log: FreakLog, items?: Parameters<typeof freakMarkets>[0]) => {
+    const meta = readMarketMeta();
+    const book = meta.books[sessionId];
+    if (!book) return; // 已切到别的聊天，或这一局已不在
+    if (items && (book.closedAt || book.frozen)) {
+      book.freak = { ...log, status: 'late' };
+    } else {
+      if (items) book.markets = [...book.markets.filter((m) => m.kind !== 'freak'), ...freakMarkets(items, Math.random)];
+      book.freak = log;
+    }
+    writeMarketMeta(meta);
+    refresh();
+  };
+  const target = subTarget();
+  if (!target) {
+    finish({ status: 'failed', error: '副本事件检测没有设置好' });
+    return;
+  }
+  const raw = buildFreakPrompt({
+    name: pack.name,
+    level: pack.level,
+    briefing: briefingText(String(getChat()[entryIndex]?.mes ?? '')),
+    docs: pack.docs,
+  });
+  const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
+  const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
+  const t0 = Date.now();
+  callFreakWithRetry((m) => callSub(target, m), messages, 1)
+    .then((items) => finish({ status: 'ok', count: items.length, ms: Date.now() - t0 }, items))
+    .catch((e) => {
+      log('庄家怪盘出题失败', e);
+      const detail = String((e as Error)?.message ?? e).slice(0, 120);
+      finish({ status: 'failed', error: `${classifyError(e)}：${detail}`, ms: Date.now() - t0 });
+    });
+}
+
+/** 开奖提示：已知的赌票章，按聊天记；切换聊天后第一次只记下，不提示 */
+const knownStamps = new Map<string, string | null>();
+let knownChat: string | null = null;
+
+function notifyStamps(list: MarketTicketView[]): void {
+  const chatId = getChatId();
+  const init = knownChat !== chatId;
+  if (init) knownStamps.clear();
+  knownChat = chatId;
+  const n = { win: 0, lose: 0, refund: 0 };
+  for (const v of list) {
+    const now = v.res?.stamp ?? null;
+    const had = knownStamps.has(v.ticket.id);
+    const prev = knownStamps.get(v.ticket.id);
+    knownStamps.set(v.ticket.id, now);
+    if (!init && had && now && now !== prev) n[now]++;
+  }
+  const parts = [n.win ? `兑 ${n.win} 张` : '', n.lose ? `废 ${n.lose} 张` : '', n.refund ? `退 ${n.refund} 张` : ''].filter(Boolean);
+  if (parts.length) toast('info', `赌票开奖：${parts.join('，')}。`);
+}
+
+/** 重放后刷新黑市：封盘、摆桌、开奖结果、票夹 */
+function refreshMarket(chat: ChatMessage[], session: Session | null): void {
+  const meta = readMarketMeta();
+  let dirty = false;
+  const inInstance = session?.status === 'active';
+  const book = session ? meta.books[session.id] : undefined;
+  // 封盘：重放出入场后第2条AI回复时；之后删楼也不重开
+  if (book && !book.closedAt && !book.frozen && state.progress && shouldClose(state.progress.perMessage, state.progress.entryIndex)) {
+    book.closedAt = formatTime(undefined);
+    dirty = true;
+  }
+  // 摆桌：回到回廊（最近结束的那一局变了）或没有摆桌记录时重新抽
+  const key = inInstance ? meta.casino.key : session?.status === 'ended' ? session.id : '';
+  const t = ensureTables(meta.casino, key, Math.random);
+  if (t.changed && (!inInstance || meta.casino.tables.length !== 2)) {
+    meta.casino.tables = t.tables;
+    meta.casino.key = t.key;
+    dirty = true;
+  }
+  if (dirty) writeMarketMeta(meta);
+
+  const tickets: MarketTicketView[] = [];
+  let results: Record<string, MarketResult> = {};
+  for (const b of Object.values(meta.books)) {
+    const ev = evalBook(chat, b, session);
+    if (book && b.session === book.session) results = ev.results;
+    for (const tk of b.tickets) tickets.push({ ticket: tk, book: b, market: b.markets.find((m) => m.id === tk.market), res: ev.tickets[tk.id] ?? null });
+  }
+  tickets.sort((a, b) => (b.ticket.seq ?? 0) - (a.ticket.seq ?? 0));
+  notifyStamps(tickets);
+  state.market = {
+    book: inInstance && book ? book : null,
+    results,
+    tickets,
+    pending: tickets.filter((x) => !x.res).length,
+    tables: meta.casino.tables,
+    casinoOpen: !inInstance || !!state.pack?.casino,
+  };
+}
+
+/** 盘口下注前的核对（界面显示上限、低于斩杀线用） */
+export function marketStakeCheck(marketId: string, stake: number): StakeCheck {
+  const chat = getChat();
+  const book = state.market.book;
+  return checkStake({
+    playerLevel: accountLevel(chat),
+    stake,
+    already: book ? stakedOn(book, marketId) : 0,
+    balance: accountBalance(chat),
+    lockedTips: lockedTips(),
+  });
+}
+
+/** 下注：记一笔 −押注（类型 bet，存在 chatMetadata，不随删楼撤销）。返回错误原因，成功为 null */
+export function placeBet(marketId: string, optionId: string, stake: number): string | null {
+  const session = readSession();
+  if (!session || session.status !== 'active') return '没有进行中的副本';
+  const meta = readMarketMeta();
+  const book = meta.books[session.id];
+  if (!book || book.frozen) return '本局没有开盘';
+  if (book.closedAt) return '已封盘';
+  const market = book.markets.find((m) => m.id === marketId);
+  const option = market?.options.find((o) => o.id === optionId);
+  if (!market || !option) return '没有这个盘口';
+  if (state.market.results[marketId]) return '已开奖';
+  const check = marketStakeCheck(marketId, stake);
+  if (!check.ok) return check.reason ?? '不能下注';
+  const chat = getChat();
+  pinInitBalance(chat);
+  const seq = meta.seq + 1;
+  meta.seq = seq;
+  book.tickets.push({ id: `t${seq}`, seq, market: marketId, option: optionId, stake, odds: option.odds, at: formatTime(undefined), after: chat.length - 1 });
+  // 押了自己本局失败：下一次正常生成时告诉主AI一次
+  if (market.kind === 'ending' && optionId === 'lose') meta.hints = addHint(meta.hints, { kind: 'betLose', amount: stake, after: chat.length - 1 });
+  writeMarketMeta(meta);
+  refresh();
+  return null;
+}
+
+/** 赌坊下注前的核对 */
+export function casinoStakeCheck(stake: number): StakeCheck {
+  const chat = getChat();
+  return checkStake({ playerLevel: accountLevel(chat), stake, already: 0, balance: accountBalance(chat), lockedTips: lockedTips() });
+}
+
+/** 赌坊开一局：即开即结，每局记一行净得失（类型 bet，存在 chatMetadata，不随删楼撤销） */
+export function playTable(tableId: string, betId: string, stake: number): { error?: string; outcome?: CasinoOutcome } {
+  if (!state.market.casinoOpen) return { error: '赌坊只在回廊营业。' };
+  const meta = readMarketMeta();
+  if (!meta.casino.tables.includes(tableId)) return { error: '这张桌今晚没开' };
+  const check = casinoStakeCheck(stake);
+  if (!check.ok) return { error: check.reason };
+  const outcome = playCasino(tableId, betId, stake, Math.random);
+  if (!outcome) return { error: '没有这种押法' };
+  const chat = getChat();
+  pinInitBalance(chat);
+  const level = accountLevel(chat);
+  const balance = accountBalance(chat);
+  const after = chat.length - 1;
+  const seq = meta.seq + 1;
+  meta.seq = seq;
+  meta.casino.plays = [
+    ...meta.casino.plays,
+    { id: `g${seq}`, seq, table: tableId, bet: betId, label: outcome.label, stake, win: outcome.win, payout: outcome.payout, net: outcome.net, result: outcome.result, at: formatTime(undefined), after },
+  ];
+  if (!outcome.win && balance - stake < KILL_THRESHOLDS[level]) meta.hints = addHint(meta.hints, { kind: 'casinoLoss', amount: stake, after });
+  if (outcome.win && outcome.net > STAKE_CAP[level] * 5) meta.hints = addHint(meta.hints, { kind: 'casinoWin', amount: outcome.net, after });
+  writeMarketMeta(meta);
+  refresh();
+  return { outcome };
+}
+
+/** 收到AI回复：已经加进过注入的一次性提示清掉 */
+function clearMarketHints(): void {
+  const meta = readMarketMeta();
+  if (!meta.hints.length) return;
+  const left = clearHints(meta.hints);
+  if (left.length === meta.hints.length) return;
+  meta.hints = left;
+  writeMarketMeta(meta);
+}
+
+/** 调试页：每轮检测对盘口的判定 */
+export function marketRounds(): RoundCheck[] {
+  const session = readSession();
+  const book = session ? readMarketMeta().books[session.id] : undefined;
+  return book ? evalBook(getChat(), book, session).rounds : [];
 }

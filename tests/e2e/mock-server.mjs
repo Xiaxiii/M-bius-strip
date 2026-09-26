@@ -8,11 +8,13 @@
  *  POST /__control  合并设置，例如 {"sub":{"mode":"timeout","count":3,"delayMs":3000,"nextFalse":["E08"]}}
  *                   sub.mode：ok | 401 | timeout | garbage | fence；count>0 表示只对接下来 count 次副API调用生效
  *                   {"danmaku":{"mode":"fail","count":2}}：AI 弹幕调用返回 500（mode：ok | fail | garbage）
+ *                   {"freak":{"mode":"fail","count":2}}：庄家怪盘出题返回 500（mode：ok | fail | garbage）
+ *                   {"sub":{"marketsYes":["M2"],"omitMarkets":false}}：检测 JSON 的 markets 里判为 true 的盘口；omitMarkets 时不带 markets
  *  POST /__plan     追加主AI的回复计划（数组），见 mainReply()；?replace=1 先清空未用完的计划
  *  GET  /__log      全部调用记录；GET /__log?since=N 只取序号大于 N 的
  *  POST /__reset    清空记录与设置
  *
- * 每次调用记一行：时间、调用方（main / sub / danmaku / sub-test / models）、模型、密钥末四位、输入输出 token（o200k 与 cl100k 两种分词器）。
+ * 每次调用记一行：时间、调用方（main / sub / danmaku / freak / sub-test / models）、模型、密钥末四位、输入输出 token（o200k 与 cl100k 两种分词器）。
  */
 import http from 'node:http';
 import fs from 'node:fs';
@@ -29,12 +31,15 @@ fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
 const RECORDER_MARK = '你是角色扮演副本的记录员';
 /** 直播：AI 生成弹幕的调用（第三期b） */
 const DANMAKU_MARK = '你在写回廊直播间的观众弹幕';
+/** 黑市：庄家怪盘出题的调用（第四期） */
+const FREAK_MARK = '你是回廊黑市的庄家';
 /** 柏宝书（共存检查用）的摘要请求：按它的输出协议回一个 <thinking> + JSON */
 const BAIBAI_MARK = /【检查记录与最终结果输出协议】|summary 是必填/;
 
 const defaults = () => ({
-  sub: { mode: 'ok', count: 0, delayMs: 0, nextFalse: [], forceStatus: {} },
+  sub: { mode: 'ok', count: 0, delayMs: 0, nextFalse: [], forceStatus: {}, marketsYes: [], omitMarkets: false },
   danmaku: { mode: 'ok', count: 0 },
+  freak: { mode: 'ok', count: 0 },
   mainDelayMs: 0,
 });
 let control = defaults();
@@ -223,8 +228,20 @@ function subReply(messages) {
   }
   // 直播：精彩度与受伤（第三期b）
   const hurt = /受伤|重伤|流血|昏迷|死了|身亡/.test(body);
-  return { events, state, next, hype: hurt ? 80 : events.length ? 45 : 25, hurt };
+  const out = { events, state, next, hype: hurt ? 80 : events.length ? 45 : 25, hurt };
+  // 黑市：【盘口陈述】里的每一条按 control.sub.marketsYes 判定；omitMarkets 时不带这个字段
+  const ids = [...section(user, '盘口陈述').matchAll(/^- (\S+?)：/gm)].map((m) => m[1]);
+  if (ids.length && !control.sub.omitMarkets) out.markets = Object.fromEntries(ids.map((id) => [id, (control.sub.marketsYes ?? []).includes(id)]));
+  return out;
 }
+
+// ───────────── 庄家怪盘 ─────────────
+
+const FREAK = [
+  { q: '主播会在塔里迷路吗', judge: '{{user}}在塔里迷了路，找不到回去的楼梯', p: 0.35 },
+  { q: '主播会给陌生人让出床铺吗', judge: '{{user}}把自己的床铺让给了别人', p: 0.2 },
+  { q: '主播会对着钟面许愿吗', judge: '{{user}}对着钟面许了愿', p: 0.15 },
+];
 
 // ───────────── AI 弹幕 ─────────────
 
@@ -294,7 +311,7 @@ const server = http.createServer((req, res) => {
     try {
       // ── 控制接口 ──
       if (url.pathname === '/__control') {
-        const merged = { ...control, ...body, sub: { ...control.sub, ...(body.sub ?? {}) }, danmaku: { ...control.danmaku, ...(body.danmaku ?? {}) } };
+        const merged = { ...control, ...body, sub: { ...control.sub, ...(body.sub ?? {}) }, danmaku: { ...control.danmaku, ...(body.danmaku ?? {}) }, freak: { ...control.freak, ...(body.freak ?? {}) } };
         control = merged;
         return send(res, 200, control);
       }
@@ -335,9 +352,10 @@ const server = http.createServer((req, res) => {
         const all = textOf(messages);
         const isSub = all.includes(RECORDER_MARK);
         const isDanmaku = !isSub && all.includes(DANMAKU_MARK);
-        const isTest = !isSub && !isDanmaku && /只回复 OK/.test(all);
-        const isBaibai = !isSub && !isDanmaku && !isTest && BAIBAI_MARK.test(all);
-        const caller = isSub ? 'sub' : isDanmaku ? 'danmaku' : isTest ? 'sub-test' : isBaibai ? 'baibai' : 'main';
+        const isFreak = !isSub && !isDanmaku && all.includes(FREAK_MARK);
+        const isTest = !isSub && !isDanmaku && !isFreak && /只回复 OK/.test(all);
+        const isBaibai = !isSub && !isDanmaku && !isFreak && !isTest && BAIBAI_MARK.test(all);
+        const caller = isSub ? 'sub' : isDanmaku ? 'danmaku' : isFreak ? 'freak' : isTest ? 'sub-test' : isBaibai ? 'baibai' : 'main';
         const base = { t0: t0.toISOString(), caller, model: body.model, key4, stream: !!body.stream, inTok: tok(all) };
 
         if ((isSub || isTest) && /bad/.test(auth)) {
@@ -363,6 +381,20 @@ const server = http.createServer((req, res) => {
           const user = messages.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
           text = active && mode === 'garbage' ? '今天的弹幕就不写了。' : JSON.stringify(danmakuReply(user));
           note = active ? `mode=${mode}` : 'danmaku';
+        } else if (isFreak) {
+          const f = control.freak;
+          const mode = f.mode;
+          const active = mode !== 'ok' && f.count !== 0;
+          if (active && f.count > 0) {
+            f.count--;
+            if (f.count === 0) f.mode = 'ok';
+          }
+          if (active && mode === 'fail') {
+            record({ ...base, t1: new Date().toISOString(), status: 500, outTok: tok(''), note: 'mode=fail', request: messages });
+            return send(res, 500, { error: { message: 'mock upstream error' } });
+          }
+          text = active && mode === 'garbage' ? '这局我不开盘。' : '```json\n' + JSON.stringify(FREAK) + '\n```';
+          note = active ? `mode=${mode}` : 'freak';
         } else if (isTest) text = 'OK';
         else if (isBaibai) {
           text =

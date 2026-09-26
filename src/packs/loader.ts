@@ -1,4 +1,4 @@
-import type { BriefingInfo, Level, Pack } from './types';
+import type { BriefingInfo, Level, MarketDef, Pack } from './types';
 import zhonglou from './builtin/zhonglou.json';
 import jingjie from './builtin/jingjie.json';
 import kaoshi from './builtin/kaoshi.json';
@@ -147,7 +147,41 @@ export function validatePack(input: unknown): string[] {
     }
   }
 
+  if (p.markets !== undefined) {
+    if (!Array.isArray(p.markets)) errors.push('markets 必须是数组');
+    else {
+      const ids = new Set<string>();
+      p.markets.forEach((m: any, i: number) => {
+        if (!m || typeof m !== 'object') { errors.push(`markets[${i}] 必须是对象`); return; }
+        for (const k of ['id', 'q', 'yes', 'no', 'judge']) {
+          if (typeof m[k] !== 'string' || !m[k].trim()) errors.push(`markets[${i}] 缺少文本字段 ${k}`);
+        }
+        if (typeof m.p !== 'number' || !(m.p >= 0.01 && m.p <= 0.99)) errors.push(`markets[${i}].p 必须是 0.01–0.99 的数`);
+        if (m.judgeNo !== undefined && (typeof m.judgeNo !== 'string' || !m.judgeNo.trim())) errors.push(`markets[${i}].judgeNo 必须是文本`);
+        if (m.by !== undefined && typeof m.by !== 'string') errors.push(`markets[${i}].by 必须是阶段 id`);
+        if (typeof m.id === 'string') {
+          if (ids.has(m.id)) errors.push(`事件盘 id 重复：${m.id}`);
+          ids.add(m.id);
+        }
+      });
+    }
+  }
+
   return errors;
+}
+
+/**
+ * 副本包的事件盘（第四期）。by 不是本包阶段 id 的那一条跳过，并在控制台警告（不算格式错误）。
+ */
+export function packMarkets(pack: Pack): MarketDef[] {
+  const phaseIds = new Set(pack.phases.map((ph) => ph.id));
+  return (pack.markets ?? []).filter((m) => {
+    if (m.by !== undefined && !phaseIds.has(m.by)) {
+      console.warn(`[rlzc] 副本包 ${pack.id} 的事件盘 ${m.id}：by「${m.by}」不是本包的阶段 id，已跳过`);
+      return false;
+    }
+    return true;
+  });
 }
 
 /** 通用副本包的等级：简报里读不出时按 D 处理 */

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSetRoles, debugSetRound, saveSettings, state } from '../../app';
+import { abandonSession, currentRoles, debugRemoveAction, debugSetPhase, debugSetRoles, debugSetRound, marketRounds, readMarketMeta, saveSettings, state } from '../../app';
+import type { MarketResult } from '../../core/market';
 import type { Snapshot } from '../../packs/types';
 import { getChat } from '../../st/context';
 import { formatState, latestSubState } from '../../core/subapi';
@@ -100,6 +101,30 @@ function subCell(snap: Snapshot): string {
   if (snap.sub && !snap.sub.skipped && !parts.length) parts.push('已整理');
   return parts.join(' ');
 }
+
+/** 黑市：本局各盘口的赔率、每轮检测对盘口的判定、怪盘出题结果 */
+const marketDebug = computed(() => {
+  void state.tick;
+  if (!state.session) return null;
+  const book = readMarketMeta().books[state.session.id];
+  if (!book) return null;
+  return { book, rounds: marketRounds() };
+});
+const MK_KIND = { ending: '结局', rating: '评价', event: '事件', freak: '庄家' } as const;
+function resultCell(r: MarketResult | undefined, labels: Record<string, string>): string {
+  if (!r) return '待开奖';
+  if (r.kind === 'refund') return `全退（#${r.index}）`;
+  if (r.kind === 'lost') return `全废（#${r.index}）`;
+  return `${labels[r.option] ?? r.option}（#${r.index}）`;
+}
+function freakCell(f: { status: string; error?: string; ms?: number; count?: number } | undefined): string {
+  if (!f) return '事件检测关闭，未出题';
+  if (f.status === 'pending') return '出题中…';
+  if (f.status === 'ok') return `已出 ${f.count} 题（${f.ms}ms）`;
+  if (f.status === 'late') return `晚于封盘到达，已丢弃（${f.ms}ms）`;
+  return `失败：${f.error ?? ''}`;
+}
+const CHECK = { ok: '已检测', miss: '没检测', pending: '检测中' } as const;
 
 const progressView = computed(() => {
   const p = state.progress;
@@ -221,6 +246,33 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
         <pre class="rlzc-pre">{{ subView.text || '（尚无状态）' }}</pre>
         <pre v-if="subView.record" class="rlzc-pre">{{ json(subView.record) }}</pre>
         <p class="rlzc-hint">✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 检测时判断条件已不成立，这一轮没有注入</p>
+      </details>
+
+      <details v-if="marketDebug" class="rlzc-card">
+        <summary>黑市：盘口赔率与检测判定</summary>
+        <table class="rlzc-table">
+          <thead><tr><th>盘</th><th>题目</th><th>赔率</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr v-for="m in marketDebug.book.markets" :key="m.id">
+              <td>{{ MK_KIND[m.kind] }} {{ m.id }}</td>
+              <td>{{ m.q }}<template v-if="m.judge"><br /><small>{{ m.judge }}</small></template><template v-if="m.judgeNo"><br /><small>否：{{ m.judgeNo }}</small></template><template v-if="m.by"><br /><small>by {{ m.by }}</small></template></td>
+              <td>{{ m.options.map((o) => `${o.label}(${Math.round(o.p * 100)}%) ×${o.odds.toFixed(2)}`).join('　') }}</td>
+              <td>{{ resultCell(state.market.results[m.id], Object.fromEntries(m.options.map((o) => [o.id, o.label]))) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="rlzc-hint">庄家怪盘：{{ freakCell(marketDebug.book.freak) }}</p>
+        <p class="rlzc-hint">开盘 {{ marketDebug.book.openedAt }}　{{ marketDebug.book.closedAt ? `封盘 ${marketDebug.book.closedAt}` : '未封盘' }}{{ marketDebug.book.frozen ? '　已定格' : '' }}</p>
+        <table v-if="marketDebug.rounds.length" class="rlzc-table">
+          <thead><tr><th>楼</th><th>检测</th><th>判定为真</th></tr></thead>
+          <tbody>
+            <tr v-for="r in marketDebug.rounds" :key="r.index" :class="{ 'rlzc-row-warn': r.state === 'miss' }">
+              <td>{{ r.index }}</td>
+              <td>{{ CHECK[r.state] }}</td>
+              <td>{{ Object.keys(r.hits).filter((k) => r.hits[k]).join(' ') || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
       </details>
 
       <div class="rlzc-card rlzc-collapsible">
