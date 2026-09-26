@@ -184,9 +184,12 @@ describe('封盘与下注', () => {
     expect(betRows().map((e) => [e.delta, e.source])).toEqual([[-500, '下注·钟楼·本局结果·通关']]);
     expect(app.accountBalance()).toBe(500);
     expect(app.state.market.pending).toBe(1);
+    // 初始余额在第一次下注时定下：之后状态栏里的余额（已扣押注）不会被当成初始余额
+    expect(st.meta.rlzc_ledger.init).toMatchObject({ value: 1000, source: '默认值' });
     user();
-    await reply('第2轮。');
+    await reply('第2轮。\n<状态栏>\n{{user}}：\n等级：D\n积分：500\n</状态栏>');
     expect(book()!.closedAt).toBeTruthy();
+    expect(app.accountBalance()).toBe(500);
     expect(app.placeBet('ending', 'lose', 100)).toBe('已封盘');
     // 删掉第2轮：不重开
     st.chat.splice(st.chat.length - 2, 2);

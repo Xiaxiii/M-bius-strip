@@ -159,10 +159,15 @@ export function drawTables(rand: () => number): TableId[] {
 
 /**
  * 摆桌：每次副本结束回到回廊（key 变了）、或聊天里没有摆桌记录时重新抽；否则沿用。
+ * 回到回廊重抽时换一批：和上一次的两张不完全相同。
  * key = 最近结束的那一局的会话 id（从没进过副本为空串）。返回新的摆桌与是否重抽了。
  */
 export function ensureTables(cur: { tables: string[]; key: string }, key: string, rand: () => number): { tables: string[]; key: string; changed: boolean } {
   const valid = cur.tables.length === 2 && cur.tables.every((t) => tableOf(t));
   if (valid && cur.key === key) return { tables: cur.tables, key, changed: false };
-  return { tables: drawTables(rand), key, changed: true };
+  const same = (t: string[]) => valid && t.length === 2 && t.every((x) => cur.tables.includes(x));
+  let tables: string[] = drawTables(rand);
+  for (let k = 0; k < 20 && same(tables); k++) tables = drawTables(rand);
+  if (same(tables)) tables = TABLES.map((t) => t.id).filter((id) => !cur.tables.includes(id));
+  return { tables, key, changed: true };
 }

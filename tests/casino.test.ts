@@ -128,4 +128,17 @@ describe('摆桌', () => {
     expect(back.tables).toEqual(['card', 'lot']);
     expect(back.key).toBe('session-1');
   });
+
+  it('回到回廊重抽时换一批：不会和上一次的两张完全相同', () => {
+    for (let seed = 1; seed < 200; seed++) {
+      const r = seeded(seed);
+      const prev = drawTables(r);
+      const next = ensureTables({ tables: prev, key: 'a' }, 'b', r);
+      expect(next.changed).toBe(true);
+      expect(next.tables.every((t) => (prev as string[]).includes(t))).toBe(false);
+    }
+    // 随机数一直抽回同一组时，直接换成另外两张
+    const stuck = ensureTables({ tables: ['bell', 'door'], key: 'a' }, 'b', () => 0);
+    expect(stuck.tables.sort()).toEqual(['card', 'lot']);
+  });
 });

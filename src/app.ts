@@ -1562,6 +1562,17 @@ export function accountBalance(chat: ChatMessage[] = getChat()): number {
   return computeBalance(getInitBalance(chat).value, state.ledger);
 }
 
+/**
+ * 第一次下注或开赌坊前把初始余额定下来：聊天里还没有状态栏时按默认值记下，
+ * 免得之后第一条状态栏（已经扣过押注的余额）被当成初始余额，押注被扣两次。
+ */
+function pinInitBalance(chat: ChatMessage[]): void {
+  if (readLedgerMeta().init) return;
+  const v = getInitBalance(chat);
+  const meta = readLedgerMeta();
+  if (!meta.init) writeLedgerMeta({ ...meta, init: { value: v.value, source: v.source, at: formatTime(undefined) } });
+}
+
 /** 副本内本局已到账的直播打赏（不可用）；回廊中为0 */
 function lockedTips(): number {
   const s = readSession();
@@ -1774,6 +1785,7 @@ export function placeBet(marketId: string, optionId: string, stake: number): str
   const check = marketStakeCheck(marketId, stake);
   if (!check.ok) return check.reason ?? '不能下注';
   const chat = getChat();
+  pinInitBalance(chat);
   const seq = meta.seq + 1;
   meta.seq = seq;
   book.tickets.push({ id: `t${seq}`, seq, market: marketId, option: optionId, stake, odds: option.odds, at: formatTime(undefined), after: chat.length - 1 });
@@ -1800,6 +1812,7 @@ export function playTable(tableId: string, betId: string, stake: number): { erro
   const outcome = playCasino(tableId, betId, stake, Math.random);
   if (!outcome) return { error: '没有这种押法' };
   const chat = getChat();
+  pinInitBalance(chat);
   const level = accountLevel(chat);
   const balance = accountBalance(chat);
   const after = chat.length - 1;

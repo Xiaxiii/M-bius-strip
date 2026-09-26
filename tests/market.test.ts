@@ -28,7 +28,6 @@ import { buildSubPrompt, parseSubResponse } from '../src/core/subapi';
 import { addHint, briefingText, buildFreakPrompt, clearHints, FREAK_DOCS_MAX, freakMarkets, hintText, parseFreakResponse } from '../src/core/market';
 
 const pack = (id: string) => BUILTIN_PACKS.find((p) => p.id === id) as Pack;
-const src = (import.meta.glob('../markets.json', { eager: true, import: 'default' }) as Record<string, Record<string, unknown>>)['../markets.json'];
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -37,11 +36,16 @@ afterEach(() => vi.restoreAllMocks());
 describe('事件盘数据', () => {
   const ids = ['zhonglou', 'dusongshu', 'jingjie', 'xiyan', 'youxi'];
 
-  it('markets.json 迁进五个副本包，每条格式不变', () => {
+  it('事件盘迁进五个副本包，每条格式不变', () => {
     for (const id of ids) {
-      expect(pack(id).markets, id).toEqual(src ? src[id] : pack(id).markets);
-      expect(pack(id).markets!.length, id).toBe(3);
+      expect(pack(id).markets!.map((m) => m.id), id).toEqual(['M1', 'M2', 'M3']);
+      for (const m of pack(id).markets!) expect(Object.keys(m).slice(0, 5), `${id}.${m.id}`).toEqual(['id', 'q', 'yes', 'no', 'p']);
     }
+    expect(pack('zhonglou').markets![0]).toEqual({ id: 'M1', q: '第一夜的值班签会抽中主播吗', yes: '会', no: '不会', p: 0.1, by: 'd1', judge: '第一日日落的抽签结果是{{user}}本人当夜值班' });
+    expect(pack('dusongshu').markets![0].by).toBe('n1');
+    expect(pack('xiyan').markets![1]).toMatchObject({ yes: '是', no: '不是', p: 0.17, judgeNo: '{{user}}以外的某个人被认定为这场婚礼的新郎或新娘' });
+    expect(pack('youxi').markets![0]).toMatchObject({ p: 0.08, judgeNo: '{{user}}以外的某个人成为第一个被淘汰出局的人' });
+    expect(pack('jingjie').markets![2]).toMatchObject({ q: '主播会走进镜宫吗', p: 0.45 });
   });
 
   it('五个包各升一个小版本号', () => {
