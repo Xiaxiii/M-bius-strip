@@ -840,6 +840,7 @@ export function onMessageReceived(index: number, type?: string): void {
 
 export function onChatChanged(): void {
   askedSkip.clear();
+  askedEntry.clear();
   lastInjectionIndex = -1;
   state.chatId = getChatId();
   state.debugUnlocked = false;
