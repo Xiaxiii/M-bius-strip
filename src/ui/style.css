@@ -223,7 +223,7 @@
 .rlzc-option-row-timeout { justify-content: flex-start; gap: 16px; }
 .rlzc-option-row-timeout > span { font-size: 13px; }
 .rlzc-timeout-wrap { display: flex; align-items: center; gap: 6px; }
-.rlzc-input-num { width: 72px; }
+.rlzc-input-num { width: 72px; text-align: right; font-variant-numeric: tabular-nums; }
 .rlzc-unit { font-size: 13px; color: var(--muted); }
 
 /* 拨动开关 */
@@ -245,11 +245,55 @@
 .rlzc-key-notice { text-align: center; margin-top: 4px; }
 
 /* ── 积分账本 ── */
-.rlzc-ledger-hero { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.rlzc-ledger-label { font-size: 12px; color: var(--muted); }
-.rlzc-ledger-balance { font-size: 28px; font-variant-numeric: tabular-nums; }
-.rlzc-ledger-balance.negative { color: #c9534f; }
-.rlzc-ledger-list { list-style: none; margin: 0; padding: 0; }
-.rlzc-ledger-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+.rlzc-ledger-hero-card { display: flex; flex-direction: column; gap: 0; }
+.rlzc-ledger-hero-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.rlzc-ledger-hero-num {
+  font-size: 32px; font-variant-numeric: tabular-nums; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 10px;
+}
+.rlzc-ledger-hero-num.negative { color: #c9534f; }
+.rlzc-ledger-hero-divider { height: 1px; background: var(--line); margin: 0 0 10px; }
+.rlzc-ledger-hero-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.rlzc-ledger-hero-col { display: flex; flex-direction: column; gap: 3px; }
+.rlzc-ledger-hero-col-label { font-size: 11px; color: var(--muted); }
+.rlzc-ledger-hero-col-val { font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.rlzc-ledger-warn { color: #c9833a; }
+.rlzc-ledger-init-hint { font-size: 11px; color: var(--muted); margin: 10px 0 0; }
+
+.rlzc-ledger-list { list-style: none; margin: 6px 0 0; padding: 0; }
+.rlzc-ledger-item {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 7px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
 .rlzc-ledger-item:last-child { border-bottom: none; }
-.rlzc-ledger-entry { font-size: 13px; font-variant-numeric: tabular-nums; flex: 1; min-width: 0; word-break: break-all; }
+.rlzc-ledger-item-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rlzc-ledger-item-src { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rlzc-ledger-item-time { font-size: 11px; color: var(--muted); }
+.rlzc-ledger-item-delta {
+  flex: 0 0 auto; font-size: 14px; font-variant-numeric: tabular-nums;
+  font-weight: 600; text-align: right; white-space: nowrap;
+}
+.rlzc-ledger-item-delta.pos { color: #4caf72; }
+.rlzc-ledger-item-delta.neg { color: #c9534f; }
+
+/* ── 可折叠卡片 ── */
+.rlzc-collapsible { padding: 0; }
+.rlzc-collapse-head {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; min-height: 44px;
+  background: none; border: none; color: inherit; font: inherit;
+  cursor: pointer; text-align: left;
+}
+.rlzc-collapsible .rlzc-collapse-head h4 { flex: 1; margin: 0; }
+.rlzc-collapse-head:hover { background: var(--soft); border-radius: 10px; }
+.rlzc-collapse-arrow {
+  flex: 0 0 auto; font-size: 13px; color: var(--muted);
+  display: inline-block; transition: transform 150ms ease;
+  transform: rotate(0deg);
+}
+.rlzc-collapse-arrow.open { transform: rotate(90deg); }
+.rlzc-collapse-body { padding: 0 12px 10px; }
+
+/* SubApiCard 的 .rlzc-dot 在折叠头里 */
+.rlzc-collapse-head .rlzc-dot { font-size: 12px; }

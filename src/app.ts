@@ -56,6 +56,8 @@ export interface Settings {
   genericCaps: GenericCaps;
   /** 副API「记录员」（CLAUDE.md 14） */
   subApi: SubApiSettings;
+  /** 设置页可折叠卡片的展开状态（CLAUDE.md 11.13） */
+  cardCollapsed: { depths: boolean; subApi: boolean; genericCaps: boolean };
 }
 
 export interface SubApiSettings {
@@ -89,6 +91,7 @@ const DEFAULT_SETTINGS: Settings = {
   panelDisplay: 'panel',
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
   subApi: structuredClone(DEFAULT_SUB_API),
+  cardCollapsed: { depths: true, subApi: true, genericCaps: true },
 };
 
 /** 面板页签（CLAUDE.md 11.9）：第四期「黑市」以后加在 ledger 与 settings 之间 */
@@ -144,6 +147,11 @@ export function loadSettings(): void {
       presets: Array.isArray(saved.subApi?.presets) ? saved.subApi!.presets : [],
       // 旧版本里的「酒馆连接配置」来源已删除，按关闭处理
       source: (['off', 'main', 'preset'] as SubSource[]).includes(saved.subApi?.source as SubSource) ? saved.subApi!.source : 'off',
+    },
+    cardCollapsed: {
+      depths: (saved.cardCollapsed as any)?.depths ?? true,
+      subApi: (saved.cardCollapsed as any)?.subApi ?? true,
+      genericCaps: (saved.cardCollapsed as any)?.genericCaps ?? true,
     },
   };
   all[SETTINGS_KEY] = merged;

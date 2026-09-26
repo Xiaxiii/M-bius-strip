@@ -22,6 +22,12 @@ const dotStatus = computed(() => {
   return { kind: 'warn', text: '未测试' };
 });
 
+const collapsed = computed(() => state.settings.cardCollapsed.subApi);
+function toggleCollapse() {
+  state.settings.cardCollapsed.subApi = !state.settings.cardCollapsed.subApi;
+  save();
+}
+
 const connLine = computed(() => {
   if (testStatus.value === 'ok')   return `已连接 · 共 ${models.value.length} 个模型`;
   if (testStatus.value === 'fail') return `连接失败：${testFailReason.value}`;
@@ -119,11 +125,17 @@ function toggle(key: 'saveMode' | 'wait', val: boolean) {
 </script>
 
 <template>
-  <div class="rlzc-card rlzc-subapi">
-    <div class="rlzc-subapi-head">
+  <div class="rlzc-card rlzc-collapsible rlzc-subapi">
+    <button
+      class="rlzc-collapse-head"
+      :aria-expanded="!collapsed"
+      @click="toggleCollapse"
+    >
       <h4>副本事件检测</h4>
       <span class="rlzc-dot" :data-kind="dotStatus.kind">{{ dotStatus.text }}</span>
-    </div>
+      <span class="rlzc-collapse-arrow" :class="{ open: !collapsed }">▸</span>
+    </button>
+    <div v-if="!collapsed" class="rlzc-collapse-body">
     <p class="rlzc-hint">每轮让另一个 AI 核对预设事件有没有写出来，并记下副本状态。开启后每轮多一次调用。</p>
     <div class="rlzc-segsrc" role="group" aria-label="检测来源">
       <button :class="{ on: sub.source === 'off' }" @click="setSource('off')">关闭</button>
@@ -213,5 +225,6 @@ function toggle(key: 'saveMode' | 'wait', val: boolean) {
         </div>
       </div>
     </template>
+    </div><!-- /rlzc-collapse-body -->
   </div>
 </template>

@@ -42,6 +42,11 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
   state.settings[key] = (e.target as HTMLInputElement).checked;
   saveSettings();
 }
+
+function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
+  state.settings.cardCollapsed[key] = !state.settings.cardCollapsed[key];
+  saveSettings();
+}
 </script>
 
 <template>
@@ -55,38 +60,59 @@ function toggle(key: 'debug' | 'showBall', e: Event) {
       <p class="rlzc-hint">选「正文状态栏」时，时限和任务由状态栏显示，系统页不重复。</p>
     </div>
 
-    <div class="rlzc-card">
-      <h4>注入深度</h4>
-      <p class="rlzc-hint">数字越小越靠近最新消息，AI 越重视。一般不用改。</p>
-      <div class="rlzc-depth">
-        <label class="rlzc-field">
-          <span>副本暗号<small>触发世界书的副本条目</small></span>
-          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.token" @change="setDepth('token', $event)" />
-        </label>
-        <label class="rlzc-field">
-          <span>副本进度<small>阶段、轮次、时限、副本状态</small></span>
-          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" />
-        </label>
-        <label class="rlzc-field">
-          <span>本轮指令<small>本轮事件与时限写法</small></span>
-          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
-        </label>
-        <label class="rlzc-field">
-          <span>账户<small>积分余额与清算状态</small></span>
-          <input type="number" min="0" class="rlzc-input" :value="state.settings.depths.ledger" @change="setDepth('ledger', $event)" />
-        </label>
+    <!-- 注入深度（可折叠） -->
+    <div class="rlzc-card rlzc-collapsible">
+      <button
+        class="rlzc-collapse-head"
+        :aria-expanded="!state.settings.cardCollapsed.depths"
+        @click="toggleCard('depths')"
+      >
+        <h4>注入深度</h4>
+        <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.depths }">▸</span>
+      </button>
+      <div v-if="!state.settings.cardCollapsed.depths" class="rlzc-collapse-body">
+        <p class="rlzc-hint">数字越小越靠近最新消息，AI 越重视。一般不用改。</p>
+        <div class="rlzc-depth">
+          <label class="rlzc-field">
+            <span>副本暗号<small>触发世界书的副本条目</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.token" @change="setDepth('token', $event)" />
+          </label>
+          <label class="rlzc-field">
+            <span>副本进度<small>阶段、轮次、时限、副本状态</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" />
+          </label>
+          <label class="rlzc-field">
+            <span>本轮指令<small>本轮事件与时限写法</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
+          </label>
+          <label class="rlzc-field">
+            <span>账户<small>积分余额与清算状态</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.ledger" @change="setDepth('ledger', $event)" />
+          </label>
+        </div>
       </div>
     </div>
 
+    <!-- 副本事件检测（SubApiCard 自带折叠） -->
     <SubApiCard />
 
-    <div class="rlzc-card">
-      <h4>通用副本默认轮数上限</h4>
-      <p class="rlzc-hint">未收录副本按等级取轮数上限，简报里写了「（最多N轮）」时以简报为准。</p>
-      <label v-for="lv in LEVELS" :key="lv" class="rlzc-field">
-        <span>{{ lv }} 级</span>
-        <input type="number" min="1" class="rlzc-input" :value="state.settings.genericCaps[lv]" @change="setCap(lv, $event)" />
-      </label>
+    <!-- 通用副本默认轮数上限（可折叠） -->
+    <div class="rlzc-card rlzc-collapsible">
+      <button
+        class="rlzc-collapse-head"
+        :aria-expanded="!state.settings.cardCollapsed.genericCaps"
+        @click="toggleCard('genericCaps')"
+      >
+        <h4>通用副本默认轮数上限</h4>
+        <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.genericCaps }">▸</span>
+      </button>
+      <div v-if="!state.settings.cardCollapsed.genericCaps" class="rlzc-collapse-body">
+        <p class="rlzc-hint">未收录副本按等级取轮数上限，简报里写了「（最多N轮）」时以简报为准。</p>
+        <label v-for="lv in LEVELS" :key="lv" class="rlzc-field">
+          <span>{{ lv }} 级</span>
+          <input type="number" min="1" class="rlzc-input rlzc-input-num" :value="state.settings.genericCaps[lv]" @change="setCap(lv, $event)" />
+        </label>
+      </div>
     </div>
 
     <div class="rlzc-card">
