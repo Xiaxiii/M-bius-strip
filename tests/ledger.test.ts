@@ -66,7 +66,7 @@ describe('computeBalance', () => {
 describe('calcSettlementDelta', () => {
   it('D副本 C玩家 B评：等级不符×0.6 → 360', () => {
     const r = calcSettlementDelta('D', 'C', { 结果: '通关', 评价: 'B' }, 1000, false);
-    expect(r.delta).toBe(360); // SCORE_TABLE[D][B]=600 × 0.6
+    expect(r.delta).toBe(360); // SCORE_TABLE[D][B]=600 × 0.6 floor
   });
 
   it('同级 S副本 S玩家 S评：全额 → 115000', () => {
@@ -79,14 +79,14 @@ describe('calcSettlementDelta', () => {
     expect(r.delta).toBe(12500);
   });
 
-  it('越级×0.6：A副本 A玩家 越级=是 B评 → 12900', () => {
+  it('越级×0.6：A副本 A玩家 越级=是 B评 → floor(21500×0.6)=12900', () => {
     const r = calcSettlementDelta('A', 'A', { 结果: '通关', 评价: 'B', 越级: '是' }, 5000, false);
-    expect(r.delta).toBe(Math.round(21500 * 0.6)); // 12900
+    expect(r.delta).toBe(Math.floor(21500 * 0.6)); // 12900
   });
 
-  it('抽查×0.5 优先于越级：S副本 S玩家 抽查=是 A评 → 42500', () => {
+  it('抽查×0.5 优先于越级：S副本 S玩家 抽查=是 A评 → floor(85000×0.5)=42500', () => {
     const r = calcSettlementDelta('S', 'S', { 结果: '通关', 评价: 'A', 抽查: '是', 越级: '是' }, 5000, false);
-    expect(r.delta).toBe(Math.round(85000 * 0.5)); // 42500
+    expect(r.delta).toBe(Math.floor(85000 * 0.5)); // 42500
   });
 
   it('普通失败扣当前余额30%：balance=1000 → -300', () => {
@@ -99,14 +99,51 @@ describe('calcSettlementDelta', () => {
     expect(r.delta).toBe(700); // KILL_THRESHOLDS['D']+500=800, 800-100=700
   });
 
+  it('清算副本通关：返回 clearWin=true', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '通关', 评价: 'S' }, 100, true);
+    expect(r.clearWin).toBe(true);
+  });
+
   it('清算副本通关：余额已高于目标时 delta=0', () => {
     const r = calcSettlementDelta('D', 'D', { 结果: '通关', 评价: 'S' }, 2000, true);
     expect(r.delta).toBe(0);
   });
 
-  it('清算副本失败：不记账，delta=0', () => {
+  it('清算副本失败：不记账，delta=0，source=清算未通关', () => {
     const r = calcSettlementDelta('D', 'D', { 结果: '失败' }, 1000, true);
     expect(r.delta).toBe(0);
+    expect(r.source).toBe('清算未通关');
+  });
+
+  it('死亡/阵亡：不记账，delta=0（补正3）', () => {
+    expect(calcSettlementDelta('D', 'D', { 结果: '死亡' }, 1000, false).delta).toBe(0);
+    expect(calcSettlementDelta('D', 'D', { 结果: '阵亡' }, 1000, false).delta).toBe(0);
+  });
+
+  it('评价缺失或无法识别：delta=0 且返回 warn（补正1）', () => {
+    const r1 = calcSettlementDelta('D', 'D', { 结果: '通关', 评价: '无' }, 1000, false);
+    expect(r1.delta).toBe(0);
+    expect(r1.warn).toBeTruthy();
+    const r2 = calcSettlementDelta('D', 'D', { 结果: '通关' }, 1000, false);
+    expect(r2.delta).toBe(0);
+    expect(r2.warn).toBeTruthy();
+  });
+
+  it('流水 source 格式含副本名（补正7）', () => {
+    const r = calcSettlementDelta('B', 'B', { 结果: '通关', 评价: 'S' }, 1000, false, '钟楼');
+    expect(r.source).toBe('副本奖励·钟楼 S评');
+  });
+
+  it('打折 source 末尾有百分比后缀（补正7）', () => {
+    const survey = calcSettlementDelta('S', 'S', { 结果: '通关', 评价: 'A', 抽查: '是' }, 5000, false, '钟楼');
+    expect(survey.source).toContain('（×50%）');
+    const mismatch = calcSettlementDelta('D', 'C', { 结果: '通关', 评价: 'B' }, 1000, false, '钟楼');
+    expect(mismatch.source).toContain('（×60%）');
+  });
+
+  it('失败 source = 副本失败·扣除30%（补正7）', () => {
+    const r = calcSettlementDelta('D', 'D', { 结果: '失败' }, 1000, false);
+    expect(r.source).toBe('副本失败·扣除30%');
   });
 
   it('斩杀线按玩家等级：C级=1000，D级=300', () => {
@@ -157,19 +194,27 @@ describe('isPendingClearance', () => {
     expect(isPendingClearance(1000, entries, threshold)).toBe(true);
   });
 
-  it('曾低于斩杀线但后来通关结算：清除标记', () => {
+  it('曾低于斩杀线但后来清算通关（clear: true）：清除标记', () => {
     const entries: LedgerDisplayEntry[] = [
       { delta: -800, source: '消耗', type: 'tag', at: '9/1 12:00', mesIndex: 1 },
-      { delta: 5000, source: '副本结算·通关·S', type: 'settle', at: '9/1 13:00', mesIndex: 2 },
+      { delta: 5000, source: '清算通关·续存至斩杀线+500', type: 'settle', at: '9/1 13:00', mesIndex: 2, clear: true },
     ];
     expect(isPendingClearance(1000, entries, threshold)).toBe(false);
   });
 
-  it('通关后再次跌破：重新标记', () => {
+  it('普通副本通关（无 clear 标记）不清除待清算', () => {
     const entries: LedgerDisplayEntry[] = [
       { delta: -800, source: '消耗', type: 'tag', at: '9/1 12:00', mesIndex: 1 },
-      { delta: 5000, source: '副本结算·通关·S', type: 'settle', at: '9/1 13:00', mesIndex: 2 },
-      { delta: -6200, source: '消耗', type: 'tag', at: '9/1 14:00', mesIndex: 3 }, // 5200-6200=-1000 < 300
+      { delta: 5000, source: '副本奖励·钟楼 S评', type: 'settle', at: '9/1 13:00', mesIndex: 2 },
+    ];
+    expect(isPendingClearance(1000, entries, threshold)).toBe(true);
+  });
+
+  it('清算通关后再次跌破：重新标记', () => {
+    const entries: LedgerDisplayEntry[] = [
+      { delta: -800, source: '消耗', type: 'tag', at: '9/1 12:00', mesIndex: 1 },
+      { delta: 5000, source: '清算通关·续存至斩杀线+500', type: 'settle', at: '9/1 13:00', mesIndex: 2, clear: true },
+      { delta: -6200, source: '消耗', type: 'tag', at: '9/1 14:00', mesIndex: 3 },
     ];
     expect(isPendingClearance(1000, entries, threshold)).toBe(true);
   });

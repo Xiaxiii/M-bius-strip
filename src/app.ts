@@ -2,7 +2,7 @@
  * 扩展的运行时状态与 ST 事件处理。核心计算全部交给 core/ 下的纯函数。
  */
 import { reactive, toRaw } from 'vue';
-import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs/types';
+import type { ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from './packs/types';
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
@@ -248,7 +248,21 @@ function buildLedgerInjection(chat: ChatMessage[]): string {
   if (!hasData) return '';
   const initBal = getInitBalance(chat);
   const balance = computeBalance(initBal.value, state.ledger);
-  const level = state.pack?.level ?? 'D';
+  // 玩家等级：优先 fix.level，其次最近状态栏，找不到按 D（不是副本等级，CLAUDE.md 补正4）
+  const STATUS_RE_LI = /<状态栏>([\s\S]*?)<\/状态栏>/;
+  let level: Level = 'D';
+  const fixLvl = meta.fix?.level;
+  if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
+    level = fixLvl as Level;
+  } else {
+    for (let i = chat.length - 1; i >= 0; i--) {
+      if (chat[i].is_user || !chat[i].mes) continue;
+      const sm = STATUS_RE_LI.exec(chat[i].mes!);
+      if (!sm) continue;
+      const pl = parsePlayerLevelFromStatusBar(sm[1]);
+      if (pl) { level = pl; break; }
+    }
+  }
   const threshold = KILL_THRESHOLDS[level];
   const pending = isPendingClearance(initBal.value, state.ledger, threshold);
   return formatBalanceInjection(balance, pending, level, threshold);
@@ -278,22 +292,38 @@ function processLedgerTags(index: number): void {
         评价: settlement.rating ?? '',
         ...settlement.fields,
       };
-      // 解析玩家等级（从最近的状态栏读取，找不到时退回副本等级）
+      // 玩家等级：优先 fix.level，其次结算消息「之前」最近的状态栏，读不到按 D（CLAUDE.md 补正4）
+      const meta = readLedgerMeta();
       const STATUS_RE_PL = /<状态栏>([\s\S]*?)<\/状态栏>/;
-      let playerLevel = state.pack.level;
-      for (let i = chat.length - 1; i >= 0; i--) {
-        if (chat[i].is_user || !chat[i].mes) continue;
-        const sm = STATUS_RE_PL.exec(chat[i].mes!);
-        if (!sm) continue;
-        const pl = parsePlayerLevelFromStatusBar(sm[1]);
-        if (pl) { playerLevel = pl; break; }
+      let playerLevel: Level = 'D';
+      const fixLvl = meta.fix?.level;
+      if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
+        playerLevel = fixLvl as Level;
+      } else {
+        for (let i = index - 1; i >= 0; i--) {
+          if (chat[i].is_user || !chat[i].mes) continue;
+          const sm = STATUS_RE_PL.exec(chat[i].mes!);
+          if (!sm) continue;
+          const pl = parsePlayerLevelFromStatusBar(sm[1]);
+          if (pl) { playerLevel = pl; break; }
+        }
       }
       const initBal = getInitBalance(chat);
       const curBalance = computeBalance(initBal.value, state.ledger);
-      const isClearance = isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[playerLevel]);
-      const settled = calcSettlementDelta(state.pack.level, playerLevel, fields, curBalance, isClearance);
+      // 清算判定用会话里的 clearance 标记（入场确认时写入，CLAUDE.md 补正5）
+      const isClearance = !!(state.session?.clearance);
+      const settled = calcSettlementDelta(state.pack.level, playerLevel, fields, curBalance, isClearance, state.pack.name);
+      if (settled.warn) {
+        // 评价缺失：写入快照供调试页警告，delta=0 不记账
+        msg.extra = msg.extra ?? {};
+        const snap: Snapshot = msg.extra.rlzc ?? { phase: '', round: 0, injected: [] };
+        msg.extra.rlzc = plain({ ...snap, settleWarn: settled.warn });
+      }
       if (settled.delta !== 0) {
-        newEntries.push({ delta: settled.delta, source: settled.source, type: 'settle', at });
+        const entry: LedgerEntry = { delta: settled.delta, source: settled.source, type: 'settle', at };
+        // 清算通关流水加 clear: true（CLAUDE.md 补正6）
+        if (settled.clearWin) (entry as any).clear = true;
+        newEntries.push(entry);
       }
     }
   }
@@ -596,6 +626,28 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
   const chat = getChat();
   const msg = chat[entryIndex];
   const session = createSession(pack, entryIndex, briefing);
+  // 入场确认时判定待清算（CLAUDE.md 补正5）：那一刻账户已标记待清算，就记 clearance: true
+  if (!pack.rest) {
+    const initBal = getInitBalance(chat);
+    const meta = readLedgerMeta();
+    const STATUS_RE_CS = /<状态栏>([\s\S]*?)<\/状态栏>/;
+    let playerLvl: Level = 'D';
+    const fixLvl = meta.fix?.level;
+    if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
+      playerLvl = fixLvl as Level;
+    } else {
+      for (let i = chat.length - 1; i >= 0; i--) {
+        if (chat[i].is_user || !chat[i].mes) continue;
+        const sm = STATUS_RE_CS.exec(chat[i].mes!);
+        if (!sm) continue;
+        const pl = parsePlayerLevelFromStatusBar(sm[1]);
+        if (pl) { playerLvl = pl; break; }
+      }
+    }
+    if (isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[playerLvl])) {
+      session.clearance = true;
+    }
+  }
   msg.extra = msg.extra ?? {};
   msg.extra.rlzc = { phase: pack.phases[0]?.name ?? '进行中', round: 1, injected: [], entry: session.id } satisfies Snapshot;
   writeSession(session);

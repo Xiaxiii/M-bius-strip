@@ -71,21 +71,21 @@ export function parseBalanceFromStatusBar(statusText: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** 根据副本等级、玩家等级与结算字段计算奖励/惩罚（CLAUDE.md 账本结算按积分表修正）。
+/** 根据副本等级、玩家等级与结算字段计算奖励/惩罚（CLAUDE.md 补正1–7）。
  *
  * 通关时：
- *   base = SCORE_TABLE[packLevel][rating]（评价缺失按 B）
- *   若抽查=是 → ×0.5（优先级最高）
- *   否则若玩家等级 ≠ 副本等级 或 越级=是 → ×0.6
+ *   base = SCORE_TABLE[packLevel][rating]
+ *   评价缺失或无法识别 → delta=0，返回 warn（不默认 B 评）
+ *   若抽查=是 → ×0.5（优先级最高，Math.floor）
+ *   否则若玩家等级 ≠ 副本等级 或 越级=是 → ×0.6（Math.floor）
  *
  * 清算副本通关（isClearance=true）：
  *   不给评价奖励；将余额补到 KILL_THRESHOLDS[playerLevel]+500；返回差值（最小为0）
+ *   clearWin: true 标记，供调用方给流水加 clear: true
  *
- * 失败/阵亡：
- *   清算副本 → 不记账（返回 0）
- *   普通失败 → 扣当前余额的 30%（floor，最小为0）
- *
- * 结果不明确 → 返回 { delta: 0 }
+ * 死亡/阵亡：不记账（delta=0）
+ * 普通失败：清算副本 → source='清算未通关'；普通 → 扣当前余额 30%（Math.floor）
+ * 结果不明确 → delta=0
  */
 export function calcSettlementDelta(
   packLevel: Level,
@@ -93,44 +93,57 @@ export function calcSettlementDelta(
   fields: Record<string, string>,
   balance: number,
   isClearance: boolean,
-): { delta: number; source: string; warn?: string } {
+  packName = '',
+): { delta: number; source: string; warn?: string; clearWin?: true } {
   const result = fields['结果'] ?? '';
-  const rating = (fields['评价'] ?? 'B').toUpperCase();
+  const rawRating = (fields['评价'] ?? '').toUpperCase().trim();
+  const tableRating = (['D', 'C', 'B', 'A', 'S'] as string[]).includes(rawRating) ? rawRating : null;
 
   const isWin = result === '通关' || result === '成功' || result === '胜利';
-  const isLoss = result === '失败' || result === '阵亡';
+  const isNormalLoss = result === '失败';
+  const isDead = result === '死亡' || result === '阵亡';
 
-  if (!isWin && !isLoss) {
+  if (!isWin && !isNormalLoss && !isDead) {
     return { delta: 0, source: '' };
   }
 
-  if (isLoss) {
-    if (isClearance) return { delta: 0, source: '清算副本失败·不记账' };
+  // 死亡/阵亡不记账（CLAUDE.md 补正3）
+  if (isDead) {
+    return { delta: 0, source: '' };
+  }
+
+  if (isNormalLoss) {
+    if (isClearance) return { delta: 0, source: '清算未通关' };
     const deduct = Math.floor(balance * 0.3);
-    return { delta: -deduct, source: `副本失败·扣30%` };
+    return { delta: -deduct, source: '副本失败·扣除30%' };
   }
 
   // isWin
   if (isClearance) {
     const target = KILL_THRESHOLDS[playerLevel] + 500;
     const delta = Math.max(0, target - balance);
-    return { delta, source: `清算副本通关·补至${target}` };
+    return { delta, source: '清算通关·续存至斩杀线+500', clearWin: true };
   }
 
-  const tableRating = ['D', 'C', 'B', 'A', 'S'].includes(rating) ? rating : 'B';
+  // 评价缺失时不发奖励（CLAUDE.md 补正1）
+  if (!tableRating) {
+    return { delta: 0, source: '', warn: '评价缺失或无法识别，不发奖励' };
+  }
+
   let base = SCORE_TABLE[packLevel][tableRating];
+  const displayName = packName || packLevel;
 
   const isSurvey = fields['抽查'] === '是' || fields['抽查'] === 'true' || fields['抽查'] === '1';
   const isOverLevel = fields['越级'] === '是' || fields['越级'] === 'true' || fields['越级'] === '1';
   const levelMismatch = packLevel !== playerLevel;
 
-  let source = `副本结算·通关·${tableRating}`;
+  let source = `副本奖励·${displayName} ${tableRating}评`;
   if (isSurvey) {
-    base = Math.round(base * 0.5);
-    source += '·抽查×0.5';
+    base = Math.floor(base * 0.5);
+    source += '（×50%）';
   } else if (isOverLevel || levelMismatch) {
-    base = Math.round(base * 0.6);
-    source += isOverLevel ? '·越级×0.6' : '·等级不符×0.6';
+    base = Math.floor(base * 0.6);
+    source += '（×60%）';
   }
 
   return { delta: base, source };
@@ -141,7 +154,7 @@ export function computeBalance(initValue: number, entries: LedgerEntry[]): numbe
   return entries.reduce((sum, e) => sum + e.delta, initValue);
 }
 
-/** 判断是否处于「待清算」状态：余额曾低于斩杀线，且之后没有通关结算（type=settle 且 delta>0）清除标记 */
+/** 判断是否处于「待清算」状态：余额曾低于斩杀线，且之后没有 clear: true 的清算通关流水（CLAUDE.md 补正6） */
 export function isPendingClearance(
   initValue: number,
   entries: LedgerDisplayEntry[],
@@ -152,7 +165,7 @@ export function isPendingClearance(
   for (const e of entries) {
     balance += e.delta;
     if (balance < threshold) pending = true;
-    if (e.type === 'settle' && e.delta > 0) pending = false;
+    if (e.clear) pending = false;
   }
   return pending;
 }

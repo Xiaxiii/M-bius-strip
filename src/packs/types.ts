@@ -122,6 +122,8 @@ export interface Session {
   declined?: string[];
   /** 入场简报解析结果；通用副本包靠它重建 */
   briefing?: BriefingInfo;
+  /** 入场确认时账户已标记待清算，本场为清算副本（CLAUDE.md 补正5） */
+  clearance?: true;
 }
 
 export interface Snapshot {
@@ -146,11 +148,13 @@ export interface Snapshot {
 /** 积分账本流水条目（存在 chat[i].extra.rlzc.ledger，CLAUDE.md 第三期） */
 export interface LedgerEntry {
   delta: number;
-  /** 变动来源，如 "直播打赏500×60%" 或 "副本结算·通关·S" */
+  /** 变动来源，如 "直播打赏500×60%" 或 "副本奖励·钟楼 S评" */
   source: string;
   type: 'settle' | 'tag' | 'manual' | 'tip' | 'bet';
   /** 格式化时间，如 "9/24 13:02" */
   at: string;
+  /** 清算副本通关时为 true；isPendingClearance 只认此标记（CLAUDE.md 补正6） */
+  clear?: true;
 }
 
 /** 账本流水的展示形态（重放时附加消息下标，仅用于 UI 撤销） */

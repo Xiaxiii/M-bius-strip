@@ -69,6 +69,10 @@ async function choose() {
       <div v-if="p.ended && p.settlement" class="rlzc-card">
         <div class="rlzc-kv"><span>结果</span><b>{{ p.settlement.result ?? '—' }}</b></div>
         <div class="rlzc-kv"><span>评价</span><b>{{ p.settlement.rating ?? '—' }}</b></div>
+        <!-- 清算副本失败后单独提示（CLAUDE.md 补正8） -->
+        <div v-if="state.session?.clearance && p.settlement.result === '失败'" class="rlzc-note rlzc-note-warn">
+          清算未通关
+        </div>
       </div>
       <div v-else-if="p.ended" class="rlzc-note">副本已手动结束。</div>
 
