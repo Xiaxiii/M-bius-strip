@@ -244,6 +244,7 @@
 .rlzc-toggle::after { content: ''; position: absolute; left: 0; right: 0; top: -10px; bottom: -10px; }
 .rlzc-segsrc button:disabled { opacity: 0.4; cursor: not-allowed; }
 .rlzc-segsrc button:disabled:hover { background: none; color: var(--muted); }
+.rlzc-live-card .rlzc-input-num { min-height: 44px; }
 .rlzc-option-row-stack { flex-direction: column; align-items: stretch; gap: 0; }
 .rlzc-option-row-stack .rlzc-segsrc { margin: 6px 0 2px; }
 .rlzc-option-row-stack .rlzc-hint { margin: 2px 0 0; }

@@ -52,8 +52,17 @@ function tick(): void {
   if (queue.length) timer = setTimeout(tick, nextDelay());
 }
 
-/** 本轮的弹幕和打赏陆续放出：第一条立即出现，之后每1.5–3秒一条 */
-export function scheduleFeed(items: FeedItem[]): void {
+/**
+ * 本轮的弹幕和打赏陆续放出：第一条立即出现，之后每1.5–3秒一条。
+ * newRound：新的一轮开始时，上一轮还没放完的直接补齐，不拖到下一轮后面。
+ */
+export function scheduleFeed(items: FeedItem[], newRound = false): void {
+  if (newRound && queue.length) {
+    for (const id of queue) hidden.delete(id);
+    queue.length = 0;
+    if (timer) clearTimeout(timer);
+    timer = null;
+  }
   if (!items.length) return;
   for (const f of items) {
     hidden.add(f.id);

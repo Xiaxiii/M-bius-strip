@@ -49,10 +49,11 @@ export interface FakeSt {
   ctx: any;
   chat: ChatMessage[];
   meta: Record<string, any>;
+  chatId: string;
   prompts: Record<string, { value: string; depth: number; scan: boolean }>;
   popups: Popup[];
   /** 下一次弹窗怎么回答：返回 true = 确定；可以改勾选框 */
-  answer: (p: Popup) => boolean;
+  answer: (p: Popup) => boolean | Promise<boolean>;
 }
 
 export function installFakeSt(): FakeSt {
@@ -60,6 +61,7 @@ export function installFakeSt(): FakeSt {
     ctx: null,
     chat: [],
     meta: {},
+    chatId: 'chat-1',
     prompts: {},
     popups: [],
     answer: () => true,
@@ -79,7 +81,7 @@ export function installFakeSt(): FakeSt {
     },
     saveMetadataDebounced() {},
     saveSettingsDebounced() {},
-    getCurrentChatId: () => 'chat-1',
+    getCurrentChatId: () => st.chatId,
     name1: '林默',
     POPUP_TYPE: { TEXT: 1, CONFIRM: 2, INPUT: 3 },
     POPUP_RESULT: { AFFIRMATIVE: 1, NEGATIVE: 0, CANCELLED: null },

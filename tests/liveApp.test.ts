@@ -15,6 +15,7 @@ function reset() {
   st.meta = {};
   st.prompts = {};
   st.popups = [];
+  st.chatId = 'chat-1';
   st.answer = () => true;
   st.ctx.extensionSettings = {};
   app.loadSettings();
@@ -261,5 +262,35 @@ describe('副本内直播', () => {
     expect(d).toBe(c);
     expect(Math.min(...live(d)!.feed.map((f) => f.id))).toBeGreaterThan(beforeSwipe);
     expect(tipEntries().map((e) => e.mesIndex)).toEqual([a, d]);
+  });
+});
+
+describe('入场弹窗开着时切换聊天', () => {
+  it('这次回答不算、不记拒绝，切回来会再问', async () => {
+    st.chat.push({ mes: '开场白', is_user: false, extra: {} });
+    user();
+    const chatA = st.chat;
+    const metaA = st.meta;
+    // 弹窗开着时切到另一个聊天，然后玩家点了「取消」
+    st.answer = () => {
+      st.chatId = 'chat-2';
+      st.chat = [{ mes: '别的聊天', is_user: false, extra: {} }];
+      st.meta = {};
+      app.onChatChanged();
+      return false;
+    };
+    await reply(BRIEFING);
+    expect(st.meta.rlzc?.declined).toBeUndefined();
+    expect(metaA.rlzc?.declined).toBeUndefined();
+    // 切回来：开场白之后那条简报仍会弹
+    st.chatId = 'chat-1';
+    st.chat = chatA;
+    st.meta = metaA;
+    st.answer = () => true;
+    app.onChatChanged();
+    app.onMessageReceived(st.chat.length - 1, 'normal');
+    await flush();
+    expect(st.popups.length).toBe(2);
+    expect(app.state.session?.packId).toBe('zhonglou');
   });
 });

@@ -645,7 +645,8 @@ function entrySearchStart(): number {
 /** 弹窗确认入场。点「否」会记入 chatMetadata.rlzc.declined，同一条消息不再询问 */
 async function askEntry(cand: EntryCandidate): Promise<void> {
   const { index, info } = cand;
-  const key = `${getChatId()}:${index}:${info.name}`;
+  const chatId = getChatId();
+  const key = `${chatId}:${index}:${info.name}`;
   if (askedEntry.has(key)) return;
   askedEntry.add(key);
   const text = cand.pack
@@ -654,6 +655,11 @@ async function askEntry(cand: EntryCandidate): Promise<void> {
   // 通用副本也可以直播，只是没有专属弹幕；disableLive 副本不显示勾选框
   const opt = entryLiveOption(cand.pack ?? ({} as Pack), state.settings.live.optIn);
   const answer = await confirmWithCheck(text, opt.show ? { label: '开启直播', checked: opt.checked } : null);
+  // 弹窗开着时玩家切到了别的聊天：这次回答不算，也不记拒绝（切回来会再问）
+  if (getChatId() !== chatId) {
+    askedEntry.delete(key);
+    return;
+  }
   if (!answer.ok) {
     addDeclined(declineKey(index, info.name));
     return;
@@ -1323,7 +1329,7 @@ export function applyLive(index: number, type?: string): void {
   writeLiveMeta(meta);
   state.ledger = replayLedger(getChat());
   state.tick++;
-  scheduleFeed(rec.feed);
+  scheduleFeed(rec.feed, true);
   if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined);
 }
 
