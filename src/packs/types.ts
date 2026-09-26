@@ -125,17 +125,31 @@ export interface Snapshot {
   skippedEvents?: { id: string; reason: string }[];
   /** 仅入场消息：所属会话 id */
   entry?: string;
+  /** 本楼的积分流水条目（CLAUDE.md 第三期） */
+  ledger?: LedgerEntry[];
 }
 
-/** 积分账本流水条目（CLAUDE.md 第三期） */
+/** 积分账本流水条目（存在 chat[i].extra.rlzc.ledger，CLAUDE.md 第三期） */
 export interface LedgerEntry {
-  /** 来源AI消息在 chat 中的下标（用于删楼回滚） */
-  mesIndex: number;
   delta: number;
-  /** 变动说明，如"直播打赏500×60%"，可为空字符串 */
-  note: string;
+  /** 变动来源，如 "直播打赏500×60%" 或 "副本结算·通关·S" */
+  source: string;
+  type: 'settle' | 'tag' | 'manual' | 'tip' | 'bet';
   /** 格式化时间，如 "9/24 13:02" */
-  time: string;
+  at: string;
+}
+
+/** 账本流水的展示形态（重放时附加消息下标，仅用于 UI 撤销） */
+export interface LedgerDisplayEntry extends LedgerEntry {
+  mesIndex: number;
+}
+
+/** chatMetadata.rlzc_ledger 的存储结构（CLAUDE.md 第三期） */
+export interface LedgerMeta {
+  /** 初始余额（来自状态栏读取或手动设置） */
+  init?: { value: number; source: string; at: string };
+  /** 手动补录的调整条目（不对应具体消息楼层） */
+  adjust?: { amount: number; note: string; at: string }[];
 }
 
 /** 简化的聊天消息（只列出本扩展用到的字段） */

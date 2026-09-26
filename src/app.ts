@@ -6,7 +6,7 @@ import type { ChatMessage, ManualAction, Pack, Session, Snapshot } from './packs
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_BALANCE, type Injection } from './core/injector';
 import {
   buildSubPrompt,
   callWithRetry,
@@ -22,8 +22,8 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, reconcileLedger } from './core/ledger';
-import type { LedgerEntry } from './packs/types';
+import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, formatBalanceInjection, isPendingClearance, KILL_THRESHOLDS } from './core/ledger';
+import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
   declineKey,
@@ -112,8 +112,8 @@ export const state = reactive({
   debugUnlocked: false,
   /** 刷新计数，调试页据此重读每楼快照 */
   tick: 0,
-  /** 积分账本流水（按聊天保存，chatMetadata.rlzc_ledger，CLAUDE.md 第三期） */
-  ledger: [] as import('./packs/types').LedgerEntry[],
+  /** 积分账本流水（重放自聊天快照，CLAUDE.md 第三期） */
+  ledger: [] as LedgerDisplayEntry[],
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -181,43 +181,96 @@ export function removePack(id: string): void {
 
 // ───────────── 积分账本（第三期） ─────────────
 
-function readLedger(): LedgerEntry[] {
+function readLedgerMeta(): LedgerMeta {
   const raw = getMeta()[LEDGER_META_KEY];
-  return Array.isArray(raw) ? (raw as LedgerEntry[]) : [];
+  // 旧版平铺数组格式直接丢弃，不迁移
+  if (!raw || Array.isArray(raw)) return {};
+  return raw as LedgerMeta;
 }
 
-function writeLedger(entries: LedgerEntry[]): void {
-  getMeta()[LEDGER_META_KEY] = entries;
+function writeLedgerMeta(meta: LedgerMeta): void {
+  getMeta()[LEDGER_META_KEY] = meta;
   saveMeta();
 }
 
-/** 扫描消息正文里的 <积分变动> 标签，追加流水 */
+/** 从聊天记录重放积分流水，删楼/滑动自动回滚 */
+function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
+  const result: LedgerDisplayEntry[] = [];
+  for (let i = 0; i < chat.length; i++) {
+    const msg = chat[i];
+    if (msg.is_user || msg.is_system) continue;
+    const entries = msg.extra?.rlzc?.ledger;
+    if (!Array.isArray(entries)) continue;
+    for (const e of entries) result.push({ ...e, mesIndex: i });
+  }
+  return result;
+}
+
+/** 获取初始余额：优先用已保存的 init，否则从最近的 <状态栏> 读取，找不到用 1000 */
+export function getInitBalance(chat: ChatMessage[]): { value: number; source: string } {
+  const meta = readLedgerMeta();
+  if (meta.init != null) return { value: meta.init.value, source: meta.init.source };
+  const STATUS_RE_LOCAL = /<状态栏>([\s\S]*?)<\/状态栏>/;
+  for (let i = chat.length - 1; i >= 0; i--) {
+    const msg = chat[i];
+    if (msg.is_user || !msg.mes) continue;
+    const m = STATUS_RE_LOCAL.exec(msg.mes);
+    if (!m) continue;
+    const val = parseBalanceFromStatusBar(m[1]);
+    if (val !== null) {
+      const at = formatTime(msg.send_date ?? msg.gen_finished ?? undefined);
+      writeLedgerMeta({ ...meta, init: { value: val, source: '状态栏读取', at } });
+      return { value: val, source: '状态栏读取' };
+    }
+  }
+  return { value: 1000, source: '默认值' };
+}
+
+/** 扫描消息正文里的 <积分变动> 标签与结算奖励，写入该楼快照 */
 function processLedgerTags(index: number): void {
   const chat = getChat();
   const msg = chat[index];
   if (!msg || msg.is_user) return;
   const text = msg.mes ?? '';
-  const entries = readLedger().filter((e) => e.mesIndex !== index); // 先清除这一楼的旧条目
+  const at = formatTime(msg.send_date ?? msg.gen_finished ?? undefined);
+  const newEntries: LedgerEntry[] = [];
   const re = new RegExp(SCORE_TAG_RE.source, 'g');
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
     const parsed = parseDelta(m[1]);
     if (!parsed) continue;
-    entries.push({
-      mesIndex: index,
-      delta: parsed.delta,
-      note: parsed.note,
-      time: formatTime(msg.send_date ?? msg.gen_finished ?? undefined),
-    });
+    newEntries.push({ delta: parsed.delta, source: parsed.source, type: 'tag', at });
   }
-  writeLedger(entries);
-  state.ledger = entries;
+  const settlement = detectSettlement(text);
+  if (settlement && state.pack) {
+    const fields: Record<string, string> = {
+      结果: settlement.result ?? '',
+      评价: settlement.rating ?? '',
+      ...settlement.fields,
+    };
+    const delta = calcSettlementDelta(state.pack.level, fields);
+    if (delta !== 0) {
+      const ratingStr = settlement.rating ? `·${settlement.rating}` : '';
+      newEntries.push({ delta, source: `副本结算·${settlement.result ?? ''}${ratingStr}`, type: 'settle', at });
+    }
+  }
+  if (newEntries.length || msg.extra?.rlzc?.ledger?.length) {
+    msg.extra = msg.extra ?? {};
+    const snap: Snapshot = msg.extra.rlzc ?? { phase: '', round: 0, injected: [] };
+    msg.extra.rlzc = plain({ ...snap, ledger: newEntries.length ? newEntries : undefined });
+    saveMeta();
+  }
+  state.ledger = replayLedger(getChat());
 }
 
+/** 撤销某楼的积分流水（删除该楼快照内的 ledger 字段） */
 export function deleteLedgerEntry(mesIndex: number): void {
-  const entries = readLedger().filter((e) => e.mesIndex !== mesIndex);
-  writeLedger(entries);
-  state.ledger = entries;
+  const chat = getChat();
+  const msg = chat[mesIndex];
+  if (!msg?.extra?.rlzc) return;
+  msg.extra.rlzc = plain({ ...msg.extra.rlzc, ledger: undefined });
+  saveMeta();
+  state.ledger = replayLedger(getChat());
 }
 
 // ───────────── 会话读写 ─────────────
@@ -344,6 +397,14 @@ function injectFor(type: string | undefined): void {
   if (inj.progress) setPrompt(KEY_PROGRESS, inj.progress, d.progress, false);
   if (inj.turn) setPrompt(KEY_TURN, inj.turn, d.turn, false);
   if (inj.state) setPrompt(KEY_STATE, inj.state, d.progress, false);
+  // 积分余额注入（第三期，副本进行中时注入）
+  if (pack && session?.status === 'active') {
+    const initBal = getInitBalance(chat);
+    const balance = computeBalance(initBal.value, state.ledger);
+    const level = pack.level;
+    const pending = isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[level]);
+    setPrompt(KEY_BALANCE, formatBalanceInjection(balance, pending), d.progress, false);
+  }
   state.lastInjection = inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
@@ -846,7 +907,7 @@ export function onChatChanged(): void {
   state.debugUnlocked = false;
   state.lastInjection = EMPTY_INJECTION;
   clearInjection();
-  state.ledger = readLedger();
+  state.ledger = replayLedger(getChat());
   refresh();
   checkGreeting();
   setTimeout(() => hideTagsInAll(), 50);
