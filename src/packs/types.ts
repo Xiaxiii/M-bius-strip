@@ -82,6 +82,26 @@ export interface Pack {
   rest?: boolean;
   /** 副本专属弹幕（第三期直播）；phase 写了阶段 id 时只在这些阶段可抽 */
   danmaku?: DanmakuItem[];
+  /** 黑市事件盘（第四期）：是非题，靠副本事件检测判定 */
+  markets?: MarketDef[];
+}
+
+/** 副本包里的一道事件盘 */
+export interface MarketDef {
+  id: string;
+  /** 题目 */
+  q: string;
+  /** 「是」「否」两个选项的显示文字 */
+  yes: string;
+  no: string;
+  /** 「是」的开盘概率（0.01–0.99），按没看过剧本的观众来猜，不按真相定 */
+  p: number;
+  /** 写到即「是」赢 */
+  judge: string;
+  /** 写到即「否」提前赢 */
+  judgeNo?: string;
+  /** 阶段 id：该阶段结束时仍未判出，按「未判出」处理；不写则到副本结算为止 */
+  by?: string;
 }
 
 export interface DanmakuItem {
