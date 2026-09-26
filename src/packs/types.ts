@@ -124,6 +124,8 @@ export interface Session {
   briefing?: BriefingInfo;
   /** 入场确认时账户已标记待清算，本场为清算副本（CLAUDE.md 补正5） */
   clearance?: true;
+  /** 入场时勾选了「开启直播」：本局直播锁定，副本结束时下播 */
+  live?: true;
 }
 
 export interface Snapshot {
@@ -139,6 +141,10 @@ export interface Snapshot {
   skippedEvents?: { id: string; reason: string }[];
   /** 仅入场消息：所属会话 id */
   entry?: string;
+  /** 直播：这一楼的精彩度、热度、人数、弹幕、打赏（第三期b） */
+  live?: import('../core/liveFlow').LiveRecord;
+  /** 结算评价缺失等提示（调试页显示） */
+  settleWarn?: string;
   /** 本楼的积分流水条目（CLAUDE.md 第三期） */
   ledger?: LedgerEntry[];
   /** 积分核对：状态栏与账本不一致时记录（仅调试页显示） */

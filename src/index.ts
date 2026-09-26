@@ -10,8 +10,11 @@ import {
   onChatMutated,
   onMessageReceived,
   onMessageSwiped,
+  liveView,
   state,
+  toggleCorridorLive,
 } from './app';
+import { installLiveApi } from './st/liveApi';
 import { onEvent } from './st/context';
 import { mountUi } from './ui/mount';
 
@@ -42,6 +45,8 @@ function init() {
   onEvent('MORE_MESSAGES_LOADED', () => hideTagsInAll());
 
   mountUi();
+  // 直播数据接口：状态栏正则从主页面读取 window.RLZC_LIVE
+  installLiveApi({ view: liveView, toggle: toggleCorridorLive });
   onChatChanged();
   console.log('[rlzc] 回廊种菜系统已加载', state.settings);
 }
