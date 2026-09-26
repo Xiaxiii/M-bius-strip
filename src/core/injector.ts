@@ -96,6 +96,10 @@ export interface BuildOptions {
 }
 
 export function buildInjection(pack: Pack, progress: Progress | null, session: Session | null, opts: BuildOptions = {}): Injection {
+  // 休整副本（rest: true）：只注入暗号，不生成进度和指令块
+  if (pack.rest && session?.status === 'active') {
+    return { ...EMPTY_INJECTION, token: pack.token };
+  }
   if (!progress || !session || progress.ended || session.status !== 'active') return EMPTY_INJECTION;
   const roles = opts.roles;
   const hasPhases = pack.phases.length > 0;

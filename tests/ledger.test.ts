@@ -179,3 +179,45 @@ describe('buildLedgerInjection 格式', () => {
     expect(text).toBe('［账户·仅供AI］积分：120　待清算：已标记，距斩杀线180分（D级斩杀线300）。商城价格上浮30%，下一场副本为清算副本。');
   });
 });
+
+// ───────────── buildFixSentence（账户校正，甲·二·4）─────────────
+
+import { buildFixSentence } from '../src/core/ledger';
+
+describe('buildFixSentence（账户校正句）', () => {
+  it('只填等级时不提位格', () => {
+    const s = buildFixSentence({ level: 'C' });
+    expect(s).toBe('本轮状态栏里{{user}}的等级写C，之后按剧情照常。');
+    expect(s).not.toContain('位格');
+  });
+
+  it('只填位格时不提等级', () => {
+    const s = buildFixSentence({ rank: '执事长' });
+    expect(s).toBe('本轮状态栏里{{user}}的位格写执事长，之后按剧情照常。');
+    expect(s).not.toContain('等级');
+  });
+
+  it('同时填等级和位格时两者都在句中', () => {
+    const s = buildFixSentence({ level: 'B', rank: '主事' });
+    expect(s).toBe('本轮状态栏里{{user}}的等级写B、位格写主事，之后按剧情照常。');
+  });
+
+  it('两者都为空时返回空字符串', () => {
+    expect(buildFixSentence({})).toBe('');
+    expect(buildFixSentence({ level: undefined, rank: undefined })).toBe('');
+  });
+
+  it('校正句只注入一次：有 fix 时出现，无 fix 时不出现', () => {
+    // 验证 formatBalanceInjection 本身不含校正句（校正句由 app.ts 在其后追加）
+    const base = formatBalanceInjection(500, false);
+    expect(base).not.toContain('状态栏');
+  });
+
+  it('校正期间斩杀线按 fix.level 等级算', () => {
+    // fix.level = 'C' → 斩杀线应为 1000；余额 800 距斩杀线 200
+    const threshold = KILL_THRESHOLDS['C'];
+    expect(threshold).toBe(1000);
+    const text = formatBalanceInjection(800, true, 'C', threshold);
+    expect(text).toContain('距斩杀线200分（C级斩杀线1000）');
+  });
+});

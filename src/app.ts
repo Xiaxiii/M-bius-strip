@@ -22,7 +22,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection } from './core/ledger';
+import { LEDGER_META_KEY, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -471,14 +471,8 @@ function injectFor(type: string | undefined): void {
   let ledgerText = buildLedgerInjection(chat);
   // 账户校正句：待生效的等级/位格校正（CLAUDE.md 甲二.2）
   if (ledgerMeta.fix) {
-    const { level: fixLevel, rank: fixRank } = ledgerMeta.fix;
-    const parts: string[] = [];
-    if (fixLevel) parts.push(`等级写${fixLevel}`);
-    if (fixRank) parts.push(`位格写${fixRank}`);
-    if (parts.length) {
-      const sentence = `本轮状态栏里{{user}}的${parts.join('、')}，之后按剧情照常。`;
-      ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
-    }
+    const sentence = buildFixSentence(ledgerMeta.fix);
+    if (sentence) ledgerText = ledgerText ? `${ledgerText}\n${sentence}` : sentence;
   }
   if (ledgerText) setPrompt(KEY_LEDGER, ledgerText, d.ledger, false);
   state.lastInjection = inj;

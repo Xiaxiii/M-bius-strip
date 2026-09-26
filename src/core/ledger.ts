@@ -115,6 +115,15 @@ export function isPendingClearance(
   return pending;
 }
 
+/** 构建账户校正句（纯函数，供 app.ts 和单元测试使用）。无校正项时返回空字符串。 */
+export function buildFixSentence(fix: { level?: string; rank?: string }): string {
+  const parts: string[] = [];
+  if (fix.level) parts.push(`等级写${fix.level}`);
+  if (fix.rank) parts.push(`位格写${fix.rank}`);
+  if (!parts.length) return '';
+  return `本轮状态栏里{{user}}的${parts.join('、')}，之后按剧情照常。`;
+}
+
 /** 格式化单条流水显示："9/24 13:02 +300 直播打赏500×60%" */
 export function formatEntry(e: LedgerDisplayEntry): string {
   const sign = e.delta >= 0 ? '+' : '';
