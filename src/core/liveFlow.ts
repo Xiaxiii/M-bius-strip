@@ -10,7 +10,11 @@ import {
   calcTips,
   calcViewers,
   detectHurt,
+  danmakuTarget,
+  DANMAKU_MAX,
+  DANMAKU_MIN,
   drawDanmaku,
+  type DanmakuLine,
   type PackDanmakuItem,
   type PoolItem,
   type TemplateItem,
@@ -64,9 +68,13 @@ export interface LiveRecord {
   tipSource: string;
   /** 死亡撤回的数额（正数），本局打赏合计 */
   revoke?: number;
+  /** 等 AI 弹幕时暂存：本地备用弹幕、打赏、系统消息、本轮目标条数 */
+  pending?: { local: DanmakuLine[]; tips: FeedDraft[]; sys: FeedDraft[]; target: number };
   /** AI 生成弹幕的结果（第4段） */
   ai?: { ok: boolean; pending?: boolean; count?: number; error?: string; ms?: number };
 }
+
+export type FeedDraft = Omit<FeedItem, 'id'>;
 
 export interface SysItem extends FeedItem {
   show: string;
@@ -242,16 +250,21 @@ export interface LiveRoundInput {
   firstId: number;
   /** 本轮是副本结算：died 为死亡结算时本局此前的打赏合计（撤回用）；ended 为这一轮结束直播 */
   settle?: { died: boolean; tipsBefore: number };
-  /** AI 生成的弹幕（第4段），并入本轮一起放出 */
-  extraDanmaku?: { name: string; text: string; type: string }[];
+  /** 这一轮要生成 AI 弹幕：先不出 feed，等 AI 结果再合成（第4段） */
+  awaitAi?: boolean;
   rand: () => number;
 }
 
 /** 一轮的直播数据：精彩度、热度、人数、弹幕、打赏；打赏夹在弹幕中间 */
+/** 本轮是否有人受伤或死亡：事件检测给了 hurt 就用它，否则按正文关键词判断 */
+export function roundHurt(text: string, sub?: { hurt?: boolean }): boolean {
+  return sub?.hurt !== undefined ? sub.hurt : detectHurt(stripPanels(text));
+}
+
 export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
   const { rand } = inp;
   const body = stripPanels(inp.text);
-  const hurt = inp.sub?.hurt !== undefined ? inp.sub.hurt : detectHurt(body);
+  const hurt = roundHurt(inp.text, inp.sub);
   const hype = calcHype({ subHype: inp.sub?.hype, subHurt: hurt, hasEvents: inp.hasEvents, hasPhaseSwitch: inp.hasPhaseSwitch, bodyText: body });
   const heat = calcHeat(inp.prevHeat ?? START_HEAT, hype);
   const isCorr = inp.scope === 'corridor' || inp.isRest;
@@ -262,7 +275,9 @@ export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
     heat,
     rand: 0.9 + rand() * 0.2,
   });
-  const msgs = drawDanmaku({
+  // 每轮弹幕总数 10–13 条；要等 AI 弹幕的轮次先多抽几条本地的，留着补足
+  const target = danmakuTarget(rand);
+  const local = drawDanmaku({
     pool: inp.pool,
     templates: inp.templates,
     packDanmaku: inp.packDanmaku,
@@ -277,31 +292,20 @@ export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
     names: inp.names,
     whoNames: inp.whoNames,
     rand,
+    count: inp.awaitAi ? DANMAKU_MAX : target,
   });
-  const tips = calcTips({ hype, isCorr, rand, names: inp.names });
-
-  type Draft = Omit<FeedItem, 'id'>;
-  const lines: Draft[] = [...msgs, ...(inp.extraDanmaku ?? [])].map((d) => ({ t: 'msg', name: d.name, text: d.text, amount: 0, net: 0 }));
-  // AI 弹幕与本地弹幕打散
-  for (let i = lines.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [lines[i], lines[j]] = [lines[j], lines[i]];
-  }
-  // 打赏插在弹幕中间（不放在第一条之前）
-  tips.faces.forEach((face, k) => {
-    const pos = lines.length ? 1 + Math.floor(rand() * lines.length) : 0;
-    lines.splice(Math.min(pos, lines.length), 0, { t: 'tip', name: tips.names[k], text: '', amount: face, net: Math.floor(face * 0.6) });
-  });
+  const calc = calcTips({ hype, isCorr, rand, names: inp.names });
+  const tips: FeedDraft[] = calc.faces.map((face, k) => ({ t: 'tip', name: calc.names[k], text: '', amount: face, net: Math.floor(face * 0.6) }));
+  const sys: FeedDraft[] = [];
   let revoke: number | undefined;
   if (inp.settle) {
     if (inp.settle.died) {
-      revoke = inp.settle.tipsBefore + tips.netTotal;
-      if (revoke > 0) lines.push({ t: 'sys', name: '', text: SYS_TEXT.revoke, amount: 0, net: -revoke });
+      revoke = inp.settle.tipsBefore + calc.netTotal;
+      if (revoke > 0) sys.push({ t: 'sys', name: '', text: SYS_TEXT.revoke, amount: 0, net: -revoke });
       else revoke = undefined;
     }
-    lines.push({ t: 'sys', name: '', text: SYS_TEXT.instanceOff, amount: 0, net: 0 });
+    sys.push({ t: 'sys', name: '', text: SYS_TEXT.instanceOff, amount: 0, net: 0 });
   }
-  const feed: FeedItem[] = lines.map((d, k) => ({ id: inp.firstId + k, ...d }));
   const rec: LiveRecord = {
     show: inp.show,
     scope: inp.scope,
@@ -309,13 +313,58 @@ export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
     heat,
     viewers,
     hurt,
-    feed,
-    tipNet: tips.netTotal,
-    tipFace: tips.totalFace,
-    tipSource: tips.source,
+    feed: [],
+    tipNet: calc.netTotal,
+    tipFace: calc.totalFace,
+    tipSource: calc.source,
   };
   if (revoke) rec.revoke = revoke;
+  // 等 AI 弹幕：先不出 feed（打赏已记账），AI 返回或失败后再按 finalizeLiveRecord 合成
+  if (inp.awaitAi) rec.pending = { local, tips, sys, target };
+  else rec.feed = assembleFeed(local.slice(0, target), tips, sys, inp.firstId, rand);
   return rec;
+}
+
+/**
+ * 本轮弹幕：有 AI 生成的先用 AI 的（最多13条），不足10条用本地池补到 10–13 条；
+ * 没有 AI 生成的（关闭、失败）只用本地池 10–13 条。
+ */
+export function composeDanmaku(ai: DanmakuLine[] | null, local: DanmakuLine[], target: number): DanmakuLine[] {
+  const want = Math.max(DANMAKU_MIN, Math.min(DANMAKU_MAX, target));
+  if (!ai?.length) return local.slice(0, want);
+  const out = ai.slice(0, DANMAKU_MAX);
+  if (out.length >= DANMAKU_MIN) return out;
+  const used = new Set(out.map((d) => d.text));
+  for (const d of local) {
+    if (out.length >= want) break;
+    if (used.has(d.text)) continue;
+    used.add(d.text);
+    out.push(d);
+  }
+  return out;
+}
+
+/** 弹幕打散，打赏插在弹幕中间（不放在第一条之前），系统消息放最后；id 从 firstId 起连续 */
+function assembleFeed(msgs: DanmakuLine[], tips: FeedDraft[], sys: FeedDraft[], firstId: number, rand: () => number): FeedItem[] {
+  const lines: FeedDraft[] = msgs.map((d) => ({ t: 'msg', name: d.name, text: d.text, amount: 0, net: 0 }));
+  for (let i = lines.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [lines[i], lines[j]] = [lines[j], lines[i]];
+  }
+  for (const tip of tips) {
+    const pos = lines.length ? 1 + Math.floor(rand() * lines.length) : 0;
+    lines.splice(Math.min(pos, lines.length), 0, tip);
+  }
+  lines.push(...sys);
+  return lines.map((d, k) => ({ id: firstId + k, ...d }));
+}
+
+/** 等 AI 弹幕的那一楼：用 AI 的结果（失败时为 null）合成本轮 feed */
+export function finalizeLiveRecord(rec: LiveRecord, ai: DanmakuLine[] | null, firstId: number, rand: () => number): LiveRecord {
+  if (!rec.pending) return rec;
+  const { pending, ...rest } = rec;
+  const msgs = composeDanmaku(ai, pending.local, pending.target);
+  return { ...rest, feed: assembleFeed(msgs, pending.tips, pending.sys, firstId, rand) };
 }
 
 /** 这一楼直播带来的账本条目（类型 tip）：本轮打赏合并一条；死亡撤回一条 */

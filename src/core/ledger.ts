@@ -149,6 +149,48 @@ export function calcSettlementDelta(
   return { delta: base, source };
 }
 
+/** 旧数据的手动调整只有「M/D HH:MM」：按今年解析成毫秒；读不到返回 undefined */
+export function parseAtTime(at: string, year = new Date().getFullYear()): number | undefined {
+  const m = /^(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):(\d{2})$/.exec(String(at ?? '').trim());
+  if (!m) return undefined;
+  const t = new Date(year, Number(m[1]) - 1, Number(m[2]), Number(m[3]), Number(m[4])).getTime();
+  return Number.isFinite(t) ? t : undefined;
+}
+
+/**
+ * 把手动调整按时间排进楼层流水：楼层流水保持聊天顺序，手动调整插在第一笔比它晚的楼层流水之前；
+ * 时间读不到的手动调整放在最后。
+ */
+export function mergeByTime<T extends { ts?: number }>(floor: T[], manual: T[]): T[] {
+  const out = [...floor];
+  const sorted = manual
+    .map((m, k) => ({ m, k }))
+    .sort((a, b) => (a.m.ts ?? Infinity) - (b.m.ts ?? Infinity) || a.k - b.k)
+    .map((x) => x.m);
+  let from = 0;
+  for (const m of sorted) {
+    let pos = out.length;
+    if (m.ts !== undefined) {
+      for (let i = from; i < out.length; i++) {
+        const t = out[i].ts;
+        if (t !== undefined && t > m.ts) {
+          pos = i;
+          break;
+        }
+      }
+    }
+    out.splice(pos, 0, m);
+    from = pos + 1;
+  }
+  return out;
+}
+
+/** 每一笔记完之后的余额（按流水顺序从初始积分累加） */
+export function runningBalances(initValue: number, entries: { delta: number }[]): number[] {
+  let b = initValue;
+  return entries.map((e) => (b += e.delta));
+}
+
 /** 计算当前积分余额 */
 export function computeBalance(initValue: number, entries: LedgerEntry[]): number {
   return entries.reduce((sum, e) => sum + e.delta, initValue);

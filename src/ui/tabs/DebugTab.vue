@@ -197,28 +197,48 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
         </div>
       </div>
 
-      <div class="rlzc-card">
-        <h4>&lt;副本&gt; 核对</h4>
-        <p v-if="!state.audit?.warnings.length" class="rlzc-hint">没有发现问题。</p>
-        <template v-else>
-          <p class="rlzc-hint">共 {{ state.audit.warnings.length }} 条，显示最近 30 条。只作提示，不会改动消息。</p>
-          <ul class="rlzc-list rlzc-warns">
-            <li v-for="(w, i) in state.audit.warnings.slice(-30).reverse()" :key="i">
-              <span><small>#{{ w.index }}｜{{ w.phase }}第{{ w.round }}轮</small><br />⚠️ {{ w.text }}</span>
-            </li>
-          </ul>
-        </template>
+      <div class="rlzc-card rlzc-collapsible">
+        <button
+          class="rlzc-collapse-head"
+          :aria-expanded="!state.settings.cardCollapsed.auditDebug"
+          @click="toggleCard('auditDebug')"
+        >
+          <h4>&lt;副本&gt; 核对</h4>
+          <span v-if="state.settings.cardCollapsed.auditDebug" class="rlzc-collapse-status">{{ state.audit?.warnings.length ? '⚠️' : '无' }}</span>
+          <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.auditDebug }">▸</span>
+        </button>
+        <div v-if="!state.settings.cardCollapsed.auditDebug" class="rlzc-collapse-body">
+          <p v-if="!state.audit?.warnings.length" class="rlzc-hint">没有发现问题。</p>
+          <template v-else>
+            <p class="rlzc-hint">共 {{ state.audit.warnings.length }} 条，显示最近 30 条。只作提示，不会改动消息。</p>
+            <ul class="rlzc-list rlzc-warns">
+              <li v-for="(w, i) in state.audit.warnings.slice(-30).reverse()" :key="i">
+                <span><small>#{{ w.index }}｜{{ w.phase }}第{{ w.round }}轮</small><br />⚠️ {{ w.text }}</span>
+              </li>
+            </ul>
+          </template>
+        </div>
       </div>
 
-      <div class="rlzc-card">
-        <h4>手动操作记录</h4>
-        <ul v-if="state.session.manual.length" class="rlzc-list">
-          <li v-for="(a, i) in state.session.manual" :key="i">
-            <code>#{{ a.atIndex }} {{ a.kind }} {{ 'phase' in a ? a.phase : '' }}{{ 'round' in a ? a.round : '' }}{{ 'targetPhase' in a ? `${a.targetPhase}:${a.targetRound}` : '' }}</code>
-            <button class="rlzc-btn ghost small" :disabled="!editable" @click="debugRemoveAction(i)">撤销</button>
-          </li>
-        </ul>
-        <p v-else class="rlzc-hint">无</p>
+      <div class="rlzc-card rlzc-collapsible">
+        <button
+          class="rlzc-collapse-head"
+          :aria-expanded="!state.settings.cardCollapsed.manualDebug"
+          @click="toggleCard('manualDebug')"
+        >
+          <h4>手动操作记录</h4>
+          <span v-if="state.settings.cardCollapsed.manualDebug && state.session.manual.length" class="rlzc-collapse-status">×{{ state.session.manual.length }}</span>
+          <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.manualDebug }">▸</span>
+        </button>
+        <div v-if="!state.settings.cardCollapsed.manualDebug" class="rlzc-collapse-body">
+          <ul v-if="state.session.manual.length" class="rlzc-list">
+            <li v-for="(a, i) in state.session.manual" :key="i">
+              <code>#{{ a.atIndex }} {{ a.kind }} {{ 'phase' in a ? a.phase : '' }}{{ 'round' in a ? a.round : '' }}{{ 'targetPhase' in a ? `${a.targetPhase}:${a.targetRound}` : '' }}</code>
+              <button class="rlzc-btn ghost small" :disabled="!editable" @click="debugRemoveAction(i)">撤销</button>
+            </li>
+          </ul>
+          <p v-else class="rlzc-hint">无</p>
+        </div>
       </div>
 
       <details v-if="subView && (subView.state || subView.record)" class="rlzc-card">
@@ -255,10 +275,19 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
         </table>
       </details>
 
-      <details class="rlzc-card" open>
-        <summary>本次注入</summary>
-        <pre class="rlzc-pre">{{ [state.lastInjection.token, state.lastInjection.progress, state.lastInjection.turn].filter(Boolean).join('\n\n') || '（尚未生成）' }}</pre>
-      </details>
+      <div class="rlzc-card rlzc-collapsible">
+        <button
+          class="rlzc-collapse-head"
+          :aria-expanded="!state.settings.cardCollapsed.injectionDebug"
+          @click="toggleCard('injectionDebug')"
+        >
+          <h4>本次注入</h4>
+          <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.injectionDebug }">▸</span>
+        </button>
+        <div v-if="!state.settings.cardCollapsed.injectionDebug" class="rlzc-collapse-body">
+          <pre class="rlzc-pre">{{ [state.lastInjection.token, state.lastInjection.progress, state.lastInjection.turn].filter(Boolean).join('\n\n') || '（尚未生成）' }}</pre>
+        </div>
+      </div>
       <details class="rlzc-card">
         <summary>重放结果</summary>
         <pre class="rlzc-pre">{{ json(progressView) }}</pre>

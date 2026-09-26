@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { importPack, removePack, saveSettings, setPanelDisplay, settingsAdjustLedger, settingsSaveLevelFix, settingsSetInitBalance, state, getInitBalance, type Settings } from '../../app';
+import { importPack, playerLevel, removePack, saveSettings, setPanelDisplay, settingsAdjustLedger, settingsSaveLevelFix, settingsSetInitBalance, state, getInitBalance, type Settings } from '../../app';
 import { computeBalance, isPendingClearance, KILL_THRESHOLDS } from '../../core/ledger';
 import { confirmBox, toast } from '../../st/context';
 import { getChat } from '../../st/context';
@@ -21,7 +21,11 @@ const LEVELS = ['D', 'C', 'B', 'A', 'S'] as const;
 
 const currentInitBal = computed(() => getInitBalance(getChat()));
 const currentBalance = computed(() => computeBalance(currentInitBal.value.value, state.ledger));
-const currentLevel = computed(() => state.pack?.level ?? 'D');
+// 玩家等级（校正或状态栏），不是副本等级
+const currentLevel = computed(() => {
+  void state.tick;
+  return playerLevel(getChat());
+});
 const currentThreshold = computed(() => KILL_THRESHOLDS[currentLevel.value]);
 const currentPending = computed(() => isPendingClearance(currentInitBal.value.value, state.ledger, currentThreshold.value));
 

@@ -59,7 +59,8 @@ async function choose() {
         <div class="rlzc-stat" v-if="p.currentClock"><span>钟时</span><b>{{ p.currentClock }}</b></div>
         <div v-if="p.roundsLeft" class="rlzc-stat"><span>最多剩余轮次</span><b>{{ p.roundsLeft.x }}/{{ p.roundsLeft.y }}</b></div>
         <div v-if="inPanel" class="rlzc-stat"><span>剩余时间</span><b>{{ remaining }}</b></div>
-        <LedgerSummary />
+        <!-- 副本进行中不显示积分；结算后已回到回廊，照常显示 -->
+        <LedgerSummary v-if="!active" />
       </div>
 
       <p v-if="state.subLine" class="rlzc-subline">{{ state.subLine }}</p>

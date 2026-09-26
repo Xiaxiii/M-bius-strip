@@ -202,6 +202,17 @@ export interface DrawDanmakuOpts {
   whoNames: string[];
   /** 每次调用返回 0–1 随机数 */
   rand: () => number;
+  /** 要抽的条数；不传时随机 10–13 条 */
+  count?: number;
+}
+
+/** 每轮弹幕总数：10–13 条（含 AI 生成的） */
+export const DANMAKU_MIN = 10;
+export const DANMAKU_MAX = 13;
+
+/** 随机取一轮的弹幕总数 10–13 */
+export function danmakuTarget(rand: () => number): number {
+  return DANMAKU_MIN + Math.floor(rand() * (DANMAKU_MAX - DANMAKU_MIN + 1));
 }
 
 /** 判断一条 pool/template 条目是否在当前上下文可抽 */
@@ -226,7 +237,7 @@ function isAvailable(
   return true;
 }
 
-/** 本地弹幕抽取，每轮5–8条。随机数通过 rand 传入。 */
+/** 本地弹幕抽取，默认每轮10–13条。随机数通过 rand 传入。 */
 export function drawDanmaku(opts: DrawDanmakuOpts): DanmakuLine[] {
   const {
     pool, templates, packDanmaku = [], currentPhase,
@@ -234,7 +245,7 @@ export function drawDanmaku(opts: DrawDanmakuOpts): DanmakuLine[] {
     recentTexts, names, whoNames, rand,
   } = opts;
 
-  const count = 5 + Math.floor(rand() * 4); // 5–8
+  const count = opts.count ?? danmakuTarget(rand);
   const results: DanmakuLine[] = [];
   const usedTexts = new Set(recentTexts);
 
@@ -290,6 +301,16 @@ export function drawDanmaku(opts: DrawDanmakuOpts): DanmakuLine[] {
     if (!text || usedTexts.has(text)) continue;
     usedTexts.add(text);
     results.push({ name: pickName(), text, type });
+  }
+
+  // 随机抽不够时，按顺序从可用条目里补足（不重复）
+  const rest = [...availPack, ...availPool];
+  const start = rest.length ? Math.floor(rand() * rest.length) : 0;
+  for (let k = 0; k < rest.length && results.length < count; k++) {
+    const item = rest[(start + k) % rest.length];
+    if (usedTexts.has(item.text)) continue;
+    usedTexts.add(item.text);
+    results.push({ name: pickName(), text: item.text, type: item.type });
   }
 
   return results;
