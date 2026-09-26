@@ -36,14 +36,14 @@
 
 以下接口名称来自 ST 的 `SillyTavern.getContext()`。**动手前请在当前 ST 源码中逐一核对签名**，以源码为准。
 
-| 用途 | 接口 | 说明 |
-|---|---|---|
-| 生成前拦截 | `manifest.json` 中的 `generate_interceptor` 字段 + 全局函数 | 函数名建议 `rlzcInterceptor`，签名 `async (chat, contextSize, abort, type) => void`。ST 会等待它完成再生成 |
-| 注入提示词 | `setExtensionPrompt(key, value, position, depth, scan, role)` | `position` 用 `extension_prompt_types.IN_CHAT`，`role` 用 `extension_prompt_roles.SYSTEM` |
-| 事件 | `eventSource.on(event_types.X, fn)` | 需要：`MESSAGE_RECEIVED`、`CHARACTER_MESSAGE_RENDERED`、`MESSAGE_DELETED`、`MESSAGE_SWIPED`、`MESSAGE_EDITED`、`MESSAGE_UPDATED`（如存在）、`CHAT_CHANGED` |
-| 聊天数据 | `chat`（消息数组）、`chatMetadata`、`saveMetadataDebounced()` | 会话存在 `chatMetadata.rlzc` |
-| 每条消息附加数据 | `chat[i].extra.rlzc` | 存该楼快照，保存聊天时随消息一起持久化 |
-| 全局设置 | `extensionSettings.rlzc`、`saveSettingsDebounced()` | 只放设置，不放游戏数据 |
+| 用途             | 接口                                                                | 说明                                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 生成前拦截       | `manifest.json` 中的 `generate_interceptor` 字段 + 全局函数     | 函数名建议`rlzcInterceptor`，签名 `async (chat, contextSize, abort, type) => void`。ST 会等待它完成再生成                                                            |
+| 注入提示词       | `setExtensionPrompt(key, value, position, depth, scan, role)`     | `position` 用 `extension_prompt_types.IN_CHAT`，`role` 用 `extension_prompt_roles.SYSTEM`                                                                        |
+| 事件             | `eventSource.on(event_types.X, fn)`                               | 需要：`MESSAGE_RECEIVED`、`CHARACTER_MESSAGE_RENDERED`、`MESSAGE_DELETED`、`MESSAGE_SWIPED`、`MESSAGE_EDITED`、`MESSAGE_UPDATED`（如存在）、`CHAT_CHANGED` |
+| 聊天数据         | `chat`（消息数组）、`chatMetadata`、`saveMetadataDebounced()` | 会话存在`chatMetadata.rlzc`                                                                                                                                            |
+| 每条消息附加数据 | `chat[i].extra.rlzc`                                              | 存该楼快照，保存聊天时随消息一起持久化                                                                                                                                   |
+| 全局设置         | `extensionSettings.rlzc`、`saveSettingsDebounced()`             | 只放设置，不放游戏数据                                                                                                                                                   |
 
 拦截器的 `type` 参数：只在普通发送、重新生成（`regenerate`、`swipe`）时注入；`quiet`、`impersonate` 时清空本扩展的注入并直接返回。`continue` 时照常注入但不视为新的一轮。
 
@@ -137,6 +137,7 @@ type ManualAction =
 ```ts
 interface Snapshot { phase: string; round: number; clock?: string; injected: string[] }
 ```
+
 快照只用于调试页显示，**不作为状态来源**。状态来源永远是 5.1 的重放。
 
 ---
@@ -163,6 +164,7 @@ interface Progress {
 ```
 
 规则：
+
 1. 只统计 `is_user === false` 且非系统消息的 AI 消息。`entryIndex` 那条消息算第一日第1轮。（实现说明：被 `/hide` 隐藏的AI回复——`is_system` 为 true 但没有 `extra.type`——照样计轮；柏宝书、Horae 等记忆扩展会隐藏旧楼层，不算的话轮次会倒退、入场消息会被当成已删除。只有 ST 原生系统消息（/sys、/comment、帮助页等，带 `extra.type`）不计。）
 2. 在 AI 消息正文中遇到 `<阶段切换>X</阶段切换>`：该消息仍属于旧阶段，下一条 AI 消息起进入名为 X 的阶段（按 `phase.name` 匹配），轮次从0开始计。
 3. 某条 AI 消息使该阶段轮次达到 `cap`：下一条起进入 `next` 阶段。`next` 为 null 时保持在该阶段，等待结算标签。
@@ -182,15 +184,16 @@ interface Progress {
 
 在拦截器里调用。每次先清空本扩展的所有 key，再按需写入：
 
-| key | 深度 | scan | 内容 |
-|---|---|---|---|
-| `rlzc_token` | 4 | **true** | 暗号，如 `【副本进行中：钟楼】`。世界书条目以它为关键词触发 |
-| `rlzc_progress` | 4 | false | 见下方模板 |
-| `rlzc_turn` | 0 | false | 见下方模板 |
+| key               | 深度 | scan           | 内容                                                         |
+| ----------------- | ---- | -------------- | ------------------------------------------------------------ |
+| `rlzc_token`    | 4    | **true** | 暗号，如`【副本进行中：钟楼】`。世界书条目以它为关键词触发 |
+| `rlzc_progress` | 4    | false          | 见下方模板                                                   |
+| `rlzc_turn`     | 0    | false          | 见下方模板                                                   |
 
 深度可在设置中修改。回廊中（无 active 会话）三个 key 全部清空。
 
 `rlzc_progress` 模板：
+
 ```
 ［副本进度·仅供AI］
 副本：钟楼（S级）　阶段：第二日·白天　本轮：第31/72轮　钟时：2:30　剩余2夜
@@ -199,12 +202,14 @@ interface Progress {
 ```
 
 `rlzc_turn` 模板：
+
 ```
 ［本轮指令·仅供AI］
 本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）：
 - E11：某某在5F西侧外壁抄下铭文……（条件：死者已到达5F西侧且未被阻止。若条件已不成立，此事件不发生，也不补写替代事件）
 本阶段在本轮结束：请在本轮结尾自然写出日落。
 ```
+
 占位符 `{角色位}` 用 `session.roles` 替换；未登记时保留角色位名称原样。
 
 ### 5.4 识别（detector.ts）
@@ -225,18 +230,20 @@ interface Progress {
 ### 5.6 角色登记
 
 有 `roles` 的副本包，入场确认后的下一次生成（即第2轮），`rlzc_turn` 追加以下内容；入场那条简报消息本身就是第1轮，事件E01已由它完成：
+
 ```
 请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>死者=姓名｜布局者=姓名｜……</角色登记>。按世界书规定生成NPC。死者不得是{{user}}或其同伴。
 ```
+
 识别到后不再要求。调试页可以手动修改登记。
 
 ### 5.7 事件监听与回滚
 
-| 事件 | 处理 |
-|---|---|
-| `MESSAGE_RECEIVED` | 识别标签 → 写快照 → 保存元数据 → 刷新面板 |
-| `MESSAGE_DELETED` / `MESSAGE_SWIPED` / `MESSAGE_EDITED` | 重放；检查入场或结算消息是否已不存在；刷新面板 |
-| `CHAT_CHANGED` | 读取新聊天的会话与备忘录，重放，刷新面板，重新隐藏标签 |
+| 事件                                                          | 处理                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------ |
+| `MESSAGE_RECEIVED`                                          | 识别标签 → 写快照 → 保存元数据 → 刷新面板           |
+| `MESSAGE_DELETED` / `MESSAGE_SWIPED` / `MESSAGE_EDITED` | 重放；检查入场或结算消息是否已不存在；刷新面板         |
+| `CHAT_CHANGED`                                              | 读取新聊天的会话与备忘录，重放，刷新面板，重新隐藏标签 |
 
 老存档：没有 `chatMetadata.rlzc` 的聊天，扩展什么都不做，直到玩家确认入场或手动选择副本。
 
@@ -258,10 +265,10 @@ interface Progress {
 
 直接使用 `packs/` 目录下的文件：
 
-| 文件 | 说明 |
-|---|---|
-| `zhonglou.json` + `zhonglou-map.svg` | 《钟楼》完整包：8个阶段、30个事件、角色位、玩家资料与楼层图 |
-| `jingjie.json` | 境界游乐园，基础包（只有资料页：游客须知） |
+| 文件                                                             | 说明                                                            |
+| ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| `zhonglou.json` + `zhonglou-map.svg`                         | 《钟楼》完整包：8个阶段、30个事件、角色位、玩家资料与楼层图     |
+| `jingjie.json`                                                 | 境界游乐园，基础包（只有资料页：游客须知）                      |
 | `kaoshi.json`、`xiyan.json`、`wuming.json`、`youxi.json` | 基础包，只有名称、等级、暗号；`wuming` 标记了 `disableLive` |
 
 通用副本包在代码中生成，不需要文件。
@@ -344,12 +351,14 @@ interface Progress {
 ## 12. 时限与轮数的计算（实现说明）
 
 ### 12.1 副本包字段
+
 - 包级 `deadline?: string`：截止条件，如「至天亮」。
 - `Phase.deadline?: string`：覆盖包级 deadline。
 - `time`：`{ type: 'clock'; dayStart; minutesPerRound }`（钟楼，不写约剩时间）｜`{ type: 'countdown'; minutesPerRound }`｜`{ type: 'none' }`。
 - `remaining`：`nights`（模板 `{n}`）｜`countdown`（模板 `{m}` = 约剩分钟）｜`fromPanel`。
 
 ### 12.2 对即将生成的这一轮
+
 - **链**：从当前阶段沿 `next` 走到 null。链的起点 = 包的第一个阶段；进入一个不在当前链上的阶段（如钟楼经 `<阶段切换>` 进入调查）时，起点改为该阶段。在同一条链上前进（包括用 `<阶段切换>` 提前进入，如污名提前定稿）不改变起点。
 - **Y** = 链上从起点开始所有阶段 cap 之和。
 - **X** = 当前阶段剩余轮数（cap − 即将生成这一轮在本阶段的轮次）+ 链上后续各阶段 cap 之和，最小为0。入场消息算第1轮：入场那一轮 X = Y − 1；钟楼第一日第2轮 X = 298、Y = 300。
@@ -359,24 +368,29 @@ interface Progress {
 - 跳过、删楼、滑动、编辑都走重放，不另存计数。包里没有阶段表就不计算、不注入。
 
 ### 12.3 注入
+
 - `rlzc_progress`：本轮「第n/当前阶段上限轮」、剩余X/Y轮、时限文字、截止条件（倒计时包另有「剩余M分钟」，供污名 `<直播>` 面板照抄）。这是AI唯一能看到轮数的地方。
 - `rlzc_turn` 末尾追加时限一行：countdown 写「本轮<副本>的时限一栏写：约剩…/…」并说明正文时间以此为准、跳过时间可写得更少不能更多、总时长照抄；钟楼写对应文字并要求照抄。
 
 ### 12.4 通用副本包（简报名不在内置包中）
+
 - 总时长：简报「时限：」一行里第一个「数字+天/小时/分钟」。
 - 轮数上限 N：时限一行里有「（最多N轮）」就用它，否则按等级默认值 D 70｜C 90｜B 110｜A 135｜S 200（设置里可改；入场时确定后记入会话）。
 - 单阶段 `{ id:'main', name:副本名, cap:N, next:null }`，countdown，minutesPerRound = round(总时长 ÷ N)。读不到总时长时仍按 N 计轮、写进进度块，但不注入约剩时间。
 - **总时长按简报的值**（`time.totalMinutes`），不用 Y × minutesPerRound（后者会因四舍五入偏离简报，如 10小时/90轮 → 630分钟）。此时约剩上限按比例折算 = round(总时长 × X ÷ Y)，不会超过总时长；「只减不增」仍按 读到的值 − minutesPerRound。内置包不设 totalMinutes，按 12.2 计算。
 
 ### 12.5 面板显示
+
 - 系统页「最多剩余轮次」显示当前这一轮结束后的剩余数 = Y − 已完成轮数（入场第1轮后为 299/300）。叫「最多」是因为这是按轮数上限算出的最大值，剧情里的时间可能先用完（如喜宴天亮）。注入给AI的 X 仍按即将生成的那一轮计算（298/300），两者相差一轮属正常。
 
 ### 12.6 核对（调试页）
+
 收到AI消息后解析 `<副本>` 时限一栏，与该楼快照 `chat[i].extra.rlzc.limit`（本楼注入的时限文字与分钟数）比较：countdown 读不到「剩余/总时长」、剩余比注入值多、总时长不一致 → 警告；钟楼与注入文字不一致 → 警告。只警告，不改原文。
 
 ## 13. 入场识别（覆盖 5.4 的「入场」一条）
 
 没有进行中的副本时，按以下顺序检查AI消息，命中任一即认为进入该副本：
+
 1. 「副本简报 - 名称」。唯一能认出未收录副本的信号：名称不在内置包里时使用通用副本包。
 2. `<副本>` 块里的「副本名：X」，X 与某个副本包的 name 或 detect.briefingName 一致。
 3. 正文中的「本次副本《X》」或「此次副本《X》」。只认带「本次 / 此次」的写法，回廊闲聊里提到别的副本名不触发。
@@ -399,11 +413,13 @@ interface Progress {
 > 实现说明（端到端测试后补充）：ST 1.19.0 打开只有开场白的聊天时会对开场白补发 `MESSAGE_RECEIVED`（type = `first_message`），开场白不是新回复，不调用也不重写它的快照。「同一次生成只检测一次」按 楼层 + ST 记录的生成时间（send_date / gen_started / gen_finished）+ 正文 判断，文字完全相同的重新生成也算新的一次。
 
 ### 14.1 一次调用做三件事，只返回 JSON
+
 ```
 {"events":[{"id":"E11","status":"done|missed|void","reason":"…"}],
  "state":{…},
  "next":[{"id":"E12","ok":true,"reason":"…"}]}
 ```
+
 1. 事件核对：本轮注入的每个后台事件在正文里是已发生 / 未发生 / 条件不成立。只核对后台事件（`kind: 'event'`），「本轮写作要求」（`directive`，如「本日须呈现至少两条破绽」）管的是一整段剧情，不送去核对；「第X到Y轮之间」的区间事件在提示词里标明轮次范围，本轮没写到、也没写反就算已发生。
 2. 隐藏状态：在上一轮状态的基础上更新副本包 `stateFields`（`{ key, label, hint }[]`）；没有 stateFields 的副本只维护 `summary`（不超过150字）。钟楼 1.3.0 的字段：crank 曲柄当前在谁手里、watcher 当夜值班者、positions 各角色所在位置、victim 死者目前状态、clues 已被发现的关键线索、theories 已公开讨论过的推理。
 3. 条件预判：下一轮将注入、且带 if 条件的事件，条件是否仍成立。
@@ -411,6 +427,7 @@ interface Progress {
 输入：副本名、阶段、轮次；上一轮状态；本轮注入的事件（占位符已替换）；下一轮带条件的事件；本条正文（去掉 `<副本>`、`<状态栏>` 等面板标签）。解析前去掉 ``` 标记；解析失败按失败处理。
 
 ### 14.2 结果的存放与使用
+
 - 存进这条消息的 `chat[i].extra.rlzc.sub`（events、state、next、耗时 ms、来源 via、时间 at；玩家跳过时为 `{ skipped: true, error }`）。
 - 当前状态 = 从入场起最近一条带 sub.state（且未跳过）的AI消息里的 state。删楼、滑动自然回滚，不另存。
 - 注入 key `rlzc_state`（深度同 rlzc_progress，scan=false），标题「［副本状态·仅供AI］」。
@@ -419,6 +436,7 @@ interface Progress {
 - 系统页只显示一行：「副本记录：已更新（第N轮）」或「第N轮状态未更新」（进行中时「整理中…」）。隐藏状态只在调试页显示。
 
 ### 14.3 来源（设置页「副本事件检测」卡，位于「注入深度」之后）
+
 - 关闭（默认）。
 - 跟随主API：`getContext().generateRaw({ prompt, systemPrompt })`。只发传入的提示词，不带聊天记录、世界书和扩展注入，不经过生成拦截器，不会递归。
 - 自设API：经 ST 服务端转发 `POST /api/backends/chat-completions/generate`，`chat_completion_source: 'custom'`、`custom_url`，密钥用 `custom_include_headers` 覆盖 Authorization（不改 ST 自己保存的密钥）；模型列表 `POST /api/backends/chat-completions/status`。接口预设（名字、地址、密钥、模型）存在 `extensionSettings.rlzc.subApi.presets`，记住上次用的预设和每条预设的模型。
@@ -427,7 +445,14 @@ interface Progress {
 - 超时默认60秒。
 
 ### 14.4 失败
+
 - 自动重试2次（网络错误、超时、JSON 解析失败都算）。
 - 仍失败：弹窗写明原因（超时 / 密钥无效 / 额度不足 / 返回格式不对 / 其他），按钮【重试】再调用一次；【换一个接口】弹窗内出现接口预设下拉框，选定后立即重试（并记为当前预设）；【这轮先跳过】沿用上一轮状态。
 - 开着「等待整理」时弹窗挡住生成；关着时只弹提示、不挡生成，这一轮记为跳过。
 - 同一轮不重复弹窗；跳过后这一轮不再自动重试。
+
+
+## 提交规则
+
+- 直接在 main 分支上工作，不要新建分支
+- 每次改完代码后：运行 npm run build，然后 git add（不要包含 .claude/ 文件夹），git commit，git push
