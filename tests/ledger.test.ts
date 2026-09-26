@@ -148,6 +148,22 @@ describe('isPendingClearance', () => {
     ];
     expect(isPendingClearance(1000, entries, threshold)).toBe(true);
   });
+
+  it('余额跌破后回升到斩杀线以上，但没有通关结算：仍标记', () => {
+    const entries: LedgerDisplayEntry[] = [
+      { delta: -800, source: '消耗', type: 'tag', at: '9/1 12:00', mesIndex: 1 }, // 1000-800=200 < 300
+      { delta: 500, source: '打赏', type: 'tag', at: '9/1 13:00', mesIndex: 2 }, // 200+500=700 > 300，但没有 settle
+    ];
+    expect(isPendingClearance(1000, entries, threshold)).toBe(true);
+  });
+
+  it('非通关的结算（负分）不清除标记', () => {
+    const entries: LedgerDisplayEntry[] = [
+      { delta: -800, source: '消耗', type: 'tag', at: '9/1 12:00', mesIndex: 1 },
+      { delta: -150, source: '副本结算·失败', type: 'settle', at: '9/1 13:00', mesIndex: 2 }, // delta < 0，不清除
+    ];
+    expect(isPendingClearance(1000, entries, threshold)).toBe(true);
+  });
 });
 
 // ───────────── formatBalanceInjection ─────────────
