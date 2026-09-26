@@ -62,5 +62,6 @@ onBeforeUnmount(() => window.removeEventListener('resize', place));
     @pointercancel="up"
   >
     <span class="rlzc-ball-mark">{{ active ? state.pack?.level ?? '副' : '廊' }}</span>
+    <span v-if="state.market.pending > 0" class="rlzc-ball-badge" title="待开奖赌票">{{ state.market.pending }}</span>
   </button>
 </template>

@@ -24,6 +24,8 @@ import {
   type RoundCheck,
   type Ticket,
 } from '../src/core/market';
+import { buildSubPrompt, parseSubResponse } from '../src/core/subapi';
+import { addHint, briefingText, buildFreakPrompt, clearHints, FREAK_DOCS_MAX, freakMarkets, hintText, parseFreakResponse } from '../src/core/market';
 
 const pack = (id: string) => BUILTIN_PACKS.find((p) => p.id === id) as Pack;
 const src = (import.meta.glob('../markets.json', { eager: true, import: 'default' }) as Record<string, Record<string, unknown>>)['../markets.json'];
@@ -429,5 +431,80 @@ describe('每轮检测情况', () => {
     const rs = roundChecks(chat, { 0: {}, 2: {}, 4: {}, 5: {}, 6: {} }, 0, 6);
     expect(rs.map((r) => [r.index, r.state])).toEqual([[2, 'ok'], [4, 'miss'], [5, 'miss'], [6, 'pending']]);
     expect(rs[0].hits).toEqual({ M1: true });
+  });
+});
+
+// ───────────── 第2段：检测字段、怪盘、一次性提示 ─────────────
+
+
+describe('事件检测里的盘口判定', () => {
+  const inp = { pack: pack('zhonglou'), phaseName: '第一日·白天', round: 2, prevState: null, events: [], nextConditional: [], text: '正文' };
+
+  it('没有待判盘口时提示词不变；有时列出每条 judge，要求明确写到才填 true、不要理由', () => {
+    const plain = buildSubPrompt(inp);
+    expect(plain.system).not.toContain('markets');
+    expect(plain.user).not.toContain('盘口');
+    const withM = buildSubPrompt({ ...inp, markets: [{ id: 'M2', judge: '有人死' }, { id: 'M2:no', judge: '没人死' }] });
+    expect(withM.system).toContain('只有本轮正文明确写到才填 true');
+    expect(withM.system).toContain('"markets":{"M2":false,"M2:no":false}');
+    expect(withM.user).toContain('【盘口陈述】\n- M2：有人死\n- M2:no：没人死');
+  });
+
+  it('解析 markets；缺少不算失败', () => {
+    const ok = parseSubResponse('{"events":[],"state":{},"next":[],"markets":{"M1":true,"M2":"false","M3":1}}');
+    expect(ok.markets).toEqual({ M1: true, M2: false });
+    const none = parseSubResponse('{"events":[],"state":{},"next":[]}');
+    expect(none.markets).toBeUndefined();
+  });
+});
+
+describe('庄家怪盘', () => {
+  it('简报原文取「副本简报」那一行起的几行，去掉面板标签', () => {
+    const t = briefingText('前文\n「副本简报 - 钟楼」\n「人数：10人」\n「等级：S」\n「时限：…」\n「简报：…」\n后文一\n后文二\n<状态栏>积分：1</状态栏>');
+    expect(t.startsWith('「副本简报 - 钟楼」')).toBe(true);
+    expect(t).not.toContain('前文');
+    expect(t).not.toContain('后文二');
+  });
+
+  it('公开资料合并后截到4000字', () => {
+    const long = 'x'.repeat(5000);
+    const m = buildFreakPrompt({ name: '钟楼', level: 'S', briefing: '简报', docs: [{ title: '甲', md: long }, { title: '乙', md: '看不到' }] });
+    const docs = m.user.split('【公开资料】\n')[1];
+    expect(docs.length).toBe(FREAK_DOCS_MAX);
+    expect(m.user).not.toContain('看不到');
+  });
+
+  it('不合格的题丢掉（题目超过20字、p 越界、缺 judge），最多3题；一题都没有算失败', () => {
+    const items = parseFreakResponse(
+      '```json\n[{"q":"主播会哭吗","judge":"主播哭了","p":0.3},{"q":"x","judge":"y","p":0.99},{"q":"缺判定","p":0.3},{"q":"' +
+        '长'.repeat(21) +
+        '","judge":"j","p":0.3},{"q":"a","judge":"b","p":"0.5"},{"q":"c","judge":"d","p":0.05},{"q":"e","judge":"f","p":0.2}]\n```',
+    );
+    expect(items.map((i) => i.q)).toEqual(['主播会哭吗', 'a', 'c']);
+    expect(() => parseFreakResponse('[]')).toThrow();
+    expect(() => parseFreakResponse('没有')).toThrow();
+    const ms = freakMarkets(items, () => 0.5);
+    expect(ms.map((m) => [m.id, m.kind, m.options[0].label, m.options[1].label])).toEqual([
+      ['F1', 'freak', '会', '不会'],
+      ['F2', 'freak', '会', '不会'],
+      ['F3', 'freak', '会', '不会'],
+    ]);
+  });
+});
+
+describe('一次性提示', () => {
+  it('三种文字', () => {
+    expect(hintText({ kind: 'betLose', amount: 500, after: 2 })).toBe('{{user}}在黑市押了自己本局失败，押注500分。');
+    expect(hintText({ kind: 'casinoLoss', amount: 800, after: 2 })).toBe('{{user}}刚在赌坊输掉800分，余额已低于斩杀线。');
+    expect(hintText({ kind: 'casinoWin', amount: 9000, after: 2 })).toBe('{{user}}刚在赌坊一局赢了9000分。');
+  });
+
+  it('押自己失败在下一次生成前合并；加进过注入后收到回复清掉', () => {
+    let h = addHint([], { kind: 'betLose', amount: 300, after: 2 });
+    h = addHint(h, { kind: 'betLose', amount: 200, after: 2 });
+    expect(h).toEqual([{ kind: 'betLose', amount: 500, after: 2 }]);
+    expect(clearHints(h)).toEqual(h);
+    const sent = h.map((x) => ({ ...x, sent: true }));
+    expect(clearHints([...sent, { kind: 'casinoWin', amount: 1, after: 3 }])).toEqual([{ kind: 'casinoWin', amount: 1, after: 3 }]);
   });
 });

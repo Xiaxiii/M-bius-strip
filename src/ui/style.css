@@ -29,6 +29,11 @@
 .rlzc-ball.is-active .rlzc-ball-mark { color: var(--accent); }
 .rlzc-ball.is-warn { animation: rlzc-pulse 1.8s ease-in-out infinite; }
 @keyframes rlzc-pulse { 50% { transform: scale(1.08); } }
+.rlzc-ball-badge {
+  position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: var(--accent); color: var(--bg); font-size: 11px; font-weight: 700; line-height: 18px; text-align: center;
+  pointer-events: none;
+}
 
 /* ── 面板：手机为底部抽屉，宽屏为右侧卡片 ── */
 /* ST 给 <html> 加了 transform，fixed 元素的包含块变成 html，inset:0 会塌成0高，所以用视口单位 */

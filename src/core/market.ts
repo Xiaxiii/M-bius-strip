@@ -8,6 +8,8 @@ import type { ChatMessage, LedgerEntry, Level, MarketDef, Pack } from '../packs/
 import { packMarkets } from '../packs/loader';
 import { KILL_THRESHOLDS } from './ledger';
 import { isCountable } from './replay';
+import { SubFormatError, type SubMessages } from './subapi';
+import { stripForAudience } from './liveAi';
 
 export const MARKET_META_KEY = 'rlzc_market';
 
@@ -56,6 +58,8 @@ export interface Ticket {
   at: string;
   /** 下注时聊天的最后一楼下标：流水按它排进时间线 */
   after: number;
+  /** 下注顺序（与赌坊同一序列） */
+  seq?: number;
 }
 
 /** 庄家怪盘的出题记录（调试页显示） */
@@ -365,16 +369,21 @@ export function freezeResults(book: Book, results: Record<string, MarketResult>)
   return out;
 }
 
-/** 从聊天记录取每轮的检测情况：入场之后的每条AI回复；pendingIndex 为检测还在进行的楼 */
-export function roundChecks(chat: ChatMessage[], perMessage: Record<number, unknown>, entryIndex: number, pendingIndex = -1): RoundCheck[] {
+/**
+ * 从聊天记录取每轮的检测情况：入场之后的每条AI回复。
+ * 有检测记录的按记录（带 markets 为检测过；跳过、失败、缺 markets 为没检测）；
+ * 还没有记录、且检测正在进行（pending 里的楼）为 pending；其余为没检测。
+ */
+export function roundChecks(chat: ChatMessage[], perMessage: Record<number, unknown>, entryIndex: number, pending: number | number[] = []): RoundCheck[] {
+  const running = new Set(Array.isArray(pending) ? pending : [pending]);
   return Object.keys(perMessage)
     .map(Number)
     .filter((i) => i > entryIndex && isCountable(chat[i]))
     .sort((a, b) => a - b)
     .map((i) => {
-      if (i === pendingIndex) return { index: i, state: 'pending' as const, hits: {} };
       const sub = chat[i]?.extra?.rlzc?.sub as { skipped?: boolean; markets?: Record<string, boolean> } | undefined;
       if (sub && !sub.skipped && sub.markets && typeof sub.markets === 'object') return { index: i, state: 'ok' as const, hits: sub.markets };
+      if (!sub && running.has(i)) return { index: i, state: 'pending' as const, hits: {} };
       return { index: i, state: 'miss' as const, hits: {} };
     });
 }
@@ -396,6 +405,8 @@ export function judgeList(book: Book, results: Record<string, MarketResult>): { 
 /** 账本条目，pos 为排进时间线的楼层下标（-1 = 放在最后） */
 export interface PositionedEntry extends LedgerEntry {
   pos: number;
+  /** 下注、赌坊的先后（兑付、退还没有） */
+  seq?: number;
 }
 
 function marketOf(book: Book, id: string): Market | undefined {
@@ -416,7 +427,7 @@ export function betSource(book: Book, t: Ticket): string {
 export function bookEntries(book: Book, res: Record<string, Resolution | null>, atOf: (index: number) => string | undefined): PositionedEntry[] {
   const out: PositionedEntry[] = [];
   for (const t of book.tickets) {
-    out.push({ delta: -t.stake, source: betSource(book, t), type: 'bet', at: t.at, pos: t.after });
+    out.push({ delta: -t.stake, source: betSource(book, t), type: 'bet', at: t.at, pos: t.after, seq: t.seq ?? 0 });
     const r = res[t.id];
     if (!r || r.stamp === 'lose') continue;
     const q = marketOf(book, t.market)?.q ?? t.market;
@@ -425,6 +436,101 @@ export function bookEntries(book: Book, res: Record<string, Resolution | null>, 
     else out.push({ delta: t.stake, source: `赌票退还·${book.packName}·${q}`, type: 'bet', at, pos: r.index });
   }
   return out;
+}
+
+// ───────────── 庄家怪盘 ─────────────
+
+/** 出题提示词（照用） */
+export const FREAK_PROMPT =
+  '你是回廊黑市的庄家，要为主播即将进入的副本开几个离谱但有趣的盘口。你只知道下面这些公开信息，不知道剧情会怎么走。出2到3道是非题：题目20字以内，称{{user}}为主播，不用性别代词；必须能从之后的正文里直接看出是或否；不要问结局、评价和生死，那些已经有盘了；不要涉及公开信息以外的设定。每题给一个你估计「是」的概率p（0.05到0.95）。只输出JSON：[{"q":"题目","judge":"用来判断是否发生的一句陈述","p":0.3}]';
+
+/** 公开资料合并后截到的字数 */
+export const FREAK_DOCS_MAX = 4000;
+
+export interface FreakInput {
+  name: string;
+  level: string;
+  /** 简报原文 */
+  briefing: string;
+  /** 副本包 docs（只取 md 文字） */
+  docs: { title: string; md?: string }[];
+}
+
+/** 简报原文：入场消息里「副本简报」那一行起的几行；没有简报行时取整条（去掉面板与机器标签） */
+export function briefingText(entryText: string): string {
+  const text = stripForAudience(entryText);
+  const lines = text.split('\n');
+  const k = lines.findIndex((l) => /副本简报/.test(l));
+  const picked = k >= 0 ? lines.slice(k, k + 6) : lines;
+  return picked.join('\n').trim().slice(0, 1000);
+}
+
+/** 输入只有：副本名、等级、简报原文、公开资料（合并后截到4000字） */
+export function buildFreakPrompt(inp: FreakInput): SubMessages {
+  const docs = inp.docs
+    .filter((d) => d.md && d.md.trim())
+    .map((d) => `## ${d.title}\n${d.md!.trim()}`)
+    .join('\n\n')
+    .slice(0, FREAK_DOCS_MAX);
+  const user = [
+    `【副本】${inp.name}　等级：${inp.level}`,
+    `【简报】\n${inp.briefing || '（无）'}`,
+    `【公开资料】\n${docs || '（无）'}`,
+  ].join('\n\n');
+  return { system: FREAK_PROMPT, user };
+}
+
+export interface FreakItem {
+  q: string;
+  judge: string;
+  p: number;
+}
+
+/** 解析方式同事件检测；不合格的题丢掉，最多3题；一题都没有算失败 */
+export function parseFreakResponse(raw: string): FreakItem[] {
+  let text = String(raw ?? '').trim();
+  const fence = /```(?:json)?\s*([\s\S]*?)```/i.exec(text);
+  if (fence) text = fence[1].trim();
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start < 0 || end <= start) throw new SubFormatError('返回里没有 JSON 数组');
+  let data: unknown;
+  try {
+    data = JSON.parse(text.slice(start, end + 1));
+  } catch {
+    throw new SubFormatError('返回的 JSON 无法解析');
+  }
+  if (!Array.isArray(data)) throw new SubFormatError('返回的不是 JSON 数组');
+  const out: FreakItem[] = [];
+  for (const d of data as any[]) {
+    if (!d || typeof d.q !== 'string' || typeof d.judge !== 'string') continue;
+    const q = d.q.trim();
+    const judge = d.judge.trim();
+    const p = typeof d.p === 'number' ? d.p : Number(d.p);
+    if (!q || q.length > 20 || !judge || !Number.isFinite(p) || p < 0.05 || p > 0.95) continue;
+    out.push({ q, judge, p: round2(p) });
+    if (out.length >= 3) break;
+  }
+  if (!out.length) throw new SubFormatError('没有合格的题');
+  return out;
+}
+
+/** 失败重试1次；仍失败抛出最后一个错误 */
+export async function callFreakWithRetry(call: (m: SubMessages) => Promise<string>, m: SubMessages, retries = 1): Promise<FreakItem[]> {
+  let last: unknown;
+  for (let k = 0; k <= retries; k++) {
+    try {
+      return parseFreakResponse(await call(m));
+    } catch (e) {
+      last = e;
+    }
+  }
+  throw last;
+}
+
+/** 怪盘：选项文字固定「会」「不会」，id 为 F1、F2、F3 */
+export function freakMarkets(items: FreakItem[], rand: () => number): Market[] {
+  return items.map((it, k) => yesNoMarket('freak', { id: `F${k + 1}`, q: it.q, yes: '会', no: '不会', p: it.p, judge: it.judge }, rand));
 }
 
 // ───────────── 给主AI的一次性提示 ─────────────
@@ -445,6 +551,7 @@ export function casinoWinHint(won: number): string {
 
 export interface CasinoPlay {
   id: string;
+  seq?: number;
   table: string;
   bet: string;
   /** 押法文字，如「押单」 */
@@ -469,8 +576,36 @@ export interface MarketMeta {
     plays: CasinoPlay[];
   };
   /** 待加到下一次正常生成［账户·仅供AI］末尾的一次性提示；after = 记下时的最后一楼 */
-  hints: { text: string; after: number }[];
+  hints: Hint[];
   seq: number;
+}
+
+export interface Hint {
+  kind: 'betLose' | 'casinoLoss' | 'casinoWin';
+  amount: number;
+  after: number;
+  /** 已经加进过一次生成的注入 */
+  sent?: boolean;
+}
+
+export function hintText(h: Hint): string {
+  if (h.kind === 'betLose') return betLoseHint(h.amount);
+  if (h.kind === 'casinoLoss') return casinoLossHint(h.amount);
+  return casinoWinHint(h.amount);
+}
+
+/** 记一条提示：押自己失败在下一次生成前合并成一句（押注相加） */
+export function addHint(hints: Hint[], h: Hint): Hint[] {
+  if (h.kind === 'betLose') {
+    const old = hints.find((x) => x.kind === 'betLose');
+    if (old && !old.sent) return hints.map((x) => (x === old ? { ...x, amount: x.amount + h.amount, after: h.after } : x));
+  }
+  return [...hints, h];
+}
+
+/** 收到AI回复后，已经加进过注入的提示清掉；还没赶上生成的留到下一次 */
+export function clearHints(hints: Hint[]): Hint[] {
+  return hints.filter((h) => !h.sent);
 }
 
 export function normalizeMarketMeta(raw: unknown): MarketMeta {
@@ -487,7 +622,7 @@ export function normalizeMarketMeta(raw: unknown): MarketMeta {
       key: typeof c.key === 'string' ? c.key : '',
       plays: Array.isArray(c.plays) ? c.plays : [],
     },
-    hints: Array.isArray(r.hints) ? r.hints.filter((h) => h && typeof h.text === 'string') : [],
+    hints: Array.isArray(r.hints) ? r.hints.filter((h) => h && typeof h.kind === 'string' && Number.isFinite(h.amount)) : [],
     seq: Number.isFinite(r.seq) ? Number(r.seq) : 0,
   };
 }
