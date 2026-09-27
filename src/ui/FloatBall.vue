@@ -77,7 +77,10 @@ onBeforeUnmount(() => window.removeEventListener('resize', place));
       <circle class="rlzc-ball-ring-base" cx="24" cy="24" r="22.5" />
       <circle v-if="ring > 0" class="rlzc-ball-ring-bar" cx="24" cy="24" r="22.5" pathLength="100" :stroke-dasharray="`${ring} 100`" />
     </svg>
-    <svg class="rlzc-ball-inf" viewBox="0 0 32 32" aria-hidden="true"><path :d="INF_PATH" /></svg>
+    <svg class="rlzc-ball-inf" viewBox="0 0 32 32" aria-hidden="true">
+      <path class="rlzc-ball-inf-base" :d="INF_PATH" />
+      <path class="rlzc-ball-inf-run" :d="INF_PATH" pathLength="58" />
+    </svg>
     <span v-if="onAir" class="rlzc-ball-live" title="直播中"></span>
     <span v-if="state.market.pending > 0" class="rlzc-ball-badge" title="待开奖赌票">{{ state.market.pending }}</span>
   </button>
