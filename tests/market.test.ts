@@ -48,10 +48,10 @@ describe('事件盘数据', () => {
     expect(pack('jingjie').markets![2]).toMatchObject({ q: '主播会走进镜宫吗', p: 0.45 });
   });
 
-  it('五个包各升一个小版本号', () => {
-    expect(pack('zhonglou').version).toBe('1.4.0');
-    expect(pack('dusongshu').version).toBe('1.1.0');
-    expect(pack('jingjie').version).toBe('1.1.0');
+  it('五个包各升过小版本号（之后改资料又升了一次）', () => {
+    expect(pack('zhonglou').version).toBe('1.5.0');
+    expect(pack('dusongshu').version).toBe('1.2.0');
+    expect(pack('jingjie').version).toBe('1.2.0');
     expect(pack('xiyan').version).toBe('1.2.0');
     expect(pack('youxi').version).toBe('1.2.0');
   });
