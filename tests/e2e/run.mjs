@@ -296,7 +296,7 @@ async function presetSnapshot(page) {
 
 // ───────────── 入场 ─────────────
 
-/** 选角色卡（或在当前角色卡开新聊天），等入场弹窗，按 answer 回答 */
+/** 选角色卡（或在当前角色卡开新聊天），等入场卡片，按 answer 回答 */
 async function enter(page, { character, newChat = false, expect, answer = 'ok', shot }) {
   await ui.closePanel(page);
   if (character) await ui.selectCharacter(page, character);
@@ -304,14 +304,16 @@ async function enter(page, { character, newChat = false, expect, answer = 'ok', 
     await ui.closeRightPanel(page);
     await ui.newChat(page);
   }
-  const dlg = await ui.popup(page, '检测到进入', 15000);
-  const text = (await dlg.innerText()).split('\n')[0].trim();
+  const card = await ui.entryCard(page, 15000);
   const shotName = shot ? await ui.shot(page, shot) : null;
-  await ui.popupClick(page, '检测到进入', answer);
+  if (shot) await ui.shotEl(card.card, `${shot}-card`);
+  // 卡片不遮罩：打开的时候没有 ST 弹窗
+  const noPopup = !(await page.locator('dialog.popup[open]').count());
+  await ui.answerEntryCard(page, answer);
   await ui.closeRightPanel(page);
   await page.waitForTimeout(800);
   const st = await ui.rlzcState(page);
-  return { text, shot: shotName, ok: new RegExp(`检测到进入《${expect}》`).test(text), st };
+  return { text: card.text, shot: shotName, ok: card.name === expect && noPopup, st };
 }
 
 /**
@@ -437,7 +439,7 @@ async function zhonglouOff(page) {
     22,
     'desktop·钟楼',
     e.ok && e.st.meta?.entryIndex === 0 && greet.rlzc?.round === 1,
-    [`弹窗：「${e.text}」`, `确认后入场消息是第0楼（开场白），快照：${greet.rlzc?.phase} 第${greet.rlzc?.round}轮`],
+    [`入场卡片：「${e.text}」`, `确认后入场消息是第0楼（开场白），快照：${greet.rlzc?.phase} 第${greet.rlzc?.round}轮`],
     [e.shot],
   );
   const sys0 = await sysText(page);
@@ -595,7 +597,7 @@ async function persistence(page) {
   const disk = JSON.parse(fs.readFileSync(path.join(ST_DATA, 'settings.json'), 'utf8'));
   const onDisk = disk.extension_settings?.rlzc?.subApi;
   ev.push(`服务器上的 settings.json：${onDisk?.presets?.map((p) => `${p.name}=${p.model}`).join('，')}（密钥都是假的：${onDisk?.presets?.every((p) => p.key.startsWith('sk-fake-'))}）`);
-  // 换聊天：在钟楼开新聊天（开场白弹入场确认，确认进入，后面的检查在这个聊天里做）
+  // 换聊天：在钟楼开新聊天（开场白出现入场卡片，点「进入」，后面的检查在这个聊天里做）
   await ui.closePanel(page);
   const e = await enter(page, { newChat: true, expect: '钟楼' });
   await check('换聊天（开新聊天）');
@@ -1070,7 +1072,7 @@ async function corridor(page) {
   await ui.selectCharacter(page, CH.corridor);
   await ui.closeRightPanel(page);
   const seq0 = await P.lastSeq();
-  const popupShown = await ui.hasPopup(page, '检测到进入');
+  const popupShown = await ui.hasEntryCard(page);
   const a = await sayAndSub(page, line('corridor'), { type: 'corridor' }, { sub: false });
   const b = await sayAndSub(page, line('corridor'), { type: 'corridor' }, { sub: false });
   const log = await P.mockLog(seq0, true);
@@ -1083,7 +1085,7 @@ async function corridor(page) {
     'desktop·回廊',
     !popupShown && log.filter((x) => x.caller === 'sub').length === 0 && !anyInjected && Object.values(prompts).every((p) => !p.value) && /休整中/.test(sys),
     [
-      `回廊引导聊天（开场白里提到「钟楼那个副本」也没有弹入场确认）聊了2轮：检测调用 ${log.filter((x) => x.caller === 'sub').length} 次`,
+      `回廊引导聊天（开场白里提到「钟楼那个副本」也没有出现入场卡片）聊了2轮：检测调用 ${log.filter((x) => x.caller === 'sub').length} 次`,
       `主AI请求里${anyInjected ? '有' : '没有'}本扩展的注入；系统页显示「休整中」`,
     ],
     [shot],
@@ -1171,7 +1173,7 @@ async function xiyanYouxi(page) {
     22,
     'desktop·喜宴/游戏',
     x.ok && y.ok && x.st.meta?.entryIndex === 0 && xGreet.rlzc?.round === 1 && y.st.meta?.entryIndex === 0 && y.st.chat[0].rlzc?.round === 1,
-    [`喜宴开场白（只有「此次副本的规则是：6=5+1？」）弹窗：「${x.text}」，确认后开场白为第1轮`, `游戏开场白（「本次副本《游戏》……」）弹窗：「${y.text}」，确认后开场白为第1轮`],
+    [`喜宴开场白（只有「此次副本的规则是：6=5+1？」）入场卡片：「${x.text}」，点「进入」后开场白为第1轮`, `游戏开场白（「本次副本《游戏》……」）入场卡片：「${y.text}」，点「进入」后开场白为第1轮`],
     [x.shot, y.shot],
   );
 }
@@ -1356,7 +1358,7 @@ async function mobilePass(browser) {
   });
   await step([22, 23], '手机：游戏开场入场', page, async () => {
     const e = await enter(page, { character: CH.youxi, newChat: true, expect: '游戏', shot: 'm-22-youxi-entry' });
-    record(22, 'mobile', e.ok && e.st.chat[0].rlzc?.round === 1, [`390px 弹窗：「${e.text}」`], [e.shot]);
+    record(22, 'mobile', e.ok && e.st.chat[0].rlzc?.round === 1, [`390px 入场卡片：「${e.text}」`], [e.shot]);
     const r = await sayAndSub(page, line('youxi'), { type: 'story' }, { sub: false, settle: 1200 });
     const sys = await sysText(page);
     const shot = await ui.shot(page, 'm-23-youxi-system');
@@ -1514,7 +1516,7 @@ async function coexistPass(page) {
       return t.includes(`本轮：第${k + 2}/72轮`) && t.includes('【副本进行中：钟楼】');
     });
     const baibaiCalls = log.filter((x) => x.caller === 'baibai').length;
-    ev.push(`钟楼入场弹窗：${e.text}；又聊了${N}轮后系统页轮次 ${stat(sys, '轮次')}（应为 ${N + 1}/72），最多剩余轮次 ${stat(sys, '最多剩余轮次')}；副本会话${st.meta?.status === 'active' ? '仍在' : '已丢失'}`);
+    ev.push(`钟楼入场卡片：${e.text}；又聊了${N}轮后系统页轮次 ${stat(sys, '轮次')}（应为 ${N + 1}/72），最多剩余轮次 ${stat(sys, '最多剩余轮次')}；副本会话${st.meta?.status === 'active' ? '仍在' : '已丢失'}`);
     ev.push(`每轮主AI请求里都有本扩展的暗号和正确轮次：${allInjected}；检测调用 ${log.filter((x) => x.caller === 'sub').length} 次`);
     ev.push(`柏宝书摘要请求 ${baibaiCalls} 次；它隐藏了 ${hiddenCount} 条旧的AI楼层（第 ${hiddenAi.join('、')} 楼，is_system=true${hiddenAi.includes(0) ? '，含入场的开场白' : ''}），本扩展照样按轮计数`);
     // 柏宝书的摘要页里应有这几轮的摘要

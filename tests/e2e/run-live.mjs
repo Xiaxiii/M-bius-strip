@@ -22,14 +22,14 @@ const OPENING_WUMING = ['聚光灯亮起的时候，你已经站在舞台中央�
 
 export const TITLES = {
   L1: '导入状态栏正则后，渲染框能读到主页面的 window.RLZC_LIVE：直播页签出现、弹幕实时更新、回廊中按钮能开播下播',
-  L2: '回廊开播 → 聊几轮 → 进钟楼（勾选直播）→ 跑几轮（含一次有人受伤）→ 结算 → 回廊：账本流水、注入、状态栏直播页',
+  L2: '回廊开播 → 聊几轮 → 进钟楼（拨开直播）→ 跑几轮（含一次有人受伤）→ 结算 → 回廊：账本流水、注入、状态栏直播页',
   L3: '喜宴不勾直播：没有直播画面、没有 tip 记账',
-  L4: '污名入场不出现勾选框',
+  L4: '污名入场卡片不出现直播开关',
   L5: '钟楼死亡结算：打赏被撤回',
   L6: '截图：状态栏直播页桌面与390px（回廊、副本各一套）；设置页「直播」卡',
   L7: '「本地+AI」时弹幕生成调用的平均输入、输出 token',
   L8: '账本一整圈（回廊→钟楼→结算→回廊）：账本页流水、rlzc_ledger 注入、系统页积分；已标记待清算时的注入全文',
-  L9: '入场弹窗：新建聊天用喜宴、游戏开场白会弹；已有聊天AI回复带简报会弹；切到别的聊天再切回来仍会弹',
+  L9: '入场卡片：新建聊天用喜宴、游戏开场白会提示；已有聊天AI回复带简报会提示；卡片不遮罩；切到别的聊天会撤掉、切回来仍会提示；「✕」不记拒绝',
   L10: '设置页「账户校正」：改初始积分、追加一笔、校正等级和位格后，下一轮注入有校正句，AI回复后消失',
 };
 const results = {};
@@ -223,32 +223,28 @@ async function importRegex(page) {
   return page.evaluate(() => (SillyTavern.getContext().extensionSettings.regex ?? []).map((r) => r.scriptName));
 }
 
-/** 等入场弹窗；tick：勾选框要设成的状态（undefined 不动）。返回弹窗文字与是否有勾选框 */
+/** 等入场卡片；tick：直播开关要拨到的状态（undefined 不动）。返回卡片文字与是否有直播开关 */
 async function answerEntry(page, { tick, answer = 'ok', shot } = {}) {
-  const dlg = await ui.popup(page, '检测到进入', 20000);
-  const text = (await dlg.innerText()).trim();
-  const box = dlg.locator('#rlzc-live-optin');
-  const hasBox = (await box.count()) > 0;
-  const defaultChecked = hasBox ? await box.isChecked() : null;
-  if (hasBox && tick !== undefined && (await box.isChecked()) !== tick) await box.setChecked(tick);
-  const shotName = shot ? await ui.shotEl(dlg, shot) : null;
-  await dlg.locator(answer === 'ok' ? '.popup-button-ok' : '.popup-button-cancel').click();
-  await dlg.waitFor({ state: 'hidden' }).catch(() => {});
+  const card = await ui.entryCard(page, 20000);
+  const hasBox = card.liveShow;
+  const defaultChecked = hasBox ? card.live : null;
+  const noPopup = !(await page.locator('dialog.popup[open]').count());
+  if (hasBox && tick !== undefined && card.live !== tick) {
+    await ui.press(page, card.card.locator('.rlzc-entry-live'));
+    await page.waitForTimeout(200);
+  }
+  const shotName = shot ? await ui.shotEl(card.card, shot) : null;
+  await ui.answerEntryCard(page, answer);
   await page.waitForTimeout(800);
-  return { text: text.split('\n')[0], hasBox, defaultChecked, shot: shotName };
+  return { text: card.text, hasBox, defaultChecked, noPopup, shot: shotName };
 }
 
 async function openChatOf(page, character, { newChat = false } = {}) {
   await ui.closePanel(page);
   await ui.selectCharacter(page, character);
   if (newChat) {
-    // 这张卡上一次的聊天（开场白带入场信号）会先弹入场确认：那是别的聊天，点取消后再开新聊天
+    // 这张卡上一次的聊天（开场白带入场信号）会先出现入场卡片：它不挡操作，开新聊天时自动撤掉
     await sleep(1500);
-    const old = page.locator('dialog.popup[open]').filter({ hasText: '检测到进入' });
-    if (await old.count()) {
-      await old.locator('.popup-button-cancel').click();
-      await old.waitFor({ state: 'hidden' }).catch(() => {});
-    }
     await ui.closeRightPanel(page);
     await ui.newChat(page);
   }
@@ -343,10 +339,10 @@ async function corridorAndZhonglou(page) {
   const ev2 = [
     `回廊直播 ${corridorTips.length} 轮有打赏，账本 tip 流水：${corridorTips.map((e) => `${e.source} ${e.delta > 0 ? '+' : ''}${e.delta}`).join('；')}`,
     `回廊里的账户注入：${corrInject}（没有「本局直播打赏」句）`,
-    `已有聊天里 AI 回复带钟楼简报 → 弹窗「${entry.text}」，勾选框${entry.hasBox ? `出现（默认${entry.defaultChecked ? '勾' : '不勾'}）` : '没有出现'}，勾上后点确定`,
+    `已有聊天里 AI 回复带钟楼简报 → 入场卡片「${entry.text}」，直播开关${entry.hasBox ? `出现（默认${entry.defaultChecked ? '开' : '关'}）` : '没有出现'}，拨开后点「进入」`,
     `入场后：会话 live=${metaAfterEntry.rlzc?.live}，回廊直播 on=${metaAfterEntry.live?.corridor?.on}，系统消息「${metaAfterEntry.live?.sys?.map((s) => s.text).join('／')}」；RLZC_LIVE：scope=${viewAfterEntry?.scope} on=${viewAfterEntry?.on} canToggle=${viewAfterEntry?.canToggle}`,
   ];
-  const l9 = [`已有聊天里AI回复带简报：弹窗「${entry.text}」`];
+  const l9 = [`已有聊天里AI回复带简报：入场卡片「${entry.text}」`];
 
   // 钟楼跑3轮：第2轮平静、第3轮有人受伤、第4轮平静
   const rounds = [];
@@ -417,7 +413,7 @@ async function corridorAndZhonglou(page) {
 async function xiyanNoLive(page, l9) {
   await openChatOf(page, CH.xiyan, { newChat: true });
   const e = await answerEntry(page, { tick: false });
-  l9.push(`新建聊天用喜宴开场白：弹窗「${e.text}」`);
+  l9.push(`新建聊天用喜宴开场白：入场卡片「${e.text}」`);
   await say(page, '找个位置坐下，先不动筷子。', { type: 'story', fullStatus: true });
   await say(page, '问旁边的人新娘在哪。', { type: 'story', fullStatus: true });
   const v = await liveGet(page);
@@ -440,7 +436,7 @@ async function xiyanNoLive(page, l9) {
     'L3',
     e.hasBox && v?.on === false && v?.feed.length === 0 && v?.viewers === 0 && tips.length === 0 && recs.length === 0,
     [
-      `入场弹窗勾选框${e.hasBox ? `出现，默认${e.defaultChecked ? '勾（沿用上次）' : '不勾'}` : '没有'}，取消勾选后确定`,
+      `入场卡片直播开关${e.hasBox ? `出现，默认${e.defaultChecked ? '开（沿用上次）' : '关'}` : '没有'}，拨到关后点「进入」`,
       `跑2轮后 RLZC_LIVE：on=${v?.on} viewers=${v?.viewers} feed=${v?.feed.length} 条；每楼直播数据 ${recs.length} 楼；tip 流水 ${tips.length} 笔`,
       `状态栏渲染框：${frameLive}`,
     ],
@@ -452,7 +448,7 @@ async function wumingNoBox(page) {
   await openChatOf(page, CH.wuming, { newChat: true });
   const e = await answerEntry(page, { shot: 'live-wuming-popup' });
   const m = await meta(page);
-  rec('L4', !e.hasBox && m.rlzc?.packId === 'wuming' && !m.rlzc?.live, [`弹窗「${e.text}」，勾选框${e.hasBox ? '出现了' : '没有出现'}；进入后会话 packId=${m.rlzc?.packId} live=${m.rlzc?.live ?? '无'}`], [e.shot]);
+  rec('L4', !e.hasBox && m.rlzc?.packId === 'wuming' && !m.rlzc?.live, [`入场卡片「${e.text}」，直播开关${e.hasBox ? '出现了' : '没有出现'}；进入后会话 packId=${m.rlzc?.packId} live=${m.rlzc?.live ?? '无'}`], [e.shot]);
 }
 
 async function zhonglouDeath(page) {
@@ -487,27 +483,44 @@ async function zhonglouDeath(page) {
 }
 
 async function entryPopups(page, l9) {
-  // 游戏：新建聊天 → 弹窗；弹窗开着时切到别的聊天（关掉弹窗）→ 切回来仍会弹
+  // 游戏：新建聊天 → 入场卡片；卡片开着时切到别的聊天 → 卡片撤掉、不记拒绝；切回来仍会提示
   await openChatOf(page, CH.youxi, { newChat: true });
-  const dlg = await ui.popup(page, '检测到进入', 20000);
-  const first = (await dlg.innerText()).split('\n')[0].trim();
-  l9.push(`新建聊天用游戏开场白：弹窗「${first}」`);
+  const first = await ui.entryCard(page, 20000);
+  const noPopup = !(await page.locator('dialog.popup[open]').count());
+  l9.push(`新建聊天用游戏开场白：入场卡片「${first.text}」，${noPopup ? '没有' : '有'}弹窗遮罩`);
   const youxiChat = await page.evaluate(() => SillyTavern.getContext().getCurrentChatId());
-  // 弹窗开着时用 ST 自己的方法切到回廊引导（和玩家在别处点角色卡一样会触发 CHAT_CHANGED）
+  // 卡片开着时用 ST 自己的方法切到回廊引导（和玩家在别处点角色卡一样会触发 CHAT_CHANGED）
   await page.evaluate(async (name) => {
     const c = SillyTavern.getContext();
     const id = c.characters.findIndex((x) => x.name === name);
     await c.selectCharacterById(id);
   }, CH.corridor);
   await page.waitForFunction((id) => SillyTavern.getContext().getCurrentChatId() !== id, youxiChat, { timeout: 15000 });
-  await dlg.locator('.popup-button-cancel').click().catch(() => {});
   await page.waitForTimeout(800);
+  const goneAfterSwitch = !(await ui.hasEntryCard(page));
   const corridorMeta = await meta(page);
+  // 切回游戏的聊天：再次提示；点「✕」这次先不处理，不记拒绝
+  await openChatOf(page, CH.youxi);
+  const closed = await ui.answerEntryCard(page, 'close', { timeout: 20000 });
+  await page.waitForTimeout(500);
+  const closedMeta = await meta(page);
+  const goneAfterClose = !(await ui.hasEntryCard(page));
+  // 重新打开这个聊天：还会提示，这次点「进入」
+  await openChatOf(page, CH.corridor);
   await openChatOf(page, CH.youxi);
   const again = await answerEntry(page, { tick: false });
   const m = await meta(page);
-  l9.push(`弹窗开着时切到回廊引导的聊天（关掉弹窗，回廊聊天里没有记下拒绝：${JSON.stringify(corridorMeta.rlzc?.declined ?? [])}），再切回游戏的聊天：又弹「${again.text}」，确定后 packId=${m.rlzc?.packId}`);
-  return again.text.includes('游戏') && m.rlzc?.packId === 'youxi' && !(corridorMeta.rlzc?.declined ?? []).length;
+  l9.push(`卡片开着时切到回廊引导的聊天：卡片${goneAfterSwitch ? '已撤掉' : '仍在'}，回廊聊天里记下的拒绝 ${JSON.stringify(corridorMeta.rlzc?.declined ?? [])}`);
+  l9.push(`切回游戏的聊天又出现「${closed.text}」，点「✕」后卡片${goneAfterClose ? '消失' : '仍在'}，拒绝记录 ${JSON.stringify(closedMeta.rlzc?.declined ?? [])}；重新打开这个聊天又出现「${again.text}」，点「进入」后 packId=${m.rlzc?.packId}`);
+  return (
+    noPopup &&
+    goneAfterSwitch &&
+    goneAfterClose &&
+    again.text.includes('游戏') &&
+    m.rlzc?.packId === 'youxi' &&
+    !(corridorMeta.rlzc?.declined ?? []).length &&
+    !(closedMeta.rlzc?.declined ?? []).length
+  );
 }
 
 async function accountFix(page) {
@@ -654,7 +667,7 @@ async function main() {
     await step(['L4'], '污名入场', page, () => wumingNoBox(page));
     await step(['L5'], '钟楼死亡结算', page, () => zhonglouDeath(page));
     let reentry = false;
-    await step(['L9'], '入场弹窗', page, async () => {
+    await step(['L9'], '入场卡片', page, async () => {
       reentry = await entryPopups(page, l9);
     });
     rec('L9', l9.length >= 4 && reentry, l9);

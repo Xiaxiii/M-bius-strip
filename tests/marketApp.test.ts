@@ -1,12 +1,14 @@
 /** 黑市接入流程（第四期-第2段）：在模拟的 ST 环境里跑 app.ts 的开盘、封盘、下注、开奖、赌坊 */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flush, installFakeSt } from './fakeSt';
+import { autoAnswerEntryCards } from './entryCard';
 import * as app from '../src/app';
 import { releaseAll } from '../src/st/liveApi';
 import { BRIEFING, zhonglou } from './helpers';
 import type { ChatMessage } from '../src/packs/types';
 
 const st = installFakeSt();
+autoAnswerEntryCards(st);
 let stamp = 0;
 let calls: { system: string; user: string }[] = [];
 /** 事件检测返回的 JSON（不含 markets 时按「没检测」处理） */
@@ -28,6 +30,7 @@ function reset() {
   st.meta = {};
   st.prompts = {};
   st.popups = [];
+  st.cards = [];
   st.chatId = 'chat-1';
   st.answer = (p) => {
     if (p.check) p.check.checked = false;
@@ -175,8 +178,9 @@ describe('开盘', () => {
     expect(book()!.reserve?.map((m) => m.id)).toEqual(['ending']);
     expect(book()!.freak?.status).toBe('failed');
     expect(book()!.freak?.error).toContain('返回格式不对');
-    // 只有入场确认那一次弹窗
-    expect(st.popups.length).toBe(before + 1);
+    // 没有弹窗（入场提示是小卡片）
+    expect(st.popups.length).toBe(before);
+    expect(st.cards).toHaveLength(1);
   });
 
   it('出题结果晚于封盘到达时丢弃', async () => {

@@ -52,6 +52,8 @@ export interface FakeSt {
   chatId: string;
   prompts: Record<string, { value: string; depth: number; scan: boolean }>;
   popups: Popup[];
+  /** 入场提示小卡片（见 entryCard.ts 的 autoAnswerEntryCards），按出现顺序 */
+  cards: Popup[];
   /** 下一次弹窗怎么回答：返回 true = 确定；可以改勾选框 */
   answer: (p: Popup) => boolean | Promise<boolean>;
 }
@@ -64,6 +66,7 @@ export function installFakeSt(): FakeSt {
     chatId: 'chat-1',
     prompts: {},
     popups: [],
+    cards: [],
     answer: () => true,
   };
   st.ctx = {

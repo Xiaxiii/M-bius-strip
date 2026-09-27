@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { saveSettings, state } from '../app';
+import { isOnAir, saveSettings, state } from '../app';
+import { INF_PATH } from './icons';
 
-const SIZE = 44;
+const SIZE = 48;
 const pos = ref({ x: 0, y: 0 });
 let drag: { id: number; dx: number; dy: number; moved: boolean; sx: number; sy: number } | null = null;
 
@@ -38,8 +39,19 @@ function up(e: PointerEvent) {
   }
 }
 
-const active = computed(() => !!state.session && !state.progress?.ended);
-const warn = computed(() => !!state.progress?.warn);
+const active = computed(() => !!state.session && !!state.progress && !state.progress.ended);
+const warn = computed(() => active.value && !!state.progress?.warn);
+/** 进度环：当前阶段已完成轮数 / 阶段上限；没有阶段上限时不画 */
+const ring = computed(() => {
+  const p = state.progress;
+  if (!active.value || !p || !state.pack?.phases.length || !(p.phase.cap > 0)) return null;
+  return Math.min(100, Math.max(0, (p.round / p.phase.cap) * 100));
+});
+const onAir = computed(() => {
+  void state.tick;
+  void state.session;
+  return isOnAir();
+});
 
 watch(() => state.settings.ball, place, { deep: true });
 
@@ -53,7 +65,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', place));
 <template>
   <button
     class="rlzc-ball"
-    :class="{ 'is-active': active, 'is-warn': warn }"
+    :class="{ 'is-active': active, 'is-warn': warn, 'has-ring': ring !== null }"
     :style="{ left: pos.x + 'px', top: pos.y + 'px' }"
     title="回廊种菜系统（可拖动）"
     @pointerdown="down"
@@ -61,7 +73,12 @@ onBeforeUnmount(() => window.removeEventListener('resize', place));
     @pointerup="up"
     @pointercancel="up"
   >
-    <span class="rlzc-ball-mark">{{ active ? state.pack?.level ?? '副' : '廊' }}</span>
+    <svg v-if="ring !== null" class="rlzc-ball-ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle class="rlzc-ball-ring-base" cx="24" cy="24" r="22.5" />
+      <circle v-if="ring > 0" class="rlzc-ball-ring-bar" cx="24" cy="24" r="22.5" pathLength="100" :stroke-dasharray="`${ring} 100`" />
+    </svg>
+    <svg class="rlzc-ball-inf" viewBox="0 0 32 32" aria-hidden="true"><path :d="INF_PATH" /></svg>
+    <span v-if="onAir" class="rlzc-ball-live" title="直播中"></span>
     <span v-if="state.market.pending > 0" class="rlzc-ball-badge" title="待开奖赌票">{{ state.market.pending }}</span>
   </button>
 </template>

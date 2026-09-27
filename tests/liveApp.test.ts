@@ -1,6 +1,7 @@
 /** 直播接入流程（第三期b-第3段）：在模拟的 ST 环境里跑 app.ts 的入场、收消息、记账、回滚 */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flush, installFakeSt } from './fakeSt';
+import { autoAnswerEntryCards } from './entryCard';
 import * as app from '../src/app';
 import { releaseAll } from '../src/st/liveApi';
 import { SYS_TEXT, TIP_REVOKE_SOURCE, type LiveRecord } from '../src/core/liveFlow';
@@ -8,6 +9,7 @@ import { BRIEFING } from './helpers';
 import type { ChatMessage } from '../src/packs/types';
 
 const st = installFakeSt();
+autoAnswerEntryCards(st);
 let stamp = 0;
 
 function reset() {
@@ -15,6 +17,7 @@ function reset() {
   st.meta = {};
   st.prompts = {};
   st.popups = [];
+  st.cards = [];
   st.chatId = 'chat-1';
   st.answer = () => true;
   st.ctx.extensionSettings = {};
@@ -66,11 +69,12 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('入场弹窗的「开启直播」', () => {
-  it('默认不勾；点「是」后记住选择，下次沿用', async () => {
+describe('入场卡片的「直播」开关', () => {
+  it('默认关；点「进入」后记住选择，下次沿用', async () => {
     await enterZhonglou(true);
-    expect(st.popups[0].text).toContain('检测到进入《钟楼》');
-    expect(st.popups[0].check).not.toBeNull();
+    expect(st.cards[0].text).toContain('检测到副本 S 钟楼');
+    expect(st.cards[0].check).not.toBeNull();
+    expect(st.popups).toHaveLength(0);
     expect(app.state.settings.live.optIn).toBe(true);
     expect(app.state.session?.live).toBe(true);
     expect(st.ctx.extensionSettings.rlzc.live.optIn).toBe(true);
@@ -105,13 +109,13 @@ describe('入场弹窗的「开启直播」', () => {
     expect(app.state.session?.live).toBeUndefined();
   });
 
-  it('disableLive 副本（污名）不显示勾选框、不开直播', async () => {
+  it('disableLive 副本（污名）不显示直播开关、不开直播', async () => {
     app.state.settings.live.optIn = true;
     st.chat.push({ mes: '开场白', is_user: false, extra: {} });
     user();
     await reply('「副本简报 - 污名」\n「人数：6人」\n「等级：B」');
-    expect(st.popups[0].text).toContain('污名');
-    expect(st.popups[0].check).toBeNull();
+    expect(st.cards[0].text).toContain('污名');
+    expect(st.cards[0].check).toBeNull();
     expect(app.state.session?.packId).toBe('wuming');
     expect(app.state.session?.live).toBeUndefined();
     expect(view().on).toBe(false);
@@ -265,13 +269,13 @@ describe('副本内直播', () => {
   });
 });
 
-describe('入场弹窗开着时切换聊天', () => {
-  it('这次回答不算、不记拒绝，切回来会再问', async () => {
+describe('入场卡片开着时切换聊天', () => {
+  it('卡片撤掉、不记拒绝，切回来会再提示', async () => {
     st.chat.push({ mes: '开场白', is_user: false, extra: {} });
     user();
     const chatA = st.chat;
     const metaA = st.meta;
-    // 弹窗开着时切到另一个聊天，然后玩家点了「取消」
+    // 卡片开着时切到另一个聊天，然后才点「不是」（卡片已撤掉，不算）
     st.answer = () => {
       st.chatId = 'chat-2';
       st.chat = [{ mes: '别的聊天', is_user: false, extra: {} }];
@@ -290,7 +294,7 @@ describe('入场弹窗开着时切换聊天', () => {
     app.onChatChanged();
     app.onMessageReceived(st.chat.length - 1, 'normal');
     await flush();
-    expect(st.popups.length).toBe(2);
+    expect(st.cards.length).toBe(2);
     expect(app.state.session?.packId).toBe('zhonglou');
   });
 });
