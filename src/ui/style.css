@@ -19,8 +19,10 @@
 .rlzc-root *, .rlzc-root *::before, .rlzc-root *::after { box-sizing: border-box; }
 
 /* ── 悬浮球 ── */
+/* 层级（对照 ST 1.19.0）：抽屉 3000–4005、选聊天 4100 < 悬浮球 5000 < 面板遮罩 5001 < 入场卡片 9000 < 旧式弹窗 9999 < toastr 999999；
+   酒馆 popup 是原生 <dialog>，在顶层之上 */
 .rlzc-ball {
-  position: fixed; z-index: 3000; width: 48px; height: 48px; border-radius: 50%;
+  position: fixed; z-index: 5000; width: 48px; height: 48px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--solid); color: var(--muted);
   display: grid; place-items: center; cursor: grab; touch-action: none; user-select: none;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25); padding: 0; font: inherit;
@@ -29,7 +31,15 @@
 .rlzc-ball.is-active { color: var(--accent); border-color: var(--accent); }
 .rlzc-ball.has-ring { border-color: transparent; }
 .rlzc-ball.is-warn { color: var(--bad); }
-.rlzc-ball-inf { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.rlzc-ball-inf { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+/* 流光：底层淡的完整描边，上层一段短亮线沿环匀速流动（pathLength=58，一圈 2.8s） */
+.rlzc-ball-inf-base { opacity: 0.22; stroke-width: 2.2; }
+.rlzc-ball-inf-run { stroke-width: 2.4; stroke-dasharray: 9 49; animation: rlzc-inf-run 2.8s linear infinite; }
+@keyframes rlzc-inf-run { to { stroke-dashoffset: -58; } }
+@media (prefers-reduced-motion: reduce) {
+  .rlzc-ball-inf-base { opacity: 1; stroke-width: 2.4; }
+  .rlzc-ball-inf-run { display: none; animation: none; }
+}
 .rlzc-ball-ring { position: absolute; inset: -1px; width: 48px; height: 48px; transform: rotate(-90deg); pointer-events: none; }
 .rlzc-ball-ring circle { fill: none; stroke-width: 3; }
 .rlzc-ball-ring-base { stroke: var(--line); }
@@ -95,7 +105,7 @@
 /* ── 面板：手机为底部抽屉，宽屏为右侧卡片 ── */
 /* ST 给 <html> 加了 transform，fixed 元素的包含块变成 html，inset:0 会塌成0高，所以用视口单位 */
 .rlzc-backdrop {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 3001; background: rgba(0, 0, 0, 0.3);
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 5001; background: rgba(0, 0, 0, 0.3);
   display: flex; align-items: flex-end; justify-content: center;
 }
 .rlzc-panel {
