@@ -23,7 +23,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, mergeByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, statusBarLevel, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
+import { LEDGER_META_KEY, mergeByTime, sortByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, statusBarLevel, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -341,7 +341,8 @@ function replayLedger(chat: ChatMessage[]): LedgerDisplayEntry[] {
     mesIndex: -1,
     ts: a.ts ?? parseAtTime(a.at),
   }));
-  return mergeByTime(result, manual);
+  // 最后整体按时间排：兑付、退还记在开奖那一楼的时间，可能早于之后在回廊里的下注和赌坊
+  return sortByTime(mergeByTime(result, manual));
 }
 
 /** 获取初始余额：优先用已保存的 init，否则从最近的 <状态栏> 读取，找不到用 1000 */
