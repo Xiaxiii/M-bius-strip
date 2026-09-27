@@ -21,7 +21,7 @@ const CH = { corridor: '回廊引导', zhonglou: '钟楼开场', nongxian: '农�
 const OPENING_NONGXIAN = ['山谷里的风是暖的。', '「副本简报 - 农闲」', '「人数：1人」', '「等级：D」', '「时限：七天」', '「简报：好好休息。」'].join('\n');
 
 export const TITLES = {
-  M1: '钟楼入场（事件检测开）：出现结局盘、评价盘、3个事件盘、2–3个庄家怪盘；第1轮内下注成功，余额和流水正确；第2条AI回复后封盘',
+  M1: '钟楼入场（事件检测开）：本局随机开2–5个盘，其中庄家怪盘1–2个，其余从结局盘、评价盘、3个事件盘里抽；第1轮内下注成功，余额和流水正确；第2条AI回复后封盘',
   M2: '事件盘 M2 在某轮被判定为真：押「会」的兑、押「不会」的废，提示弹出，悬浮球数字减少',
   M3: '通关结算 B评：结局盘、评价盘开奖正确；未判出的事件盘按规则兑「否」或退',
   M4: '删掉结算那条消息：兑付撤回；重新生成后重新开奖',
@@ -281,6 +281,28 @@ async function waitFreak(page) {
   await sleep(500);
 }
 
+/**
+ * 本局随机开2–5个盘。后面的开奖检查要用到结局盘、评价盘和事件盘：
+ * 先记下抽中的阵容，再把没抽中的候选盘也放进盘口本（只改测试这一局的 chatMetadata）。
+ */
+async function openAllMarkets(page) {
+  const drawn = await page.evaluate(async () => {
+    const c = SillyTavern.getContext();
+    const b = c.chatMetadata.rlzc_market?.books?.[c.chatMetadata.rlzc?.id];
+    if (!b?.plan) return null;
+    const out = { plan: { total: b.plan.total, freak: b.plan.freak }, kinds: b.markets.map((m) => m.kind), ids: b.markets.map((m) => m.id) };
+    const order = b.plan.order;
+    const base = [...b.markets.filter((m) => m.kind !== 'freak'), ...(b.reserve ?? [])].sort((x, y) => order.indexOf(x.id) - order.indexOf(y.id));
+    b.markets = [...base, ...b.markets.filter((m) => m.kind === 'freak')];
+    b.reserve = [];
+    c.saveMetadataDebounced?.();
+    await c.eventSource.emit(c.eventTypes.MESSAGE_EDITED, c.chat.length - 1);
+    return out;
+  });
+  await sleep(300);
+  return drawn;
+}
+
 async function setup(page) {
   await ui.connectMainApi(page, { stream: false });
   const names = await page.evaluate(() => SillyTavern.getContext().characters.map((c) => c.name));
@@ -383,6 +405,16 @@ async function zhonglouMain(page, ev8) {
   const tablesBefore = (await marketMeta(page))?.casino;
   const entryText = await answerEntry(page);
   await waitFreak(page);
+  const drawn = await openAllMarkets(page);
+  const drawnOk =
+    !!drawn &&
+    drawn.plan.total >= 2 &&
+    drawn.plan.total <= 5 &&
+    drawn.plan.freak >= 1 &&
+    drawn.plan.freak <= 2 &&
+    drawn.ids.length === drawn.plan.total &&
+    drawn.kinds.filter((k) => k === 'freak').length === drawn.plan.freak;
+  ev1.push(`本局抽中 ${drawn?.ids.length ?? 0} 个盘（计划 ${drawn?.plan.total} 个，怪盘 ${drawn?.plan.freak} 个）：${drawn?.ids.join('、')}；之后的检查把没抽中的候选盘也打开`);
   const list = await cards(page);
   const status0 = await statusLine(page);
   const tagCount = (t) => list.filter((c) => c.tag === t).length;
@@ -530,7 +562,7 @@ async function zhonglouMain(page, ev8) {
   rec('M4', left6.length === 1 && left6[0].src === '赌票兑付·钟楼·塔里会出人命吗' && pending6 === Object.keys(want).length && Object.entries(want).every(([t, s]) => tk(tk7, t)?.stamp === s) && bal7 === bal5, ev4);
 
   const betOk = betRows.length === (freakQ ? 8 : 7) && bal1 === bal0 - staked && betRows.some((r) => r.src === '下注·钟楼·本局结果·通关' && r.delta.replace(/,/g, '') === '-300');
-  const listOk = tagCount('结局') === 1 && tagCount('评价') === 1 && tagCount('事件') === 3 && tagCount('庄家') >= 2 && tagCount('庄家') <= 3;
+  const listOk = drawnOk && tagCount('结局') === 1 && tagCount('评价') === 1 && tagCount('事件') === 3 && tagCount('庄家') === drawn.plan.freak;
   rec('M1', listOk && leak.length === 0 && betOk && status0.includes('开盘中') && status1 === '《钟楼》已封盘' && list1.every((c) => c.disabled), ev1, [...(shots.open ?? []), ...(shots.closed ?? [])]);
   return { closedCasino, redrawn };
 }
@@ -540,6 +572,7 @@ async function zhonglouDeath(page) {
   await openNewChat(page, CH.zhonglou);
   await answerEntry(page);
   await waitFreak(page);
+  await openAllMarkets(page);
   await bet(page, '本局结果', '通关', 100);
   await bet(page, '本局评价', 'S', 50);
   await bet(page, '塔里会出人命吗', '不会', 100);

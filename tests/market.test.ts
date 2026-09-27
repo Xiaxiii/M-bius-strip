@@ -7,9 +7,12 @@ import {
   bookEntries,
   calcOdds,
   checkStake,
+  drawSome,
+  fillFreak,
   freezeResults,
   judgeList,
   levelDiff,
+  lineupMarkets,
   openMarkets,
   payoutOf,
   ratingProbs,
@@ -174,6 +177,107 @@ describe('开盘', () => {
     const ms = openMarkets({ pack: pack('xiyan'), playerLevel: 'D', withEvents: true, rand: r });
     expect(ms.find((m) => m.id === 'M2')!.judgeNo).toContain('以外的某个人');
     expect(ms.find((m) => m.id === 'M2')!.options.map((o) => o.label)).toEqual(['是', '不是']);
+  });
+});
+
+describe('本局开哪几个盘', () => {
+  /** 可复现的伪随机数 */
+  const seeded = (seed: number) => () => {
+    seed = (seed * 1103515245 + 12345) % 2147483648;
+    return seed / 2147483648;
+  };
+  const cands = (id = 'zhonglou') => openMarkets({ pack: pack(id), playerLevel: 'S', withEvents: true, rand: () => 0.5 });
+  const items = [
+    { q: '一', judge: 'j1', p: 0.3 },
+    { q: '二', judge: 'j2', p: 0.3 },
+    { q: '三', judge: 'j3', p: 0.3 },
+  ];
+
+  it('事件检测关闭：只开结局盘和评价盘，没有计划和备用', () => {
+    const off = openMarkets({ pack: pack('zhonglou'), playerLevel: 'S', withEvents: false, rand: () => 0.5 });
+    const l = lineupMarkets(off, false, () => 0.5);
+    expect(l.markets.map((m) => m.id)).toEqual(['ending', 'rating']);
+    expect(l.plan).toBeUndefined();
+  });
+
+  it('开着：总数2–5、怪盘1–2，其余从结局、评价、事件盘里抽；结局盘、评价盘不保证出现；每局不同', () => {
+    const seen = new Set<string>();
+    const totals = new Set<number>();
+    const freaks = new Set<number>();
+    let noEnding = 0;
+    let noRating = 0;
+    for (let k = 1; k <= 300; k++) {
+      const rand = seeded(k);
+      const c = cands();
+      const l = lineupMarkets(c, true, rand);
+      const { total, freak } = l.plan!;
+      expect(total).toBeGreaterThanOrEqual(2);
+      expect(total).toBeLessThanOrEqual(5);
+      expect([1, 2]).toContain(freak);
+      totals.add(total);
+      freaks.add(freak);
+      expect(l.markets).toHaveLength(total - freak);
+      expect(new Set(l.markets.map((m) => m.id)).size).toBe(l.markets.length);
+      expect([...l.markets, ...l.reserve!].map((m) => m.id).sort()).toEqual(c.map((m) => m.id).sort());
+      // 出题成功：总数正好是计划数，怪盘数正好是计划的怪盘数
+      const done = fillFreak({ ...l }, items, rand);
+      expect(done.markets).toHaveLength(total);
+      expect(done.markets.filter((m) => m.kind === 'freak')).toHaveLength(freak);
+      // 顺序：结局、评价、事件盘按包里的先后，怪盘在最后
+      const ids = done.markets.map((m) => m.id);
+      const base = ids.filter((id) => !/^F\d$/.test(id));
+      expect(base).toEqual(c.map((m) => m.id).filter((id) => base.includes(id)));
+      expect(ids.slice(base.length).every((id) => /^F\d$/.test(id))).toBe(true);
+      if (!ids.includes('ending')) noEnding++;
+      if (!ids.includes('rating')) noRating++;
+      seen.add(ids.join(','));
+    }
+    expect([...totals].sort()).toEqual([2, 3, 4, 5]);
+    expect([...freaks].sort()).toEqual([1, 2]);
+    expect(noEnding).toBeGreaterThan(0);
+    expect(noRating).toBeGreaterThan(0);
+    expect(seen.size).toBeGreaterThan(20);
+  });
+
+  it('怪盘从出的2–3题里随机取，id 按取到的先后为 F1、F2', () => {
+    const l = lineupMarkets(cands(), true, () => 0.5); // 总数4、怪盘2
+    const done = fillFreak(l, items, () => 0.9);
+    const f = done.markets.filter((m) => m.kind === 'freak');
+    expect(f.map((m) => [m.id, m.q])).toEqual([
+      ['F1', '二'],
+      ['F2', '三'],
+    ]);
+  });
+
+  it('怪盘出题失败：名额从没抽中的候选里补；题不够时缺的也补', () => {
+    const l = lineupMarkets(cands(), true, () => 0.5);
+    expect(l.markets.map((m) => m.id)).toEqual(['M1', 'M2']);
+    const failed = fillFreak(l, null, () => 0.5);
+    expect(failed.markets.map((m) => m.id)).toEqual(['rating', 'M1', 'M2', 'M3']);
+    expect(failed.reserve.map((m) => m.id)).toEqual(['ending']);
+    const one = fillFreak(l, items.slice(0, 1), () => 0);
+    expect(one.markets.map((m) => m.id)).toEqual(['ending', 'M1', 'M2', 'F1']);
+  });
+
+  it('候选不够就少开', () => {
+    // 考试没有事件盘：只有结局、评价两个候选
+    const c = cands('kaoshi');
+    const l = lineupMarkets(c, true, () => 0.99); // 总数5、怪盘2 → 候选只能出2个
+    expect(l.plan).toMatchObject({ total: 5, freak: 2 });
+    expect(l.markets.map((m) => m.id)).toEqual(['ending', 'rating']);
+    expect(fillFreak(l, null, () => 0.5).markets.map((m) => m.id)).toEqual(['ending', 'rating']);
+    expect(fillFreak(l, items, () => 0.5).markets).toHaveLength(4);
+  });
+
+  it('没有计划的旧盘口本：出的题照旧全部加上', () => {
+    const old = { markets: cands() };
+    expect(fillFreak(old, items, () => 0.5).markets.filter((m) => m.kind === 'freak')).toHaveLength(3);
+  });
+
+  it('drawSome 不重复、保持原来的先后、不够就全取', () => {
+    expect(drawSome([1, 2, 3, 4], 2, () => 0.99)).toEqual([3, 4]);
+    expect(drawSome([1, 2], 5, () => 0)).toEqual([1, 2]);
+    expect(drawSome([1, 2, 3], 0, () => 0)).toEqual([]);
   });
 });
 

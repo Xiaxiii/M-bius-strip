@@ -20,6 +20,7 @@ import {
   type TemplateItem,
 } from './live';
 import { stripPanels } from './subapi';
+import { statusBarLevel } from './ledger';
 
 export const LIVE_META_KEY = 'rlzc_live';
 export const TIP_REVOKE_SOURCE = '本局直播打赏撤回';
@@ -166,17 +167,9 @@ export function latestStatusBar(chat: ChatMessage[], before = chat.length): stri
   return null;
 }
 
-/** 玩家等级：最近一条 <状态栏> 里的「等级」，读不到按 D */
+/** 玩家等级：最近一条 <状态栏> 里{{user}}的「等级」，读不到按 D（不看待生效的校正；要看校正用 app.ts 的 playerLevel） */
 export function playerLevelOf(chat: ChatMessage[], before = chat.length): Level {
-  for (let i = Math.min(before, chat.length) - 1; i >= 0; i--) {
-    const m = chat[i];
-    if (!m || m.is_user || !m.mes) continue;
-    const s = STATUS_RE.exec(m.mes);
-    if (!s) continue;
-    const lv = /等级[：:]\s*([DCBAS])/.exec(s[1]);
-    if (lv) return lv[1] as Level;
-  }
-  return 'D';
+  return statusBarLevel(chat, before) ?? 'D';
 }
 
 /**
