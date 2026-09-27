@@ -1,25 +1,32 @@
 <script setup lang="ts">
 /** 设置页「副本事件检测」卡（CLAUDE.md 14） */
 import { computed, ref } from 'vue';
-import { saveSettings, state } from '../app';
+import { saveSettings, setCurrentPresetField, state } from '../app';
 import { confirmBox, inputBox, toast } from '../st/context';
-import { listModels, testPreset, type SubPreset, type SubSource } from '../st/subTransport';
-import { classifyError } from '../core/subapi';
+import { fetchModels, probeModel, type SubPreset, type SubSource } from '../st/subTransport';
+import {
+  canFetchModels,
+  canTestModel,
+  describeError,
+  fetchLine,
+  presetDot,
+  recordFetch,
+  recordTest,
+  testLine,
+} from '../core/subPreset';
 
 const sub = computed(() => state.settings.subApi);
 const preset = computed(() => sub.value.presets.find((p) => p.id === sub.value.presetId) ?? null);
-const models = ref<string[]>([]);
+const models = computed(() => preset.value?.models ?? []);
 const showKey = ref(false);
-const testing = ref(false);
-const testStatus = ref<'none' | 'ok' | 'fail'>('none');
-const testFailReason = ref('');
+/** 正在拉取 / 测试的预设 id */
+const fetching = ref('');
+const testing = ref('');
 
 const dotStatus = computed(() => {
-  if (sub.value.source === 'off')     return { kind: 'off',  text: '未开启' };
-  if (sub.value.source === 'main')    return { kind: 'on',   text: '跟随主API' };
-  if (testStatus.value === 'ok')      return { kind: 'on',   text: '已连接' };
-  if (testStatus.value === 'fail')    return { kind: 'warn', text: '连接失败' };
-  return { kind: 'warn', text: '未测试' };
+  if (sub.value.source === 'off')  return { kind: 'off', text: '未开启' };
+  if (sub.value.source === 'main') return { kind: 'on',  text: '跟随主API' };
+  return presetDot(preset.value);
 });
 
 const collapsed = computed(() => state.settings.cardCollapsed.subApi);
@@ -28,17 +35,10 @@ function toggleCollapse() {
   save();
 }
 
-const connLine = computed(() => {
-  if (testStatus.value === 'ok')   return `已连接 · 共 ${models.value.length} 个模型`;
-  if (testStatus.value === 'fail') return `连接失败：${testFailReason.value}`;
-  return '未测试';
-});
-
 function save() { saveSettings(); }
 
 function setSource(src: SubSource) {
   sub.value.source = src;
-  testStatus.value = 'none';
   save();
 }
 
@@ -50,8 +50,6 @@ async function addPreset() {
   const p: SubPreset = { id: newId(), name, url: '', key: '', model: '' };
   sub.value.presets = [...sub.value.presets, p];
   sub.value.presetId = p.id;
-  models.value = [];
-  testStatus.value = 'none';
   save();
 }
 
@@ -68,43 +66,56 @@ async function removePreset() {
   if (!(await confirmBox(`确定删除「${preset.value.name}」吗？`))) return;
   sub.value.presets = sub.value.presets.filter((p) => p.id !== sub.value.presetId);
   sub.value.presetId = sub.value.presets[0]?.id ?? '';
-  models.value = [];
-  testStatus.value = 'none';
   save();
 }
 
 function pickPreset(e: Event) {
   sub.value.presetId = (e.target as HTMLSelectElement).value;
-  models.value = [];
-  testStatus.value = 'none';
   save();
 }
 
 function setField(field: 'url' | 'key' | 'model', e: Event) {
-  if (!preset.value) return;
-  preset.value[field] = (e.target as HTMLInputElement).value.trim();
-  save();
+  setCurrentPresetField(field, (e.target as HTMLInputElement | HTMLSelectElement).value);
 }
 
-async function test() {
-  if (!preset.value) return;
-  testing.value = true;
-  testStatus.value = 'none';
-  testFailReason.value = '';
+function timeoutMs() {
+  return Math.max(5, Number(sub.value.timeoutSec) || 60) * 1000;
+}
+
+/** 请求期间改了地址、密钥或模型：结果对应的已不是这条预设的当前内容，丢弃 */
+function sameAs(p: SubPreset, snap: SubPreset, withModel: boolean) {
+  return p.url === snap.url && p.key === snap.key && (!withModel || p.model === snap.model);
+}
+
+async function pullModels() {
+  const p = preset.value;
+  if (!p || !canFetchModels(p) || fetching.value) return;
+  const snap = { ...p };
+  fetching.value = p.id;
   try {
-    const r = await testPreset(preset.value, Math.max(5, sub.value.timeoutSec) * 1000);
-    models.value = r.models;
-    if (!preset.value.model && r.models.length) {
-      preset.value.model = r.models[0];
-      save();
-    }
-    testStatus.value = 'ok';
+    const list = await fetchModels(snap, timeoutMs());
+    if (sameAs(p, snap, false)) recordFetch(p, { ok: true, models: list });
   } catch (e) {
-    testStatus.value = 'fail';
-    testFailReason.value = classifyError(e);
-    models.value = await listModels(preset.value).catch(() => []);
+    if (sameAs(p, snap, false)) recordFetch(p, { ok: false, reason: describeError(e) });
   } finally {
-    testing.value = false;
+    fetching.value = '';
+    save();
+  }
+}
+
+async function testModel() {
+  const p = preset.value;
+  if (!p || !canTestModel(p) || testing.value) return;
+  const snap = { ...p };
+  testing.value = p.id;
+  try {
+    await probeModel(snap, timeoutMs());
+    if (sameAs(p, snap, true)) recordTest(p, { ok: true });
+  } catch (e) {
+    if (sameAs(p, snap, true)) recordTest(p, { ok: false, reason: describeError(e) });
+  } finally {
+    testing.value = '';
+    save();
   }
 }
 
@@ -162,12 +173,12 @@ function toggle(key: 'saveMode' | 'wait', val: boolean) {
         <template v-if="preset">
           <div class="rlzc-stacked-field">
             <label class="rlzc-label">地址</label>
-            <input class="rlzc-input" :value="preset.url" placeholder="https://…/v1" @change="setField('url', $event)" />
+            <input class="rlzc-input" :value="preset.url" placeholder="https://…/v1" @input="setField('url', $event)" />
           </div>
           <div class="rlzc-stacked-field">
             <label class="rlzc-label">密钥</label>
             <div class="rlzc-key-wrap">
-              <input class="rlzc-input" :type="showKey ? 'text' : 'password'" :value="preset.key" autocomplete="off" @change="setField('key', $event)" />
+              <input class="rlzc-input" :type="showKey ? 'text' : 'password'" :value="preset.key" autocomplete="off" @input="setField('key', $event)" />
               <button class="rlzc-eye-btn" type="button" :aria-label="showKey ? '隐藏密钥' : '显示密钥'" @click="showKey = !showKey">
                 <svg v-if="showKey" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><path d="M2 2l12 12"/></svg>
                 <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
@@ -176,15 +187,22 @@ function toggle(key: 'saveMode' | 'wait', val: boolean) {
           </div>
           <div class="rlzc-stacked-field">
             <label class="rlzc-label">模型</label>
-            <select v-if="models.length" class="rlzc-input" :value="preset.model" @change="setField('model', $event)">
-              <option v-if="!models.includes(preset.model)" :value="preset.model">{{ preset.model || '请选择…' }}</option>
-              <option v-for="m in models" :key="m" :value="m">{{ m }}</option>
+            <select v-if="models.length" class="rlzc-input" @change="setField('model', $event)">
+              <option v-if="!preset.model" value="" selected disabled>请选择…</option>
+              <option v-if="preset.model && !models.includes(preset.model)" :value="preset.model" selected>{{ preset.model }}</option>
+              <option v-for="m in models" :key="m" :value="m" :selected="m === preset.model">{{ m }}</option>
             </select>
-            <input v-else class="rlzc-input rlzc-input-disabled" :value="preset.model ? preset.model : '先测试连接'" readonly tabindex="-1" />
+            <input v-else class="rlzc-input rlzc-input-disabled" :value="preset.model ? preset.model : '先拉取模型'" readonly tabindex="-1" />
           </div>
-          <div class="rlzc-conn-row">
-            <span class="rlzc-dot" :data-kind="testStatus === 'ok' ? 'on' : testStatus === 'fail' ? 'warn' : 'off'">{{ connLine }}</span>
-            <button class="rlzc-btn ghost" :disabled="testing || !preset.url" @click="test">测试连接</button>
+          <div class="rlzc-check-row">
+            <div class="rlzc-check-item">
+              <button class="rlzc-btn ghost" type="button" :disabled="!!fetching || !canFetchModels(preset)" @click="pullModels">拉取模型</button>
+              <span class="rlzc-check-result" :data-kind="preset.fetchResult ? (preset.fetchResult.ok ? 'on' : 'warn') : ''">{{ fetching === preset.id ? '拉取中…' : fetchLine(preset) }}</span>
+            </div>
+            <div class="rlzc-check-item">
+              <button class="rlzc-btn ghost" type="button" :disabled="!!testing || !canTestModel(preset)" @click="testModel">测试模型</button>
+              <span class="rlzc-check-result" :data-kind="preset.testResult ? (preset.testResult.ok ? 'on' : 'warn') : ''">{{ testing === preset.id ? '测试中…' : testLine(preset) }}</span>
+            </div>
           </div>
         </template>
       </div>

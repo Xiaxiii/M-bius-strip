@@ -442,6 +442,7 @@ interface Progress {
 - 关闭（默认）。
 - 跟随主API：`getContext().generateRaw({ prompt, systemPrompt })`。只发传入的提示词，不带聊天记录、世界书和扩展注入，不经过生成拦截器，不会递归。
 - 自设API：经 ST 服务端转发 `POST /api/backends/chat-completions/generate`，`chat_completion_source: 'custom'`、`custom_url`，密钥用 `custom_include_headers` 覆盖 Authorization（不改 ST 自己保存的密钥）；模型列表 `POST /api/backends/chat-completions/status`。接口预设（名字、地址、密钥、模型）存在 `extensionSettings.rlzc.subApi.presets`，记住上次用的预设和每条预设的模型。
+- 自设API的「拉取模型」「测试模型」两个按钮（实现说明）：拉取模型要求地址不为空，成功后模型栏变成下拉框、不替玩家选模型；测试模型要求已选模型，回复长度上限64，HTTP 成功但正文为空也算能回复。每条预设在 `presets[i]` 里存 `models`、`fetchResult`、`testResult`（ok、reason、at），改地址或密钥清空这三项，换模型只清空 `testResult`；标题行状态点按 `testResult` 显示。选模型时立即保存。失败原因在分类后附「（HTTP状态码：中转站错误信息前80字）」，事件检测失败弹窗同样附上。
 - 省钱模式（默认关）：只在本轮有注入事件、或下一轮有带条件的事件时调用，其余轮沿用上一轮状态。
 - 等待整理（默认开）：生成下一轮前等本轮整理完成，发送按钮旁显示「整理中…」；关闭时不等。
 - 超时默认60秒。

@@ -272,7 +272,12 @@
 .rlzc-input-disabled { color: var(--muted); cursor: default; }
 
 /* 连接状态行 */
-.rlzc-conn-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
+.rlzc-check-row { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.rlzc-check-item { flex: 1 1 140px; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.rlzc-check-item .rlzc-btn { min-height: 44px; min-width: 44px; flex: none; }
+.rlzc-check-result { min-width: 0; font-size: 12px; line-height: 1.35; color: var(--muted); overflow-wrap: anywhere; }
+.rlzc-check-result[data-kind="on"] { color: #4caf72; }
+.rlzc-check-result[data-kind="warn"] { color: #c9833a; }
 
 /* 选项列表（省钱模式等） */
 .rlzc-option-list { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; display: flex; flex-direction: column; }

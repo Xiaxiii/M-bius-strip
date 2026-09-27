@@ -1,5 +1,5 @@
 /** 黑市接入流程（第四期-第2段）：在模拟的 ST 环境里跑 app.ts 的开盘、封盘、下注、开奖、赌坊 */
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { flush, installFakeSt } from './fakeSt';
 import { autoAnswerEntryCards } from './entryCard';
 import * as app from '../src/app';
@@ -313,6 +313,11 @@ describe('开奖', () => {
   });
 
   it('某轮判定为真：押「会」的兑、押「不会」的废，弹一次提示；删楼后兑付撤回、下注不撤回', async () => {
+    // 下注按当前时间记账，流水按时间排：把时钟定在这些回复（10:xx）之前，结果不随跑测试的时刻变化
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 8, 27, 9, 0) });
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
     await enterWithSub();
     const log = vi.spyOn(console, 'log');
     app.placeBet('M2', 'yes', 100);

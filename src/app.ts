@@ -22,6 +22,7 @@ import {
   type SubRecord,
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
+import { describeError, normalizePreset, setPresetField } from './core/subPreset';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
 import { LEDGER_META_KEY, mergeByTime, sortByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, statusBarLevel, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
@@ -238,7 +239,7 @@ export function loadSettings(): void {
     subApi: {
       ...structuredClone(DEFAULT_SUB_API),
       ...(saved.subApi ?? {}),
-      presets: Array.isArray(saved.subApi?.presets) ? saved.subApi!.presets : [],
+      presets: Array.isArray(saved.subApi?.presets) ? saved.subApi!.presets.map(normalizePreset) : [],
       // 旧版本里的「酒馆连接配置」来源已删除，按关闭处理
       source: (['off', 'main', 'preset'] as SubSource[]).includes(saved.subApi?.source as SubSource) ? saved.subApi!.source : 'off',
     },
@@ -276,6 +277,14 @@ export function saveSettings(): void {
   ctx().extensionSettings[SETTINGS_KEY] = toRaw(state.settings);
   ctx().saveSettingsDebounced();
   state.packs = allPacks(state.settings.customPacks);
+}
+
+/** 改当前接口预设的地址 / 密钥 / 模型，并立即保存（改地址或密钥清空两个结果与模型列表，换模型只清空测试结果） */
+export function setCurrentPresetField(field: 'url' | 'key' | 'model', value: string): void {
+  const s = state.settings.subApi;
+  const p = s.presets.find((x) => x.id === s.presetId);
+  if (!p) return;
+  if (setPresetField(p, field, value)) saveSettings();
 }
 
 export function importPack(json: string): string[] {
@@ -1143,16 +1152,18 @@ async function runSubJob(index: number, key: string, round: number, messages: Su
       } catch (e) {
         if (subKey(index) !== key) return; // 这一楼已经变了，不再处理
         const reason = classifyError(e);
-        const detail = String((e as Error)?.message ?? e).slice(0, 200);
-        log('副本事件检测失败', reason, e);
+        const full = describeError(e);
+        // 原因后面已附上状态码和中转站的错误信息时，不再另列原始报错
+        const detail = full === reason ? String((e as Error)?.message ?? e).slice(0, 200) : '';
+        log('副本事件检测失败', full, e);
         if (!state.settings.subApi.wait) {
-          toast('warning', `第${round}轮事件检测失败（${reason}），已沿用上一轮状态。`);
-          skipSub(index, key, reason);
+          toast('warning', `第${round}轮事件检测失败：${full}，已沿用上一轮状态。`);
+          skipSub(index, key, full);
           return;
         }
-        const choice = await askSubFailure(round, reason, detail);
+        const choice = await askSubFailure(round, full, detail);
         if (choice === 'skip') {
-          skipSub(index, key, reason);
+          skipSub(index, key, full);
           return;
         }
         retries = 0; // 玩家点的重试：再调用一次
@@ -1175,7 +1186,7 @@ function skipSub(index: number, key: string, reason: string): void {
 async function askSubFailure(round: number, reason: string, detail: string): Promise<'retry' | 'skip'> {
   const c = ctx() as any;
   if (!c.Popup || !c.POPUP_TYPE) {
-    return window.confirm(`第${round}轮事件检测失败（${reason}）。重试吗？取消则这轮先跳过。`) ? 'retry' : 'skip';
+    return window.confirm(`第${round}轮事件检测失败：${reason}。重试吗？取消则这轮先跳过。`) ? 'retry' : 'skip';
   }
   const s = state.settings.subApi;
   const box = document.createElement('div');
@@ -1186,6 +1197,7 @@ async function askSubFailure(round: number, reason: string, detail: string): Pro
   const small = document.createElement('small');
   small.textContent = detail;
   small.style.opacity = '0.7';
+  if (!detail) small.style.display = 'none';
   const switchBox = document.createElement('div');
   switchBox.style.cssText = 'display:none;margin-top:10px;';
   const label = document.createElement('label');

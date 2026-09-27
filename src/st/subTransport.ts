@@ -10,14 +10,9 @@
  */
 import { ctx } from './context';
 import { SubTimeoutError, type SubMessages } from '../core/subapi';
+import type { SubPreset } from '../core/subPreset';
 
-export interface SubPreset {
-  id: string;
-  name: string;
-  url: string;
-  key: string;
-  model: string;
-}
+export type { SubPreset };
 
 /** 关闭 / 跟随主API / 自设API（接口预设） */
 export type SubSource = 'off' | 'main' | 'preset';
@@ -58,15 +53,38 @@ async function withTimeout<T>(ms: number, run: (signal: AbortSignal) => Promise<
   }
 }
 
-/** 把服务端返回的错误整理成带状态码/说明的 Error，供 classifyError 区分原因 */
-function responseError(status: number, data: any): Error {
-  const message = data?.error?.message ?? data?.message ?? (typeof data === 'string' ? data : '') ?? '';
+/**
+ * 把服务端返回的错误整理成带状态码/说明的 Error，供 classifyError 区分原因；
+ * status、detail（中转站返回的错误信息）供 describeError 附在原因后面。
+ */
+export function responseError(status: number, data: any): Error {
+  const raw =
+    typeof data?.error === 'string' ? data.error
+    : data?.error?.message ?? data?.message ?? (typeof data === 'string' ? data : '');
+  const message = String(raw ?? '').trim();
   const err = new Error(`${status || ''} ${message}${data?.quota_error ? ' insufficient_quota' : ''}`.trim());
   (err as any).status = status;
+  (err as any).detail = message;
   return err;
 }
 
-async function callPreset(p: SubPreset, m: SubMessages, signal: AbortSignal, maxTokens = MAX_TOKENS, temperature = 0.2): Promise<string> {
+async function readBody(res: Response): Promise<any> {
+  const text = await res.text().catch(() => '');
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+async function callPreset(
+  p: SubPreset,
+  m: SubMessages,
+  signal: AbortSignal,
+  maxTokens = MAX_TOKENS,
+  temperature = 0.2,
+  allowEmpty = false,
+): Promise<string> {
   const res = await fetch('/api/backends/chat-completions/generate', {
     method: 'POST',
     headers: headers(),
@@ -83,16 +101,14 @@ async function callPreset(p: SubPreset, m: SubMessages, signal: AbortSignal, max
       stream: false,
     }),
   });
-  const text = await res.text();
-  let data: any;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = text;
-  }
+  const data = await readBody(res);
   if (!res.ok || data?.error) throw responseError(res.status === 200 ? 0 : res.status, data);
   const content = data?.choices?.[0]?.message?.content ?? data?.choices?.[0]?.text ?? data?.content;
-  if (typeof content !== 'string') throw new Error('返回里没有正文');
+  if (typeof content !== 'string') {
+    // 带思考的模型可能在长度上限内只写了思考、正文为空：测试时照样算能回复
+    if (allowEmpty) return '';
+    throw new Error('返回里没有正文');
+  }
   return content;
 }
 
@@ -112,24 +128,32 @@ export function callSub(target: SubTarget, m: SubMessages, opts: { temperature?:
 }
 
 /** 拉取独立接口的模型列表 */
-export async function listModels(p: SubPreset): Promise<string[]> {
+export async function listModels(p: SubPreset, signal?: AbortSignal): Promise<string[]> {
   const res = await fetch('/api/backends/chat-completions/status', {
     method: 'POST',
     headers: headers(),
+    signal,
     body: JSON.stringify(customBody(p)),
   });
-  const data: any = await res.json().catch(() => null);
-  if (!res.ok || data?.error) throw responseError(res.status, data);
+  const data = await readBody(res);
+  if (!res.ok || data?.error) throw responseError(res.status === 200 ? 0 : res.status, data);
   const list = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : Array.isArray(data?.models) ? data.models : [];
-  return list.map((x: any) => (typeof x === 'string' ? x : x?.id ?? x?.name)).filter(Boolean).sort();
+  const names: string[] = list.map((x: any) => (typeof x === 'string' ? x : x?.id ?? x?.name)).filter(Boolean);
+  return [...new Set(names)].sort();
 }
 
-/** 测试连接：拉模型列表，并发一个极短的请求 */
-export async function testPreset(p: SubPreset, timeoutMs: number): Promise<{ models: string[]; reply: string }> {
-  const models = await listModels(p).catch(() => [] as string[]);
-  const probe: SubPreset = { ...p, model: p.model || models[0] || '' };
-  const reply = await withTimeout(timeoutMs, (signal) =>
-    callPreset(probe, { system: '只回复 OK。', user: 'ping' }, signal, 5),
+/** 「拉取模型」：用地址和密钥拉模型列表 */
+export function fetchModels(p: SubPreset, timeoutMs: number): Promise<string[]> {
+  return withTimeout(timeoutMs, (signal) => listModels(p, signal));
+}
+
+/** 「测试模型」发的请求的回复长度上限：留出余量给带思考的模型 */
+export const PROBE_MAX_TOKENS = 64;
+
+/** 「测试模型」：用当前选中的模型发一句很短的请求；HTTP 成功但正文为空也算能回复 */
+export async function probeModel(p: SubPreset, timeoutMs: number): Promise<string> {
+  if (!p.model.trim()) throw new Error('还没有选模型');
+  return withTimeout(timeoutMs, (signal) =>
+    callPreset(p, { system: '只回复 OK。', user: 'ping' }, signal, PROBE_MAX_TOKENS, 0.2, true),
   );
-  return { models, reply };
 }
