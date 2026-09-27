@@ -42,11 +42,11 @@ const he = {}, Wt = [], Kt = () => {
 };
 let zr;
 const js = () => zr || (zr = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : typeof global < "u" ? global : {});
-function Ds(e) {
+function Rs(e) {
   if (ne(e)) {
     const t = {};
     for (let n = 0; n < e.length; n++) {
-      const s = e[n], i = be(s) ? ac(s) : Ds(s);
+      const s = e[n], i = be(s) ? ac(s) : Rs(s);
       if (i)
         for (const r in i)
           t[r] = i[r];
@@ -136,7 +136,7 @@ function It(e, t, n) {
 function fc(e, t) {
   return e.findIndex((n) => It(n, t));
 }
-const Do = (e) => !!(e && e.__v_isRef === !0), S = (e) => be(e) ? e : e == null ? "" : ne(e) || me(e) && (e.toString === Io || !le(e.toString)) ? Do(e) ? S(e.value) : JSON.stringify(e, Ro, 2) : String(e), Ro = (e, t) => Do(t) ? Ro(e, t.value) : Et(t) ? {
+const Ro = (e) => !!(e && e.__v_isRef === !0), S = (e) => be(e) ? e : e == null ? "" : ne(e) || me(e) && (e.toString === Io || !le(e.toString)) ? Ro(e) ? S(e.value) : JSON.stringify(e, Do, 2) : String(e), Do = (e, t) => Ro(t) ? Do(e, t.value) : Et(t) ? {
   [`Map(${t.size})`]: [...t.entries()].reduce(
     (n, [s, i], r) => (n[si(s, r) + " =>"] = i, n),
     {}
@@ -262,7 +262,7 @@ function hc() {
 }
 let Ae;
 const ii = /* @__PURE__ */ new WeakSet();
-class Fo {
+class Oo {
   constructor(t) {
     this.fn = t, this.deps = void 0, this.depsTail = void 0, this.flags = 5, this.next = void 0, this.cleanup = void 0, this.scheduler = void 0, we && (we.active ? we.effects.push(this) : this.flags &= -2);
   }
@@ -310,7 +310,7 @@ class Fo {
     return Ei(this);
   }
 }
-let Oo = 0, $n, Sn;
+let Fo = 0, $n, Sn;
 function Lo(e, t = !1) {
   if (e.flags |= 8, t) {
     e.next = Sn, Sn = e;
@@ -319,10 +319,10 @@ function Lo(e, t = !1) {
   e.next = $n, $n = e;
 }
 function Ui() {
-  Oo++;
+  Fo++;
 }
 function Wi() {
-  if (--Oo > 0)
+  if (--Fo > 0)
     return;
   if (Sn) {
     let t = Sn;
@@ -467,7 +467,7 @@ const Ci = /* @__PURE__ */ new WeakMap(), qt = /* @__PURE__ */ Symbol(
   ""
 ), Mi = /* @__PURE__ */ Symbol(
   ""
-), Dn = /* @__PURE__ */ Symbol(
+), Rn = /* @__PURE__ */ Symbol(
   ""
 );
 function _e(e, t, n) {
@@ -494,10 +494,10 @@ function mt(e, t, n, s, i, r) {
     if (a && n === "length") {
       const u = Number(s);
       o.forEach((d, h) => {
-        (h === "length" || h === Dn || !ct(h) && h >= u) && l(d);
+        (h === "length" || h === Rn || !ct(h) && h >= u) && l(d);
       });
     } else
-      switch ((n !== void 0 || o.has(void 0)) && l(o.get(n)), c && l(o.get(Dn)), t) {
+      switch ((n !== void 0 || o.has(void 0)) && l(o.get(n)), c && l(o.get(Rn)), t) {
         case "add":
           a ? c && l(o.get("length")) : (l(o.get(qt)), Et(e) && l(o.get(Mi)));
           break;
@@ -513,10 +513,10 @@ function mt(e, t, n, s, i, r) {
 }
 function on(e) {
   const t = /* @__PURE__ */ ie(e);
-  return t === e || (_e(t, "iterate", Dn), /* @__PURE__ */ Le(e)) ? t : /* @__PURE__ */ ut(e) ? /* @__PURE__ */ Ct(e) ? t.map((n) => Pt(Ve(n))) : t.map(Pt) : t.map(Ve);
+  return t === e || (_e(t, "iterate", Rn), /* @__PURE__ */ Le(e)) ? t : /* @__PURE__ */ ut(e) ? /* @__PURE__ */ Ct(e) ? t.map((n) => Pt(Ve(n))) : t.map(Pt) : t.map(Ve);
 }
-function Rs(e) {
-  return _e(e = /* @__PURE__ */ ie(e), "iterate", Dn), e;
+function Ds(e) {
+  return _e(e = /* @__PURE__ */ ie(e), "iterate", Rn), e;
 }
 function rt(e, t) {
   return /* @__PURE__ */ ut(e) ? Pt(/* @__PURE__ */ Ct(e) ? Ve(t) : t) : Ve(t);
@@ -632,7 +632,7 @@ const xc = {
   }
 };
 function ri(e, t, n) {
-  const s = Rs(e), i = s[t]();
+  const s = Ds(e), i = s[t]();
   return s !== e && !/* @__PURE__ */ Le(e) && (i._next = i.next, i.next = () => {
     const r = i._next();
     return r.done || (r.value = n(r.value)), r;
@@ -640,7 +640,7 @@ function ri(e, t, n) {
 }
 const yc = Array.prototype;
 function ft(e, t, n, s, i, r) {
-  const o = Rs(e), l = o !== e && !/* @__PURE__ */ Le(e), a = o[t];
+  const o = Ds(e), l = o !== e && !/* @__PURE__ */ Le(e), a = o[t];
   if (a !== yc[t]) {
     const d = a.apply(e, r);
     return l ? Ve(d) : d;
@@ -655,7 +655,7 @@ function ft(e, t, n, s, i, r) {
   return l && i ? i(u) : u;
 }
 function Cr(e, t, n, s) {
-  const i = Rs(e), r = i !== e && !/* @__PURE__ */ Le(e);
+  const i = Ds(e), r = i !== e && !/* @__PURE__ */ Le(e);
   let o = n, l = !1;
   i !== e && (r ? (l = s.length === 0, o = function(c, u, d) {
     return l && (l = !1, c = rt(e, c)), n.call(this, c, rt(e, u), d, e);
@@ -667,7 +667,7 @@ function Cr(e, t, n, s) {
 }
 function oi(e, t, n) {
   const s = /* @__PURE__ */ ie(e);
-  _e(s, "iterate", Dn);
+  _e(s, "iterate", Rn);
   const i = s[t](...n);
   return (i === -1 || i === !1) && /* @__PURE__ */ Yi(n[0]) ? (n[0] = /* @__PURE__ */ ie(n[0]), s[t](...n)) : i;
 }
@@ -723,7 +723,7 @@ class Ko {
       const a = o && Vi(n) ? l : l.value;
       return i && me(a) ? /* @__PURE__ */ Ti(a) : a;
     }
-    return me(l) ? i ? /* @__PURE__ */ Ti(l) : /* @__PURE__ */ Fs(l) : l;
+    return me(l) ? i ? /* @__PURE__ */ Ti(l) : /* @__PURE__ */ Os(l) : l;
   }
 }
 class qo extends Ko {
@@ -907,7 +907,7 @@ function Tc(e) {
   }
 }
 // @__NO_SIDE_EFFECTS__
-function Fs(e) {
+function Os(e) {
   return /* @__PURE__ */ ut(e) ? e : qi(
     e,
     !1,
@@ -975,7 +975,7 @@ function ie(e) {
 function Pc(e) {
   return !ue(e, "__v_skip") && Object.isExtensible(e) && Po(e, "__v_skip", !0), e;
 }
-const Ve = (e) => me(e) ? /* @__PURE__ */ Fs(e) : e, Pt = (e) => me(e) ? /* @__PURE__ */ Ti(e) : e;
+const Ve = (e) => me(e) ? /* @__PURE__ */ Os(e) : e, Pt = (e) => me(e) ? /* @__PURE__ */ Ti(e) : e;
 // @__NO_SIDE_EFFECTS__
 function Se(e) {
   return e ? e.__v_isRef === !0 : !1;
@@ -985,9 +985,9 @@ function de(e) {
   return jc(e, !1);
 }
 function jc(e, t) {
-  return /* @__PURE__ */ Se(e) ? e : new Dc(e, t);
+  return /* @__PURE__ */ Se(e) ? e : new Rc(e, t);
 }
-class Dc {
+class Rc {
   constructor(t, n) {
     this.dep = new Gi(), this.__v_isRef = !0, this.__v_isShallow = !1, this._rawValue = n ? t : /* @__PURE__ */ ie(t), this._value = n ? t : Ve(t), this.__v_isShallow = n;
   }
@@ -1002,7 +1002,7 @@ class Dc {
 function T(e) {
   return /* @__PURE__ */ Se(e) ? e.value : e;
 }
-const Rc = {
+const Dc = {
   get: (e, t, n) => t === "__v_raw" ? e : T(Reflect.get(e, t, n)),
   set: (e, t, n, s) => {
     const i = e[t];
@@ -1010,9 +1010,9 @@ const Rc = {
   }
 };
 function Xo(e) {
-  return /* @__PURE__ */ Ct(e) ? e : new Proxy(e, Rc);
+  return /* @__PURE__ */ Ct(e) ? e : new Proxy(e, Dc);
 }
-class Fc {
+class Oc {
   constructor(t, n, s) {
     this.fn = t, this.setter = n, this._value = void 0, this.dep = new Gi(this), this.__v_isRef = !0, this.deps = void 0, this.depsTail = void 0, this.flags = 16, this.globalVersion = jn - 1, this.next = void 0, this.effect = this, this.__v_isReadonly = !n, this.isSSR = s;
   }
@@ -1033,9 +1033,9 @@ class Fc {
   }
 }
 // @__NO_SIDE_EFFECTS__
-function Oc(e, t, n = !1) {
+function Fc(e, t, n = !1) {
   let s, i;
-  return le(e) ? s = e : (s = e.get, i = e.set), new Fc(s, i, n);
+  return le(e) ? s = e : (s = e.get, i = e.set), new Oc(s, i, n);
 }
 const ss = {}, ms = /* @__PURE__ */ new WeakMap();
 let Bt;
@@ -1112,7 +1112,7 @@ function Bc(e, t, n = he) {
       } else
         u.run();
   };
-  return l && l(z), u = new Fo(d), u.scheduler = o ? () => o(z, !1) : z, y = (I) => Lc(I, !1, u), h = u.onStop = () => {
+  return l && l(z), u = new Oo(d), u.scheduler = o ? () => o(z, !1) : z, y = (I) => Lc(I, !1, u), h = u.onStop = () => {
     const I = ms.get(u);
     if (I) {
       if (a)
@@ -1152,14 +1152,14 @@ function Kn(e, t, n, s) {
   try {
     return s ? e(...s) : e();
   } catch (i) {
-    Os(i, t, n);
+    Fs(i, t, n);
   }
 }
 function At(e, t, n, s) {
   if (le(e)) {
     const i = Kn(e, t, n, s);
     return i && Mo(i) && i.catch((r) => {
-      Os(r, t, n);
+      Fs(r, t, n);
     }), i;
   }
   if (ne(e)) {
@@ -1169,7 +1169,7 @@ function At(e, t, n, s) {
     return i;
   }
 }
-function Os(e, t, n, s = !0) {
+function Fs(e, t, n, s = !0) {
   const i = t ? t.vnode : null, { errorHandler: r, throwUnhandledErrorInProduction: o } = t && t.appContext.config || he;
   if (t) {
     let l = t.parent;
@@ -1212,16 +1212,16 @@ function el(e) {
 function Uc(e) {
   let t = it + 1, n = $e.length;
   for (; t < n; ) {
-    const s = t + n >>> 1, i = $e[s], r = Rn(i);
+    const s = t + n >>> 1, i = $e[s], r = Dn(i);
     r < e || r === e && i.flags & 2 ? t = s + 1 : n = s;
   }
   return t;
 }
 function Ji(e) {
   if (!(e.flags & 1)) {
-    const t = Rn(e), n = $e[$e.length - 1];
+    const t = Dn(e), n = $e[$e.length - 1];
     !n || // fast path when the job id is larger than the tail
-    !(e.flags & 2) && t >= Rn(n) ? $e.push(e) : $e.splice(Uc(t), 0, e), e.flags |= 1, tl();
+    !(e.flags & 2) && t >= Dn(n) ? $e.push(e) : $e.splice(Uc(t), 0, e), e.flags |= 1, tl();
   }
 }
 function tl() {
@@ -1248,7 +1248,7 @@ function Mr(e, t, n = it + 1) {
 function nl(e) {
   if (cn.length) {
     const t = [...new Set(cn)].sort(
-      (n, s) => Rn(n) - Rn(s)
+      (n, s) => Dn(n) - Dn(s)
     );
     if (cn.length = 0, $t) {
       for (let n = 0; n < t.length; n++)
@@ -1262,7 +1262,7 @@ function nl(e) {
     $t = null, ln = 0;
   }
 }
-const Rn = (e) => e.id == null ? e.flags & 2 ? -1 : 1 / 0 : e.id;
+const Dn = (e) => e.id == null ? e.flags & 2 ? -1 : 1 / 0 : e.id;
 function sl(e) {
   try {
     for (it = 0; it < $e.length; it++) {
@@ -1281,32 +1281,32 @@ function sl(e) {
     it = -1, $e.length = 0, nl(), gs = null, ($e.length || cn.length) && sl();
   }
 }
-let Oe = null, il = null;
+let Fe = null, il = null;
 function xs(e) {
-  const t = Oe;
-  return Oe = e, il = e && e.type.__scopeId || null, t;
+  const t = Fe;
+  return Fe = e, il = e && e.type.__scopeId || null, t;
 }
-function Hc(e, t = Oe, n) {
+function Hc(e, t = Fe, n) {
   if (!t || e._n)
     return e;
   const s = (...i) => {
-    s._d && Rr(-1);
+    s._d && Dr(-1);
     const r = xs(t), o = Yt.length;
     let l;
     try {
       l = e(...i);
     } finally {
       for (let a = Yt.length; a > o; a--) kl();
-      xs(r), s._d && Rr(1);
+      xs(r), s._d && Dr(1);
     }
     return l;
   };
   return s._n = !0, s._c = !0, s._d = !0, s;
 }
 function at(e, t) {
-  if (Oe === null)
+  if (Fe === null)
     return e;
-  const n = Ws(Oe), s = e.dirs || (e.dirs = []);
+  const n = Ws(Fe), s = e.dirs || (e.dirs = []);
   for (let i = 0; i < t.length; i++) {
     let [r, o, l, a = he] = t[i];
     r && (le(r) && (r = {
@@ -1323,7 +1323,7 @@ function at(e, t) {
   }
   return e;
 }
-function Ot(e, t, n, s) {
+function Ft(e, t, n, s) {
   const i = e.dirs, r = t && t.dirs;
   for (let o = 0; o < i.length; o++) {
     const l = i[o];
@@ -1512,7 +1512,7 @@ function fe(e, t, n, s) {
   if (o || be(e)) {
     const l = o && /* @__PURE__ */ Ct(e);
     let a = !1, c = !1;
-    l && (a = !/* @__PURE__ */ Le(e), c = /* @__PURE__ */ ut(e), e = Rs(e)), i = new Array(e.length);
+    l && (a = !/* @__PURE__ */ Le(e), c = /* @__PURE__ */ ut(e), e = Ds(e)), i = new Array(e.length);
     for (let u = 0, d = e.length; u < d; u++)
       i[u] = t(
         a ? c ? Pt(Ve(e[u])) : Ve(e[u]) : e[u],
@@ -1794,7 +1794,7 @@ function Nr(e) {
       ), j = t.props ? l : au(l);
     }
   } catch (I) {
-    Yt.length = 0, Os(I, e, 1), V = Be(yt);
+    Yt.length = 0, Fs(I, e, 1), V = Be(yt);
   }
   let z = V;
   if (j && _ !== !1) {
@@ -2096,10 +2096,10 @@ function yu(e, t) {
     nextSibling: h,
     setScopeId: y = Kt,
     insertStaticContent: w
-  } = e, _ = (p, x, $, N = null, E = null, M = null, L = void 0, F = null, R = !!x.dynamicChildren) => {
+  } = e, _ = (p, x, $, N = null, E = null, M = null, L = void 0, O = null, D = !!x.dynamicChildren) => {
     if (p === x)
       return;
-    p && !bn(p, x) && (N = es(p), K(p, E, M, !0), p = null), x.patchFlag === -2 && (R = !1, x.dynamicChildren = null), x.dynamicChildren && p && p.dynamicChildren && p.dynamicChildren.hasOnce && (x.dynamicChildren === Wt && (x.dynamicChildren = []), x.dynamicChildren.hasOnce = !0);
+    p && !bn(p, x) && (N = es(p), K(p, E, M, !0), p = null), x.patchFlag === -2 && (D = !1, x.dynamicChildren = null), x.dynamicChildren && p && p.dynamicChildren && p.dynamicChildren.hasOnce && (x.dynamicChildren === Wt && (x.dynamicChildren = []), x.dynamicChildren.hasOnce = !0);
     const { type: C, ref: J, shapeFlag: W } = x;
     switch (C) {
       case Us:
@@ -2120,8 +2120,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
         break;
       default:
@@ -2133,8 +2133,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         ) : W & 6 ? re(
           p,
           x,
@@ -2143,8 +2143,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         ) : (W & 64 || W & 128) && C.process(
           p,
           x,
@@ -2153,8 +2153,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R,
+          O,
+          D,
           gn
         );
     }
@@ -2195,7 +2195,7 @@ function yu(e, t) {
     for (; p && p !== x; )
       $ = h(p), i(p), p = $;
     i(x);
-  }, ee = (p, x, $, N, E, M, L, F, R) => {
+  }, ee = (p, x, $, N, E, M, L, O, D) => {
     if (x.type === "svg" ? L = "svg" : x.type === "math" && (L = "mathml"), p == null)
       Z(
         x,
@@ -2204,8 +2204,8 @@ function yu(e, t) {
         E,
         M,
         L,
-        F,
-        R
+        O,
+        D
       );
     else {
       const C = p.el && p.el._isVueCE ? p.el : null;
@@ -2216,40 +2216,40 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
       } finally {
         C && C._endPatch();
       }
     }
-  }, Z = (p, x, $, N, E, M, L, F) => {
-    let R, C;
+  }, Z = (p, x, $, N, E, M, L, O) => {
+    let D, C;
     const { props: J, shapeFlag: W, transition: q, dirs: Q } = p;
-    if (R = p.el = o(
+    if (D = p.el = o(
       p.type,
       M,
       J && J.is,
       J
-    ), W & 8 ? u(R, p.children) : W & 16 && b(
+    ), W & 8 ? u(D, p.children) : W & 16 && b(
       p.children,
-      R,
+      D,
       null,
       N,
       E,
       ci(p, M),
       L,
-      F
-    ), Q && Ot(p, null, N, "created"), B(R, p, p.scopeId, L, N), J) {
+      O
+    ), Q && Ft(p, null, N, "created"), B(D, p, p.scopeId, L, N), J) {
       for (const ce in J)
-        ce !== "value" && !zn(ce) && r(R, ce, null, J[ce], M, N);
-      "value" in J && r(R, "value", null, J.value, M), (C = J.onVnodeBeforeMount) && st(C, N, p);
+        ce !== "value" && !zn(ce) && r(D, ce, null, J[ce], M, N);
+      "value" in J && r(D, "value", null, J.value, M), (C = J.onVnodeBeforeMount) && st(C, N, p);
     }
-    Q && Ot(p, null, N, "beforeMount");
+    Q && Ft(p, null, N, "beforeMount");
     const se = bu(E, q);
-    se && q.beforeEnter(R), s(R, x, $), ((C = J && J.onVnodeMounted) || se || Q) && Ce(() => {
+    se && q.beforeEnter(D), s(D, x, $), ((C = J && J.onVnodeMounted) || se || Q) && Ce(() => {
       try {
-        C && st(C, N, p), se && q.enter(R), Q && Ot(p, null, N, "mounted");
+        C && st(C, N, p), se && q.enter(D), Q && Ft(p, null, N, "mounted");
       } finally {
       }
     }, E);
@@ -2270,9 +2270,9 @@ function yu(e, t) {
         );
       }
     }
-  }, b = (p, x, $, N, E, M, L, F, R = 0) => {
-    for (let C = R; C < p.length; C++) {
-      const J = p[C] = F ? ht(p[C]) : ot(p[C]);
+  }, b = (p, x, $, N, E, M, L, O, D = 0) => {
+    for (let C = D; C < p.length; C++) {
+      const J = p[C] = O ? ht(p[C]) : ot(p[C]);
       _(
         null,
         J,
@@ -2282,21 +2282,21 @@ function yu(e, t) {
         E,
         M,
         L,
-        F
+        O
       );
     }
   }, m = (p, x, $, N, E, M, L) => {
-    const F = x.el = p.el;
-    let { patchFlag: R, dynamicChildren: C, dirs: J } = x;
-    R |= p.patchFlag & 16;
+    const O = x.el = p.el;
+    let { patchFlag: D, dynamicChildren: C, dirs: J } = x;
+    D |= p.patchFlag & 16;
     const W = p.props || he, q = x.props || he;
     let Q;
-    if ($ && Lt($, !1), (Q = q.onVnodeBeforeUpdate) && st(Q, $, x, p), J && Ot(x, p, $, "beforeUpdate"), $ && Lt($, !0), // #6385 the old vnode may be a user-wrapped non-isomorphic block
+    if ($ && Lt($, !1), (Q = q.onVnodeBeforeUpdate) && st(Q, $, x, p), J && Ft(x, p, $, "beforeUpdate"), $ && Lt($, !0), // #6385 the old vnode may be a user-wrapped non-isomorphic block
     // Force full diff when block metadata is unstable.
-    C && (!p.dynamicChildren || p.dynamicChildren.length !== C.length) && (R = 0, L = !1, C = null), (W.innerHTML && q.innerHTML == null || W.textContent && q.textContent == null) && u(F, ""), C ? g(
+    C && (!p.dynamicChildren || p.dynamicChildren.length !== C.length) && (D = 0, L = !1, C = null), (W.innerHTML && q.innerHTML == null || W.textContent && q.textContent == null) && u(O, ""), C ? g(
       p.dynamicChildren,
       C,
-      F,
+      O,
       $,
       N,
       ci(x, E),
@@ -2304,46 +2304,46 @@ function yu(e, t) {
     ) : L || Ge(
       p,
       x,
-      F,
+      O,
       null,
       $,
       N,
       ci(x, E),
       M,
       !1
-    ), R > 0) {
-      if (R & 16)
-        O(F, W, q, $, E);
-      else if (R & 2 && W.class !== q.class && r(F, "class", null, q.class, E), R & 4 && r(F, "style", W.style, q.style, E), R & 8) {
+    ), D > 0) {
+      if (D & 16)
+        F(O, W, q, $, E);
+      else if (D & 2 && W.class !== q.class && r(O, "class", null, q.class, E), D & 4 && r(O, "style", W.style, q.style, E), D & 8) {
         const se = x.dynamicProps;
         for (let ce = 0; ce < se.length; ce++) {
           const oe = se[ce], ye = W[oe], ke = q[oe];
-          (ke !== ye || oe === "value") && r(F, oe, ye, ke, E, $);
+          (ke !== ye || oe === "value") && r(O, oe, ye, ke, E, $);
         }
       }
-      R & 1 && p.children !== x.children && u(F, x.children);
-    } else !L && C == null && O(F, W, q, $, E);
+      D & 1 && p.children !== x.children && u(O, x.children);
+    } else !L && C == null && F(O, W, q, $, E);
     ((Q = q.onVnodeUpdated) || J) && Ce(() => {
-      Q && st(Q, $, x, p), J && Ot(x, p, $, "updated");
+      Q && st(Q, $, x, p), J && Ft(x, p, $, "updated");
     }, N);
   }, g = (p, x, $, N, E, M, L) => {
-    for (let F = 0; F < x.length; F++) {
-      const R = p[F], C = x[F], J = (
+    for (let O = 0; O < x.length; O++) {
+      const D = p[O], C = x[O], J = (
         // oldVNode may be an errored async setup() component inside Suspense
         // which will not have a mounted element
-        R.el && // - In the case of a Fragment, we need to provide the actual parent
+        D.el && // - In the case of a Fragment, we need to provide the actual parent
         // of the Fragment itself so it can move its children.
-        (R.type === X || // - In the case of different nodes, there is going to be a replacement
+        (D.type === X || // - In the case of different nodes, there is going to be a replacement
         // which also requires the correct parent container
-        !bn(R, C) || // - In the case of a component, it could contain anything.
-        R.shapeFlag & 198) ? d(R.el) : (
+        !bn(D, C) || // - In the case of a component, it could contain anything.
+        D.shapeFlag & 198) ? d(D.el) : (
           // In other cases, the parent container is not actually used so we
           // just pass the block element here to avoid a DOM parentNode call.
           $
         )
       );
       _(
-        R,
+        D,
         C,
         J,
         null,
@@ -2354,7 +2354,7 @@ function yu(e, t) {
         !0
       );
     }
-  }, O = (p, x, $, N, E) => {
+  }, F = (p, x, $, N, E) => {
     if (x !== $) {
       if (x !== he)
         for (const M in x)
@@ -2368,15 +2368,15 @@ function yu(e, t) {
           );
       for (const M in $) {
         if (zn(M)) continue;
-        const L = $[M], F = x[M];
-        L !== F && M !== "value" && r(p, M, F, L, E, N);
+        const L = $[M], O = x[M];
+        L !== O && M !== "value" && r(p, M, O, L, E, N);
       }
       "value" in $ && r(p, "value", x.value, $.value, E);
     }
-  }, ae = (p, x, $, N, E, M, L, F, R) => {
+  }, ae = (p, x, $, N, E, M, L, O, D) => {
     const C = x.el = p ? p.el : l(""), J = x.anchor = p ? p.anchor : l("");
     let { patchFlag: W, dynamicChildren: q, slotScopeIds: Q } = x;
-    Q && (F = F ? F.concat(Q) : Q), p == null ? (s(C, $, N), s(J, $, N), b(
+    Q && (O = O ? O.concat(Q) : Q), p == null ? (s(C, $, N), s(J, $, N), b(
       // #10007
       // such fragment like `<></>` will be compiled into
       // a fragment which doesn't have a children.
@@ -2387,8 +2387,8 @@ function yu(e, t) {
       E,
       M,
       L,
-      F,
-      R
+      O,
+      D
     )) : W > 0 && W & 64 && q && // #2715 the previous fragment could've been a BAILed one as a result
     // of renderSlot() with no valid children
     p.dynamicChildren && p.dynamicChildren.length === q.length ? (g(
@@ -2398,7 +2398,7 @@ function yu(e, t) {
       E,
       M,
       L,
-      F
+      O
     ), // #2080 if the stable fragment has a key, it's a <template v-for> that may
     //  get moved around. Make sure all root level vnodes inherit el.
     // #2134 or if it's a component root, it may also get moved around
@@ -2416,16 +2416,16 @@ function yu(e, t) {
       E,
       M,
       L,
-      F,
-      R
+      O,
+      D
     );
-  }, re = (p, x, $, N, E, M, L, F, R) => {
-    x.slotScopeIds = F, p == null ? x.shapeFlag & 512 ? E.ctx.activate(
+  }, re = (p, x, $, N, E, M, L, O, D) => {
+    x.slotScopeIds = O, p == null ? x.shapeFlag & 512 ? E.ctx.activate(
       x,
       $,
       N,
       L,
-      R
+      D
     ) : ze(
       x,
       $,
@@ -2433,22 +2433,22 @@ function yu(e, t) {
       E,
       M,
       L,
-      R
-    ) : ge(p, x, R);
+      D
+    ) : ge(p, x, D);
   }, ze = (p, x, $, N, E, M, L) => {
-    const F = p.component = Eu(
+    const O = p.component = Eu(
       p,
       N,
       E
     );
-    if (ol(p) && (F.ctx.renderer = gn), Mu(F, !1, L), F.asyncDep) {
-      if (E && E.registerDep(F, He, L), !p.el) {
-        const R = F.subTree = Be(yt);
-        V(null, R, x, $), p.placeholder = R.el;
+    if (ol(p) && (O.ctx.renderer = gn), Mu(O, !1, L), O.asyncDep) {
+      if (E && E.registerDep(O, He, L), !p.el) {
+        const D = O.subTree = Be(yt);
+        V(null, D, x, $), p.placeholder = D.el;
       }
     } else
       He(
-        F,
+        O,
         p,
         x,
         $,
@@ -2467,7 +2467,7 @@ function yu(e, t) {
     else
       x.el = p.el, N.vnode = x;
   }, He = (p, x, $, N, E, M, L) => {
-    const F = () => {
+    const O = () => {
       if (p.isMounted) {
         let { next: W, bu: q, u: Q, parent: se, vnode: ce } = p;
         {
@@ -2529,19 +2529,19 @@ function yu(e, t) {
       }
     };
     p.scope.on();
-    const R = p.effect = new Fo(F);
+    const D = p.effect = new Oo(O);
     p.scope.off();
-    const C = p.update = R.run.bind(R), J = p.job = R.runIfDirty.bind(R);
-    J.i = p, J.id = p.uid, R.scheduler = () => Ji(J), Lt(p, !0), C();
+    const C = p.update = D.run.bind(D), J = p.job = D.runIfDirty.bind(D);
+    J.i = p, J.id = p.uid, D.scheduler = () => Ji(J), Lt(p, !0), C();
   }, Qe = (p, x, $) => {
     x.component = p;
     const N = p.vnode.props;
     p.vnode = x, p.next = null, fu(p, x.props, N, $), gu(p, x.children, $), Tt(), Mr(p), Nt();
-  }, Ge = (p, x, $, N, E, M, L, F, R = !1) => {
+  }, Ge = (p, x, $, N, E, M, L, O, D = !1) => {
     const C = p && p.children, J = p ? p.shapeFlag : 0, W = x.children, { patchFlag: q, shapeFlag: Q } = x;
     if (q > 0) {
       if (q & 128) {
-        Ft(
+        Ot(
           C,
           W,
           $,
@@ -2549,8 +2549,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
         return;
       } else if (q & 256) {
@@ -2562,13 +2562,13 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
         return;
       }
     }
-    Q & 8 ? (J & 16 && _t(C, E, M), W !== C && u($, W)) : J & 16 ? Q & 16 ? Ft(
+    Q & 8 ? (J & 16 && _t(C, E, M), W !== C && u($, W)) : J & 16 ? Q & 16 ? Ot(
       C,
       W,
       $,
@@ -2576,8 +2576,8 @@ function yu(e, t) {
       E,
       M,
       L,
-      F,
-      R
+      O,
+      D
     ) : _t(C, E, M, !0) : (J & 8 && u($, ""), Q & 16 && b(
       W,
       $,
@@ -2585,15 +2585,15 @@ function yu(e, t) {
       E,
       M,
       L,
-      F,
-      R
+      O,
+      D
     ));
-  }, rn = (p, x, $, N, E, M, L, F, R) => {
+  }, rn = (p, x, $, N, E, M, L, O, D) => {
     p = p || Wt, x = x || Wt;
     const C = p.length, J = x.length, W = Math.min(C, J);
     let q;
     for (q = 0; q < W; q++) {
-      const Q = x[q] = R ? ht(x[q]) : ot(x[q]);
+      const Q = x[q] = D ? ht(x[q]) : ot(x[q]);
       _(
         p[q],
         Q,
@@ -2602,8 +2602,8 @@ function yu(e, t) {
         E,
         M,
         L,
-        F,
-        R
+        O,
+        D
       );
     }
     C > J ? _t(
@@ -2620,16 +2620,16 @@ function yu(e, t) {
       E,
       M,
       L,
-      F,
-      R,
+      O,
+      D,
       W
     );
-  }, Ft = (p, x, $, N, E, M, L, F, R) => {
+  }, Ot = (p, x, $, N, E, M, L, O, D) => {
     let C = 0;
     const J = x.length;
     let W = p.length - 1, q = J - 1;
     for (; C <= W && C <= q; ) {
-      const Q = p[C], se = x[C] = R ? ht(x[C]) : ot(x[C]);
+      const Q = p[C], se = x[C] = D ? ht(x[C]) : ot(x[C]);
       if (bn(Q, se))
         _(
           Q,
@@ -2639,15 +2639,15 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
       else
         break;
       C++;
     }
     for (; C <= W && C <= q; ) {
-      const Q = p[W], se = x[q] = R ? ht(x[q]) : ot(x[q]);
+      const Q = p[W], se = x[q] = D ? ht(x[q]) : ot(x[q]);
       if (bn(Q, se))
         _(
           Q,
@@ -2657,8 +2657,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         );
       else
         break;
@@ -2670,14 +2670,14 @@ function yu(e, t) {
         for (; C <= q; )
           _(
             null,
-            x[C] = R ? ht(x[C]) : ot(x[C]),
+            x[C] = D ? ht(x[C]) : ot(x[C]),
             $,
             se,
             E,
             M,
             L,
-            F,
-            R
+            O,
+            D
           ), C++;
       }
     } else if (C > q)
@@ -2686,7 +2686,7 @@ function yu(e, t) {
     else {
       const Q = C, se = C, ce = /* @__PURE__ */ new Map();
       for (C = se; C <= q; C++) {
-        const Te = x[C] = R ? ht(x[C]) : ot(x[C]);
+        const Te = x[C] = D ? ht(x[C]) : ot(x[C]);
         Te.key != null && ce.set(Te.key, C);
       }
       let oe, ye = 0;
@@ -2717,8 +2717,8 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
+          O,
+          D
         ), ye++);
       }
       const vr = et ? vu(xn) : Wt;
@@ -2735,15 +2735,15 @@ function yu(e, t) {
           E,
           M,
           L,
-          F,
-          R
-        ) : et && (oe < 0 || C !== vr[oe] ? D(nt, $, wr, 2) : oe--);
+          O,
+          D
+        ) : et && (oe < 0 || C !== vr[oe] ? R(nt, $, wr, 2) : oe--);
       }
     }
-  }, D = (p, x, $, N, E = null) => {
-    const { el: M, type: L, transition: F, children: R, shapeFlag: C } = p;
+  }, R = (p, x, $, N, E = null) => {
+    const { el: M, type: L, transition: O, children: D, shapeFlag: C } = p;
     if (C & 6) {
-      D(p.component.subTree, x, $, N);
+      R(p.component.subTree, x, $, N);
       return;
     }
     if (C & 128) {
@@ -2756,8 +2756,8 @@ function yu(e, t) {
     }
     if (L === X) {
       s(M, x, $);
-      for (let W = 0; W < R.length; W++)
-        D(R[W], x, $, N);
+      for (let W = 0; W < D.length; W++)
+        R(D[W], x, $, N);
       s(p.anchor, x, $);
       return;
     }
@@ -2765,18 +2765,18 @@ function yu(e, t) {
       z(p, x, $);
       return;
     }
-    if (N !== 2 && C & 1 && F)
+    if (N !== 2 && C & 1 && O)
       if (N === 0)
-        F.persisted && !M[li] ? s(M, x, $) : (F.beforeEnter(M), s(M, x, $), Ce(() => F.enter(M), E));
+        O.persisted && !M[li] ? s(M, x, $) : (O.beforeEnter(M), s(M, x, $), Ce(() => O.enter(M), E));
       else {
-        const { leave: W, delayLeave: q, afterLeave: Q } = F, se = () => {
+        const { leave: W, delayLeave: q, afterLeave: Q } = O, se = () => {
           p.ctx.isUnmounted ? i(M) : s(M, x, $);
         }, ce = () => {
           const oe = M._isLeaving || !!M[li];
           M._isLeaving && M[li](
             !0
             /* cancelled */
-          ), F.persisted && !oe ? se() : W(M, () => {
+          ), O.persisted && !oe ? se() : W(M, () => {
             se(), Q && Q();
           });
         };
@@ -2788,8 +2788,8 @@ function yu(e, t) {
     const {
       type: M,
       props: L,
-      ref: F,
-      children: R,
+      ref: O,
+      children: D,
       dynamicChildren: C,
       shapeFlag: J,
       patchFlag: W,
@@ -2797,7 +2797,7 @@ function yu(e, t) {
       cacheIndex: Q,
       memo: se
     } = p;
-    if ((W === -2 || C && C.hasOnce) && (E = !1), F != null && (Tt(), En(F, null, $, p, !0), Nt()), Q != null && (!p.ctx || p.ctx === x) && (x.renderCache[Q] = void 0), J & 256) {
+    if ((W === -2 || C && C.hasOnce) && (E = !1), O != null && (Tt(), En(O, null, $, p, !0), Nt()), Q != null && (!p.ctx || p.ctx === x) && (x.renderCache[Q] = void 0), J & 256) {
       x.ctx.deactivate(p);
       return;
     }
@@ -2810,7 +2810,7 @@ function yu(e, t) {
         p.suspense.unmount($, N);
         return;
       }
-      ce && Ot(p, null, x, "beforeUnmount"), J & 64 ? p.type.remove(
+      ce && Ft(p, null, x, "beforeUnmount"), J & 64 ? p.type.remove(
         p,
         x,
         $,
@@ -2828,11 +2828,11 @@ function yu(e, t) {
         $,
         !1,
         !0
-      ) : (M === X && W & 384 || !E && J & 16) && _t(R, x, $), N && H(p);
+      ) : (M === X && W & 384 || !E && J & 16) && _t(D, x, $), N && H(p);
     }
     const ke = se != null && Q == null;
     (oe && (ye = L && L.onVnodeUnmounted) || ce || ke) && Ce(() => {
-      ye && st(ye, x, p), ce && Ot(p, null, x, "unmounted"), ke && (p.el = null);
+      ye && st(ye, x, p), ce && Ft(p, null, x, "unmounted"), ke && (p.el = null);
     }, $);
   }, H = (p) => {
     const { type: x, el: $, anchor: N, transition: E } = p;
@@ -2848,8 +2848,8 @@ function yu(e, t) {
       i($), E && !E.persisted && E.afterLeave && E.afterLeave();
     };
     if (p.shapeFlag & 1 && E && !E.persisted) {
-      const { leave: L, delayLeave: F } = E, R = () => L($, M);
-      F ? F(p.el, M, R) : R();
+      const { leave: L, delayLeave: O } = E, D = () => L($, M);
+      O ? O(p.el, M, D) : D();
     } else
       M();
   }, pe = (p, x) => {
@@ -2858,8 +2858,8 @@ function yu(e, t) {
       $ = h(p), i(p), p = $;
     i(x);
   }, Qn = (p, x, $) => {
-    const { bum: N, scope: E, job: M, subTree: L, um: F, m: R, a: C } = p;
-    Dr(R), Dr(C), N && cs(N), E.stop(), M ? (M.flags |= 8, K(L, p, x, $)) : p.vnode.el && L && (L.transition = p.vnode.transition, K(L, p, x, $)), F && Ce(F, x), Ce(() => {
+    const { bum: N, scope: E, job: M, subTree: L, um: O, m: D, a: C } = p;
+    Rr(D), Rr(C), N && cs(N), E.stop(), M ? (M.flags |= 8, K(L, p, x, $)) : p.vnode.el && L && (L.transition = p.vnode.transition, K(L, p, x, $)), O && Ce(O, x), Ce(() => {
       p.isUnmounted = !0;
     }, x);
   }, _t = (p, x, $, N = !1, E = !1, M = 0) => {
@@ -2888,7 +2888,7 @@ function yu(e, t) {
   }, gn = {
     p: _,
     um: K,
-    m: D,
+    m: R,
     r: H,
     mt: ze,
     mc: b,
@@ -2946,7 +2946,7 @@ function yl(e) {
   if (t)
     return t.asyncDep && !t.asyncResolved ? t : yl(t);
 }
-function Dr(e) {
+function Rr(e) {
   if (e)
     for (let t = 0; t < e.length; t++)
       e[t].flags |= 8;
@@ -2969,12 +2969,12 @@ function v(e = !1) {
 function kl() {
   Yt.pop(), Pe = Yt[Yt.length - 1] || null;
 }
-let Fn = 1;
-function Rr(e, t = !1) {
-  Fn += e, e < 0 && Pe && t && (Pe.hasOnce = !0);
+let On = 1;
+function Dr(e, t = !1) {
+  On += e, e < 0 && Pe && t && (Pe.hasOnce = !0);
 }
 function wl(e) {
-  return e.dynamicChildren = Fn > 0 ? Pe || Wt : null, kl(), Fn > 0 && Pe && Pe.push(e), e;
+  return e.dynamicChildren = On > 0 ? Pe || Wt : null, kl(), On > 0 && Pe && Pe.push(e), e;
 }
 function k(e, t, n, s, i, r) {
   return wl(
@@ -3011,7 +3011,7 @@ const zl = ({ key: e }) => e ?? null, us = ({
   ref: e,
   ref_key: t,
   ref_for: n
-}) => (typeof e == "number" && (e = "" + e), e != null ? be(e) || /* @__PURE__ */ Se(e) || le(e) ? { i: Oe, r: e, k: t, f: !!n } : e : null);
+}) => (typeof e == "number" && (e = "" + e), e != null ? be(e) || /* @__PURE__ */ Se(e) || le(e) ? { i: Fe, r: e, k: t, f: !!n } : e : null);
 function A(e, t = null, n = null, s = 0, i = null, r = e === X ? 0 : 1, o = !1, l = !1) {
   const a = {
     __v_isVNode: !0,
@@ -3040,9 +3040,9 @@ function A(e, t = null, n = null, s = 0, i = null, r = e === X ? 0 : 1, o = !1, 
     dynamicProps: i,
     dynamicChildren: null,
     appContext: null,
-    ctx: Oe
+    ctx: Fe
   };
-  return l ? (bs(a, n), r & 128 && e.normalize(a)) : n && (a.shapeFlag |= be(n) ? 8 : 16), Fn > 0 && // avoid a block node from tracking itself
+  return l ? (bs(a, n), r & 128 && e.normalize(a)) : n && (a.shapeFlag |= be(n) ? 8 : 16), On > 0 && // avoid a block node from tracking itself
   !o && // has current parent block
   Pe && // presence of a patch flag indicates this node needs patching on updates.
   // component nodes also should always be patched, because even if the
@@ -3061,12 +3061,12 @@ function wu(e, t = null, n = null, s = 0, i = null, r = !1) {
       !0
       /* mergeRef: true */
     );
-    return n && bs(l, n), Fn > 0 && !r && Pe && (l.shapeFlag & 6 ? Pe[Pe.indexOf(e)] = l : Pe.push(l)), l.patchFlag = -2, l;
+    return n && bs(l, n), On > 0 && !r && Pe && (l.shapeFlag & 6 ? Pe[Pe.indexOf(e)] = l : Pe.push(l)), l.patchFlag = -2, l;
   }
   if (Pu(e) && (e = e.__vccOpts), t) {
     t = _u(t);
     let { class: l, style: a } = t;
-    l && !be(l) && (t.class = te(l)), me(a) && (/* @__PURE__ */ Yi(a) && !ne(a) && (a = Ze({}, a)), t.style = Ds(a));
+    l && !be(l) && (t.class = te(l)), me(a) && (/* @__PURE__ */ Yi(a) && !ne(a) && (a = Ze({}, a)), t.style = Rs(a));
   }
   const o = be(e) ? 1 : vl(e) ? 128 : Bs(e) ? 64 : me(e) ? 4 : le(e) ? 2 : 0;
   return A(
@@ -3166,14 +3166,14 @@ function bs(e, t) {
     } else {
       n = 32;
       const i = t._;
-      !i && !fl(t) ? t._ctx = Oe : i === 3 && Oe && (Oe.slots._ === 1 ? t._ = 1 : (t._ = 2, e.patchFlag |= 1024));
+      !i && !fl(t) ? t._ctx = Fe : i === 3 && Fe && (Fe.slots._ === 1 ? t._ = 1 : (t._ = 2, e.patchFlag |= 1024));
     }
   else if (le(t)) {
     if (s & 65) {
       bs(e, { default: t });
       return;
     }
-    t = { default: t, _ctx: Oe }, n = 32;
+    t = { default: t, _ctx: Fe }, n = 32;
   } else
     t = String(t), s & 64 ? (n = 16, t = [Ne(t)]) : n = 8;
   e.children = t, e.shapeFlag |= n;
@@ -3186,7 +3186,7 @@ function zu(...e) {
       if (i === "class")
         t.class !== s.class && (t.class = te([t.class, s.class]));
       else if (i === "style")
-        t.style = Ds([t.style, s.style]);
+        t.style = Rs([t.style, s.style]);
       else if (Is(i)) {
         const r = t[i], o = s[i];
         o && r !== o && !(ne(r) && r.includes(o)) ? t[i] = r ? [].concat(r, o) : o : o == null && r == null && // mergeProps({ 'onUpdate:modelValue': undefined }) should not retain
@@ -3284,8 +3284,8 @@ function Eu(e, t, n) {
   return r.ctx = { _: r }, r.root = t ? t.root : r, r.emit = ou.bind(null, r), e.ce && e.ce(r), r;
 }
 let jt = null;
-const Cu = () => jt || Oe;
-let vs, On;
+const Cu = () => jt || Fe;
+let vs, Fn;
 {
   const e = js(), t = (n, s) => {
     let i;
@@ -3296,7 +3296,7 @@ let vs, On;
   vs = t(
     "__VUE_INSTANCE_SETTERS__",
     (n) => jt = n
-  ), On = t(
+  ), Fn = t(
     "__VUE_SSR_SETTERS__",
     (n) => Ln = n
   );
@@ -3306,7 +3306,7 @@ const er = (e) => {
   return vs(e), e.scope.on(), () => {
     e.scope.off(), vs(t);
   };
-}, Fr = () => {
+}, Or = () => {
   jt && jt.scope.off(), vs(null);
 };
 function $l(e) {
@@ -3314,11 +3314,11 @@ function $l(e) {
 }
 let Ln = !1;
 function Mu(e, t = !1, n = !1) {
-  t && On(t);
+  t && Fn(t);
   const { props: s, children: i } = e.vnode, r = $l(e);
   du(e, s, r, t), mu(e, i, n || t);
   const o = r ? Iu(e, t) : void 0;
-  return t && On(!1), o;
+  return t && Fn(!1), o;
 }
 function Iu(e, t) {
   const n = e.type;
@@ -3336,24 +3336,24 @@ function Iu(e, t) {
       ]
     ), l = Mo(o);
     if (Nt(), r(), (l || e.sp) && !Cn(e) && Xc(e), l) {
-      if (o.then(Fr, Fr), t)
+      if (o.then(Or, Or), t)
         return o.then((a) => {
-          On(!0);
+          Fn(!0);
           try {
-            Or(e, a, t);
+            Fr(e, a, t);
           } finally {
-            On(!1);
+            Fn(!1);
           }
         }).catch((a) => {
-          Os(a, e, 0);
+          Fs(a, e, 0);
         });
       e.asyncDep = o;
     } else
-      Or(e, o);
+      Fr(e, o);
   } else
     Sl(e);
 }
-function Or(e, t, n) {
+function Fr(e, t, n) {
   le(t) ? e.type.__ssrInlineRender ? e.ssrRender = t : e.render = t : me(t) && (e.setupState = Xo(t)), Sl(e);
 }
 function Sl(e, t, n) {
@@ -3392,7 +3392,7 @@ function Ws(e) {
 function Pu(e) {
   return le(e) && "__vccOpts" in e;
 }
-const G = (e, t) => /* @__PURE__ */ Oc(e, t, Ln), ju = "3.5.43";
+const G = (e, t) => /* @__PURE__ */ Fc(e, t, Ln), ju = "3.5.43";
 /**
 * @vue/runtime-dom v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
@@ -3407,7 +3407,7 @@ if (Lr)
     });
   } catch {
   }
-const El = ji ? (e) => ji.createHTML(e) : (e) => e, Du = "http://www.w3.org/2000/svg", Ru = "http://www.w3.org/1998/Math/MathML", pt = typeof document < "u" ? document : null, Br = pt && /* @__PURE__ */ pt.createElement("template"), Fu = {
+const El = ji ? (e) => ji.createHTML(e) : (e) => e, Ru = "http://www.w3.org/2000/svg", Du = "http://www.w3.org/1998/Math/MathML", pt = typeof document < "u" ? document : null, Br = pt && /* @__PURE__ */ pt.createElement("template"), Ou = {
   insert: (e, t, n) => {
     t.insertBefore(e, n || null);
   },
@@ -3416,7 +3416,7 @@ const El = ji ? (e) => ji.createHTML(e) : (e) => e, Du = "http://www.w3.org/2000
     t && t.removeChild(e);
   },
   createElement: (e, t, n, s) => {
-    const i = t === "svg" ? pt.createElementNS(Du, e) : t === "mathml" ? pt.createElementNS(Ru, e) : n ? pt.createElement(e, { is: n }) : pt.createElement(e);
+    const i = t === "svg" ? pt.createElementNS(Ru, e) : t === "mathml" ? pt.createElementNS(Du, e) : n ? pt.createElement(e, { is: n }) : pt.createElement(e);
     return e === "select" && s && s.multiple != null && i.setAttribute("multiple", s.multiple), i;
   },
   createText: (e) => pt.createTextNode(e),
@@ -3462,9 +3462,9 @@ const El = ji ? (e) => ji.createHTML(e) : (e) => e, Du = "http://www.w3.org/2000
       n ? n.previousSibling : t.lastChild
     ];
   }
-}, Ou = /* @__PURE__ */ Symbol("_vtc");
+}, Fu = /* @__PURE__ */ Symbol("_vtc");
 function Lu(e, t, n) {
-  const s = e[Ou];
+  const s = e[Fu];
   s && (t = (t ? [t, ...s] : [...s]).join(" ")), t == null ? e.removeAttribute("class") : n ? e.setAttribute("class", t) : e.className = t;
 }
 const Vr = /* @__PURE__ */ Symbol("_vod"), Bu = /* @__PURE__ */ Symbol("_vsh"), Vu = /* @__PURE__ */ Symbol(""), Uu = /(?:^|;)\s*display\s*:/;
@@ -3785,7 +3785,7 @@ const oA = ["ctrl", "shift", "alt", "meta"], lA = {
     }
     return e(i, ...r);
   }));
-}, cA = /* @__PURE__ */ Ze({ patchProp: tA }, Fu);
+}, cA = /* @__PURE__ */ Ze({ patchProp: tA }, Ou);
 let Zr;
 function uA() {
   return Zr || (Zr = xu(cA));
@@ -3810,60 +3810,46 @@ function dA(e) {
 function fA(e) {
   return be(e) ? document.querySelector(e) : e;
 }
-const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【副本进行中：钟楼】", bA = [], vA = { briefingName: "钟楼" }, kA = { type: "clock", dayStart: "12:00", minutesPerRound: 5 }, wA = { type: "nights", template: "剩余{n}夜" }, _A = "至第四日日出", zA = ["死者", "布局者", "原值班者", "摇钟者", "窃读者", "异见者", "首夜目击", "大厅目击", "零点目击"], $A = "死者永远不是{{user}}或其同伴。其余角色位默认由NPC担任；{{user}}或同伴通过自己的行动进入某个位置时，以实际行动为准。", SA = [{ key: "crank", label: "曲柄当前在谁手里", hint: "4F机房曲柄现在由谁掌握；没人拿着就写「挂在机房」" }, { key: "watcher", label: "当夜值班者", hint: "当夜抽签或托付后的值班者；白天写上一夜的值班者，尚未抽签写「未定」" }, { key: "positions", label: "各角色所在位置", hint: "简写，如「死者：5F西侧；布局者：1F大厅」；只写正文能推断出的" }, { key: "victim", label: "死者目前状态", hint: "如「正常活动」「5F西侧昏睡」「已坠入竖井」「尸体已被发现」" }, { key: "clues", label: "已被发现的关键线索", hint: "列表；只记{{user}}或同伴已经发现的" }, { key: "theories", label: "已公开讨论过的推理", hint: "列表；众人公开说出过的推理或怀疑" }], EA = [{ id: "d1", name: "第一日·白天", cap: 72, next: "n1", clock: !0 }, { id: "n1", name: "第一夜", cap: 28, next: "d2", night: !0 }, { id: "d2", name: "第二日·白天", cap: 72, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 28, next: "d3", night: !0 }, { id: "d3", name: "第三日·白天", cap: 72, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 28, next: null, night: !0 }, { id: "inv", name: "调查", cap: 50, next: "trial", byTag: !0, frozen: !0, deadline: "至审判结束" }, { id: "trial", name: "审判", cap: 50, next: null, byTag: !0, frozen: !0 }], CA = [{ id: "E01", phase: "d1", text: "十人落在塔外岩岸，系统展开简报与入场提示，发放楼层图。", kind: "event", from: 1, to: 1 }, { id: "E02", phase: "d1", text: "{布局者}独自读完《操作手册》及夹页，多次上5F，在东半侧外壁墙根画下粉笔短线与数字1到6。", kind: "event", from: 2, to: 60 }, { id: "E03", phase: "d1", text: "本日须自然呈现至少两条公平破绽（见世界书F4），不得特写或点破。", kind: "directive", from: 2, to: 72 }, { id: "E04", phase: "d1", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{首夜目击}。", kind: "event", from: 72, to: 72 }, { id: "E05", phase: "n1", text: "{首夜目击}经4F铁门、旋转梯登钟室检查大钟，铁门吱呀响两次。", kind: "event", from: 1, to: 10 }, { id: "E06", phase: "n1", text: "{首夜目击}回机房摇钟，曲柄全程很轻，第20轮前鸣钟十二下。", kind: "event", from: 10, to: 20 }, { id: "E07", phase: "d2", text: "{布局者}从1F药箱取走两片安眠药（剩十片），溶进保温杯的热茶，之后拿着保温杯在塔内走动。", kind: "event", from: 5, to: 15 }, { id: "E08", phase: "d2", text: "{布局者}在1F大厅角落告诉{死者}铭文的位置与“只有钟面三点前能过去”，递出保温杯。{大厅目击}看见两人交谈。", kind: "event", from: 19, to: 19, if: "{死者}与{布局者}仍按原计划行动" }, { id: "E09", phase: "d2", text: "{死者}从文具柜拿走较粗的那支铅笔和几张纸。", kind: "event", from: 20, to: 28, if: "{死者}仍按原计划行动" }, { id: "E10", phase: "d2", text: "{死者}拿着保温杯独自上楼。{大厅目击}看见。", kind: "event", from: 29, to: 29, if: "{死者}仍按原计划行动" }, { id: "E11", phase: "d2", text: "{死者}在5F西侧外壁抄下铭文，在页边写下日期与{布局者}的名字，喝了茶，靠墙睡着。", kind: "event", from: 31, to: 31, if: "{死者}已到达5F西侧且未被阻止" }, { id: "E12", phase: "d2", text: "{窃读者}跟着上楼。{大厅目击}看见。", kind: "event", from: 32, to: 32 }, { id: "E13", phase: "d2", text: "{窃读者}在5F看见{死者}睡着，没有叫醒，用掉在地上的铅笔抄下铭文，顺手把铅笔揣走。", kind: "event", from: 33, to: 33, if: "{死者}正在5F西侧昏睡" }, { id: "E14", phase: "d2", text: "{窃读者}匆匆下楼。{大厅目击}看见。", kind: "event", from: 34, to: 34 }, { id: "E15", phase: "d2", text: "时针之墙压住东口，推不开；第39轮起{死者}所在区域与东口隔开。", kind: "event", from: 35, to: 39 }, { id: "E16", phase: "d2", text: "共同进食，{死者}缺席。{窃读者}没有说出他看见的事。", kind: "event", from: 55, to: 65, if: "{死者}仍被封在西侧" }, { id: "E17", phase: "d2", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{原值班者}。", kind: "event", from: 72, to: 72 }, { id: "E18", phase: "n2", text: "{窃读者}经铁门登钟室，路过格栅没有停下，匆匆看过即下来。铁门响两次，间隔短。", kind: "event", from: 1, to: 4 }, { id: "E19", phase: "n2", text: "{布局者}取下插销，上5F东半圆摸索一圈，确认一面直墙贯穿圆心，下来挂回插销。", kind: "event", from: 5, to: 8 }, { id: "E20", phase: "n2", text: "{原值班者}经铁门上行，在格栅前停下贴近静听，听见西半圆里熟睡的呼吸声，登钟室检查后下来。铁门响两次，间隔长。", kind: "event", from: 9, to: 14, if: "{死者}仍在西半圆昏睡" }, { id: "E21", phase: "n2", text: "{摇钟者}来到机房帮忙，{原值班者}笑着把曲柄托付给对方。若此时{{user}}在机房并愿意摇钟，改为托付给{{user}}。", kind: "event", from: 15, to: 17 }, { id: "E22", phase: "n2", text: "摇钟：第18轮起曲柄变沉；第20轮{死者}与保温杯被时针之墙推进竖井，曲柄突然一轻，{原值班者}说“老钟都这样”；{大厅目击}在1F听见闷响；第22轮鸣钟十二下。", kind: "event", from: 18, to: 22, if: "{死者}仍在西半圆，且无人中止或逆摇" }, { id: "E23", phase: "n2", text: "{零点目击}从摇钟者手中接过插销，上5F摸索一圈：只有一面墙，完整的圆，没有人。下来挂回插销。", kind: "event", from: 23, to: 25 }, { id: "E24", phase: "d3", text: "日出点名。若{死者}缺席：众人搜索，打开1F竖井检修门发现尸体，系统宣布有人死于他人之手、钟楼停摆，并在正文末尾输出<阶段切换>调查</阶段切换>。若无人死亡：点名全员到齐，钟楼照常走动。", kind: "event", from: 1, to: 1 }, { id: "E25", phase: "d3", text: "日落：钟停在6点，东口上锁，1F在所有存活者中抽签（包括{{user}}与同伴）选出第三夜值班者。所有人都知道这支签意味着什么。", kind: "event", from: 72, to: 72 }, { id: "E26", phase: "n3", text: "第三夜值班者知道自己将被留下，会按其人格设法把曲柄托付给别人（劝说、交换条件、欺骗、以情相求），也可能认命；{{user}}与同伴同样可能被托付。最后实际摇动曲柄、让大钟鸣响十二下的人，就是第三夜的值班者，第20轮前鸣钟。", kind: "event", from: 1, to: 20 }, { id: "E27", phase: "n3", text: "第四日日出：点名。第三夜最后摇动曲柄的人没有出现，他站在钟室大钟旁，被钟楼留下成为钟守，石壁上多了他的名字。其余人通关。按世界书F5评价，在正文末尾输出<副本结算>。", kind: "event", from: 28, to: 28 }, { id: "E28", phase: "inv", text: "调查开始：钟楼停在12点，5F为完整的圆，东口因停摆上锁，插销挂在机房。", kind: "event", from: 1, to: 1 }, { id: "E29", phase: "inv", text: "调查时间结束：系统宣布审判开启，并在正文末尾输出<阶段切换>审判</阶段切换>。", kind: "event", from: 50, to: 50 }, { id: "E30", phase: "trial", text: "审判时间结束：强制投票，按守则第10条执行；投中时凶手成为钟守，其余人通关。在正文末尾输出<副本结算>。", kind: "event", from: 50, to: 50 }], MA = [{ id: "M1", q: "第一夜的值班签会抽中主播吗", yes: "会", no: "不会", p: 0.1, by: "d1", judge: "第一日日落的抽签结果是{{user}}本人当夜值班" }, { id: "M2", q: "塔里会出人命吗", yes: "会", no: "不会", p: 0.5, judge: "有人死于他人之手，系统宣布钟楼停摆、开启审判" }, { id: "M3", q: "主播会亲手摇响大钟吗", yes: "会", no: "不会", p: 0.35, judge: "{{user}}本人在4F机房摇动曲柄，让大钟鸣响" }], IA = [{ title: "游玩说明", md: `## 副本概况
+const pA = "zhonglou", hA = "钟楼", mA = "1.5.0", gA = "S", xA = 10, yA = "【副本进行中：钟楼】", bA = [], vA = { briefingName: "钟楼" }, kA = { type: "clock", dayStart: "12:00", minutesPerRound: 5 }, wA = { type: "nights", template: "剩余{n}夜" }, _A = "至第四日日出", zA = ["死者", "布局者", "原值班者", "摇钟者", "窃读者", "异见者", "首夜目击", "大厅目击", "零点目击"], $A = "死者永远不是{{user}}或其同伴。其余角色位默认由NPC担任；{{user}}或同伴通过自己的行动进入某个位置时，以实际行动为准。", SA = [{ key: "crank", label: "曲柄当前在谁手里", hint: "4F机房曲柄现在由谁掌握；没人拿着就写「挂在机房」" }, { key: "watcher", label: "当夜值班者", hint: "当夜抽签或托付后的值班者；白天写上一夜的值班者，尚未抽签写「未定」" }, { key: "positions", label: "各角色所在位置", hint: "简写，如「死者：5F西侧；布局者：1F大厅」；只写正文能推断出的" }, { key: "victim", label: "死者目前状态", hint: "如「正常活动」「5F西侧昏睡」「已坠入竖井」「尸体已被发现」" }, { key: "clues", label: "已被发现的关键线索", hint: "列表；只记{{user}}或同伴已经发现的" }, { key: "theories", label: "已公开讨论过的推理", hint: "列表；众人公开说出过的推理或怀疑" }], EA = [{ id: "d1", name: "第一日·白天", cap: 72, next: "n1", clock: !0 }, { id: "n1", name: "第一夜", cap: 28, next: "d2", night: !0 }, { id: "d2", name: "第二日·白天", cap: 72, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 28, next: "d3", night: !0 }, { id: "d3", name: "第三日·白天", cap: 72, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 28, next: null, night: !0 }, { id: "inv", name: "调查", cap: 50, next: "trial", byTag: !0, frozen: !0, deadline: "至审判结束" }, { id: "trial", name: "审判", cap: 50, next: null, byTag: !0, frozen: !0 }], CA = [{ id: "E01", phase: "d1", text: "十人落在塔外岩岸，系统展开简报与入场提示，发放楼层图。", kind: "event", from: 1, to: 1 }, { id: "E02", phase: "d1", text: "{布局者}独自读完《操作手册》及夹页，多次上5F，在东半侧外壁墙根画下粉笔短线与数字1到6。", kind: "event", from: 2, to: 60 }, { id: "E03", phase: "d1", text: "本日须自然呈现至少两条公平破绽（见世界书F4），不得特写或点破。", kind: "directive", from: 2, to: 72 }, { id: "E04", phase: "d1", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{首夜目击}。", kind: "event", from: 72, to: 72 }, { id: "E05", phase: "n1", text: "{首夜目击}经4F铁门、旋转梯登钟室检查大钟，铁门吱呀响两次。", kind: "event", from: 1, to: 10 }, { id: "E06", phase: "n1", text: "{首夜目击}回机房摇钟，曲柄全程很轻，第20轮前鸣钟十二下。", kind: "event", from: 10, to: 20 }, { id: "E07", phase: "d2", text: "{布局者}从1F药箱取走两片安眠药（剩十片），溶进保温杯的热茶，之后拿着保温杯在塔内走动。", kind: "event", from: 5, to: 15 }, { id: "E08", phase: "d2", text: "{布局者}在1F大厅角落告诉{死者}铭文的位置与“只有钟面三点前能过去”，递出保温杯。{大厅目击}看见两人交谈。", kind: "event", from: 19, to: 19, if: "{死者}与{布局者}仍按原计划行动" }, { id: "E09", phase: "d2", text: "{死者}从文具柜拿走较粗的那支铅笔和几张纸。", kind: "event", from: 20, to: 28, if: "{死者}仍按原计划行动" }, { id: "E10", phase: "d2", text: "{死者}拿着保温杯独自上楼。{大厅目击}看见。", kind: "event", from: 29, to: 29, if: "{死者}仍按原计划行动" }, { id: "E11", phase: "d2", text: "{死者}在5F西侧外壁抄下铭文，在页边写下日期与{布局者}的名字，喝了茶，靠墙睡着。", kind: "event", from: 31, to: 31, if: "{死者}已到达5F西侧且未被阻止" }, { id: "E12", phase: "d2", text: "{窃读者}跟着上楼。{大厅目击}看见。", kind: "event", from: 32, to: 32 }, { id: "E13", phase: "d2", text: "{窃读者}在5F看见{死者}睡着，没有叫醒，用掉在地上的铅笔抄下铭文，顺手把铅笔揣走。", kind: "event", from: 33, to: 33, if: "{死者}正在5F西侧昏睡" }, { id: "E14", phase: "d2", text: "{窃读者}匆匆下楼。{大厅目击}看见。", kind: "event", from: 34, to: 34 }, { id: "E15", phase: "d2", text: "时针之墙压住东口，推不开；第39轮起{死者}所在区域与东口隔开。", kind: "event", from: 35, to: 39 }, { id: "E16", phase: "d2", text: "共同进食，{死者}缺席。{窃读者}没有说出他看见的事。", kind: "event", from: 55, to: 65, if: "{死者}仍被封在西侧" }, { id: "E17", phase: "d2", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{原值班者}。", kind: "event", from: 72, to: 72 }, { id: "E18", phase: "n2", text: "{窃读者}经铁门登钟室，路过格栅没有停下，匆匆看过即下来。铁门响两次，间隔短。", kind: "event", from: 1, to: 4 }, { id: "E19", phase: "n2", text: "{布局者}取下插销，上5F东半圆摸索一圈，确认一面直墙贯穿圆心，下来挂回插销。", kind: "event", from: 5, to: 8 }, { id: "E20", phase: "n2", text: "{原值班者}经铁门上行，在格栅前停下贴近静听，听见西半圆里熟睡的呼吸声，登钟室检查后下来。铁门响两次，间隔长。", kind: "event", from: 9, to: 14, if: "{死者}仍在西半圆昏睡" }, { id: "E21", phase: "n2", text: "{摇钟者}来到机房帮忙，{原值班者}笑着把曲柄托付给对方。若此时{{user}}在机房并愿意摇钟，改为托付给{{user}}。", kind: "event", from: 15, to: 17 }, { id: "E22", phase: "n2", text: "摇钟：第18轮起曲柄变沉；第20轮{死者}与保温杯被时针之墙推进竖井，曲柄突然一轻，{原值班者}说“老钟都这样”；{大厅目击}在1F听见闷响；第22轮鸣钟十二下。", kind: "event", from: 18, to: 22, if: "{死者}仍在西半圆，且无人中止或逆摇" }, { id: "E23", phase: "n2", text: "{零点目击}从摇钟者手中接过插销，上5F摸索一圈：只有一面墙，完整的圆，没有人。下来挂回插销。", kind: "event", from: 23, to: 25 }, { id: "E24", phase: "d3", text: "日出点名。若{死者}缺席：众人搜索，打开1F竖井检修门发现尸体，系统宣布有人死于他人之手、钟楼停摆，并在正文末尾输出<阶段切换>调查</阶段切换>。若无人死亡：点名全员到齐，钟楼照常走动。", kind: "event", from: 1, to: 1 }, { id: "E25", phase: "d3", text: "日落：钟停在6点，东口上锁，1F在所有存活者中抽签（包括{{user}}与同伴）选出第三夜值班者。所有人都知道这支签意味着什么。", kind: "event", from: 72, to: 72 }, { id: "E26", phase: "n3", text: "第三夜值班者知道自己将被留下，会按其人格设法把曲柄托付给别人（劝说、交换条件、欺骗、以情相求），也可能认命；{{user}}与同伴同样可能被托付。最后实际摇动曲柄、让大钟鸣响十二下的人，就是第三夜的值班者，第20轮前鸣钟。", kind: "event", from: 1, to: 20 }, { id: "E27", phase: "n3", text: "第四日日出：点名。第三夜最后摇动曲柄的人没有出现，他站在钟室大钟旁，被钟楼留下成为钟守，石壁上多了他的名字。其余人通关。按世界书F5评价，在正文末尾输出<副本结算>。", kind: "event", from: 28, to: 28 }, { id: "E28", phase: "inv", text: "调查开始：钟楼停在12点，5F为完整的圆，东口因停摆上锁，插销挂在机房。", kind: "event", from: 1, to: 1 }, { id: "E29", phase: "inv", text: "调查时间结束：系统宣布审判开启，并在正文末尾输出<阶段切换>审判</阶段切换>。", kind: "event", from: 50, to: 50 }, { id: "E30", phase: "trial", text: "审判时间结束：强制投票，按守则第10条执行；投中时凶手成为钟守，其余人通关。在正文末尾输出<副本结算>。", kind: "event", from: 50, to: 50 }], MA = [{ id: "M1", q: "第一夜的值班签会抽中主播吗", yes: "会", no: "不会", p: 0.1, by: "d1", judge: "第一日日落的抽签结果是{{user}}本人当夜值班" }, { id: "M2", q: "塔里会出人命吗", yes: "会", no: "不会", p: 0.5, judge: "有人死于他人之手，系统宣布钟楼停摆、开启审判" }, { id: "M3", q: "主播会亲手摇响大钟吗", yes: "会", no: "不会", p: 0.35, judge: "{{user}}本人在4F机房摇动曲柄，让大钟鸣响" }], IA = [{ title: "游玩说明", md: `## 副本概况
+
 - 名称：钟楼
 - 等级：S
-- 类型：密室推理·审判
-- 人数：10人（你、最多3名携带角色、其余为系统生成的参与者）
-- 目标：存活三夜，至第四日日出
+- 人数：10人
+- 时限：以钟楼为准，至第四日日出
+- 目标：存活三夜，请避免成为钟守
 
 ## 你需要知道的
+
 1. 时间以钟楼为准。塔里没有钟，只有走出塔门才能看到钟面。
-2. 每天最多100轮对话：白天72轮，夜晚28轮。到点会自动日落、日出，不会等你。
-3. 你不在场，事情也照样会发生。你只会知道你和同伴亲眼看到、亲耳听到的部分。
-4. 想快进可以直接说，比如"跳到日落""睡到天亮"。遇到必须由你亲自决定的事，快进会自动停下。
-5. 入塔后所有人的位格按基准值执行，异能封存，道具栏冻结，你的同伴也一样。
+2. 每天最多100轮对话：白天72轮，夜晚28轮。到点会自动日落、日出。
+3. 在场与否，事情都会发生。
+4. 可以用指令快进，如"跳到日落""睡到天亮"。遇到必须决定的事，快进会自动停下。
+5. 入塔后所有人的位格按基准值执行，异能封存，道具栏冻结。
 6. 塔内一砖一石不可损毁，海是副本的边界。
 7. 有人死于他人之手时开启审判。调查最多50轮，审判最多50轮。每位存活者投一票，得票最多者为结果，平票算作没有找出凶手。
    投中凶手：凶手被抹杀，其余人通关，副本结束。
    没有投中：凶手独自通关，其余所有人被抹杀。
-8. 没有发生命案的话，第四日日出时，第三夜最后一个摇动曲柄的人会被钟楼留下，成为钟守，其余人通关。
+8. 若无命案发生，第四日日出时，第三夜最后一个摇动曲柄的人会被钟楼留下，成为钟守，其余人通关。
    系统只给了一句简报：请避免成为钟守。
 9. 你可以做任何事。世界不会保护你，也不会额外惩罚你，只按规则与因果回应。
 
-## 携带角色
-- 最多3名。
-- 他们和其他参与者一样住在塔里，过着塔里的日子，也可能看见或听见一些事。
-- 他们信任你，但在审判中会看证据。
-- 你和同伴不会被预先安排任何身份。你们做了什么，就会成为什么。
-
 ## 直播
+
 若回廊已开放副本直播，入场时系统会询问是否开启。选择后整局锁定，不能中途更改。
 
-## 评价
-评价从D到S。活下来就有D。越接近完整的真相，评价越高。
-
 ## 小提示
-- 你看到的、别人说的、纸上画的，都值得反复对照。
+
+- 看到的、听见的、纸上画的，都值得反复对照。
 - 值班不是小事。
-- 多记，多问，多回头看。` }, { title: "钟楼守则", md: `本条目是{{user}}与同行者在副本内可以正常获得的全部公开信息：
-- 「系统简报」与「入场提示」由系统在入场时展开；
-- 「钟楼守则」刻在1F大厅北侧石壁上，任何人可随时阅读；
-- 「楼层图」为入场时发到每人手中的纸质图；
-- 「公开环境」为任何人进塔后都能直接看见的事实。
-
-公开内容可以被角色完整念出、抄写、讨论。F1是玩家可见的唯一规则正文；F2、F3、F4不得被写入本条目，也不得以任何形式补进守则。
-
-## 一、系统简报
+- 多记，多问，多回头看。` }, { title: "钟楼守则", md: `## 一、系统简报
 
 「副本简报 - 钟楼」
 「人数：10人」
 「等级：S」
-「目标：存活三夜」
 「时限：以钟楼为准，至第四日日出」
-「简报：请避免成为钟守。」
+「简报：存活三夜，请避免成为钟守。」
 
-## 二、入场提示（系统公告）
+## 二、系统公告
 
 「本副本内，所有玩家的位格按基准值执行。」
 「异能暂时封存，道具栏暂时冻结，无法取出，也无法存入。」
@@ -3931,7 +3917,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   markets: MA,
   docs: IA,
   danmaku: TA
-}, PA = "jingjie", jA = "境界游乐园", DA = "1.1.0", RA = "A", FA = "【副本进行中：境界游乐园】", OA = [], LA = { briefingName: "境界游乐园" }, BA = { type: "none" }, VA = { type: "fromPanel" }, UA = [], WA = [], HA = [{ id: "M1", q: "15:30演出时主播会回头吗", yes: "会", no: "不会", p: 0.3, judge: "15:30表演区演出期间，{{user}}本人回头了" }, { id: "M2", q: "主播会坐上摩天轮吗", yes: "会", no: "不会", p: 0.55, judge: "{{user}}本人乘坐了摩天轮" }, { id: "M3", q: "主播会走进镜宫吗", yes: "会", no: "不会", p: 0.45, judge: "{{user}}本人进入了镜宫" }], GA = [{ title: "游客须知", md: `A-境界游乐园｜F1 可公开规则·《境界游乐园》游客须知（修订版）
+}, PA = "jingjie", jA = "境界游乐园", RA = "1.2.0", DA = "A", OA = "【副本进行中：境界游乐园】", FA = [], LA = { briefingName: "境界游乐园" }, BA = { type: "none" }, VA = { type: "fromPanel" }, UA = [], WA = [], HA = [{ id: "M1", q: "15:30演出时主播会回头吗", yes: "会", no: "不会", p: 0.3, judge: "15:30表演区演出期间，{{user}}本人回头了" }, { id: "M2", q: "主播会坐上摩天轮吗", yes: "会", no: "不会", p: 0.55, judge: "{{user}}本人乘坐了摩天轮" }, { id: "M3", q: "主播会走进镜宫吗", yes: "会", no: "不会", p: 0.45, judge: "{{user}}本人进入了镜宫" }], GA = [{ title: "游客须知", md: `## 《境界游乐园》游客须知（修订版）
 
 本须知由园区统一印制。
 请在入园后完整阅读一次，并将本页交还给入口工作人员。
@@ -3969,19 +3955,12 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 本园登记的常规项目只有以下八项：
 
 1. 摩天轮：每个轿厢核载四人，发车前会响铃。轿厢返回时，如人数与发车前不一致，请立即告知工作人员，不要自行清点。
-
 2. 过山车：列车会经过一段无灯隧道。进入隧道后，如果听见同行者拍你的肩膀并叫你的名字，请保持面向前方，不要转头。
-
 3. 旋转木马：音乐停止后，工作人员会逐一解锁座位。未听见工作人员叫到你的座位编号前，不要下马。
-
 4. 碰碰车：碰碰车禁止单人驾驶。若看见某辆车空着座位，却仍有人向你招手示意同乘，不要同意，拒绝即可。
-
 5. 镜宫：镜宫只有一个入口和一个出口，出口方向由绿色箭头标示。不要触摸镜面，也不要在镜宫内呼喊同行者的姓名。
-
 6. 海盗船：项目开始和结束时各响两次铃。结束后请留在原位，等工作人员打开安全压杆。
-
 7. 旋转茶杯：项目运行期间请握住杯内扶手，不要与其他茶杯交换物品。项目停止后，等地面完全静止再离开。
-
 8. 表演区：每日15:30同时进行鹦鹉表演与木偶戏。演出开始前请入场，演出结束后才可离开。
 
 除以上八项外，园区不承认其他可计入离园资格的项目。
@@ -4028,6 +4007,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 如果你看见木偶出现在游客、表演人员或小丑手中，请不要询问木偶的来源，也不要先确认持有者的身份。
 
 先观察持有者的手环：
+
 - 手环为蓝色：与其保持距离，寻找佩戴工作牌的工作人员；
 - 手环为红色：不要让他靠近工作人员，也不要让木偶回到舞台；
 - 手环颜色无法确认：不要看他的脸。
@@ -4113,10 +4093,10 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 如果你确认自己不是游客，请把手环交给离你最近的人。` }], KA = {
   id: PA,
   name: jA,
-  version: DA,
-  level: RA,
-  token: FA,
-  legacyKeys: OA,
+  version: RA,
+  level: DA,
+  token: OA,
+  legacyKeys: FA,
   detect: LA,
   time: BA,
   remaining: VA,
@@ -4154,7 +4134,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   markets: bd,
   docs: vd,
   danmaku: kd
-}, _d = "youxi", zd = "游戏", $d = "1.2.0", Sd = "C", Ed = "【副本进行中：游戏】", Cd = [], Md = { briefingName: "游戏", patterns: ["(本次|此次)副本《游戏》"] }, Id = { type: "countdown", minutesPerRound: 8 }, Td = { type: "fromPanel" }, Nd = "至结算", Pd = [{ id: "main", name: "游戏", cap: 90, next: null }], jd = [], Dd = [{ id: "M1", q: "第一个出局的会是主播吗", yes: "是", no: "不是", p: 0.08, judge: "第一个被淘汰出局的人是{{user}}", judgeNo: "{{user}}以外的某个人成为第一个被淘汰出局的人" }, { id: "M2", q: "三场游戏能全部玩完吗", yes: "能", no: "不能", p: 0.55, judge: "第三场游戏结束" }, { id: "M3", q: "喊数抱团时主播会拉陌生人吗", yes: "会", no: "不会", p: 0.5, judge: "喊数抱团时，{{user}}主动拉了自己同伴以外的人一起抱团" }], Rd = [], Fd = [{ type: "discuss", text: "小时候玩的游戏，现在要拿命玩", when: "open" }, { type: "discuss", text: "喊数抱团，手快有手慢无" }, { type: "bless", text: "数清人数啊！" }, { type: "discuss", text: "那群小孩一直在看这边" }, { type: "discuss", text: "十二个人，最后能剩几个" }, { type: "discuss", text: "三场游戏，现在第几场了" }, { type: "cold", text: "C级本，老观众都说别小看" }, { type: "discuss", text: "村子里太安静了，就小孩在笑" }, { type: "bless", text: "别掉队，跟紧人" }, { type: "smear", text: "拉人凑数的时候，真看出人品了" }, { type: "discuss", text: "又少了一个……", when: "hurt" }], Od = {
+}, _d = "youxi", zd = "游戏", $d = "1.2.0", Sd = "C", Ed = "【副本进行中：游戏】", Cd = [], Md = { briefingName: "游戏", patterns: ["(本次|此次)副本《游戏》"] }, Id = { type: "countdown", minutesPerRound: 8 }, Td = { type: "fromPanel" }, Nd = "至结算", Pd = [{ id: "main", name: "游戏", cap: 90, next: null }], jd = [], Rd = [{ id: "M1", q: "第一个出局的会是主播吗", yes: "是", no: "不是", p: 0.08, judge: "第一个被淘汰出局的人是{{user}}", judgeNo: "{{user}}以外的某个人成为第一个被淘汰出局的人" }, { id: "M2", q: "三场游戏能全部玩完吗", yes: "能", no: "不能", p: 0.55, judge: "第三场游戏结束" }, { id: "M3", q: "喊数抱团时主播会拉陌生人吗", yes: "会", no: "不会", p: 0.5, judge: "喊数抱团时，{{user}}主动拉了自己同伴以外的人一起抱团" }], Dd = [], Od = [{ type: "discuss", text: "小时候玩的游戏，现在要拿命玩", when: "open" }, { type: "discuss", text: "喊数抱团，手快有手慢无" }, { type: "bless", text: "数清人数啊！" }, { type: "discuss", text: "那群小孩一直在看这边" }, { type: "discuss", text: "十二个人，最后能剩几个" }, { type: "discuss", text: "三场游戏，现在第几场了" }, { type: "cold", text: "C级本，老观众都说别小看" }, { type: "discuss", text: "村子里太安静了，就小孩在笑" }, { type: "bless", text: "别掉队，跟紧人" }, { type: "smear", text: "拉人凑数的时候，真看出人品了" }, { type: "discuss", text: "又少了一个……", when: "hurt" }], Fd = {
   id: _d,
   name: zd,
   version: $d,
@@ -4167,9 +4147,9 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   deadline: Nd,
   phases: Pd,
   events: jd,
-  markets: Dd,
-  docs: Rd,
-  danmaku: Fd
+  markets: Rd,
+  docs: Dd,
+  danmaku: Od
 }, Ld = "wuming", Bd = "污名", Vd = "1.1.0", Ud = "B", Wd = "4-8", Hd = "【副本进行中：污名】", Gd = ["污名"], Kd = { briefingName: "污名" }, qd = { type: "countdown", minutesPerRound: 3 }, Yd = { type: "countdown", template: "剩余{m}分钟" }, Jd = "至收播", Zd = [{ id: "normal", name: "常规", cap: 60, next: "final" }, { id: "final", name: "定稿", cap: 20, next: null }], Xd = [{ id: "E01", phase: "normal", from: 1, to: 1, kind: "event", text: "玩家在正在直播的卧室里醒来，系统展开简报。直播已经开始，她正在被围攻。" }, { id: "E02", phase: "final", from: 1, to: 1, kind: "directive", text: "定稿阶段开始：弹幕不再产生全新指控，而是从此前出现过的叙事中挑选一版，逐渐写进现实。" }, { id: "E03", phase: "final", from: 20, to: 20, kind: "event", text: "收播：直播结束。按世界书F1第九节判定失败或评价，在正文末尾输出<副本结算>。" }], Qd = [], ef = !0, tf = {
   id: Ld,
   name: Bd,
@@ -4186,22 +4166,18 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   events: Xd,
   docs: Qd,
   disableLive: ef
-}, nf = "dusongshu", sf = "杜松树", rf = "1.1.0", of = "A", lf = 6, af = "【副本进行中：杜松树】", cf = [], uf = { briefingName: "杜松树" }, Af = { type: "countdown", minutesPerRound: 30 }, df = { type: "fromPanel" }, ff = "至第四日日出", pf = ["父亲", "继母", "玛琳", "男孩", "其余"], hf = "登记开局发到的牌面。「继母」「男孩」必定发出；金匠、鞋匠、磨坊工写进「其余」，多人用顿号分隔。之后牌面改写不重新登记。", mf = [{ id: "n1", name: "第一夜", cap: 24, next: "d2", night: !0 }, { id: "d2", name: "第二日", cap: 24, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 24, next: "d3", night: !0 }, { id: "d3", name: "第三日", cap: 24, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 24, next: null, night: !0 }], gf = [{ id: "E01", phase: "n1", from: 1, to: 1, kind: "event", text: "日落。六人在与自己牌面一致的房间醒来，口袋里各有一块木牌；系统展开简报。杜松树上的鸟一声不吭。" }, { id: "E02", phase: "n1", from: 10, to: 14, kind: "event", text: "{继母}耳边有人说「去叫他拿个苹果吧」；看向{男孩}时，有一瞬间说不清来由的厌恶。只写{继母}能感知到的，不替其行动。", if: "{继母}仍活着" }, { id: "E03", phase: "n1", from: 19, to: 19, kind: "event", text: "苹果箱的盖子掀开一条缝，箱底传来轻轻的敲击声，醒着或浅睡的人能听见楼下有动静。一个NPC下楼去看，弯腰，箱盖落下，只有很重的一声闷响，然后安静。{{user}}或同伴若自己下楼，按其实际行动结算。", if: "今夜还没有人死在苹果箱里" }, { id: "E04", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。死者的床空着，鞋还在床边；灶火是旺的，锅里炖着肉。所有人的牌面按实际发生的事改写，画像上男孩的脸变成死者的脸。鸟第一次开口，用死者的声音唱「母亲杀了我」。", if: "第一夜有人死在苹果箱里" }, { id: "E05", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。所有人的牌面变成空白，鸟仍然不叫，灶膛是冷的。", if: "第一夜没有人死在苹果箱里" }, { id: "E06", phase: "n2", from: 1, to: 1, kind: "directive", text: "日落：鸟按顺序只唱已成真的歌词，不多唱一个字；还没有歌词成真就不唱。" }, { id: "E07", phase: "n2", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，轻轻的敲击声比上一夜更多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E08", phase: "d3", from: 1, to: 1, kind: "directive", text: "日出：牌面按实际发生的事改写；鸟只唱已成真的歌词；吃过炖肉的人木化推进一步。" }, { id: "E09", phase: "n3", from: 1, to: 1, kind: "directive", text: "日落：若故事尚未进入断局，从现在起进入断局（见世界书F3阶段三）；鸟只唱已成真的歌词。" }, { id: "E10", phase: "n3", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，敲击声比前两夜都多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E11", phase: "n3", from: 24, to: 24, kind: "directive", text: "本轮结尾是第四日日出，时限到达：按世界书F2第5节与F3第3节判定结局，在正文末尾输出<副本结算>。" }], xf = [{ key: "cards", label: "各人当前牌面", hint: "每人牌上现在刻的字；只在日出改写" }, { key: "boy", label: "死者", hint: "死在苹果箱里的人；还没有写「无」" }, { key: "eaters", label: "吃过炖肉的人", hint: "名字、第一次吃在第几日、木化到哪一步" }, { key: "bones", label: "骨头在哪里", hint: "锅里、桌下、丝巾里、已埋，各还剩多少；谁拾的" }, { key: "scarf", label: "丝巾", hint: "还在「玛琳」房抽屉里，还是在谁手里" }, { key: "lastPage", label: "最后一页", hint: "还在鸟巢里，还是谁拿到了、谁读过" }, { key: "lines", label: "已成真的歌词", hint: "四句里已成真的几句" }, { key: "millstone", label: "磨盘", hint: "现在的位置，指向谁" }, { key: "evidence", label: "{{user}}已发现的异常", hint: "撑杆啄痕、爪痕、羽毛、没有指纹、撕口啄痕、最后一页中，{{user}}亲自发现的" }, { key: "stage", label: "故事阶段", hint: "迷雾、暗黑或断局，按世界书F3的条件" }, { key: "named", label: "埋骨后说出的名字", hint: "埋骨的人盖上土后第一次说出的名字；还没有写「无」" }], yf = [{ id: "M1", q: "第一夜会有人死在苹果箱里吗", yes: "会", no: "不会", p: 0.5, by: "n1", judge: "有人在苹果箱里被箱盖压死或死在箱中" }, { id: "M2", q: "主播会吃下锅里的炖肉吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人吃了灶上铁锅里炖的肉" }, { id: "M3", q: "杜松树上的鸟会开口吗", yes: "会", no: "不会", p: 0.6, judge: "杜松树上那只红绿羽毛的鸟开口说话或唱歌" }], bf = [{ title: "游玩说明", md: `## 副本概况
+}, nf = "dusongshu", sf = "杜松树", rf = "1.2.0", of = "A", lf = 6, af = "【副本进行中：杜松树】", cf = [], uf = { briefingName: "杜松树" }, Af = { type: "countdown", minutesPerRound: 30 }, df = { type: "fromPanel" }, ff = "至第四日日出", pf = ["父亲", "继母", "玛琳", "男孩", "其余"], hf = "登记开局发到的牌面。「继母」「男孩」必定发出；金匠、鞋匠、磨坊工写进「其余」，多人用顿号分隔。之后牌面改写不重新登记。", mf = [{ id: "n1", name: "第一夜", cap: 24, next: "d2", night: !0 }, { id: "d2", name: "第二日", cap: 24, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 24, next: "d3", night: !0 }, { id: "d3", name: "第三日", cap: 24, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 24, next: null, night: !0 }], gf = [{ id: "E01", phase: "n1", from: 1, to: 1, kind: "event", text: "日落。六人在与自己牌面一致的房间醒来，口袋里各有一块木牌；系统展开简报。杜松树上的鸟一声不吭。" }, { id: "E02", phase: "n1", from: 10, to: 14, kind: "event", text: "{继母}耳边有人说「去叫他拿个苹果吧」；看向{男孩}时，有一瞬间说不清来由的厌恶。只写{继母}能感知到的，不替其行动。", if: "{继母}仍活着" }, { id: "E03", phase: "n1", from: 19, to: 19, kind: "event", text: "苹果箱的盖子掀开一条缝，箱底传来轻轻的敲击声，醒着或浅睡的人能听见楼下有动静。一个NPC下楼去看，弯腰，箱盖落下，只有很重的一声闷响，然后安静。{{user}}或同伴若自己下楼，按其实际行动结算。", if: "今夜还没有人死在苹果箱里" }, { id: "E04", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。死者的床空着，鞋还在床边；灶火是旺的，锅里炖着肉。所有人的牌面按实际发生的事改写，画像上男孩的脸变成死者的脸。鸟第一次开口，用死者的声音唱「母亲杀了我」。", if: "第一夜有人死在苹果箱里" }, { id: "E05", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。所有人的牌面变成空白，鸟仍然不叫，灶膛是冷的。", if: "第一夜没有人死在苹果箱里" }, { id: "E06", phase: "n2", from: 1, to: 1, kind: "directive", text: "日落：鸟按顺序只唱已成真的歌词，不多唱一个字；还没有歌词成真就不唱。" }, { id: "E07", phase: "n2", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，轻轻的敲击声比上一夜更多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E08", phase: "d3", from: 1, to: 1, kind: "directive", text: "日出：牌面按实际发生的事改写；鸟只唱已成真的歌词；吃过炖肉的人木化推进一步。" }, { id: "E09", phase: "n3", from: 1, to: 1, kind: "directive", text: "日落：若故事尚未进入断局，从现在起进入断局（见世界书F3阶段三）；鸟只唱已成真的歌词。" }, { id: "E10", phase: "n3", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，敲击声比前两夜都多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E11", phase: "n3", from: 24, to: 24, kind: "directive", text: "本轮结尾是第四日日出，时限到达：按世界书F2第5节与F3第3节判定结局，在正文末尾输出<副本结算>。" }], xf = [{ key: "cards", label: "各人当前牌面", hint: "每人牌上现在刻的字；只在日出改写" }, { key: "boy", label: "死者", hint: "死在苹果箱里的人；还没有写「无」" }, { key: "eaters", label: "吃过炖肉的人", hint: "名字、第一次吃在第几日、木化到哪一步" }, { key: "bones", label: "骨头在哪里", hint: "锅里、桌下、丝巾里、已埋，各还剩多少；谁拾的" }, { key: "scarf", label: "丝巾", hint: "还在「玛琳」房抽屉里，还是在谁手里" }, { key: "lastPage", label: "最后一页", hint: "还在鸟巢里，还是谁拿到了、谁读过" }, { key: "lines", label: "已成真的歌词", hint: "四句里已成真的几句" }, { key: "millstone", label: "磨盘", hint: "现在的位置，指向谁" }, { key: "evidence", label: "{{user}}已发现的异常", hint: "撑杆啄痕、爪痕、羽毛、没有指纹、撕口啄痕、最后一页中，{{user}}亲自发现的" }, { key: "stage", label: "故事阶段", hint: "迷雾、暗黑或断局，按世界书F3的条件" }, { key: "named", label: "埋骨后说出的名字", hint: "埋骨的人盖上土后第一次说出的名字；还没有写「无」" }], yf = [{ id: "M1", q: "第一夜会有人死在苹果箱里吗", yes: "会", no: "不会", p: 0.5, by: "n1", judge: "有人在苹果箱里被箱盖压死或死在箱中" }, { id: "M2", q: "主播会吃下锅里的炖肉吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人吃了灶上铁锅里炖的肉" }, { id: "M3", q: "杜松树上的鸟会开口吗", yes: "会", no: "不会", p: 0.6, judge: "杜松树上那只红绿羽毛的鸟开口说话或唱歌" }], bf = [{ title: "游玩说明", md: `## 副本概况
+
 - 名称：杜松树
 - 等级：A
-- 人数：6人（你、最多3名携带角色、其余为系统生成的参与者）
+- 人数：6人
 - 时限：60小时，至第四日日出
 - 简报：找出是谁杀了那个孩子。
-
-## 你需要知道的
-1. 所有人在第一日日落时醒来，这是第1轮。每轮约半小时，最多120轮。
-2. 想快进可以直接说，比如「睡到天亮」「跳到日落」。遇到必须由你亲自决定的事，快进会停下。
-3. 本副本不压制位格、异能与道具。
 
 ## 身份牌
 
 每个人醒来时，口袋里都有一块掌心大小的木牌，上面刻着一个身份。身份只是故事里的位置，与本人的性别、年龄无关。
-牌面可能是：父亲、继母、玛琳、男孩、金匠、鞋匠、磨坊工。其中「继母」与「男孩」一定有人拿到。
+牌面可能是：父亲、继母、玛琳、男孩、金匠、鞋匠、磨坊工。
 每个人醒来的房间，与自己牌面上的身份一致。` }, { title: "屋子与院子", md: `## 公开环境
 
 - 一栋两层的木屋，孤零零地立在一片杜松林中间。屋子很旧，但干净、暖和，像是一直有人住。
@@ -4211,10 +4187,10 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 - 一楼墙上挂着一幅旧画像：一个男人、一个女人、一个女孩、一个男孩，站在一棵杜松树前。四个人的脸都很模糊，像被雨水泡过。
 - 屋外是一小片院子。院子正中是一棵很老的杜松树。院角有一口石井。工具棚外墙上斜靠着一块旧磨盘。
 - 院子外面四面都是杜松林。
-- 杜松树上停着一只小鸟，羽毛红绿相间，脖子上有一圈金色。它一直停在那里，没有叫过。` }, { title: "故事书", md: `## 故事书
+- 杜松树上停着一只小鸟，羽毛红绿相间，脖子上有一圈金色。` }, { title: "故事书", md: `## 故事书
 
 一楼壁炉边矮柜里有一本手绘插图的旧故事书，书名《杜松树》。
-公开内容（任何人翻开都能读到）：
+故事内容：
 一个富人的妻子死了，葬在院子里的杜松树下，留下一个男孩。富人再娶，新妻子生了一个女孩，叫玛琳。新妻子厌恶那个男孩。有一天，她对男孩说：「去箱子里拿个苹果吧。」男孩弯腰去拿，她猛地合上箱盖。
 她把男孩剁碎，炖成一锅肉。父亲回家，吃得很香，说这是他吃过最好吃的东西，一碗接一碗，把骨头扔到桌子底下。玛琳哭着把骨头一根根拾起来，用她最好的丝巾包好，埋在杜松树下。
 杜松树动了起来，树里升起一团雾，雾里飞出一只美丽的鸟。鸟一遍遍地唱：
@@ -4246,7 +4222,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   markets: yf,
   docs: bf,
   danmaku: vf
-}, wf = "nongxian", _f = "农闲", zf = "1.0.0", $f = "D", Sf = !0, Ef = "不限", Cf = "【副本进行中：农闲】", Mf = [], If = { briefingName: "农闲" }, Tf = { type: "none" }, Nf = { type: "fromPanel" }, Pf = [], jf = [], Df = [{ title: "游玩说明", md: `## 系统简报
+}, wf = "nongxian", _f = "农闲", zf = "1.1.0", $f = "D", Sf = !0, Ef = "不限", Cf = "【副本进行中：农闲】", Mf = [], If = { briefingName: "农闲" }, Tf = { type: "none" }, Nf = { type: "fromPanel" }, Pf = [], jf = [], Rf = [{ title: "游玩说明", md: `## 系统简报
 
 「副本简报 - 农闲」
 「人数：不限人数」
@@ -4270,6 +4246,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 - 一到晚上人就犯困。天黑以后在外头走得太远，会在自己床上醒过来。` }, { title: "换货单", md: `## 换东西
 
 村子里不用钱，也不用积分，东西都是拿来换的。
+
 - 自己种的、养的、钓的、做的、从山里捡的，都可以拿去跟村民换。
 - 外头带进来的道具，村民看不懂，也不要。
 - 价钱没那么死板。多给少给，村民都不计较；送东西给他们，他们会记得，下次多塞你一把。
@@ -4277,42 +4254,51 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 村民和他们的换货单（玩家→村民）：
 
 阿禾｜杂货铺
+
 - 任意作物×3 → 一种种子×4（小麦、胡萝卜、土豆、甜菜、南瓜、草莓、西瓜任选）
 - 鸡蛋×4 → 一把铁锄头（开地快一倍）
 - 鱼×3 → 一个铁水壶（一次能浇一整排）
 - 蜂蜜×1 → 一包花种子（种在哪里开在哪里）
 
 老石｜木匠
+
 - 原木×8 → 一张床、一张桌子或一把摇椅
 - 原木×12 → 一只小木船（可以在溪里划）
 - 原木×6 + 任意作物×2 → 一圈篱笆或一座小凉亭
 - 帮他搬一上午木头 → 他给你做一个你想要的小玩意
 
 阿潮｜渔家
+
 - 任意作物×4 → 一根好钓竿（更容易钓到稀罕鱼）
 - 面包×2 → 一罐鱼饵
 - 鱼×5 → 一张渔网（下在溪里，第二天早上收鱼）
 - 陪她坐着钓一下午 → 她教你认溪里的鱼
 
 桑婆婆｜织布
+
 - 羊毛×3 → 一匹布
 - 布×1 + 任意作物×2 → 一件衣裳、一床被子或一副窗帘
 - 羊毛×1 → 一团毛线
 - 给她带一束花 → 她给你缝一个小布偶
 
 蜂叔｜养蜂、养牲口
+
 - 任意作物×6 → 一只小鸡、一只小鸭或一只兔子
 - 任意作物×12 → 一只羊或一头牛
 - 苹果×4 → 一个蜂箱（放在花旁边，每三天出一罐蜂蜜）
 - 帮他收一次蜂蜜 → 他分你一罐
 
 梅姨｜灶房、酒坊
+
 - 任意作物×3 → 一顿现做的饭
 - 桃子×6 → 一坛桃花酿
 - 任意作物×2 → 教一道新菜（她会写在你家墙上的配方板上）
-- 进她灶房帮一次忙 → 她留你吃饭` }, { title: "作物", md: `## 作物（种子袋在木屋门边：小麦种子8、胡萝卜4、土豆4、甜菜种子4、南瓜种子2）
+- 进她灶房帮一次忙 → 她留你吃饭` }, { title: "作物", md: `## 作物（种子袋在木屋门边）
+
+种子袋：小麦种子8、胡萝卜4、土豆4、甜菜种子4、南瓜种子2
 
 作物只在早上长：
+
 - 胡萝卜、土豆、草莓：种下后过2个早上成熟。胡萝卜、土豆每格收2个，留1个可以再种；草莓成熟后每天早上都能摘。
 - 小麦、甜菜：过3个早上成熟，每格收1份，外加1~2颗种子。
 - 南瓜、西瓜：过4个早上成熟，藤旁边要留一格空地，瓜结在空地上，之后每过2个早上再结一个。
@@ -4333,7 +4319,7 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
 - 南瓜×1 + 鸡蛋×1 + 小麦×1 → 南瓜饼
 - 苹果×2 + 蜂蜜×1 → 苹果酱
 - 发光方块 → 一盏不会灭的小灯
-梅姨教新菜，会添在配方板上。` }], Rf = [{ type: "discuss", text: "这是副本？这是度假吧", when: "open" }, { type: "discuss", text: "休整本也开播，我爱看" }, { type: "praise", text: "这田种得真齐整" }, { type: "praise", text: "方块房子盖得好好看" }, { type: "discuss", text: "梅姨做的饭看着好香" }, { type: "discuss", text: "蜂叔又在给鸡起名字了" }, { type: "discuss", text: "水花是方的，笑死" }, { type: "discuss", text: "今天拿什么去换了？" }, { type: "discuss", text: "月亮也是方的" }, { type: "discuss", text: "桃花瓣落了一头" }, { type: "bless", text: "好好歇着，外面的事先别想" }, { type: "envy", text: "凭什么别人能抽到休整本" }, { type: "cold", text: "种地有什么好看的……好吧我看了一小时" }], Ff = {
+  梅姨教新菜，会添在配方板上。` }], Df = [{ type: "discuss", text: "这是副本？这是度假吧", when: "open" }, { type: "discuss", text: "休整本也开播，我爱看" }, { type: "praise", text: "这田种得真齐整" }, { type: "praise", text: "方块房子盖得好好看" }, { type: "discuss", text: "梅姨做的饭看着好香" }, { type: "discuss", text: "蜂叔又在给鸡起名字了" }, { type: "discuss", text: "水花是方的，笑死" }, { type: "discuss", text: "今天拿什么去换了？" }, { type: "discuss", text: "月亮也是方的" }, { type: "discuss", text: "桃花瓣落了一头" }, { type: "bless", text: "好好歇着，外面的事先别想" }, { type: "envy", text: "凭什么别人能抽到休整本" }, { type: "cold", text: "种地有什么好看的……好吧我看了一小时" }], Of = {
   id: wf,
   name: _f,
   version: zf,
@@ -4347,9 +4333,9 @@ const pA = "zhonglou", hA = "钟楼", mA = "1.4.0", gA = "S", xA = 10, yA = "【
   remaining: Nf,
   phases: Pf,
   events: jf,
-  docs: Df,
-  danmaku: Rf
-}, Of = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 707" width="400" height="707" font-family="'Noto Serif CJK SC','Songti SC','Noto Serif SC','SimSun',serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTphNmE3YjgwOC1iZWE1LTRjOWEtYWY3My00YTFiYTAwNDVjZDgAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaA7lHgmd1lrfgR2Ba5Av6LcAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpjZGQwMzcxNC1jOWI3LTQ3YWUtODUzMC0wNDAzNWZiYTIyZDJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoi2PRahh5wcGGeW3Ga5NSPQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg0PaDqGneMavLaCcae5iL8OYLmd2yClwfwZExuVptlCGkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaDguTGafdJMhAn9tUVvsVu0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCCXT1hZpVBRyKX/1bZWw7nZ+KF4h2sKtGHgmIQtWRewbGRuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBjjZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmE2YTdiODA4LWJlYTUtNGM5YS1hZjczLTRhMWJhMDA0NWNkOC9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmIyZTU1MDFkLTQ0YjUtNGI0NS1iODM3LWU4MThkMDg1MmNiZnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDQ9oOoad4xq8toJxp7mIvw5guZ3bIKXB/BkTG5Wm2UIaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggkgyEL0oyKP7JKq95iWpfJj6evOzwZtXkIDhKkVi2NgqiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggMCM1nvcBcGO3X47TZ8o8ZKesJONwv/U3Kbc1YRNYXht0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQPSgw7maSzLdQ1Sg4R7jSQlmE0J56Jp4mnYXgOq8RktEhwHifgfUzS9frn6I3+bgW8LKMGX3ru/OePvAdodGgvA=</c2pa:manifest></metadata><rect x="0" y="0" width="400" height="707" fill="#efe6d2"/><text x="200.0" y="24.0" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟楼 · 楼层图</text><text x="372.0" y="24.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">北↑</text><rect x="18.0" y="18.0" width="10" height="10" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="34.0" y="24.0" font-size="10" text-anchor="start" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井</text><text x="100.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟室</text><circle cx="100.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><path d="M84 178 Q84 150 100 148 Q116 150 116 178 Z" fill="none" stroke="#3b3326" stroke-width="1.4"/><line x1="80.0" y1="178.0" x2="120.0" y2="178.0" stroke="#3b3326" stroke-width="1.4"/><circle cx="100.0" cy="182.0" r="3" fill="#3b3326" stroke="#3b3326" stroke-width="1"/><text x="100.0" y="202.0" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">大钟</text><text x="300.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">5F 钟面层</text><circle cx="300.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><line x1="300.0" y1="98.0" x2="300.0" y2="238.0" stroke="#3b3326" stroke-width="1.6"/><text x="335.0" y="142.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">东室</text><text x="265.0" y="142.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">西室·无入口</text><rect x="342.0" y="162.0" width="12" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="342.0" y1="168.0" x2="354.0" y2="168.0" stroke="#3b3326" stroke-width="0.8"/><text x="336.0" y="190.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">东口（梯）</text><circle cx="244.0" cy="168.0" r="6" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="266.0" y="186.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">西口</text><text x="266.0" y="199.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井·危险</text><text x="100.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">4F 机房</text><circle cx="100.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><rect x="88.0" y="375.0" width="24" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="112.0" y1="383.0" x2="120.0" y2="383.0" stroke="#3b3326" stroke-width="1.6"/><line x1="120.0" y1="378.0" x2="120.0" y2="388.0" stroke="#3b3326" stroke-width="1.6"/><text x="100.0" y="403.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">齿轮箱·曲柄</text><rect x="146.0" y="375.0" width="10" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="146.0" y1="379.0" x2="156.0" y2="379.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="383.0" x2="156.0" y2="383.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="387.0" x2="156.0" y2="387.0" stroke="#3b3326" stroke-width="0.8"/><text x="140.0" y="361.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯·通东口</text><rect x="34.0" y="374.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="36.0" y1="372.0" x2="48.0" y2="372.0" stroke="#3b3326" stroke-width="2.6"/><text x="70.0" y="347.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">铁门·旋转梯</text><text x="70.0" y="359.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">通钟室</text><rect x="124.1" y="414.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="128.1" y1="414.3" x2="128.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="132.1" y1="414.3" x2="132.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="136.1" y1="414.3" x2="136.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><text x="102.0" y="433.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">楼梯·通3F</text><text x="300.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">3F</text><circle cx="300.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="300.0" cy="383.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="319.1" y1="394.0" x2="360.6" y2="418.0" stroke="#3b3326" stroke-width="1.1"/><line x1="307.5" y1="403.7" x2="323.9" y2="448.8" stroke="#3b3326" stroke-width="1.1"/><line x1="290.0" y1="402.6" x2="268.2" y2="445.4" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="388.7" x2="232.4" y2="401.1" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="377.3" x2="232.4" y2="364.9" stroke="#3b3326" stroke-width="1.1"/><line x1="296.2" y1="361.3" x2="287.8" y2="314.1" stroke="#3b3326" stroke-width="1.1"/><line x1="318.0" y1="370.4" x2="357.3" y2="342.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="232.4,401.1 231.1,395.2 230.3,389.1 230.0,383.0 230.3,376.9 231.1,370.8 232.4,364.9 278.7,377.3 278.3,379.2 278.1,381.1 278.0,383.0 278.1,384.9 278.3,386.8 278.7,388.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="297.1" y="429.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="263.5" y="412.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="268.2" y="348.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="318.0" y="339.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="347.0" y="380.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="329.6" y="418.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="300.0" y="467.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="100.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">2F</text><circle cx="100.0" cy="598.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="100.0" cy="598.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="119.1" y1="609.0" x2="160.6" y2="633.0" stroke="#3b3326" stroke-width="1.1"/><line x1="107.5" y1="618.7" x2="123.9" y2="663.8" stroke="#3b3326" stroke-width="1.1"/><line x1="90.0" y1="617.6" x2="68.2" y2="660.4" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="603.7" x2="32.4" y2="616.1" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="592.3" x2="32.4" y2="579.9" stroke="#3b3326" stroke-width="1.1"/><line x1="96.2" y1="576.3" x2="87.8" y2="529.1" stroke="#3b3326" stroke-width="1.1"/><line x1="118.0" y1="585.4" x2="157.3" y2="557.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="32.4,616.1 31.1,610.2 30.3,604.1 30.0,598.0 30.3,591.9 31.1,585.8 32.4,579.9 78.7,592.3 78.3,594.2 78.1,596.1 78.0,598.0 78.1,599.9 78.3,601.8 78.7,603.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="97.1" y="644.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="63.5" y="627.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="68.2" y="563.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="118.0" y="554.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="147.0" y="595.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="129.6" y="633.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="100.0" y="682.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="300.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">1F 大厅</text><path d="M287.8 666.9 A70 70 0 1 1 312.2 666.9" fill="none" stroke="#3b3326" stroke-width="1.6"/><text x="300.0" y="678.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">塔门</text><path d="M267.0 540.8 A66 66 0 0 1 333.0 540.8" fill="none" stroke="#3b3326" stroke-width="4"/><text x="300.0" y="546.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">守则石壁</text><rect x="286.0" y="592.0" width="28" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="300.0" y="614.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">抽签桌</text><rect x="234.0" y="589.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="250.0" y1="593.0" x2="250.0" y2="603.0" stroke="#3b3326" stroke-width="2.6"/><text x="266.0" y="626.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井检修门</text><rect x="338.0" y="564.0" width="12" height="9" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="344.0" y="554.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">药箱</text><rect x="350.0" y="592.0" width="9" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="334.0" y="599.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">文具柜</text><rect x="324.1" y="629.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="328.1" y1="629.3" x2="328.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="332.1" y1="629.3" x2="332.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="336.1" y1="629.3" x2="336.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><text x="334.0" y="652.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text></svg>`;
+  docs: Rf,
+  danmaku: Df
+}, Ff = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 707" width="400" height="707" font-family="'Noto Serif CJK SC','Songti SC','Noto Serif SC','SimSun',serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTphNmE3YjgwOC1iZWE1LTRjOWEtYWY3My00YTFiYTAwNDVjZDgAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaA7lHgmd1lrfgR2Ba5Av6LcAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpjZGQwMzcxNC1jOWI3LTQ3YWUtODUzMC0wNDAzNWZiYTIyZDJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoi2PRahh5wcGGeW3Ga5NSPQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg0PaDqGneMavLaCcae5iL8OYLmd2yClwfwZExuVptlCGkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaDguTGafdJMhAn9tUVvsVu0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCCXT1hZpVBRyKX/1bZWw7nZ+KF4h2sKtGHgmIQtWRewbGRuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBjjZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmE2YTdiODA4LWJlYTUtNGM5YS1hZjczLTRhMWJhMDA0NWNkOC9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmIyZTU1MDFkLTQ0YjUtNGI0NS1iODM3LWU4MThkMDg1MmNiZnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDQ9oOoad4xq8toJxp7mIvw5guZ3bIKXB/BkTG5Wm2UIaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggkgyEL0oyKP7JKq95iWpfJj6evOzwZtXkIDhKkVi2NgqiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggMCM1nvcBcGO3X47TZ8o8ZKesJONwv/U3Kbc1YRNYXht0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQPSgw7maSzLdQ1Sg4R7jSQlmE0J56Jp4mnYXgOq8RktEhwHifgfUzS9frn6I3+bgW8LKMGX3ru/OePvAdodGgvA=</c2pa:manifest></metadata><rect x="0" y="0" width="400" height="707" fill="#efe6d2"/><text x="200.0" y="24.0" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟楼 · 楼层图</text><text x="372.0" y="24.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">北↑</text><rect x="18.0" y="18.0" width="10" height="10" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="34.0" y="24.0" font-size="10" text-anchor="start" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井</text><text x="100.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟室</text><circle cx="100.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><path d="M84 178 Q84 150 100 148 Q116 150 116 178 Z" fill="none" stroke="#3b3326" stroke-width="1.4"/><line x1="80.0" y1="178.0" x2="120.0" y2="178.0" stroke="#3b3326" stroke-width="1.4"/><circle cx="100.0" cy="182.0" r="3" fill="#3b3326" stroke="#3b3326" stroke-width="1"/><text x="100.0" y="202.0" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">大钟</text><text x="300.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">5F 钟面层</text><circle cx="300.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><line x1="300.0" y1="98.0" x2="300.0" y2="238.0" stroke="#3b3326" stroke-width="1.6"/><text x="335.0" y="142.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">东室</text><text x="265.0" y="142.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">西室·无入口</text><rect x="342.0" y="162.0" width="12" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="342.0" y1="168.0" x2="354.0" y2="168.0" stroke="#3b3326" stroke-width="0.8"/><text x="336.0" y="190.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">东口（梯）</text><circle cx="244.0" cy="168.0" r="6" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="266.0" y="186.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">西口</text><text x="266.0" y="199.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井·危险</text><text x="100.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">4F 机房</text><circle cx="100.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><rect x="88.0" y="375.0" width="24" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="112.0" y1="383.0" x2="120.0" y2="383.0" stroke="#3b3326" stroke-width="1.6"/><line x1="120.0" y1="378.0" x2="120.0" y2="388.0" stroke="#3b3326" stroke-width="1.6"/><text x="100.0" y="403.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">齿轮箱·曲柄</text><rect x="146.0" y="375.0" width="10" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="146.0" y1="379.0" x2="156.0" y2="379.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="383.0" x2="156.0" y2="383.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="387.0" x2="156.0" y2="387.0" stroke="#3b3326" stroke-width="0.8"/><text x="140.0" y="361.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯·通东口</text><rect x="34.0" y="374.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="36.0" y1="372.0" x2="48.0" y2="372.0" stroke="#3b3326" stroke-width="2.6"/><text x="70.0" y="347.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">铁门·旋转梯</text><text x="70.0" y="359.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">通钟室</text><rect x="124.1" y="414.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="128.1" y1="414.3" x2="128.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="132.1" y1="414.3" x2="132.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="136.1" y1="414.3" x2="136.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><text x="102.0" y="433.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">楼梯·通3F</text><text x="300.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">3F</text><circle cx="300.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="300.0" cy="383.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="319.1" y1="394.0" x2="360.6" y2="418.0" stroke="#3b3326" stroke-width="1.1"/><line x1="307.5" y1="403.7" x2="323.9" y2="448.8" stroke="#3b3326" stroke-width="1.1"/><line x1="290.0" y1="402.6" x2="268.2" y2="445.4" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="388.7" x2="232.4" y2="401.1" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="377.3" x2="232.4" y2="364.9" stroke="#3b3326" stroke-width="1.1"/><line x1="296.2" y1="361.3" x2="287.8" y2="314.1" stroke="#3b3326" stroke-width="1.1"/><line x1="318.0" y1="370.4" x2="357.3" y2="342.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="232.4,401.1 231.1,395.2 230.3,389.1 230.0,383.0 230.3,376.9 231.1,370.8 232.4,364.9 278.7,377.3 278.3,379.2 278.1,381.1 278.0,383.0 278.1,384.9 278.3,386.8 278.7,388.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="297.1" y="429.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="263.5" y="412.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="268.2" y="348.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="318.0" y="339.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="347.0" y="380.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="329.6" y="418.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="300.0" y="467.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="100.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">2F</text><circle cx="100.0" cy="598.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="100.0" cy="598.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="119.1" y1="609.0" x2="160.6" y2="633.0" stroke="#3b3326" stroke-width="1.1"/><line x1="107.5" y1="618.7" x2="123.9" y2="663.8" stroke="#3b3326" stroke-width="1.1"/><line x1="90.0" y1="617.6" x2="68.2" y2="660.4" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="603.7" x2="32.4" y2="616.1" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="592.3" x2="32.4" y2="579.9" stroke="#3b3326" stroke-width="1.1"/><line x1="96.2" y1="576.3" x2="87.8" y2="529.1" stroke="#3b3326" stroke-width="1.1"/><line x1="118.0" y1="585.4" x2="157.3" y2="557.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="32.4,616.1 31.1,610.2 30.3,604.1 30.0,598.0 30.3,591.9 31.1,585.8 32.4,579.9 78.7,592.3 78.3,594.2 78.1,596.1 78.0,598.0 78.1,599.9 78.3,601.8 78.7,603.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="97.1" y="644.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="63.5" y="627.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="68.2" y="563.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="118.0" y="554.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="147.0" y="595.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="129.6" y="633.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="100.0" y="682.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="300.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">1F 大厅</text><path d="M287.8 666.9 A70 70 0 1 1 312.2 666.9" fill="none" stroke="#3b3326" stroke-width="1.6"/><text x="300.0" y="678.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">塔门</text><path d="M267.0 540.8 A66 66 0 0 1 333.0 540.8" fill="none" stroke="#3b3326" stroke-width="4"/><text x="300.0" y="546.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">守则石壁</text><rect x="286.0" y="592.0" width="28" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="300.0" y="614.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">抽签桌</text><rect x="234.0" y="589.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="250.0" y1="593.0" x2="250.0" y2="603.0" stroke="#3b3326" stroke-width="2.6"/><text x="266.0" y="626.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井检修门</text><rect x="338.0" y="564.0" width="12" height="9" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="344.0" y="554.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">药箱</text><rect x="350.0" y="592.0" width="9" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="334.0" y="599.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">文具柜</text><rect x="324.1" y="629.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="328.1" y1="629.3" x2="328.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="332.1" y1="629.3" x2="332.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="336.1" y1="629.3" x2="336.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><text x="334.0" y="652.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text></svg>`;
 function an(e) {
   const t = Math.max(0, Math.round(e));
   if (t < 60) return `${t}分钟`;
@@ -4414,9 +4400,9 @@ function Tl(e, t, n = Vn) {
   const l = Number(o[1]), a = Math.round(o[2] === "天" ? l * 1440 : o[2].includes("小时") ? l * 60 : l);
   return a <= 0 ? { rounds: r } : { rounds: r, totalMinutes: a, minutesPerRound: Math.max(1, Math.round(a / r)) };
 }
-const _s = "generic", Di = [NA, KA, ld, wd, Od, tf, kf, Ff], Uf = {
+const _s = "generic", Ri = [NA, KA, ld, wd, Fd, tf, kf, Of], Uf = {
   zhonglou: {
-    "zhonglou-map.svg": "data:image/svg+xml;charset=utf-8," + encodeURIComponent(Of)
+    "zhonglou-map.svg": "data:image/svg+xml;charset=utf-8," + encodeURIComponent(Ff)
   }
 };
 function Wf(e, t) {
@@ -4487,7 +4473,7 @@ function Hf(e) {
 function jl(e) {
   return Nl.includes(e.level ?? "") ? e.level : "D";
 }
-function Dl(e, t = Vn) {
+function Rl(e, t = Vn) {
   const n = jl(e), s = Tl(e.limit, n, t), i = e.rounds && e.rounds > 0 ? e.rounds : s.rounds, r = s.totalMinutes ? Math.max(1, Math.round(s.totalMinutes / i)) : void 0;
   return {
     id: _s,
@@ -4506,11 +4492,11 @@ function Dl(e, t = Vn) {
   };
 }
 function tr(e) {
-  const t = new Set(Di.map((n) => n.id));
-  return [...Di, ...e.filter((n) => !t.has(n.id))];
+  const t = new Set(Ri.map((n) => n.id));
+  return [...Ri, ...e.filter((n) => !t.has(n.id))];
 }
-const Gf = /副本简报\s*[-－—]\s*([^\s」』\n]+)/, Kf = /<阶段切换>([\s\S]*?)<\/阶段切换>/, qf = /<副本结算>([\s\S]*?)<\/副本结算>/, Rl = /<副本>([\s\S]*?)<\/副本>/, Yf = /<角色登记>([\s\S]*?)<\/角色登记>/, Jf = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|日出|晚饭|夜里|明天)/, Zf = /<积分变动>([\s\S]*?)<\/积分变动>/g;
-function Fl(e) {
+const Gf = /副本简报\s*[-－—]\s*([^\s」』\n]+)/, Kf = /<阶段切换>([\s\S]*?)<\/阶段切换>/, qf = /<副本结算>([\s\S]*?)<\/副本结算>/, Dl = /<副本>([\s\S]*?)<\/副本>/, Yf = /<角色登记>([\s\S]*?)<\/角色登记>/, Jf = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|日出|晚饭|夜里|明天)/, Zf = /<积分变动>([\s\S]*?)<\/积分变动>/g;
+function Ol(e) {
   const t = Gf.exec(e ?? "");
   if (!t) return null;
   const n = { name: t[1] }, s = e.slice(t.index + t[0].length).split(`
@@ -4525,7 +4511,7 @@ function Xf(e) {
   const t = Kf.exec(e ?? "");
   return t ? t[1].trim() : null;
 }
-function Ol(e) {
+function Fl(e) {
   const t = {};
   for (const n of e.split(/[｜|\n]/)) {
     const s = n.search(/[=＝]/);
@@ -4538,20 +4524,20 @@ function Ol(e) {
 function Hs(e) {
   const t = qf.exec(e ?? "");
   if (!t) return null;
-  const n = Ol(t[1]);
+  const n = Fl(t[1]);
   return { raw: t[1].trim(), result: n.结果, rating: n.评价, fields: n };
 }
 function Ll(e) {
   const t = Yf.exec(e ?? "");
   if (!t) return null;
-  const n = Ol(t[1]);
+  const n = Fl(t[1]);
   return Object.keys(n).length ? n : null;
 }
 function os(e) {
   return e.replace(/^[-*•·]\s*/, "").trim();
 }
 function Bl(e) {
-  const t = Rl.exec(e ?? "");
+  const t = Dl.exec(e ?? "");
   if (!t) return null;
   const n = { tasks: [] };
   let s = null;
@@ -4631,10 +4617,10 @@ function sp(e, t) {
   return gi.get(n);
 }
 function ip(e, t) {
-  const n = String(e ?? ""), s = (l, a) => l ? { signal: a, pack: l, info: { name: l.name, level: l.level } } : null, i = Fl(n);
+  const n = String(e ?? ""), s = (l, a) => l ? { signal: a, pack: l, info: { name: l.name, level: l.level } } : null, i = Ol(n);
   if (i)
     return { signal: 1, pack: t.find((a) => a.detect.briefingName === i.name), info: i };
-  const r = Rl.exec(n);
+  const r = Dl.exec(n);
   if (r) {
     const l = /副本名\s*[：:]\s*([^\n｜|]+)/.exec(r[1]), a = l && s(mi(t, l[1]), 2);
     if (a) return a;
@@ -4661,7 +4647,7 @@ function ip(e, t) {
   return null;
 }
 const Qr = 5, rp = { id: "_open", name: "进行中", cap: 0, next: null };
-function De(e) {
+function Re(e) {
   return !e || e.is_user ? !1 : !(e.is_system && e.extra?.type);
 }
 function op(e) {
@@ -4704,7 +4690,7 @@ function no(e, t, n, s) {
 }
 function Wl(e, t, n) {
   const s = t.entryIndex;
-  if (!De(e[s])) return null;
+  if (!Re(e[s])) return null;
   const i = Ul(n);
   let r = i[0], o = i[0], l = 0, a, c = !1, u, d, h = null, y, w, _;
   const P = /* @__PURE__ */ new Set(), V = {}, j = {}, z = /* @__PURE__ */ new Map();
@@ -4715,16 +4701,16 @@ function Wl(e, t, n) {
   };
   for (let re = s; re < e.length; re++) {
     const ze = e[re];
-    if (!c && De(ze)) {
+    if (!c && Re(ze)) {
       const ge = no(n, r, l, h);
       l = ge.round;
-      const He = new Set((ze.extra?.rlzc?.skippedEvents ?? []).map((D) => D.id));
-      ge.events.forEach((D) => {
-        He.has(D.id) || P.add(D.id);
+      const He = new Set((ze.extra?.rlzc?.skippedEvents ?? []).map((R) => R.id));
+      ge.events.forEach((R) => {
+        He.has(R.id) || P.add(R.id);
       }), V[re] = {
         phase: r.id,
         round: l,
-        events: ge.events.map((D) => D.id),
+        events: ge.events.map((R) => R.id),
         skipFrom: ge.skipFrom,
         limit: pi(n, r, o, l, a)
       }, h && r.id === h.phase && l >= h.round && (h = null);
@@ -4732,11 +4718,11 @@ function Wl(e, t, n) {
       Ge && (w = Ge), a = Ge?.limit;
       const rn = Ll(Qe);
       rn && (_ = rn);
-      const Ft = Hs(Qe);
-      if (Ft)
-        c = !0, u = "tag", d = re, y = Ft;
+      const Ot = Hs(Qe);
+      if (Ot)
+        c = !0, u = "tag", d = re, y = Ot;
       else {
-        const D = Xf(Qe), K = D ? i.find((H) => H.name === D) : void 0;
+        const R = Xf(Qe), K = R ? i.find((H) => H.name === R) : void 0;
         if (K && n.phases.length)
           I(K, re);
         else if (r.cap > 0 && l >= r.cap && r.next) {
@@ -4767,15 +4753,15 @@ function Wl(e, t, n) {
     }
   }
   const ee = c ? null : no(n, r, l, h), Z = ee ? ee.round : l + 1, B = r.cap > 0, b = n.events.filter((re) => P.has(re.id)).map((re) => re.id), m = c ? void 0 : pi(n, r, o, Z, a), g = c ? void 0 : pi(n, r, o, l);
-  let O;
+  let F;
   const ae = n.remaining;
-  return !c && ae.type === "nights" && n.phases.length && !r.byTag && !r.frozen ? O = ae.template.replace("{n}", String(Il(n, r))) : !c && ae.type === "countdown" && m?.minutes !== void 0 && (O = ae.template.replace("{m}", String(m.minutes))), {
+  return !c && ae.type === "nights" && n.phases.length && !r.byTag && !r.frozen ? F = ae.template.replace("{n}", String(Il(n, r))) : !c && ae.type === "countdown" && m?.minutes !== void 0 && (F = ae.template.replace("{m}", String(m.minutes))), {
     phase: r,
     round: l,
     nextRound: Z,
     clock: c ? void 0 : eo(n, r, Z),
     currentClock: eo(n, r, l),
-    remainingText: O,
+    remainingText: F,
     limit: m,
     roundsLeft: g ? { x: g.x, y: g.y } : void 0,
     chainStart: n.phases.length ? o.id : void 0,
@@ -4910,7 +4896,7 @@ function Ee(e, t) {
   const n = window.toastr;
   n ? n[e](t, "回廊种菜系统") : console.log(`[rlzc] ${t}`);
 }
-async function Dt(e) {
+async function Rt(e) {
   const t = xe();
   if (t.callGenericPopup && t.POPUP_TYPE && t.POPUP_RESULT) {
     const n = document.createElement("div");
@@ -5078,7 +5064,7 @@ function na(e) {
 function Ks(e, t) {
   for (let n = e.length - 1; n >= t && n >= 0; n--) {
     const s = e[n];
-    if (!De(s)) continue;
+    if (!Re(s)) continue;
     const i = na(s)?.sub;
     if (i?.state && !i.skipped) return { index: n, state: i.state };
   }
@@ -5087,7 +5073,7 @@ function Ks(e, t) {
 function Sp(e, t) {
   for (let n = e.length - 1; n >= t && n >= 0; n--) {
     const s = e[n];
-    if (!De(s)) continue;
+    if (!Re(s)) continue;
     const i = na(s)?.sub;
     return i && !i.skipped && Array.isArray(i.next) ? i.next : void 0;
   }
@@ -5175,7 +5161,7 @@ async function Pp(e, t, n = 1) {
 function jp(e) {
   return e.t === "tip" ? `${e.name} 打赏${e.amount}` : `${e.name}：${e.text}`;
 }
-function Dp(e, t = 5) {
+function Rp(e, t = 5) {
   if (!e.on) return "";
   const n = e.feed.filter((i) => i.t === "msg" || i.t === "tip").slice(-t), s = `［直播·仅供AI］{{user}}正在直播，约${e.viewers}人在看。`;
   return n.length ? `${s}最近弹幕：${n.map(jp).join("／")}` : s;
@@ -5234,14 +5220,14 @@ async function ua(e, t, n, s = ra, i = 0.2) {
   if (typeof a != "string") throw new Error("返回里没有正文");
   return a;
 }
-async function Rp(e) {
+async function Dp(e) {
   const t = xe();
   if (typeof t.generateRaw != "function") throw new Error("当前酒馆版本没有 generateRaw");
   return String(await t.generateRaw({ prompt: e.user, systemPrompt: e.system }));
 }
 function sr(e, t, n = {}) {
   return aa(e.timeoutMs, (s) => {
-    if (e.source === "main") return Rp(t);
+    if (e.source === "main") return Dp(t);
     if (!e.preset) throw new Error("没有选择接口预设");
     return ua(e.preset, t, s, ra, n.temperature ?? 0.2);
   });
@@ -5255,7 +5241,7 @@ async function Aa(e) {
   if (!t.ok || n?.error) throw ca(t.status, n);
   return (Array.isArray(n) ? n : Array.isArray(n?.data) ? n.data : Array.isArray(n?.models) ? n.models : []).map((i) => typeof i == "string" ? i : i?.id ?? i?.name).filter(Boolean).sort();
 }
-async function Fp(e, t) {
+async function Op(e, t) {
   const n = await Aa(e).catch(() => []), s = { ...e, model: e.model || n[0] || "" }, i = await aa(
     t,
     (r) => ua(s, { system: "只回复 OK。", user: "ping" }, r, 5)
@@ -5268,7 +5254,7 @@ const da = "rlzc_ledger", bt = {
   B: 3e3,
   A: 1e4,
   S: 3e4
-}, Op = {
+}, Fp = {
   D: { D: 150, C: 300, B: 600, A: 1e3, S: 1800 },
   C: { D: 800, C: 1400, B: 2200, A: 3e3, S: 4200 },
   B: { D: 3e3, C: 4800, B: 6800, A: 9e3, S: 12500 },
@@ -5316,7 +5302,7 @@ function Bp(e, t, n, s, i, r = "") {
   }
   if (!a)
     return { delta: 0, source: "", warn: "评价缺失或无法识别，不发奖励" };
-  let h = Op[e][a];
+  let h = Fp[e][a];
   const y = r || e, w = n.抽查 === "是" || n.抽查 === "true" || n.抽查 === "1", _ = n.越级 === "是" || n.越级 === "true" || n.越级 === "1", P = e !== t;
   let V = `副本奖励·${y} ${a}评`;
   return w ? (h = Math.floor(h * 0.5), V += "（×50%）") : (_ || P) && (h = Math.floor(h * 0.6), V += "（×60%）"), { delta: h, source: V };
@@ -5387,12 +5373,12 @@ function qp(e) {
   return !t || typeof t != "object" || typeof t.packId != "string" || typeof t.entryIndex != "number" ? null : (Array.isArray(t.manual) || (t.manual = []), t.status !== "ended" && (t.status = "active"), typeof t.id != "string" && (t.id = ""), t);
 }
 function pa(e, t) {
-  return e.packId === _s ? e.briefing ? Dl(e.briefing) : null : t.find((n) => n.id === e.packId) ?? null;
+  return e.packId === _s ? e.briefing ? Rl(e.briefing) : null : t.find((n) => n.id === e.packId) ?? null;
 }
 function Yp(e, t) {
   const n = (s) => !!s && !s.is_user && s.extra?.rlzc?.entry === t.id;
   if (!t.id)
-    return De(e[t.entryIndex]) ? t.entryIndex : -1;
+    return Re(e[t.entryIndex]) ? t.entryIndex : -1;
   if (n(e[t.entryIndex])) return t.entryIndex;
   for (let s = e.length - 1; s >= 0; s--) if (n(e[s])) return s;
   return -1;
@@ -5412,7 +5398,7 @@ const oo = "rlzc_declined";
 function rr(e, t) {
   return `${e}:${t}`;
 }
-const ma = De;
+const ma = Re;
 function qs(e, t, n) {
   if (!ma(e[t])) return null;
   const s = ip(String(e[t].mes ?? ""), n);
@@ -5425,7 +5411,7 @@ function Zp(e, t, n, s, i = []) {
   }
   return null;
 }
-function Xp(e, t, n = [], s = Di, i = 0) {
+function Xp(e, t, n = [], s = Ri, i = 0) {
   if (t?.status === "active") return null;
   let r = -1;
   for (let l = Math.max(0, i); l < e.length; l++) if (ma(e[l])) {
@@ -5577,23 +5563,23 @@ function fh(e) {
     (g) => xi(g, r, o, l, a, c, u)
   ) : [], ee = s.filter((g) => xi(g, r, o, l, a, c, u) ? g.phase && g.phase.length > 0 && i ? g.phase.includes(i) : !0 : !1), Z = () => h[Math.floor(w() * h.length)] ?? "匿名", B = () => y[Math.floor(w() * y.length)] ?? "";
   for (let g = 0; g < _ * 5 && P.length < _; g++) {
-    let O = "", ae = "discuss";
+    let F = "", ae = "discuss";
     if (ee.length > 0 && w() < 0.3) {
       const ze = ee[Math.floor(w() * ee.length)];
-      O = ze.text, ae = ze.type;
+      F = ze.text, ae = ze.type;
     } else if (I.length > 0 && w() < 0.5) {
       const ge = I[Math.floor(w() * I.length)];
-      O = ge.text.replace("{who}", B()), ae = ge.type;
+      F = ge.text.replace("{who}", B()), ae = ge.type;
     } else if (j.length > 0) {
       const ge = j[Math.floor(w() * j.length)];
-      O = ge.text, ae = ge.type;
+      F = ge.text, ae = ge.type;
     }
-    !O || V.has(O) || (V.add(O), P.push({ name: Z(), text: O, type: ae }));
+    !F || V.has(F) || (V.add(F), P.push({ name: Z(), text: F, type: ae }));
   }
   const b = [...ee, ...j], m = b.length ? Math.floor(w() * b.length) : 0;
   for (let g = 0; g < b.length && P.length < _; g++) {
-    const O = b[(m + g) % b.length];
-    V.has(O.text) || (V.add(O.text), P.push({ name: Z(), text: O.text, type: O.type }));
+    const F = b[(m + g) % b.length];
+    V.has(F.text) || (V.add(F.text), P.push({ name: Z(), text: F.text, type: F.type }));
   }
   return P;
 }
@@ -5616,7 +5602,7 @@ function hh(e) {
 function va(e, t) {
   return e.disableLive ? { show: !1, checked: !1 } : { show: !0, checked: !!t };
 }
-function Rt(e) {
+function Dt(e) {
   const t = e?.extra?.rlzc?.live;
   return t && typeof t.show == "string" && Array.isArray(t.feed) ? t : void 0;
 }
@@ -5625,7 +5611,7 @@ function lr(e, t, n = e.length) {
   for (let i = 0; i < Math.min(n, e.length); i++) {
     const r = e[i];
     if (!r || r.is_user) continue;
-    const o = Rt(r);
+    const o = Dt(r);
     o && o.show === t && s.push({ index: i, rec: o });
   }
   return s;
@@ -5636,13 +5622,13 @@ function ar(e, t) {
 function Ys(e, t) {
   let n = t.seq;
   for (const s of t.sys) n = Math.max(n, s.id);
-  for (const s of e) for (const i of Rt(s)?.feed ?? []) n = Math.max(n, i.id);
+  for (const s of e) for (const i of Dt(s)?.feed ?? []) n = Math.max(n, i.id);
   return n;
 }
 function mh(e, t = 30) {
   const n = [];
   for (let s = e.length - 1; s >= 0 && n.length < t; s--) {
-    const i = Rt(e[s])?.feed ?? [];
+    const i = Dt(e[s])?.feed ?? [];
     for (let r = i.length - 1; r >= 0 && n.length < t; r--) i[r].t === "msg" && n.push(i[r].text);
   }
   return n;
@@ -5788,7 +5774,7 @@ function zh(e, t) {
   let n = "", s = -1;
   for (const i of t.sys) i.id > s && (s = i.id, n = i.show);
   for (const i of e) {
-    const r = Rt(i);
+    const r = Dt(i);
     if (r)
       for (const o of r.feed) o.id > s && (s = o.id, n = r.show);
   }
@@ -5858,11 +5844,11 @@ function Nh(e) {
     toggle: () => yi.toggle()
   };
 }
-const Ca = "rlzc_market", ao = { D: 0, C: 1, B: 2, A: 3, S: 4 }, Ma = { D: 1e3, C: 5e3, B: 2e4, A: 8e4, S: 3e5 }, co = 10, Ph = 0.8, jh = "ending", Dh = "rating", Ia = ["S", "A", "B", "C", "D"];
-function Rh(e, t) {
+const Ca = "rlzc_market", ao = { D: 0, C: 1, B: 2, A: 3, S: 4 }, Ma = { D: 1e3, C: 5e3, B: 2e4, A: 8e4, S: 3e5 }, co = 10, Ph = 0.8, jh = "ending", Rh = "rating", Ia = ["S", "A", "B", "C", "D"];
+function Dh(e, t) {
   return ao[e] - ao[t];
 }
-function Fh(e) {
+function Oh(e) {
   return e <= -2 ? 0.85 : e === -1 ? 0.75 : e === 0 ? 0.6 : e === 1 ? 0.4 : e === 2 ? 0.25 : 0.15;
 }
 const ls = {
@@ -5871,7 +5857,7 @@ const ls = {
   1: { S: 0.04, A: 0.12, B: 0.3, C: 0.32, D: 0.22 },
   ge2: { S: 0.02, A: 0.08, B: 0.25, C: 0.35, D: 0.3 }
 };
-function Oh(e) {
+function Fh(e) {
   return e <= -1 ? ls["le-1"] : e === 0 ? ls[0] : e === 1 ? ls[1] : ls.ge2;
 }
 function Js(e) {
@@ -5900,10 +5886,10 @@ function Na(e, t, n) {
 function Bh(e) {
   const { pack: t, rand: n } = e;
   if (t.rest) return [];
-  const s = Rh(t.level, e.playerLevel), i = Fh(s), r = [
+  const s = Dh(t.level, e.playerLevel), i = Oh(s), r = [
     { id: jh, kind: "ending", q: "本局结果", options: [In("win", "通关", i, n), In("lose", "失败", Js(1 - i), n)] }
-  ], o = Oh(s);
-  if (r.push({ id: Dh, kind: "rating", q: "本局评价", options: Ia.map((l) => In(l, l, o[l], n)) }), e.withEvents) for (const l of Hf(t)) r.push(Na("event", l, n));
+  ], o = Fh(s);
+  if (r.push({ id: Rh, kind: "rating", q: "本局评价", options: Ia.map((l) => In(l, l, o[l], n)) }), e.withEvents) for (const l of Hf(t)) r.push(Na("event", l, n));
   return r;
 }
 function Vh(e, t) {
@@ -5964,7 +5950,7 @@ function Yh(e) {
     e.outcome.voided ? t[n.id] = { kind: "refund", index: -1 } : n.kind === "ending" ? t[n.id] = Gh(e.outcome) : n.kind === "rating" ? t[n.id] = Kh(e.outcome) : t[n.id] = qh(n, e);
   return t;
 }
-function Ri(e, t) {
+function Di(e, t) {
   const n = {};
   for (const s of e.tickets) {
     if (e.frozen) {
@@ -5977,13 +5963,13 @@ function Ri(e, t) {
   return n;
 }
 function Jh(e, t) {
-  const n = {}, s = Ri({ ...e, frozen: void 0 }, t);
+  const n = {}, s = Di({ ...e, frozen: void 0 }, t);
   for (const i of e.tickets) n[i.id] = s[i.id] ?? { stamp: "refund", index: -1 };
   return n;
 }
 function Zh(e, t, n, s = []) {
   const i = new Set(Array.isArray(s) ? s : [s]);
-  return Object.keys(t).map(Number).filter((r) => r > n && De(e[r])).sort((r, o) => r - o).map((r) => {
+  return Object.keys(t).map(Number).filter((r) => r > n && Re(e[r])).sort((r, o) => r - o).map((r) => {
     const o = e[r]?.extra?.rlzc?.sub;
     return o && !o.skipped && o.markets && typeof o.markets == "object" ? { index: r, state: "ok", hits: o.markets } : !o && i.has(r) ? { index: r, state: "pending", hits: {} } : { index: r, state: "miss", hits: {} };
   });
@@ -5995,14 +5981,14 @@ function Xh(e, t) {
     s.kind !== "event" && s.kind !== "freak" || t[s.id] || !s.judge || (n.push({ id: s.id, judge: s.judge }), s.judgeNo && n.push({ id: `${s.id}:no`, judge: s.judgeNo }));
   return n;
 }
-function Da(e, t) {
+function Ra(e, t) {
   return e.markets.find((n) => n.id === t);
 }
 function Qh(e, t) {
   return e?.options.find((n) => n.id === t)?.label ?? t;
 }
 function em(e, t) {
-  const n = Da(e, t.market);
+  const n = Ra(e, t.market);
   return `下注·${e.packName}·${n?.q ?? t.market}·${Qh(n, t.option)}`;
 }
 function tm(e, t, n) {
@@ -6011,7 +5997,7 @@ function tm(e, t, n) {
     s.push({ delta: -i.stake, source: em(e, i), type: "bet", at: i.at, pos: i.after, seq: i.seq ?? 0 });
     const r = t[i.id];
     if (!r || r.stamp === "lose") continue;
-    const o = Da(e, i.market)?.q ?? i.market, l = (r.index >= 0 ? n(r.index) : void 0) ?? i.at;
+    const o = Ra(e, i.market)?.q ?? i.market, l = (r.index >= 0 ? n(r.index) : void 0) ?? i.at;
     r.stamp === "win" ? s.push({ delta: Ta(i.stake, i.odds), source: `赌票兑付·${e.packName}·${o}`, type: "bet", at: l, pos: r.index }) : s.push({ delta: i.stake, source: `赌票退还·${e.packName}·${o}`, type: "bet", at: l, pos: r.index });
   }
   return s;
@@ -6086,7 +6072,7 @@ function Am(e) {
 function dm(e) {
   return e.kind === "betLose" ? cm(e.amount) : e.kind === "casinoLoss" ? um(e.amount) : Am(e.amount);
 }
-function Fi(e, t) {
+function Oi(e, t) {
   if (t.kind === "betLose") {
     const n = e.find((s) => s.kind === "betLose");
     if (n && !n.sent) return e.map((s) => s === n ? { ...s, amount: s.amount + t.amount, after: t.after } : s);
@@ -6206,7 +6192,7 @@ function xm(e, t, n) {
   for (let o = 0; o < 20 && i(r); o++) r = uo(n);
   return i(r) && (r = dr.map((o) => o.id).filter((o) => !e.tables.includes(o))), { tables: r, key: t, changed: !0 };
 }
-const Oi = "rlzc", fs = { optIn: !1, injectToAI: !1, source: "local", freq: 3 }, Ra = {
+const Fi = "rlzc", fs = { optIn: !1, injectToAI: !1, source: "local", freq: 3 }, Da = {
   source: "off",
   presets: [],
   presetId: "",
@@ -6221,10 +6207,10 @@ const Oi = "rlzc", fs = { optIn: !1, injectToAI: !1, source: "local", freq: 3 },
   customPacks: [],
   panelDisplay: "panel",
   genericCaps: { ...Vn },
-  subApi: structuredClone(Ra),
+  subApi: structuredClone(Da),
   cardCollapsed: { depths: !0, subApi: !0, genericCaps: !0, accountFix: !0, rolesDebug: !0, live: !0, auditDebug: !0, manualDebug: !0, injectionDebug: !0 },
   live: { ...fs }
-}, f = /* @__PURE__ */ Fs({
+}, f = /* @__PURE__ */ Os({
   chatId: "",
   session: null,
   pack: null,
@@ -6254,7 +6240,7 @@ function Jn(...e) {
   f.settings.debug && console.log("[rlzc]", ...e);
 }
 function ym() {
-  const e = xe().extensionSettings, t = e[Oi] ?? {}, n = {
+  const e = xe().extensionSettings, t = e[Fi] ?? {}, n = {
     ...structuredClone(_n),
     ...t,
     depths: { ..._n.depths, ...t.depths ?? {}, ledger: t.depths?.ledger ?? _n.depths.ledger },
@@ -6263,7 +6249,7 @@ function ym() {
     panelDisplay: t.panelDisplay === "statusbar" ? "statusbar" : "panel",
     genericCaps: { ...Vn, ...t.genericCaps ?? {} },
     subApi: {
-      ...structuredClone(Ra),
+      ...structuredClone(Da),
       ...t.subApi ?? {},
       presets: Array.isArray(t.subApi?.presets) ? t.subApi.presets : [],
       // 旧版本里的「酒馆连接配置」来源已删除，按关闭处理
@@ -6282,7 +6268,7 @@ function ym() {
     },
     live: bm(t.live)
   };
-  e[Oi] = n, f.settings = n, f.packs = tr(n.customPacks);
+  e[Fi] = n, f.settings = n, f.packs = tr(n.customPacks);
 }
 function bm(e) {
   const t = e ?? {}, n = Math.floor(Number(t.freq));
@@ -6294,7 +6280,7 @@ function bm(e) {
   };
 }
 function ve() {
-  xe().extensionSettings[Oi] = /* @__PURE__ */ ie(f.settings), xe().saveSettingsDebounced(), f.packs = tr(f.settings.customPacks);
+  xe().extensionSettings[Fi] = /* @__PURE__ */ ie(f.settings), xe().saveSettingsDebounced(), f.packs = tr(f.settings.customPacks);
 }
 function vm(e) {
   let t;
@@ -6311,7 +6297,7 @@ function vm(e) {
 function km(e) {
   f.settings.customPacks = f.settings.customPacks.filter((t) => t.id !== e), ve();
 }
-function Re() {
+function De() {
   const e = dt()[da];
   return !e || Array.isArray(e) ? {} : e;
 }
@@ -6331,7 +6317,7 @@ function sn(e) {
   for (const { pos: r, seq: o, ...l } of Qm(e))
     t.push({ e: { ...l, mesIndex: r, ts: ro(l.at) }, pos: r < 0 ? Number.MAX_SAFE_INTEGER : r, g: o === void 0 ? 1 : 2, seq: o ?? 0 });
   t.sort((r, o) => r.pos - o.pos || r.g - o.g || r.seq - o.seq);
-  const n = t.map((r) => r.e), i = (Re().adjust ?? []).map((r) => ({
+  const n = t.map((r) => r.e), i = (De().adjust ?? []).map((r) => ({
     delta: r.amount,
     source: `手动：${r.note}`,
     type: "manual",
@@ -6342,7 +6328,7 @@ function sn(e) {
   return Vp(n, i);
 }
 function vt(e) {
-  const t = Re();
+  const t = De();
   if (t.init != null) return { value: t.init.value, source: t.init.source };
   const n = /<状态栏>([\s\S]*?)<\/状态栏>/;
   for (let s = e.length - 1; s >= 0; s--) {
@@ -6359,7 +6345,7 @@ function vt(e) {
   return { value: 1e3, source: "默认值" };
 }
 function Zn(e = Y()) {
-  const t = Re().fix?.level;
+  const t = De().fix?.level;
   if (t && ["D", "C", "B", "A", "S"].includes(t)) return t;
   for (let n = e.length - 1; n >= 0; n--) {
     if (e[n].is_user || !e[n].mes) continue;
@@ -6371,7 +6357,7 @@ function Zn(e = Y()) {
   return "D";
 }
 function wm(e) {
-  if (!(Re().init != null || f.ledger.length > 0)) return "";
+  if (!(De().init != null || f.ledger.length > 0)) return "";
   const s = vt(e), i = nn(s.value, f.ledger), r = Zn(e), o = bt[r], l = qn(s.value, f.ledger, o), a = Hp(i, l, r, o), c = Ie();
   return c?.status === "active" && c.live ? wh(a, ar(e, c.id)) : a;
 }
@@ -6390,7 +6376,7 @@ function Ao(e, t = !0) {
       结果: c.result ?? "",
       评价: c.rating ?? "",
       ...c.fields
-    }, d = Re(), h = /<状态栏>([\s\S]*?)<\/状态栏>/;
+    }, d = De(), h = /<状态栏>([\s\S]*?)<\/状态栏>/;
     let y = "D";
     const w = d.fix?.level;
     if (w && ["D", "C", "B", "A", "S"].includes(w))
@@ -6425,19 +6411,19 @@ function Ao(e, t = !0) {
   f.ledger = sn(Y());
 }
 function _m(e, t) {
-  const n = Re(), s = We(void 0), i = [...n.adjust ?? [], { amount: e, note: t, at: s, ts: Date.now() }];
+  const n = De(), s = We(void 0), i = [...n.adjust ?? [], { amount: e, note: t, at: s, ts: Date.now() }];
   pn({ ...n, adjust: i }), f.ledger = sn(Y());
 }
 function zm(e, t) {
   _m(e, t);
 }
 function $m(e) {
-  const t = Re(), n = We(void 0);
+  const t = De(), n = We(void 0);
   pn({ ...t, init: { value: e, source: "手动设置", at: n } }), f.ledger = sn(Y());
 }
 function Sm(e, t) {
   if (!e && !t) return;
-  const n = Re(), s = Y(), i = We(void 0);
+  const n = De(), s = Y(), i = We(void 0);
   pn({ ...n, fix: { level: e, rank: t, at: i, afterIndex: s.length - 1 } });
 }
 function Ie() {
@@ -6459,9 +6445,9 @@ function fr(e) {
   const t = Ie();
   t && (e(t), Qt(t), Me());
 }
-function Fa(e) {
+function Oa(e) {
   const t = Y();
-  return (e === "swipe" || e === "continue") && De(t[t.length - 1]) ? t.slice(0, -1) : t;
+  return (e === "swipe" || e === "continue") && Re(t[t.length - 1]) ? t.slice(0, -1) : t;
 }
 function Cs(e, t) {
   if (!t) return { session: null, pack: null, progress: null, audit: null };
@@ -6485,7 +6471,7 @@ function Me() {
   const n = Cs(e, t);
   f.session = n.session, f.pack = n.pack, f.progress = n.progress, f.audit = n.audit, f.subLine = Wa(e, n.progress), ig(e, n.session), f.ledger = sn(e), f.tick++, Yn();
 }
-function Oa() {
+function Fa() {
   if (f.session)
     return ha(f.session, f.progress?.rolesFromChat);
 }
@@ -6494,7 +6480,7 @@ function Ms() {
 }
 let Tn = -1;
 function Cm(e) {
-  const t = Fa(e), n = Ie(), { pack: s, progress: i, audit: r } = Cs(t, n), o = n ? ha(n, i?.rolesFromChat) : void 0, l = hn() && !!i, a = l ? Ks(t, i.entryIndex) : null, c = s ? Ap(s, i, n, {
+  const t = Oa(e), n = Ie(), { pack: s, progress: i, audit: r } = Cs(t, n), o = n ? ha(n, i?.rolesFromChat) : void 0, l = hn() && !!i, a = l ? Ks(t, i.entryIndex) : null, c = s ? Ap(s, i, n, {
     roles: o,
     briefing: n?.briefing,
     panelLimit: i?.panel?.limit,
@@ -6505,21 +6491,21 @@ function Cm(e) {
   Ms();
   const u = f.settings.depths;
   c.token && Vt(Hl, c.token, u.token, !0), c.progress && Vt(Gl, c.progress, u.progress, !1), c.turn && Vt(Kl, c.turn, u.turn, !1), c.state && Vt(ql, c.state, u.progress, !1);
-  const d = Re();
+  const d = De();
   let h = wm(t);
   if (d.fix) {
     const w = Wp(d.fix);
     w && (h = h ? `${h}
 ${w}` : w);
   }
-  const y = Fe();
+  const y = Oe();
   if (y.hints.length) {
     const w = y.hints.map(dm).join("");
     h = h ? `${h}
 ${w}` : w, y.hints.some((_) => !_.sent) && (y.hints = y.hints.map((_) => ({ ..._, sent: !0 })), wt(y));
   }
   if (h && Vt(Yl, h, u.ledger, !1), f.settings.live.injectToAI) {
-    const w = Dp(xr(/* @__PURE__ */ new Set(), t));
+    const w = Rp(xr(/* @__PURE__ */ new Set(), t));
     w && Vt(Jl, w, u.live, !1);
   }
   f.lastInjection = c, Tn = t.length, Jn("注入", e, c);
@@ -6538,7 +6524,7 @@ async function Mm() {
   const { pack: o, progress: l } = Cs(e, i);
   if (!o || !l || l.ended) return;
   const a = ep(o, l.phase, l.round, s);
-  a && await Dt(`是否跳到${s}？（${a.label}）`) && (i.manual.push({ kind: "skip", atIndex: t, targetPhase: a.phase, targetRound: a.round }), Qt(i));
+  a && await Rt(`是否跳到${s}？（${a.label}）`) && (i.manual.push({ kind: "skip", atIndex: t, targetPhase: a.phase, targetRound: a.round }), Qt(i));
 }
 async function Im(e, t, n, s) {
   try {
@@ -6578,7 +6564,7 @@ async function La(e) {
     return;
   }
   const c = { ...n };
-  e.pack || (c.rounds = Tl(n.limit, jl(n), f.settings.genericCaps).rounds), Ua(e.pack ?? Dl(c, f.settings.genericCaps), t, c, o.show && l.checked);
+  e.pack || (c.rounds = Tl(n.limit, jl(n), f.settings.genericCaps).rounds), Ua(e.pack ?? Rl(c, f.settings.genericCaps), t, c, o.show && l.checked);
 }
 function Ba(e) {
   f.settings.live.optIn !== e && (f.settings.live.optIn = e, ve());
@@ -6591,7 +6577,7 @@ function Tm(e) {
   Me();
   const t = Y(), n = pr();
   let s = -1;
-  for (let i = n; i < t.length; i++) if (De(t[i])) {
+  for (let i = n; i < t.length; i++) if (Re(t[i])) {
     s = i;
     break;
   }
@@ -6602,7 +6588,7 @@ function Ua(e, t, n, s = !1) {
   o && eg(o);
   const l = Kp(e, t, n), a = kt();
   if (a.corridor.on && (a.corridor.on = !1, Hn(a, a.corridor.show, Xt.enterOff)), s && !e.disableLive && (l.live = !0, Hn(a, l.id, Xt.instanceOn)), mn(a), !e.rest) {
-    const c = vt(i), u = Re(), d = /<状态栏>([\s\S]*?)<\/状态栏>/;
+    const c = vt(i), u = De(), d = /<状态栏>([\s\S]*?)<\/状态栏>/;
     let h = "D";
     const y = u.fix?.level;
     if (y && ["D", "C", "B", "A", "S"].includes(y))
@@ -6627,14 +6613,14 @@ async function Nm(e) {
   if (!t) return;
   const n = Y();
   let s = n.length - 1;
-  for (; s >= 0 && !De(n[s]); ) s--;
+  for (; s >= 0 && !Re(n[s]); ) s--;
   if (s < 0) {
     Ee("warning", "当前聊天还没有AI消息，无法手动进入副本。");
     return;
   }
-  if (Ie()?.status === "active" && !await Dt("当前已有进行中的副本，确定要替换吗？")) return;
+  if (Ie()?.status === "active" && !await Rt("当前已有进行中的副本，确定要替换吗？")) return;
   const r = va(t, f.settings.live.optIn), o = await Zl(`以最新一条AI回复作为《${t.name}》的第1轮，确定进入吗？`, r.show ? { label: "开启直播", checked: r.checked } : null);
-  o.ok && (r.show && Ba(o.checked), Ua(t, s, Fl(n[s].mes) ?? { name: t.name }, r.show && o.checked));
+  o.ok && (r.show && Ba(o.checked), Ua(t, s, Ol(n[s].mes) ?? { name: t.name }, r.show && o.checked));
 }
 function Xs(e) {
   fr((t) => t.manual.push(e));
@@ -6649,11 +6635,11 @@ async function fo() {
       Ee("info", "已经是本阶段最后一轮，无需跳过。");
       return;
     }
-    await Dt(`是否跳到本阶段结束？（${e.phase.name}第${e.phase.cap}轮）`) && (Xs({ kind: "skip", atIndex: Qs(), targetPhase: e.phase.id, targetRound: e.phase.cap }), Ee("info", "已记录跳过，下一次生成开始快进。"));
+    await Rt(`是否跳到本阶段结束？（${e.phase.name}第${e.phase.cap}轮）`) && (Xs({ kind: "skip", atIndex: Qs(), targetPhase: e.phase.id, targetRound: e.phase.cap }), Ee("info", "已记录跳过，下一次生成开始快进。"));
   }
 }
 async function po() {
-  if (!(!f.session || f.progress?.ended) && await Dt("确定要手动结束当前副本吗？")) {
+  if (!(!f.session || f.progress?.ended) && await Rt("确定要手动结束当前副本吗？")) {
     if (f.session.live) {
       const e = kt();
       Hn(e, f.session.id, Xt.instanceOff), mn(e);
@@ -6667,16 +6653,16 @@ function Pm(e) {
 function jm(e) {
   Xs({ kind: "setRound", atIndex: Qs(), round: e });
 }
-function Dm(e) {
+function Rm(e) {
   fr((t) => {
     t.roles = Object.fromEntries(Object.entries(e).filter(([, n]) => n.trim()));
   });
 }
-function Rm(e) {
+function Dm(e) {
   fr((t) => t.manual.splice(e, 1));
 }
 async function ho() {
-  f.session && await Dt("确定要删除当前副本会话吗？（不会改动聊天记录）") && (Ya(f.session.id), Qt(null), Me());
+  f.session && await Rt("确定要删除当前副本会话吗？（不会改动聊天记录）") && (Ya(f.session.id), Qt(null), Me());
 }
 function hn() {
   return f.settings.subApi.source !== "off";
@@ -6690,7 +6676,7 @@ function hr() {
   }
   return null;
 }
-function Fm(e) {
+function Om(e) {
   return e.source === "main" ? "跟随主API" : `自设API「${e.preset?.name}」`;
 }
 function Wa(e, t) {
@@ -6722,10 +6708,10 @@ function Ha(e, t, n) {
   const s = Y()[e];
   s?.extra?.rlzc && (s.extra.rlzc = Je({ ...s.extra.rlzc, sub: n }), Xe(), Me());
 }
-function Om(e, t) {
+function Fm(e, t) {
   const n = Y(), s = f.progress, i = f.pack, r = n[e], o = s?.perMessage[e];
   if (!i || !s || !o || !r) return null;
-  const l = Oa(), a = (I) => ({ ...I, text: zs(I.text, i, l), if: I.if ? zs(I.if, i, l) : void 0 }), c = vp(i, r.extra?.rlzc?.injected ?? []).map(a), u = (s.next?.events ?? []).filter((I) => I.if).map(a);
+  const l = Fa(), a = (I) => ({ ...I, text: zs(I.text, i, l), if: I.if ? zs(I.if, i, l) : void 0 }), c = vp(i, r.extra?.rlzc?.injected ?? []).map(a), u = (s.next?.events ?? []).filter((I) => I.if).map(a);
   if (!zp({
     enabled: hn(),
     active: !s.ended && f.session?.status === "active",
@@ -6736,7 +6722,7 @@ function Om(e, t) {
   })) return null;
   const h = en(e);
   if (mr.has(h)) return null;
-  const y = i.phases.find((I) => I.id === o.phase), w = Ks(n.slice(0, e), s.entryIndex), _ = f.session ? Fe().books[f.session.id] : void 0, P = bp({
+  const y = i.phases.find((I) => I.id === o.phase), w = Ks(n.slice(0, e), s.entryIndex), _ = f.session ? Oe().books[f.session.id] : void 0, P = bp({
     pack: i,
     phaseName: y?.name ?? o.phase,
     round: o.round,
@@ -6760,7 +6746,7 @@ async function Lm(e, t, n, s) {
       const o = Date.now();
       try {
         const l = await $p((a) => sr(r, a), s, i);
-        Ha(e, t, { ...l, ms: Date.now() - o, via: Fm(r), at: (/* @__PURE__ */ new Date()).toISOString() }), mr.add(t);
+        Ha(e, t, { ...l, ms: Date.now() - o, via: Om(r), at: (/* @__PURE__ */ new Date()).toISOString() }), mr.add(t);
         return;
       } catch (l) {
         if (en(e) !== t) return;
@@ -6830,7 +6816,7 @@ async function Bm(e, t, n) {
 }
 async function Vm(e) {
   const t = Nn;
-  if (!(!t || !f.settings.subApi.wait) && !((e === "swipe" || e === "regenerate" || e === "continue") && t.index >= Fa(e).length))
+  if (!(!t || !f.settings.subApi.wait) && !((e === "swipe" || e === "regenerate" || e === "continue") && t.index >= Oa(e).length))
     try {
       await t.promise;
     } catch {
@@ -6838,7 +6824,7 @@ async function Vm(e) {
 }
 function Um(e, t) {
   const n = Y(), s = n[e];
-  if (!De(s)) return;
+  if (!Re(s)) return;
   const i = Ie();
   if (!i || i.status === "ended") {
     if (qs(n, e, f.packs)) {
@@ -6867,7 +6853,7 @@ function Um(e, t) {
     const y = s.extra?.rlzc?.entry;
     y && (u.entry = y), Tn === e && f.lastInjection.skipped?.length && (u.skippedEvents = f.lastInjection.skipped), t === "continue" && s.extra?.rlzc?.sub && (u.sub = s.extra.rlzc.sub), t === "continue" && s.extra?.rlzc?.live && (u.live = s.extra.rlzc.live);
     const w = (s.extra?.rlzc?.ledger ?? []).filter((_) => _.type === "tip");
-    t === "continue" && w.length && (u.ledger = w), s.extra = s.extra ?? {}, s.extra.rlzc = Je(u), Xe(), Me(), r = Om(e, t);
+    t === "continue" && w.length && (u.ledger = w), s.extra = s.extra ?? {}, s.extra.rlzc = Je(u), Xe(), Me(), r = Fm(e, t);
   }
   Pn >= 0 && (Pn = -1, r || Me());
   const a = Hs(s.mes);
@@ -6880,7 +6866,7 @@ function Um(e, t) {
   go(), vo();
 }
 function go() {
-  const e = Re();
+  const e = De();
   e.fix && pn({ ...e, fix: void 0 });
 }
 function xo(e) {
@@ -6935,7 +6921,7 @@ function Gm(e) {
 function _i(e, t) {
   if (t === "continue" || t === "first_message") return;
   const n = Y(), s = n[e];
-  if (!De(s) || Rt(s)) return;
+  if (!Re(s) || Dt(s)) return;
   const i = Gm(e);
   if (!i) return;
   const r = kt(), { show: o, scope: l, pack: a } = i, c = f.progress, u = s.extra?.rlzc ?? { phase: "", round: 0, injected: [] }, d = lr(n, o, e), h = u.sub && !u.sub.skipped ? { hype: u.sub.hype, hurt: u.sub.hurt } : void 0, y = l === "instance" && c?.endIndex === e && c.endedBy === "tag" ? Hs(s.mes) : null, w = !!y && ["死亡", "阵亡"].includes(String(y.result ?? "").trim()), _ = c?.roundsLeft, P = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(s.mes ?? "")), V = new Set((a?.events ?? []).filter((B) => B.kind !== "directive").map((B) => B.id)), j = Mp({
@@ -6982,7 +6968,7 @@ function Km(e, t) {
     return;
   }
   const r = [];
-  for (let u = e; u >= 0 && r.length < 2; u--) De(n[u]) && r.unshift(String(n[u].mes ?? ""));
+  for (let u = e; u >= 0 && r.length < 2; u--) Re(n[u]) && r.unshift(String(n[u].mes ?? ""));
   const o = Tp({
     scene: t ?? "回廊",
     texts: r,
@@ -6997,7 +6983,7 @@ function Km(e, t) {
 }
 function zi(e, t, n, s, i) {
   if (en(e) !== t) return;
-  const r = Y(), o = r[e], l = Rt(o);
+  const r = Y(), o = r[e], l = Dt(o);
   if (!l?.pending || !o.extra?.rlzc) return;
   const a = kt(), c = Sa(l, s ? null : n, Ys(r, a) + 1, Math.random), u = s ? 0 : Math.min(n.length, 13), d = { ...c, ai: s ? { ok: !1, error: s, ms: i } : { ok: !0, count: u, ms: i } };
   o.extra.rlzc = Je({ ...o.extra.rlzc, live: d }), a.seq = Math.max(a.seq, ...d.feed.map((h) => h.id)), mn(a), f.tick++, ur(d.feed, !0);
@@ -7006,7 +6992,7 @@ function qm() {
   const e = Y();
   let t = !1;
   for (const n of e) {
-    const s = Rt(n);
+    const s = Dt(n);
     if (!s?.pending || !n.extra?.rlzc) continue;
     const i = kt(), r = Sa(s, null, Ys(e, i) + 1, Math.random);
     n.extra.rlzc = Je({ ...n.extra.rlzc, live: { ...r, ai: { ok: !1, error: "没有等到结果" } } }), i.seq = Math.max(i.seq, ...r.feed.map((o) => o.id)), mn(i), t = !0;
@@ -7050,7 +7036,7 @@ function Jm() {
 function Zm() {
   return { book: null, results: {}, tickets: [], pending: 0, tables: [], casinoOpen: !0 };
 }
-function Fe() {
+function Oe() {
   return pm(dt()[Ca]);
 }
 function wt(e) {
@@ -7067,8 +7053,8 @@ function yr(e = Y()) {
   return nn(vt(e).value, f.ledger);
 }
 function Ka(e) {
-  if (Re().init) return;
-  const t = vt(e), n = Re();
+  if (De().init) return;
+  const t = vt(e), n = De();
   n.init || pn({ ...n, init: { value: t.value, source: t.source, at: We(void 0) } });
 }
 function qa() {
@@ -7076,7 +7062,7 @@ function qa() {
   return e?.status === "active" && e.live ? ar(Y(), e.id) : 0;
 }
 function ei(e, t, n) {
-  if (t.frozen) return { results: {}, tickets: Ri(t, {}), rounds: [] };
+  if (t.frozen) return { results: {}, tickets: Di(t, {}), rounds: [] };
   let s = { voided: !0, ended: !1 }, i = [], r = {};
   if (n && n.id === t.session) {
     const l = pa(n, f.packs), a = l ? Wl(e, n, l) : null;
@@ -7089,24 +7075,24 @@ function ei(e, t, n) {
     }, i = Zh(e, a.perMessage, a.entryIndex, Xm()), r = a.phaseEnds);
   }
   const o = Yh({ markets: t.markets, rounds: i, outcome: s, phaseEnds: r });
-  return { results: o, tickets: Ri(t, o), rounds: i };
+  return { results: o, tickets: Di(t, o), rounds: i };
 }
 function Qm(e) {
-  const t = Fe(), n = Ie(), s = (r) => e[r] ? We(e[r].send_date ?? e[r].gen_finished ?? void 0) : void 0, i = [];
+  const t = Oe(), n = Ie(), s = (r) => e[r] ? We(e[r].send_date ?? e[r].gen_finished ?? void 0) : void 0, i = [];
   for (const r of Object.values(t.books)) i.push(...tm(r, ei(e, r, n).tickets, s));
   for (const r of t.casino.plays)
     i.push({ delta: r.net, source: gm(r.table, r.label), type: "bet", at: r.at, pos: r.after, seq: r.seq ?? 0 });
   return i;
 }
 function eg(e) {
-  const t = Fe(), n = t.books[e.id];
+  const t = Oe(), n = t.books[e.id];
   if (!n || n.frozen) return;
   const s = Y(), i = Jh(n, ei(s, n, e).results);
   for (const r of n.tickets) i[r.id].index < 0 && (i[r.id].index = Math.max(s.length, r.after + 1));
   n.frozen = i, wt(t);
 }
 function Ya(e) {
-  const t = Fe(), n = t.books[e];
+  const t = Oe(), n = t.books[e];
   if (!n || n.frozen) return;
   const s = Y().length;
   n.frozen = Object.fromEntries(n.tickets.map((i) => [i.id, { stamp: "refund", index: Math.max(s, i.after + 1) }])), wt(t);
@@ -7115,12 +7101,12 @@ function tg(e, t, n) {
   if (t.rest) return;
   const s = Y(), i = hn(), r = Bh({ pack: t, playerLevel: Xn(s), withEvents: i, rand: Math.random });
   if (!r.length) return;
-  const o = Fe(), l = { session: e.id, packId: t.id, packName: t.name, openedAt: We(void 0), markets: r, tickets: [] };
+  const o = Oe(), l = { session: e.id, packId: t.id, packName: t.name, openedAt: We(void 0), markets: r, tickets: [] };
   i && (l.freak = { status: "pending" }), o.books[e.id] = l, wt(o), i && ng(e.id, t, n);
 }
 function ng(e, t, n) {
   const s = (c, u) => {
-    const d = Fe(), h = d.books[e];
+    const d = Oe(), h = d.books[e];
     h && (u && (h.closedAt || h.frozen) ? h.freak = { ...c, status: "late" } : (u && (h.markets = [...h.markets.filter((y) => y.kind !== "freak"), ...am(u, Math.random)]), h.freak = c), wt(d), Me());
   }, i = hr();
   if (!i) {
@@ -7153,7 +7139,7 @@ function sg(e) {
   i.length && Ee("info", `赌票开奖：${i.join("，")}。`);
 }
 function ig(e, t) {
-  const n = Fe();
+  const n = Oe();
   let s = !1;
   const i = t?.status === "active", r = t ? n.books[t.id] : void 0;
   r && !r.closedAt && !r.frozen && f.progress && Wh(f.progress.perMessage, f.progress.entryIndex) && (r.closedAt = We(void 0), s = !0);
@@ -7188,7 +7174,7 @@ function Ja(e, t) {
 function rg(e, t, n) {
   const s = Ie();
   if (!s || s.status !== "active") return "没有进行中的副本";
-  const i = Fe(), r = i.books[s.id];
+  const i = Oe(), r = i.books[s.id];
   if (!r || r.frozen) return "本局没有开盘";
   if (r.closedAt) return "已封盘";
   const o = r.markets.find((d) => d.id === e), l = o?.options.find((d) => d.id === t);
@@ -7199,7 +7185,7 @@ function rg(e, t, n) {
   const c = Y();
   Ka(c);
   const u = i.seq + 1;
-  return i.seq = u, r.tickets.push({ id: `t${u}`, seq: u, market: e, option: t, stake: n, odds: l.odds, at: We(void 0), after: c.length - 1 }), o.kind === "ending" && t === "lose" && (i.hints = Fi(i.hints, { kind: "betLose", amount: n, after: c.length - 1 })), wt(i), Me(), null;
+  return i.seq = u, r.tickets.push({ id: `t${u}`, seq: u, market: e, option: t, stake: n, odds: l.odds, at: We(void 0), after: c.length - 1 }), o.kind === "ending" && t === "lose" && (i.hints = Oi(i.hints, { kind: "betLose", amount: n, after: c.length - 1 })), wt(i), Me(), null;
 }
 function Za(e) {
   const t = Y();
@@ -7207,7 +7193,7 @@ function Za(e) {
 }
 function og(e, t, n) {
   if (!f.market.casinoOpen) return { error: "赌坊只在回廊营业。" };
-  const s = Fe();
+  const s = Oe();
   if (!s.casino.tables.includes(e)) return { error: "这张桌今晚没开" };
   const i = Za(n);
   if (!i.ok) return { error: i.reason };
@@ -7219,16 +7205,16 @@ function og(e, t, n) {
   return s.seq = u, s.casino.plays = [
     ...s.casino.plays,
     { id: `g${u}`, seq: u, table: e, bet: t, label: r.label, stake: n, win: r.win, payout: r.payout, net: r.net, result: r.result, at: We(void 0), after: c }
-  ], !r.win && a - n < bt[l] && (s.hints = Fi(s.hints, { kind: "casinoLoss", amount: n, after: c })), r.win && r.net > Ma[l] * 5 && (s.hints = Fi(s.hints, { kind: "casinoWin", amount: r.net, after: c })), wt(s), Me(), { outcome: r };
+  ], !r.win && a - n < bt[l] && (s.hints = Oi(s.hints, { kind: "casinoLoss", amount: n, after: c })), r.win && r.net > Ma[l] * 5 && (s.hints = Oi(s.hints, { kind: "casinoWin", amount: r.net, after: c })), wt(s), Me(), { outcome: r };
 }
 function vo() {
-  const e = Fe();
+  const e = Oe();
   if (!e.hints.length) return;
   const t = fm(e.hints);
   t.length !== e.hints.length && (e.hints = t, wt(e));
 }
 function lg() {
-  const e = Ie(), t = e ? Fe().books[e.id] : void 0;
+  const e = Ie(), t = e ? Oe().books[e.id] : void 0;
   return t ? ei(Y(), t, e).rounds : [];
 }
 const ag = { class: "rlzc-ball-mark" }, cg = {
@@ -7264,7 +7250,7 @@ const ag = { class: "rlzc-ball-mark" }, cg = {
       i(), window.addEventListener("resize", i);
     }), al(() => window.removeEventListener("resize", i)), (u, d) => (v(), k("button", {
       class: te(["rlzc-ball", { "is-active": a.value, "is-warn": c.value }]),
-      style: Ds({ left: t.value.x + "px", top: t.value.y + "px" }),
+      style: Rs({ left: t.value.x + "px", top: t.value.y + "px" }),
       title: "回廊种菜系统（可拖动）",
       onPointerdown: r,
       onPointermove: o,
@@ -7408,10 +7394,10 @@ const fg = {
 }, jg = {
   key: 2,
   class: "rlzc-card"
-}, Dg = { class: "rlzc-kv" }, Rg = { class: "rlzc-kv" }, Fg = {
+}, Rg = { class: "rlzc-kv" }, Dg = { class: "rlzc-kv" }, Og = {
   key: 0,
   class: "rlzc-note rlzc-note-warn"
-}, Og = {
+}, Fg = {
   key: 3,
   class: "rlzc-note"
 }, Lg = {
@@ -7486,16 +7472,16 @@ const fg = {
         T(f).subLine ? (v(), k("p", Ng, S(T(f).subLine), 1)) : U("", !0),
         s.value.skipGoal ? (v(), k("div", Pg, "快进中：目标 " + S(T(f).pack.phases.find((w) => w.id === s.value.skipGoal.phase)?.name) + " 第" + S(s.value.skipGoal.round) + "轮", 1)) : U("", !0),
         s.value.ended && s.value.settlement ? (v(), k("div", jg, [
-          A("div", Dg, [
+          A("div", Rg, [
             y[8] || (y[8] = A("span", null, "结果", -1)),
             A("b", null, S(s.value.settlement.result ?? "—"), 1)
           ]),
-          A("div", Rg, [
+          A("div", Dg, [
             y[9] || (y[9] = A("span", null, "评价", -1)),
             A("b", null, S(s.value.settlement.rating ?? "—"), 1)
           ]),
-          T(f).session?.clearance && s.value.settlement.result === "失败" ? (v(), k("div", Fg, " 清算未通关 ")) : U("", !0)
-        ])) : s.value.ended ? (v(), k("div", Og, "副本已手动结束。")) : U("", !0),
+          T(f).session?.clearance && s.value.settlement.result === "失败" ? (v(), k("div", Og, " 清算未通关 ")) : U("", !0)
+        ])) : s.value.ended ? (v(), k("div", Fg, "副本已手动结束。")) : U("", !0),
         l.value && s.value.panel ? (v(), k("div", Lg, [
           s.value.panel.progressBar ? (v(), k("div", Bg, [
             y[10] || (y[10] = A("span", null, "进度", -1)),
@@ -7651,10 +7637,10 @@ const fg = {
 }, Nx = { class: "rlzc-tk-left" }, Px = { class: "rlzc-tk-title" }, jx = {
   key: 1,
   class: "rlzc-hint"
-}, Dx = {
+}, Rx = {
   key: 0,
   class: "rlzc-card rlzc-mk-status"
-}, Rx = { class: "rlzc-cs-tables" }, Fx = ["onClick"], Ox = {
+}, Dx = { class: "rlzc-cs-tables" }, Ox = ["onClick"], Fx = {
   key: 0,
   class: "rlzc-card rlzc-cs-play"
 }, Lx = {
@@ -7666,54 +7652,54 @@ const fg = {
 }, Kx = /* @__PURE__ */ Ue({
   __name: "MarketTab",
   setup(e) {
-    const t = /* @__PURE__ */ de("book"), n = (D) => new Intl.NumberFormat("en-US").format(D), s = (D) => `×${D.toFixed(2)}`, i = G(() => f.market.pending), r = G(() => (f.tick, Xn())), o = G(() => f.market.book), l = G(() => !!o.value?.closedAt), a = G(() => {
-      const D = o.value;
-      return D ? D.closedAt ? `《${D.packName}》已封盘` : `《${D.packName}》开盘中 · 第1轮结束封盘` : f.session?.status === "active" && f.pack?.rest ? "休整副本不开盘。" : "进副本后开盘。";
+    const t = /* @__PURE__ */ de("book"), n = (R) => new Intl.NumberFormat("en-US").format(R), s = (R) => `×${R.toFixed(2)}`, i = G(() => f.market.pending), r = G(() => (f.tick, Xn())), o = G(() => f.market.book), l = G(() => !!o.value?.closedAt), a = G(() => {
+      const R = o.value;
+      return R ? R.closedAt ? `《${R.packName}》已封盘` : `《${R.packName}》开盘中 · 第1轮结束封盘` : f.session?.status === "active" && f.pack?.rest ? "休整副本不开盘。" : "进副本后开盘。";
     }), c = { ending: "结局", rating: "评价", event: "事件", freak: "庄家" }, u = /* @__PURE__ */ de({}), d = /* @__PURE__ */ de({});
-    function h(D, K) {
-      l.value || f.market.results[D.id] || (u.value = { ...u.value, [D.id]: u.value[D.id] === K ? "" : K });
+    function h(R, K) {
+      l.value || f.market.results[R.id] || (u.value = { ...u.value, [R.id]: u.value[R.id] === K ? "" : K });
     }
-    function y(D) {
+    function y(R) {
       f.tick;
-      const K = d.value[D.id];
-      return Ja(D.id, typeof K == "number" ? K : 0);
+      const K = d.value[R.id];
+      return Ja(R.id, typeof K == "number" ? K : 0);
     }
-    function w(D) {
-      const K = u.value[D.id], H = d.value[D.id];
+    function w(R) {
+      const K = u.value[R.id], H = d.value[R.id];
       if (!K || typeof H != "number") return;
-      const pe = rg(D.id, K, H);
+      const pe = rg(R.id, K, H);
       if (pe) {
         Ee("warning", pe);
         return;
       }
-      d.value = { ...d.value, [D.id]: null }, u.value = { ...u.value, [D.id]: "" };
+      d.value = { ...d.value, [R.id]: null }, u.value = { ...u.value, [R.id]: "" };
     }
-    function _(D) {
+    function _(R) {
       const K = o.value;
-      return K ? f.market.tickets.filter((H) => H.book.session === K.session && H.ticket.market === D.id) : [];
+      return K ? f.market.tickets.filter((H) => H.book.session === K.session && H.ticket.market === R.id) : [];
     }
-    function P(D) {
-      return D.market?.options.find((K) => K.id === D.ticket.option)?.label ?? D.ticket.option;
+    function P(R) {
+      return R.market?.options.find((K) => K.id === R.ticket.option)?.label ?? R.ticket.option;
     }
-    function V(D) {
-      return `${D.book.packName} · ${D.market?.q ?? D.ticket.market} · ${P(D)}`;
+    function V(R) {
+      return `${R.book.packName} · ${R.market?.q ?? R.ticket.market} · ${P(R)}`;
     }
-    function j(D) {
-      const K = D.ticket, H = D.res?.stamp;
+    function j(R) {
+      const K = R.ticket, H = R.res?.stamp;
       return H ? H === "win" ? `押 ${n(K.stake)} · ${s(K.odds)} · 兑 ${n(Ta(K.stake, K.odds))}` : H === "lose" ? `押 ${n(K.stake)} · ${s(K.odds)}` : `押 ${n(K.stake)} · 原数退还` : `押 ${n(K.stake)} · ${s(K.odds)} · 待开奖`;
     }
-    const z = { win: "兑", lose: "废", refund: "退" }, I = G(() => f.market.tables.map((D) => An(D)).filter((D) => !!D)), ee = /* @__PURE__ */ de(""), Z = G(() => ee.value ? An(ee.value) : void 0), B = /* @__PURE__ */ de(""), b = /* @__PURE__ */ de(null), m = /* @__PURE__ */ de(!1), g = /* @__PURE__ */ de(""), O = /* @__PURE__ */ de(null);
+    const z = { win: "兑", lose: "废", refund: "退" }, I = G(() => f.market.tables.map((R) => An(R)).filter((R) => !!R)), ee = /* @__PURE__ */ de(""), Z = G(() => ee.value ? An(ee.value) : void 0), B = /* @__PURE__ */ de(""), b = /* @__PURE__ */ de(null), m = /* @__PURE__ */ de(!1), g = /* @__PURE__ */ de(""), F = /* @__PURE__ */ de(null);
     let ae = null;
-    function re(D) {
-      if (ee.value === D) {
+    function re(R) {
+      if (ee.value === R) {
         ee.value = "";
         return;
       }
-      ee.value = D;
-      const K = An(D);
-      B.value = K && K.bets.length === 1 ? K.bets[0].id : "", O.value = null;
+      ee.value = R;
+      const K = An(R);
+      B.value = K && K.bets.length === 1 ? K.bets[0].id : "", F.value = null;
     }
-    const ze = G(() => (Z.value?.bets ?? []).filter((D) => !/^[nd]\d+$/.test(D.id))), ge = G(() => (Z.value?.bets ?? []).filter((D) => /^[nd]\d+$/.test(D.id))), He = G(() => (f.tick, Za(typeof b.value == "number" ? b.value : 0)));
+    const ze = G(() => (Z.value?.bets ?? []).filter((R) => !/^[nd]\d+$/.test(R.id))), ge = G(() => (Z.value?.bets ?? []).filter((R) => /^[nd]\d+$/.test(R.id))), He = G(() => (f.tick, Za(typeof b.value == "number" ? b.value : 0)));
     function Qe() {
       try {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -7721,35 +7707,35 @@ const fg = {
         return !1;
       }
     }
-    function Ge(D, K) {
-      return D === "bell" ? `${K[0]}下` : D === "door" ? `${K[0]}号门` : D === "lot" ? `第${K[0]}支` : `${K[0]} : ${K[1]}`;
+    function Ge(R, K) {
+      return R === "bell" ? `${K[0]}下` : R === "door" ? `${K[0]}号门` : R === "lot" ? `第${K[0]}支` : `${K[0]} : ${K[1]}`;
     }
     function rn() {
-      const D = Z.value, K = b.value;
-      if (!D || !B.value || typeof K != "number" || m.value) return;
-      const H = og(D.id, B.value, K);
+      const R = Z.value, K = b.value;
+      if (!R || !B.value || typeof K != "number" || m.value) return;
+      const H = og(R.id, B.value, K);
       if (H.error || !H.outcome) {
         Ee("warning", H.error ?? "不能下注");
         return;
       }
       const pe = { ...H.outcome, stake: K };
-      if (O.value = null, Qe()) {
-        g.value = Ge(D.id, pe.faces), O.value = pe;
+      if (F.value = null, Qe()) {
+        g.value = Ge(R.id, pe.faces), F.value = pe;
         return;
       }
       m.value = !0;
-      const Qn = D.id === "bell" ? 12 : D.id === "door" ? 20 : D.id === "lot" ? 3 : 13, _t = () => 1 + Math.floor(Math.random() * Qn);
-      ae = setInterval(() => g.value = Ge(D.id, [_t(), _t()]), 80), setTimeout(() => {
-        ae && clearInterval(ae), ae = null, g.value = Ge(D.id, pe.faces), m.value = !1, O.value = pe;
+      const Qn = R.id === "bell" ? 12 : R.id === "door" ? 20 : R.id === "lot" ? 3 : 13, _t = () => 1 + Math.floor(Math.random() * Qn);
+      ae = setInterval(() => g.value = Ge(R.id, [_t(), _t()]), 80), setTimeout(() => {
+        ae && clearInterval(ae), ae = null, g.value = Ge(R.id, pe.faces), m.value = !1, F.value = pe;
       }, 1200);
     }
-    const Ft = G(() => {
-      const D = O.value;
-      return D ? `结果：${D.result}。${D.win ? `赢 ${n(D.payout)}` : `输 ${n(D.stake)}`}` : "";
+    const Ot = G(() => {
+      const R = F.value;
+      return R ? `结果：${R.result}。${R.win ? `赢 ${n(R.payout)}` : `输 ${n(R.stake)}`}` : "";
     });
     return al(() => {
       ae && clearInterval(ae);
-    }), (D, K) => (v(), k("div", xx, [
+    }), (R, K) => (v(), k("div", xx, [
       A("nav", yx, [
         A("button", {
           class: te({ on: t.value === "book" }),
@@ -7836,7 +7822,7 @@ const fg = {
       ])) : (v(), k(X, { key: 2 }, [
         T(f).market.casinoOpen ? (v(), k(X, { key: 1 }, [
           K[4] || (K[4] = A("p", { class: "rlzc-hint" }, "今晚开两张桌，回到回廊换一批。", -1)),
-          A("div", Rx, [
+          A("div", Dx, [
             (v(!0), k(X, null, fe(I.value, (H) => (v(), k("button", {
               key: H.id,
               class: te(["rlzc-card rlzc-cs-table", { on: ee.value === H.id }]),
@@ -7844,9 +7830,9 @@ const fg = {
             }, [
               A("b", null, S(H.name), 1),
               A("small", null, S(H.desc), 1)
-            ], 10, Fx))), 128))
+            ], 10, Ox))), 128))
           ]),
-          Z.value ? (v(), k("div", Ox, [
+          Z.value ? (v(), k("div", Fx, [
             A("h4", null, S(Z.value.name), 1),
             ze.value.length ? (v(), k("div", Lx, [
               (v(!0), k(X, null, fe(ze.value, (H) => (v(), k("button", {
@@ -7890,16 +7876,16 @@ const fg = {
             ]),
             A("p", Hx, "单注上限 " + S(n(He.value.cap)) + "（" + S(r.value) + "级）", 1),
             He.value.belowKill ? (v(), k("p", Gx, "押完余额低于斩杀线")) : U("", !0),
-            m.value || O.value ? (v(), k("div", {
+            m.value || F.value ? (v(), k("div", {
               key: 3,
               class: te(["rlzc-cs-face", { rolling: m.value }])
             }, S(g.value || ""), 3)) : U("", !0),
-            O.value ? (v(), k("p", {
+            F.value ? (v(), k("p", {
               key: 4,
-              class: te(["rlzc-cs-result", O.value.win ? "win" : "lose"])
-            }, S(Ft.value), 3)) : U("", !0)
+              class: te(["rlzc-cs-result", F.value.win ? "win" : "lose"])
+            }, S(Ot.value), 3)) : U("", !0)
           ])) : U("", !0)
-        ], 64)) : (v(), k("div", Dx, "赌坊只在回廊营业。"))
+        ], 64)) : (v(), k("div", Rx, "赌坊只在回廊营业。"))
       ], 64))
     ]));
   }
@@ -7966,7 +7952,7 @@ const fg = {
       B && (n.value.name = B, h());
     }
     async function V() {
-      n.value && await Dt(`确定删除「${n.value.name}」吗？`) && (t.value.presets = t.value.presets.filter((B) => B.id !== t.value.presetId), t.value.presetId = t.value.presets[0]?.id ?? "", s.value = [], o.value = "none", h());
+      n.value && await Rt(`确定删除「${n.value.name}」吗？`) && (t.value.presets = t.value.presets.filter((B) => B.id !== t.value.presetId), t.value.presetId = t.value.presets[0]?.id ?? "", s.value = [], o.value = "none", h());
     }
     function j(B) {
       t.value.presetId = B.target.value, s.value = [], o.value = "none", h();
@@ -7978,7 +7964,7 @@ const fg = {
       if (n.value) {
         r.value = !0, o.value = "none", l.value = "";
         try {
-          const B = await Fp(n.value, Math.max(5, t.value.timeoutSec) * 1e3);
+          const B = await Op(n.value, Math.max(5, t.value.timeoutSec) * 1e3);
           s.value = B.models, !n.value.model && B.models.length && (n.value.model = B.models[0], h()), o.value = "ok";
         } catch (B) {
           o.value = "fail", l.value = Gs(B), s.value = await Aa(n.value).catch(() => []);
@@ -8236,11 +8222,11 @@ const fg = {
 }, P0 = {
   key: 0,
   class: "rlzc-collapse-body"
-}, j0 = { class: "rlzc-option-list" }, D0 = { class: "rlzc-option-row rlzc-option-row-stack" }, R0 = {
+}, j0 = { class: "rlzc-option-list" }, R0 = { class: "rlzc-option-row rlzc-option-row-stack" }, D0 = {
   class: "rlzc-segsrc",
   role: "group",
   "aria-label": "弹幕来源"
-}, F0 = ["disabled"], O0 = {
+}, O0 = ["disabled"], F0 = {
   key: 0,
   class: "rlzc-hint"
 }, L0 = {
@@ -8278,11 +8264,11 @@ const fg = {
       r.value ? U("", !0) : (v(), k("div", P0, [
         d[10] || (d[10] = A("p", { class: "rlzc-hint" }, "开播后有观众弹幕和打赏，打赏计入积分。画面在状态栏的直播页。", -1)),
         A("div", j0, [
-          A("div", D0, [
+          A("div", R0, [
             d[4] || (d[4] = A("span", { class: "rlzc-option-label" }, [
               A("span", null, "弹幕来源")
             ], -1)),
-            A("div", R0, [
+            A("div", D0, [
               A("button", {
                 class: te({ on: s.value === "local" }),
                 onClick: d[0] || (d[0] = (h) => l("local"))
@@ -8291,9 +8277,9 @@ const fg = {
                 class: te({ on: s.value === "ai" }),
                 disabled: !n.value,
                 onClick: d[1] || (d[1] = (h) => l("ai"))
-              }, "本地+AI", 10, F0)
+              }, "本地+AI", 10, O0)
             ]),
-            n.value ? U("", !0) : (v(), k("small", O0, "需先在副本事件检测里选接口"))
+            n.value ? U("", !0) : (v(), k("small", F0, "需先在副本事件检测里选接口"))
           ]),
           s.value === "ai" ? (v(), k("div", L0, [
             d[7] || (d[7] = A("div", { class: "rlzc-option-label" }, [
@@ -8353,7 +8339,7 @@ const fg = {
 }, I1 = {
   key: 2,
   class: "rlzc-errors"
-}, T1 = { class: "rlzc-card" }, N1 = { class: "rlzc-check" }, P1 = ["checked"], j1 = { class: "rlzc-check" }, D1 = ["checked"], R1 = /* @__PURE__ */ Ue({
+}, T1 = { class: "rlzc-card" }, N1 = { class: "rlzc-check" }, P1 = ["checked"], j1 = { class: "rlzc-check" }, R1 = ["checked"], D1 = /* @__PURE__ */ Ue({
   __name: "SettingsTab",
   setup(e) {
     const t = /* @__PURE__ */ de([]), n = /* @__PURE__ */ de(null), s = /* @__PURE__ */ de(null), i = /* @__PURE__ */ de(null), r = /* @__PURE__ */ de(""), o = /* @__PURE__ */ de(""), l = /* @__PURE__ */ de(""), a = ["D", "C", "B", "A", "S"], c = G(() => vt(Y())), u = G(() => nn(c.value.value, f.ledger)), d = G(() => (f.tick, Zn(Y()))), h = G(() => bt[d.value]), y = G(() => qn(c.value.value, f.ledger, h.value));
@@ -8375,7 +8361,7 @@ const fg = {
       m.value = "", g && (t.value = vm(await g.text()), t.value.length || Ee("success", `已导入副本包：${g.name}`));
     }
     async function z(b, m) {
-      await Dt(`确定删除自定义副本包《${m}》吗？`) && km(b);
+      await Rt(`确定删除自定义副本包《${m}》吗？`) && km(b);
     }
     function I(b, m) {
       const g = Math.floor(Number(m.target.value));
@@ -8480,7 +8466,7 @@ const fg = {
                 (v(), k(X, null, fe(a, (g) => A("button", {
                   key: g,
                   class: te(["rlzc-seg", { active: o.value === g }]),
-                  onClick: (O) => o.value = o.value === g ? "" : g
+                  onClick: (F) => o.value = o.value === g ? "" : g
                 }, S(g), 11, o1)), 64))
               ]),
               at(A("input", {
@@ -8606,7 +8592,7 @@ const fg = {
                 min: "1",
                 class: "rlzc-input rlzc-input-num",
                 value: T(f).settings.genericCaps[g],
-                onChange: (O) => I(g, O)
+                onChange: (F) => I(g, F)
               }, null, 40, $1)
             ])), 64))
           ]))
@@ -8623,7 +8609,7 @@ const fg = {
               ]),
               A("button", {
                 class: "rlzc-btn ghost small",
-                onClick: (O) => z(g.id, g.name)
+                onClick: (F) => z(g.id, g.name)
               }, "删除", 8, C1)
             ]))), 128))
           ])) : (v(), k("p", M1, "还没有导入自定义副本包。")),
@@ -8640,7 +8626,7 @@ const fg = {
             onClick: m[12] || (m[12] = (g) => n.value?.click())
           }, "导入 JSON…"),
           t.value.length ? (v(), k("ul", I1, [
-            (v(!0), k(X, null, fe(t.value, (g, O) => (v(), k("li", { key: O }, S(g), 1))), 128))
+            (v(!0), k(X, null, fe(t.value, (g, F) => (v(), k("li", { key: F }, S(g), 1))), 128))
           ])) : U("", !0)
         ]),
         A("div", T1, [
@@ -8658,7 +8644,7 @@ const fg = {
               type: "checkbox",
               checked: T(f).settings.debug,
               onChange: m[14] || (m[14] = (g) => Z("debug", g))
-            }, null, 40, D1),
+            }, null, 40, R1),
             m[36] || (m[36] = Ne("调试模式", -1))
           ])
         ])
@@ -8666,7 +8652,7 @@ const fg = {
       m[38] || (m[38] = A("p", { class: "rlzc-hint rlzc-key-notice" }, "密钥保存在本机酒馆设置里，分享设置或截图时注意别带出去。", -1))
     ], 64));
   }
-}), F1 = { class: "rlzc-debug" }, O1 = {
+}), O1 = { class: "rlzc-debug" }, F1 = {
   key: 0,
   class: "rlzc-note"
 }, L1 = {
@@ -8723,18 +8709,18 @@ const fg = {
 }, $y = { class: "rlzc-pre" }, Sy = { class: "rlzc-card" }, Ey = { class: "rlzc-pre" }, Cy = { class: "rlzc-card" }, My = { class: "rlzc-pre" }, Iy = { class: "rlzc-card" }, Ty = { class: "rlzc-table" }, Ny = {
   key: 0,
   class: "rlzc-warn-text"
-}, Py = { key: 1 }, jy = ["disabled"], Dy = {
+}, Py = { key: 1 }, jy = ["disabled"], Ry = {
   key: 2,
   class: "rlzc-card"
-}, Ry = { class: "rlzc-table" }, Fy = /* @__PURE__ */ Ue({
+}, Dy = { class: "rlzc-table" }, Oy = /* @__PURE__ */ Ue({
   __name: "DebugTab",
   setup(e) {
-    const t = G(() => f.settings.debug), n = /* @__PURE__ */ de(""), s = /* @__PURE__ */ de(null), i = /* @__PURE__ */ Fs({});
+    const t = G(() => f.settings.debug), n = /* @__PURE__ */ de(""), s = /* @__PURE__ */ de(null), i = /* @__PURE__ */ Os({});
     Ls(
       () => [f.tick, f.pack?.id],
       () => {
         for (const m of Object.keys(i)) delete i[m];
-        const b = Oa() ?? {};
+        const b = Fa() ?? {};
         for (const m of f.pack?.roles ?? []) i[m] = b[m] ?? "";
       },
       { immediate: !0 }
@@ -8742,22 +8728,22 @@ const fg = {
     const r = G(() => {
       f.tick;
       const b = Y(), m = [], g = f.session?.entryIndex ?? 0;
-      for (let O = g; O < b.length; O++) {
-        const ae = b[O]?.extra?.rlzc;
-        ae && m.push({ index: O, snap: ae });
+      for (let F = g; F < b.length; F++) {
+        const ae = b[F]?.extra?.rlzc;
+        ae && m.push({ index: F, snap: ae });
       }
       return m.reverse().slice(0, 60);
     }), o = G(() => {
-      const b = new Set((f.audit?.warnings ?? []).filter((O) => O.kind === "limit" || O.kind === "eventMissed").map((O) => O.index)), m = Y(), g = f.session?.entryIndex ?? 0;
-      for (let O = g; O < m.length; O++)
-        m[O]?.extra?.rlzc?.ledgerMismatch && b.add(O);
+      const b = new Set((f.audit?.warnings ?? []).filter((F) => F.kind === "limit" || F.kind === "eventMissed").map((F) => F.index)), m = Y(), g = f.session?.entryIndex ?? 0;
+      for (let F = g; F < m.length; F++)
+        m[F]?.extra?.rlzc?.ledgerMismatch && b.add(F);
       return b;
     }), l = G(() => {
       if (f.tick, !f.session || !f.pack || !f.progress) return null;
       const b = Y(), m = Ks(b, f.progress.entryIndex);
       let g = null;
-      for (let O = b.length - 1; O >= f.progress.entryIndex; O--) {
-        const ae = b[O]?.extra?.rlzc?.sub;
+      for (let F = b.length - 1; F >= f.progress.entryIndex; F--) {
+        const ae = b[F]?.extra?.rlzc?.sub;
         if (ae) {
           g = ae;
           break;
@@ -8772,8 +8758,8 @@ const fg = {
       f.tick;
       const b = Y(), m = [];
       for (let g = b.length - 1; g >= 0 && m.length < 60; g--) {
-        const O = Rt(b[g]);
-        O && m.push({ index: g, rec: O });
+        const F = Dt(b[g]);
+        F && m.push({ index: g, rec: F });
       }
       return m;
     });
@@ -8796,7 +8782,7 @@ const fg = {
     }
     const y = G(() => {
       if (f.tick, !f.session) return null;
-      const b = Fe().books[f.session.id];
+      const b = Oe().books[f.session.id];
       return b ? { book: b, rounds: lg() } : null;
     }), w = { ending: "结局", rating: "评价", event: "事件", freak: "庄家" };
     function _(b, m) {
@@ -8808,11 +8794,11 @@ const fg = {
     const V = { ok: "已检测", miss: "没检测", pending: "检测中" }, j = G(() => {
       const b = f.progress;
       if (!b) return null;
-      const { perMessage: m, phase: g, next: O, ...ae } = b;
+      const { perMessage: m, phase: g, next: F, ...ae } = b;
       return {
         phase: g.id + " " + g.name,
         ...ae,
-        next: O ? { round: O.round, skipFrom: O.skipFrom, events: O.events.map((re) => re.id) } : null,
+        next: F ? { round: F.round, skipFrom: F.skipFrom, events: F.events.map((re) => re.id) } : null,
         messages: Object.keys(m).length
       };
     });
@@ -8823,13 +8809,13 @@ const fg = {
       s.value !== null && s.value >= 0 && jm(s.value);
     }
     function ee() {
-      Dm({ ...i });
+      Rm({ ...i });
     }
     const Z = (b) => JSON.stringify(b, null, 2);
     function B(b) {
       f.settings.cardCollapsed[b] = !f.settings.cardCollapsed[b], ve();
     }
-    return (b, m) => (v(), k("div", F1, [
+    return (b, m) => (v(), k("div", O1, [
       T(f).session ? (v(), k(X, { key: 1 }, [
         t.value ? U("", !0) : (v(), k("p", L1, "只读。要手动修改，请先在「设置」里打开调试模式。")),
         T(f).pack && T(f).session.packVersion !== T(f).pack.version ? (v(), k("p", B1, " 入场时副本包版本为 " + S(T(f).session.packVersion) + "，当前为 " + S(T(f).pack.version) + "。 ", 1)) : U("", !0),
@@ -8896,7 +8882,7 @@ const fg = {
             }, [
               A("span", null, S(g), 1),
               at(A("input", {
-                "onUpdate:modelValue": (O) => i[g] = O,
+                "onUpdate:modelValue": (F) => i[g] = F,
                 class: "rlzc-input",
                 disabled: !t.value,
                 placeholder: "未登记"
@@ -8927,7 +8913,7 @@ const fg = {
             T(f).audit?.warnings.length ? (v(), k(X, { key: 1 }, [
               A("p", oy, "共 " + S(T(f).audit.warnings.length) + " 条，显示最近 30 条。只作提示，不会改动消息。", 1),
               A("ul", ly, [
-                (v(!0), k(X, null, fe(T(f).audit.warnings.slice(-30).reverse(), (g, O) => (v(), k("li", { key: O }, [
+                (v(!0), k(X, null, fe(T(f).audit.warnings.slice(-30).reverse(), (g, F) => (v(), k("li", { key: F }, [
                   A("span", null, [
                     A("small", null, "#" + S(g.index) + "｜" + S(g.phase) + "第" + S(g.round) + "轮", 1),
                     m[11] || (m[11] = A("br", null, null, -1)),
@@ -8952,12 +8938,12 @@ const fg = {
           ], 8, cy),
           T(f).settings.cardCollapsed.manualDebug ? U("", !0) : (v(), k("div", Ay, [
             T(f).session.manual.length ? (v(), k("ul", dy, [
-              (v(!0), k(X, null, fe(T(f).session.manual, (g, O) => (v(), k("li", { key: O }, [
+              (v(!0), k(X, null, fe(T(f).session.manual, (g, F) => (v(), k("li", { key: F }, [
                 A("code", null, "#" + S(g.atIndex) + " " + S(g.kind) + " " + S("phase" in g ? g.phase : "") + S("round" in g ? g.round : "") + S("targetPhase" in g ? `${g.targetPhase}:${g.targetRound}` : ""), 1),
                 A("button", {
                   class: "rlzc-btn ghost small",
                   disabled: !t.value,
-                  onClick: (ae) => T(Rm)(O)
+                  onClick: (ae) => T(Dm)(F)
                 }, "撤销", 8, fy)
               ]))), 128))
             ])) : (v(), k("p", py, "无"))
@@ -9000,8 +8986,8 @@ const fg = {
                     A("small", null, "by " + S(g.by), 1)
                   ], 64)) : U("", !0)
                 ]),
-                A("td", null, S(g.options.map((O) => `${O.label}(${Math.round(O.p * 100)}%) ×${O.odds.toFixed(2)}`).join("　")), 1),
-                A("td", null, S(_(T(f).market.results[g.id], Object.fromEntries(g.options.map((O) => [O.id, O.label])))), 1)
+                A("td", null, S(g.options.map((F) => `${F.label}(${Math.round(F.p * 100)}%) ×${F.odds.toFixed(2)}`).join("　")), 1),
+                A("td", null, S(_(T(f).market.results[g.id], Object.fromEntries(g.options.map((F) => [F.id, F.label])))), 1)
               ]))), 128))
             ])
           ]),
@@ -9022,7 +9008,7 @@ const fg = {
               }, [
                 A("td", null, S(g.index), 1),
                 A("td", null, S(V[g.state]), 1),
-                A("td", null, S(Object.keys(g.hits).filter((O) => g.hits[O]).join(" ") || "—"), 1)
+                A("td", null, S(Object.keys(g.hits).filter((F) => g.hits[F]).join(" ") || "—"), 1)
               ], 2))), 128))
             ])
           ])) : U("", !0)
@@ -9089,10 +9075,10 @@ const fg = {
           onClick: m[6] || (m[6] = //@ts-ignore
           (...g) => T(ho) && T(ho)(...g))
         }, "删除副本会话", 8, jy)
-      ], 64)) : (v(), k("p", O1, "当前聊天没有副本会话。")),
-      a.value.length ? (v(), k("details", Dy, [
+      ], 64)) : (v(), k("p", F1, "当前聊天没有副本会话。")),
+      a.value.length ? (v(), k("details", Ry, [
         m[27] || (m[27] = A("summary", null, "直播（每楼，最近60条）", -1)),
-        A("table", Ry, [
+        A("table", Dy, [
           m[26] || (m[26] = A("thead", null, [
             A("tr", null, [
               A("th", null, "楼"),
@@ -9120,7 +9106,7 @@ const fg = {
       ])) : U("", !0)
     ]));
   }
-}), Oy = {
+}), Fy = {
   class: "rlzc-panel",
   role: "dialog",
   "aria-label": "回廊种菜系统"
@@ -9136,7 +9122,7 @@ const fg = {
     ];
     async function n(s) {
       if (s === "debug" && !f.debugUnlocked) {
-        if (!await Dt("此页会显示副本真相，确定要打开吗？")) return;
+        if (!await Rt("此页会显示副本真相，确定要打开吗？")) return;
         f.debugUnlocked = !0;
       }
       f.tab = s;
@@ -9145,7 +9131,7 @@ const fg = {
       class: "rlzc-backdrop",
       onClick: i[1] || (i[1] = aA((r) => T(f).panelOpen = !1, ["self"]))
     }, [
-      A("section", Oy, [
+      A("section", Fy, [
         A("header", Ly, [
           i[2] || (i[2] = A("span", { class: "rlzc-title" }, "回廊种菜系统", -1)),
           A("button", {
@@ -9162,7 +9148,7 @@ const fg = {
           }, S(r.label), 11, Vy)), 64))
         ]),
         A("div", Uy, [
-          T(f).tab === "system" ? (v(), Ke(Qg, { key: 0 })) : T(f).tab === "ledger" ? (v(), Ke(gx, { key: 1 })) : T(f).tab === "market" ? (v(), Ke(Kx, { key: 2 })) : T(f).tab === "settings" ? (v(), Ke(R1, { key: 3 })) : T(f).tab === "debug" && T(f).debugUnlocked ? (v(), Ke(Fy, { key: 4 })) : U("", !0)
+          T(f).tab === "system" ? (v(), Ke(Qg, { key: 0 })) : T(f).tab === "ledger" ? (v(), Ke(gx, { key: 1 })) : T(f).tab === "market" ? (v(), Ke(Kx, { key: 2 })) : T(f).tab === "settings" ? (v(), Ke(D1, { key: 3 })) : T(f).tab === "debug" && T(f).debugUnlocked ? (v(), Ke(Oy, { key: 4 })) : U("", !0)
         ])
       ])
     ]));
@@ -9207,8 +9193,19 @@ async function Yy(e) {
   const t = await Xa("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const _o = "rlzc-host", zo = "rlzc-menu-btn", $o = "rlzc-settings-drawer";
-function Jy() {
+const Jy = "回廊种菜系统", Zy = 100, Xy = [], Qy = [], eb = "dist/index.js", tb = "xiaxiii", nb = "1.0.0", sb = "https://github.com/xiaxiii/M-bius-strip", ib = !0, rb = "rlzcInterceptor", ob = {
+  display_name: Jy,
+  loading_order: Zy,
+  requires: Xy,
+  optional: Qy,
+  js: eb,
+  author: tb,
+  version: nb,
+  homePageUrl: sb,
+  auto_update: ib,
+  generate_interceptor: rb
+}, _o = "rlzc-host", zo = "rlzc-menu-btn", $o = "rlzc-settings-drawer";
+function lb() {
   if (document.getElementById(_o)) return;
   const e = document.createElement("div");
   e.id = _o, document.body.appendChild(e);
@@ -9267,8 +9264,8 @@ function ec(e = 0) {
       I = !0, _.textContent = "正在检查更新…", V.style.display = "none";
       try {
         z = await qy();
-        const Z = z.commit ? `（${z.commit}）` : "";
-        z.isGit ? z.isUpToDate ? _.textContent = `已是最新版本${Z}` : (_.textContent = `有新版本可以更新，当前${Z || "版本较旧"}`, V.style.display = "") : _.textContent = "不是用仓库地址安装的，无法检查更新。", l.style.display = z.isGit && !z.isUpToDate ? "" : "none";
+        const Z = `（${ob.version}）`;
+        z.isGit ? z.isUpToDate ? _.textContent = `已是最新版本${Z}` : (_.textContent = `有新版本可以更新，当前${Z}`, V.style.display = "") : _.textContent = "不是用仓库地址安装的，无法检查更新。", l.style.display = z.isGit && !z.isUpToDate ? "" : "none";
       } catch (Z) {
         _.textContent = `检查更新失败：${Z.message}`;
       } finally {
@@ -9295,7 +9292,7 @@ function Si() {
     Tm(Number(e)), wi(Number(e));
   }), zt("MESSAGE_EDITED", () => ki()), zt("MESSAGE_UPDATED", (e) => {
     ki(), wi(Number(e));
-  }), zt("CHAT_CHANGED", () => yo()), zt("MORE_MESSAGES_LOADED", () => gr()), Jy(), Nh({ view: xr, toggle: Jm }), yo(), console.log("[rlzc] 回廊种菜系统已加载", f.settings);
+  }), zt("CHAT_CHANGED", () => yo()), zt("MORE_MESSAGES_LOADED", () => gr()), lb(), Nh({ view: xr, toggle: Jm }), yo(), console.log("[rlzc] 回廊种菜系统已加载", f.settings);
 }
 const So = window.jQuery;
 typeof So == "function" ? So(() => Si()) : document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", Si) : Si();

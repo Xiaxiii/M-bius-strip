@@ -3,6 +3,7 @@ import App from './App.vue';
 import css from './style.css?inline';
 import { saveSettings, state } from '../app';
 import { checkForUpdate, runUpdate, type UpdateInfo } from '../st/updater';
+import manifest from '../../manifest.json';
 
 const HOST_ID = 'rlzc-host';
 const MENU_ID = 'rlzc-menu-btn';
@@ -123,11 +124,12 @@ function addSettingsDrawer(tries = 0): void {
     updateBtn.style.display = 'none';
     try {
       info = await checkForUpdate();
-      const ver = info.commit ? `（${info.commit}）` : '';
+      // 显示 manifest.json 里的版本号（如 1.0.0），不显示 git 提交号
+      const ver = `（${manifest.version}）`;
       if (!info.isGit) status.textContent = '不是用仓库地址安装的，无法检查更新。';
       else if (info.isUpToDate) status.textContent = `已是最新版本${ver}`;
       else {
-        status.textContent = `有新版本可以更新，当前${ver || '版本较旧'}`;
+        status.textContent = `有新版本可以更新，当前${ver}`;
         updateBtn.style.display = '';
       }
       badge.style.display = info.isGit && !info.isUpToDate ? '' : 'none';
