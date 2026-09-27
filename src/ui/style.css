@@ -272,12 +272,14 @@
 .rlzc-input-disabled { color: var(--muted); cursor: default; }
 
 /* 连接状态行 */
-.rlzc-check-row { display: flex; flex-wrap: wrap; gap: 8px 12px; }
-.rlzc-check-item { flex: 1 1 140px; min-width: 0; display: flex; align-items: center; gap: 8px; }
-.rlzc-check-item .rlzc-btn { min-height: 44px; min-width: 44px; flex: none; }
-.rlzc-check-result { min-width: 0; font-size: 12px; line-height: 1.35; color: var(--muted); overflow-wrap: anywhere; }
-.rlzc-check-result[data-kind="on"] { color: #4caf72; }
-.rlzc-check-result[data-kind="warn"] { color: #c9833a; }
+.rlzc-check-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rlzc-check-btns .rlzc-btn { min-height: 44px; width: 100%; }
+.rlzc-check-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.rlzc-check-list li { display: flex; align-items: baseline; gap: 10px; font-size: 12px; line-height: 1.45; }
+.rlzc-check-list li[data-kind="on"] { color: #4caf72; }
+.rlzc-check-list li[data-kind="warn"] { color: #c9833a; }
+.rlzc-check-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.rlzc-check-time { flex: none; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* 选项列表（省钱模式等） */
 .rlzc-option-list { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; display: flex; flex-direction: column; }

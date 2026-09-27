@@ -8,11 +8,13 @@ import {
   canFetchModels,
   canTestModel,
   describeError,
-  fetchLine,
+  fetchText,
+  hhmm,
   presetDot,
   recordFetch,
   recordTest,
-  testLine,
+  testText,
+  type CheckResult,
 } from '../core/subPreset';
 
 const sub = computed(() => state.settings.subApi);
@@ -27,6 +29,15 @@ const dotStatus = computed(() => {
   if (sub.value.source === 'off')  return { kind: 'off', text: '未开启' };
   if (sub.value.source === 'main') return { kind: 'on',  text: '跟随主API' };
   return presetDot(preset.value);
+});
+
+/** 两个按钮的上次结果，一行一个：文字在左，时间靠右 */
+const checkRows = computed(() => {
+  const p = preset.value;
+  if (!p) return [];
+  const row = (id: string, text: string, r: CheckResult | undefined) =>
+    text && r ? [{ id, text, kind: r.ok ? 'on' : 'warn', time: r.at ? hhmm(r.at) : '' }] : [];
+  return [...row('fetch', fetchText(p), p.fetchResult), ...row('test', testText(p), p.testResult)];
 });
 
 const collapsed = computed(() => state.settings.cardCollapsed.subApi);
@@ -194,16 +205,16 @@ function toggle(key: 'saveMode' | 'wait', val: boolean) {
             </select>
             <input v-else class="rlzc-input rlzc-input-disabled" :value="preset.model ? preset.model : '先拉取模型'" readonly tabindex="-1" />
           </div>
-          <div class="rlzc-check-row">
-            <div class="rlzc-check-item">
-              <button class="rlzc-btn ghost" type="button" :disabled="!!fetching || !canFetchModels(preset)" @click="pullModels">拉取模型</button>
-              <span class="rlzc-check-result" :data-kind="preset.fetchResult ? (preset.fetchResult.ok ? 'on' : 'warn') : ''">{{ fetching === preset.id ? '拉取中…' : fetchLine(preset) }}</span>
-            </div>
-            <div class="rlzc-check-item">
-              <button class="rlzc-btn ghost" type="button" :disabled="!!testing || !canTestModel(preset)" @click="testModel">测试模型</button>
-              <span class="rlzc-check-result" :data-kind="preset.testResult ? (preset.testResult.ok ? 'on' : 'warn') : ''">{{ testing === preset.id ? '测试中…' : testLine(preset) }}</span>
-            </div>
+          <div class="rlzc-check-btns">
+            <button class="rlzc-btn ghost" type="button" :disabled="!!fetching || !canFetchModels(preset)" @click="pullModels">{{ fetching === preset.id ? '拉取中…' : '拉取模型' }}</button>
+            <button class="rlzc-btn ghost" type="button" :disabled="!!testing || !canTestModel(preset)" @click="testModel">{{ testing === preset.id ? '测试中…' : '测试模型' }}</button>
           </div>
+          <ul v-if="checkRows.length" class="rlzc-check-list">
+            <li v-for="row in checkRows" :key="row.id" :data-kind="row.kind">
+              <span class="rlzc-check-text">{{ row.text }}</span>
+              <time v-if="row.time" class="rlzc-check-time">{{ row.time }}</time>
+            </li>
+          </ul>
         </template>
       </div>
     </template>

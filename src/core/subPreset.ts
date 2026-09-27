@@ -93,24 +93,35 @@ export function recordTest(p: SubPreset, r: { ok: true } | { ok: false; reason: 
   p.testResult = { ok: r.ok, reason: r.ok ? '' : r.reason, at };
 }
 
-function hhmm(at: number): string {
+export function hhmm(at: number): string {
   const d = new Date(at);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
-/** 按钮旁边的一行：✓ 读到N个模型 · 07:22 / ✗ 原因 · 07:22；没有结果时为空 */
-export function fetchLine(p: SubPreset): string {
+/** 按钮结果的文字（不含时间）：✓ 读到N个模型 / ✗ 原因；没有结果时为空 */
+export function fetchText(p: SubPreset): string {
   const r = p.fetchResult;
   if (!r) return '';
-  const text = r.ok ? `✓ 读到${p.models?.length ?? 0}个模型` : `✗ ${r.reason}`;
-  return r.at ? `${text} · ${hhmm(r.at)}` : text;
+  return r.ok ? `✓ 读到${p.models?.length ?? 0}个模型` : `✗ ${r.reason}`;
+}
+
+export function testText(p: SubPreset): string {
+  const r = p.testResult;
+  if (!r) return '';
+  return r.ok ? '✓ 可以回复' : `✗ ${r.reason}`;
+}
+
+function withTime(text: string, r: CheckResult | undefined): string {
+  return text && r?.at ? `${text} · ${hhmm(r.at)}` : text;
+}
+
+/** 完整的一行：✓ 读到N个模型 · 07:22 / ✗ 原因 · 07:22 */
+export function fetchLine(p: SubPreset): string {
+  return withTime(fetchText(p), p.fetchResult);
 }
 
 export function testLine(p: SubPreset): string {
-  const r = p.testResult;
-  if (!r) return '';
-  const text = r.ok ? '✓ 可以回复' : `✗ ${r.reason}`;
-  return r.at ? `${text} · ${hhmm(r.at)}` : text;
+  return withTime(testText(p), p.testResult);
 }
 
 /** 卡片标题行的状态点，按「测试模型」的结果 */
