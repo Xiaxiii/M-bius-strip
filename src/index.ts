@@ -36,9 +36,9 @@ function init() {
     onMessageSwiped(Number(id));
     hideTagsInMessage(Number(id));
   });
-  onEvent('MESSAGE_EDITED', () => onChatMutated());
+  onEvent('MESSAGE_EDITED', (id: number) => onChatMutated(Number(id)));
   onEvent('MESSAGE_UPDATED', (id: number) => {
-    onChatMutated();
+    onChatMutated(Number(id));
     hideTagsInMessage(Number(id));
   });
   onEvent('CHAT_CHANGED', () => onChatChanged());

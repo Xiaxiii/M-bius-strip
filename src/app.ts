@@ -68,6 +68,7 @@ import {
 import { calcViewers, type PoolItem, type TemplateItem } from './core/live';
 import danmakuPool from './packs/builtin/danmaku_pool.json';
 import { notifyLive, releaseAll, scheduleFeed } from './st/liveApi';
+import { createChatWatch, isGenerating } from './st/chatWatch';
 import {
   addHint,
   bookEntries,
@@ -581,6 +582,7 @@ export function refresh(): void {
   state.ledger = replayLedger(chat);
   state.tick++;
   notifyLive();
+  syncGreetingWatch(c.session);
 }
 
 export function currentRoles(): Record<string, string> | undefined {
@@ -813,22 +815,70 @@ function rememberLiveChoice(checked: boolean): void {
   saveSettings();
 }
 
+/** 起点之后的第一条AI消息（通常是开场白）的下标；没有时为 -1 */
+function firstAiIndex(chat: ChatMessage[] = getChat()): number {
+  for (let i = entrySearchStart(); i < chat.length; i++) if (isCountable(chat[i])) return i;
+  return -1;
+}
+
+/** 开场白的 楼层 + swipe_id + 正文：变了说明换了开场白或改了内容 */
+function greetingSignature(): string {
+  const chat = getChat();
+  const i = firstAiIndex(chat);
+  if (i < 0) return '';
+  return `${i}\u0001${chat[i].swipe_id ?? ''}\u0001${chat[i].mes ?? ''}`;
+}
+
+/** 上一次检查开场白时的签名 */
+let greetingSig = '';
+
 /**
  * 切换/加载聊天、切换开场白时检查第一条AI消息（ST 在这些时候不会对开场白发 MESSAGE_RECEIVED）。
  * 命中入场信号就弹窗，确认后以它为第1轮。
  */
 export function checkGreeting(): void {
+  greetingSig = greetingSignature();
   const hit = greetingEntryCandidate(getChat(), readSession(), readDeclined(), state.packs, entrySearchStart());
   if (hit) askEntry(hit);
+}
+
+/** 卡片那一楼已不再是卡片上的副本（被删改、换了开场白）：撤掉 */
+function withdrawStaleEntryCard(): void {
+  const card = state.entryCard;
+  if (card && entryCandidateAt(getChat(), card.index, state.packs)?.info.name !== entryCardCand?.info.name) withdrawEntryCard();
+}
+
+/**
+ * 开场白可能变了（跳转开场白、事件之后才写入正文、被更新或编辑）：没有进行中的副本时重新检查。
+ * 旧卡片已不对应当前内容就撤掉；结果相同时 checkGreeting 不会重复出卡片。
+ */
+export function recheckGreeting(): void {
+  if (readSession()?.status === 'active') return;
+  withdrawStaleEntryCard();
+  checkGreeting();
+}
+
+/**
+ * 兜底：没有进行中的副本时监听聊天区 DOM，开场白的 swipe_id 或正文变了就重新检查（进入副本后停止，切换聊天时重建）。
+ * 生成中不查：这一楼可能正在流式输出，写完后由 MESSAGE_RECEIVED 处理。
+ */
+const greetingWatch = createChatWatch(() => {
+  if (!isGenerating() && greetingSignature() !== greetingSig) recheckGreeting();
+});
+
+function syncGreetingWatch(session: Session | null): void {
+  if (session?.status === 'active') {
+    greetingWatch.stop();
+  } else if (!greetingWatch.running) {
+    greetingSig = greetingSignature();
+    greetingWatch.start();
+  }
 }
 
 /** 滑动的是（起点之后的）第一条AI消息（开场白）时检查 */
 export function onMessageSwiped(id: number): void {
   refresh();
-  const chat = getChat();
-  const start = entrySearchStart();
-  let first = -1;
-  for (let i = start; i < chat.length; i++) if (isCountable(chat[i])) { first = i; break; }
+  const first = firstAiIndex();
   // 滑动的正是卡片那一楼（或开场白）：旧卡片撤掉，按新情况决定是否重新提示
   if (state.entryCard && (id === first || id === state.entryCard.index)) withdrawEntryCard();
   if (id === first) checkGreeting();
@@ -1325,7 +1375,12 @@ function auditLedgerBalance(index: number): void {
   }
 }
 
+/** CHAT_CHANGED 之后补查开场白的计时器 */
+let greetingRecheckTimer: ReturnType<typeof setTimeout> | null = null;
+
 export function onChatChanged(): void {
+  greetingWatch.stop();
+  if (greetingRecheckTimer) clearTimeout(greetingRecheckTimer);
   askedSkip.clear();
   withdrawEntryCard();
   askedEntry.clear();
@@ -1340,14 +1395,22 @@ export function onChatChanged(): void {
   state.ledger = replayLedger(getChat());
   refresh();
   checkGreeting();
+  // 开场白的正文可能在 CHAT_CHANGED 之后才写入：稍后补查一次（结果相同不会重复出卡片）
+  const chatId = state.chatId;
+  greetingRecheckTimer = setTimeout(() => {
+    greetingRecheckTimer = null;
+    if (getChatId() === chatId) recheckGreeting();
+  }, 300);
   setTimeout(() => hideTagsInAll(), 50);
 }
 
-export function onChatMutated(): void {
+/** 删楼（id 不传）、消息被更新或编辑（id = 楼层） */
+export function onChatMutated(id?: number): void {
   refresh();
   // 卡片那一楼被删改、已不再是入场信号：撤掉
-  const card = state.entryCard;
-  if (card && entryCandidateAt(getChat(), card.index, state.packs)?.info.name !== entryCardCand?.info.name) withdrawEntryCard();
+  withdrawStaleEntryCard();
+  // 被更新或编辑的是开场白（起点之后的第一条AI消息）：没有进行中的副本时重新检查
+  if (id !== undefined && id === firstAiIndex()) recheckGreeting();
 }
 
 /** 按「副本信息显示位置」决定要隐藏的标签：正文状态栏模式下保留 <副本> */

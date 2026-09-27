@@ -206,6 +206,9 @@ export interface ChatMessage {
   is_user?: boolean;
   is_system?: boolean;
   name?: string;
+  /** 当前显示的是第几个滑动（开场白 = 第几个开场白） */
+  swipe_id?: number;
+  swipes?: string[];
   /** ST 每次生成（含每个滑动）各自的时间戳 */
   send_date?: string | number;
   gen_started?: string | number | Date;
