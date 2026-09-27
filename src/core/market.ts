@@ -90,6 +90,10 @@ export interface Book {
   markets: Market[];
   tickets: Ticket[];
   freak?: FreakLog;
+  /** 本局开几个盘、其中庄家怪盘几个（事件检测关闭时没有） */
+  plan?: MarketPlan;
+  /** 没抽中的候选盘（赔率已定）：怪盘出题失败或题不够时从这里补 */
+  reserve?: Market[];
   /** 会话被替换或作废后定格的开奖结果（赌票 id → 结果） */
   frozen?: Record<string, Resolution>;
 }
@@ -167,7 +171,7 @@ export interface OpenInput {
   rand: () => number;
 }
 
-/** 入场确认后开的盘：结局盘、评价盘，以及（检测开着时）本包的事件盘。休整副本不开盘 */
+/** 候选盘：结局盘、评价盘，以及（检测开着时）本包的事件盘，赔率在这里定下。休整副本没有 */
 export function openMarkets(inp: OpenInput): Market[] {
   const { pack, rand } = inp;
   if (pack.rest) return [];
@@ -180,6 +184,63 @@ export function openMarkets(inp: OpenInput): Market[] {
   out.push({ id: RATING_ID, kind: 'rating', q: '本局评价', options: RATINGS.map((r) => opt(r, r, rp[r], rand)) });
   if (inp.withEvents) for (const def of packMarkets(pack)) out.push(yesNoMarket('event', def, rand));
   return out;
+}
+
+// ───────────── 本局开哪几个盘 ─────────────
+
+export const MARKETS_MIN = 2;
+export const MARKETS_MAX = 5;
+
+export interface MarketPlan {
+  /** 本局一共开几个盘（2–5） */
+  total: number;
+  /** 其中庄家怪盘几个（1–2） */
+  freak: number;
+  /** 候选盘原来的先后（id）：补盘后按它排 */
+  order: string[];
+}
+
+/** 从 list 里随机取 n 个（不重复）；不够就全取，保持原来的先后 */
+export function drawSome<T>(list: T[], n: number, rand: () => number): T[] {
+  const idx = list.map((_, k) => k);
+  const picked: number[] = [];
+  while (picked.length < n && idx.length) picked.push(idx.splice(Math.floor(rand() * idx.length), 1)[0]);
+  return picked.sort((a, b) => a - b).map((k) => list[k]);
+}
+
+export interface Lineup {
+  markets: Market[];
+  plan?: MarketPlan;
+  reserve?: Market[];
+}
+
+/**
+ * 本局的盘口阵容。事件检测关闭：只开结局盘和评价盘。
+ * 开着：总数 N 在2–5里随机，其中怪盘1–2个（等出题回来再补上），其余从结局盘、评价盘、事件盘里随机抽，
+ * 没抽中的留作备用。
+ */
+export function lineupMarkets(candidates: Market[], withEvents: boolean, rand: () => number): Lineup {
+  if (!withEvents) return { markets: candidates.filter((m) => m.kind === 'ending' || m.kind === 'rating') };
+  const total = MARKETS_MIN + Math.floor(rand() * (MARKETS_MAX - MARKETS_MIN + 1));
+  const freak = 1 + Math.floor(rand() * 2);
+  const markets = drawSome(candidates, total - freak, rand);
+  return { markets, plan: { total, freak, order: candidates.map((m) => m.id) }, reserve: candidates.filter((m) => !markets.includes(m)) };
+}
+
+/**
+ * 怪盘出题回来（items 为 null = 出题失败）：从题里随机取计划的怪盘数；
+ * 缺的名额从备用候选里随机补，候选不够就少开。没有计划的旧盘口本照旧全部加上。
+ */
+export function fillFreak(book: Pick<Book, 'markets' | 'plan' | 'reserve'>, items: FreakItem[] | null, rand: () => number): Required<Pick<Book, 'markets' | 'reserve'>> {
+  const base = book.markets.filter((m) => m.kind !== 'freak');
+  const reserve = book.reserve ?? [];
+  if (!book.plan) return { markets: [...base, ...(items ? freakMarkets(items, rand) : [])], reserve };
+  const freaks = freakMarkets(drawSome(items ?? [], book.plan.freak, rand), rand);
+  const extra = drawSome(reserve, book.plan.freak - freaks.length, rand);
+  // 按候选原来的先后（结局盘、评价盘、事件盘）排，怪盘排最后
+  const rank = (m: Market) => book.plan!.order.indexOf(m.id);
+  const chosen = [...base, ...extra].sort((a, b) => rank(a) - rank(b));
+  return { markets: [...chosen, ...freaks], reserve: reserve.filter((m) => !extra.includes(m)) };
 }
 
 // ───────────── 押注 ─────────────

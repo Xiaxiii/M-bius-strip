@@ -23,7 +23,7 @@ import {
 } from './core/subapi';
 import { callSub, type SubPreset, type SubSource, type SubTarget } from './st/subTransport';
 import { detectBriefing, detectRoles, detectSettlement, detectSkip, resolveSkipTarget, SCORE_TAG_RE } from './core/detector';
-import { LEDGER_META_KEY, mergeByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, parsePlayerLevelFromStatusBar, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
+import { LEDGER_META_KEY, mergeByTime, parseAtTime, parseDelta, formatTime, calcSettlementDelta, parseBalanceFromStatusBar, statusBarLevel, computeBalance, isPendingClearance, KILL_THRESHOLDS, formatBalanceInjection, buildFixSentence } from './core/ledger';
 import type { LedgerDisplayEntry, LedgerEntry, LedgerMeta } from './packs/types';
 import {
   createSession,
@@ -76,10 +76,11 @@ import {
   callFreakWithRetry,
   checkStake,
   clearHints,
-  freakMarkets,
+  fillFreak,
   freezeResults,
   hintText,
   judgeList,
+  lineupMarkets,
   MARKET_META_KEY,
   normalizeMarketMeta,
   openMarkets,
@@ -90,6 +91,7 @@ import {
   STAKE_CAP,
   ticketResults,
   type Book,
+  type FreakItem,
   type FreakLog,
   type Market,
   type MarketMeta,
@@ -359,18 +361,14 @@ export function getInitBalance(chat: ChatMessage[]): { value: number; source: st
   return { value: 1000, source: '默认值' };
 }
 
-/** 玩家等级：优先待生效的校正 fix.level，其次最近一条状态栏的「等级」，找不到按 D（不是副本等级，CLAUDE.md 补正4） */
-export function playerLevel(chat: ChatMessage[] = getChat()): Level {
+/**
+ * 玩家等级：优先待生效的校正 fix.level，其次从 before 往前最近一条状态栏里{{user}}的「等级」（含入场消息本身），
+ * 都找不到按 D（不是副本等级，CLAUDE.md 补正4）。账本、结算、入场、黑市开盘都用这一个。
+ */
+export function playerLevel(chat: ChatMessage[] = getChat(), before = chat.length): Level {
   const fixLvl = readLedgerMeta().fix?.level;
   if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) return fixLvl as Level;
-  for (let i = chat.length - 1; i >= 0; i--) {
-    if (chat[i].is_user || !chat[i].mes) continue;
-    const sm = /<状态栏>([\s\S]*?)<\/状态栏>/.exec(chat[i].mes!);
-    if (!sm) continue;
-    const pl = parsePlayerLevelFromStatusBar(sm[1]);
-    if (pl) return pl;
-  }
-  return 'D';
+  return statusBarLevel(chat, before) ?? 'D';
 }
 
 /** 构建账户注入文本（回廊和副本内都注入；没有任何账本数据时返回空字符串）*/
@@ -415,26 +413,12 @@ function processLedgerTags(index: number, allowSettle = true): void {
         ...settlement.fields,
       };
       // 玩家等级：优先 fix.level，其次结算消息「之前」最近的状态栏，读不到按 D（CLAUDE.md 补正4）
-      const meta = readLedgerMeta();
-      const STATUS_RE_PL = /<状态栏>([\s\S]*?)<\/状态栏>/;
-      let playerLevel: Level = 'D';
-      const fixLvl = meta.fix?.level;
-      if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
-        playerLevel = fixLvl as Level;
-      } else {
-        for (let i = index - 1; i >= 0; i--) {
-          if (chat[i].is_user || !chat[i].mes) continue;
-          const sm = STATUS_RE_PL.exec(chat[i].mes!);
-          if (!sm) continue;
-          const pl = parsePlayerLevelFromStatusBar(sm[1]);
-          if (pl) { playerLevel = pl; break; }
-        }
-      }
+      const pLevel = playerLevel(chat, index);
       const initBal = getInitBalance(chat);
       const curBalance = computeBalance(initBal.value, state.ledger);
       // 清算判定用会话里的 clearance 标记（入场确认时写入，CLAUDE.md 补正5）
       const isClearance = !!(state.session?.clearance);
-      const settled = calcSettlementDelta(state.pack.level, playerLevel, fields, curBalance, isClearance, state.pack.name);
+      const settled = calcSettlementDelta(state.pack.level, pLevel, fields, curBalance, isClearance, state.pack.name);
       if (settled.warn) {
         // 评价缺失：写入快照供调试页警告，delta=0 不记账
         msg.extra = msg.extra ?? {};
@@ -800,22 +784,7 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
   // 入场确认时判定待清算（CLAUDE.md 补正5）：那一刻账户已标记待清算，就记 clearance: true
   if (!pack.rest) {
     const initBal = getInitBalance(chat);
-    const meta = readLedgerMeta();
-    const STATUS_RE_CS = /<状态栏>([\s\S]*?)<\/状态栏>/;
-    let playerLvl: Level = 'D';
-    const fixLvl = meta.fix?.level;
-    if (fixLvl && (['D', 'C', 'B', 'A', 'S'] as string[]).includes(fixLvl)) {
-      playerLvl = fixLvl as Level;
-    } else {
-      for (let i = chat.length - 1; i >= 0; i--) {
-        if (chat[i].is_user || !chat[i].mes) continue;
-        const sm = STATUS_RE_CS.exec(chat[i].mes!);
-        if (!sm) continue;
-        const pl = parsePlayerLevelFromStatusBar(sm[1]);
-        if (pl) { playerLvl = pl; break; }
-      }
-    }
-    if (isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[playerLvl])) {
+    if (isPendingClearance(initBal.value, state.ledger, KILL_THRESHOLDS[playerLevel(chat)])) {
       session.clearance = true;
     }
   }
@@ -1594,11 +1563,6 @@ function pendingChecks(): number[] {
   return [marketHold, subJob?.index ?? -1].filter((i) => i >= 0);
 }
 
-/** 玩家等级，取法与账本相同：待生效的校正 → 最近的状态栏 → D */
-export function accountLevel(chat: ChatMessage[] = getChat()): Level {
-  return playerLevel(chat);
-}
-
 export function accountBalance(chat: ChatMessage[] = getChat()): number {
   return computeBalance(getInitBalance(chat).value, state.ledger);
 }
@@ -1681,15 +1645,24 @@ function voidBook(sessionId: string): void {
   writeMarketMeta(meta);
 }
 
-/** 入场确认后开盘：结局盘、评价盘，检测开着时加事件盘，并另发一次调用出庄家怪盘。休整副本不开 */
+/**
+ * 入场确认后开盘。检测关闭：结局盘和评价盘。开着：本局随机开2–5个，其中怪盘1–2个（另发一次调用出题），
+ * 其余从结局盘、评价盘、事件盘里随机抽；抽中的存进盘口本，之后不再变。休整副本不开
+ */
 function openBook(session: Session, pack: Pack, entryIndex: number): void {
   if (pack.rest) return;
   const chat = getChat();
   const withSub = subEnabled();
-  const markets = openMarkets({ pack, playerLevel: accountLevel(chat), withEvents: withSub, rand: Math.random });
-  if (!markets.length) return;
+  // 赔率按玩家等级（与账本同一个取法：待生效的校正 → 最近的状态栏，含入场消息本身 → D）
+  const candidates = openMarkets({ pack, playerLevel: playerLevel(chat), withEvents: withSub, rand: Math.random });
+  if (!candidates.length) return;
+  const lineup = lineupMarkets(candidates, withSub, Math.random);
   const meta = readMarketMeta();
-  const book: Book = { session: session.id, packId: pack.id, packName: pack.name, openedAt: formatTime(undefined), markets, tickets: [] };
+  const book: Book = { session: session.id, packId: pack.id, packName: pack.name, openedAt: formatTime(undefined), markets: lineup.markets, tickets: [] };
+  if (lineup.plan) {
+    book.plan = lineup.plan;
+    book.reserve = lineup.reserve;
+  }
   if (withSub) book.freak = { status: 'pending' };
   meta.books[session.id] = book;
   writeMarketMeta(meta);
@@ -1698,17 +1671,19 @@ function openBook(session: Session, pack: Pack, entryIndex: number): void {
 
 /**
  * 庄家怪盘：独立调用，接口跟随事件检测卡的来源与预设；不等待、不阻塞。
- * 输入只有副本名、等级、简报原文、副本包 docs 的公开资料；失败重试1次，仍失败这局不开怪盘，不弹窗，调试页记原因。
+ * 输入只有副本名、等级、简报原文、副本包 docs 的公开资料；失败重试1次，仍失败这局不开怪盘，不弹窗，调试页记原因，
+ * 怪盘的名额改从没抽中的候选盘里补。
  */
 function startFreak(sessionId: string, pack: Pack, entryIndex: number): void {
-  const finish = (log: FreakLog, items?: Parameters<typeof freakMarkets>[0]) => {
+  const finish = (log: FreakLog, items?: FreakItem[]) => {
     const meta = readMarketMeta();
     const book = meta.books[sessionId];
     if (!book) return; // 已切到别的聊天，或这一局已不在
-    if (items && (book.closedAt || book.frozen)) {
-      book.freak = { ...log, status: 'late' };
+    if (book.closedAt || book.frozen) {
+      if (items) book.freak = { ...log, status: 'late' };
+      else book.freak = log;
     } else {
-      if (items) book.markets = [...book.markets.filter((m) => m.kind !== 'freak'), ...freakMarkets(items, Math.random)];
+      Object.assign(book, fillFreak(book, items ?? null, Math.random));
       book.freak = log;
     }
     writeMarketMeta(meta);
@@ -1803,7 +1778,7 @@ export function marketStakeCheck(marketId: string, stake: number): StakeCheck {
   const chat = getChat();
   const book = state.market.book;
   return checkStake({
-    playerLevel: accountLevel(chat),
+    playerLevel: playerLevel(chat),
     stake,
     already: book ? stakedOn(book, marketId) : 0,
     balance: accountBalance(chat),
@@ -1840,7 +1815,7 @@ export function placeBet(marketId: string, optionId: string, stake: number): str
 /** 赌坊下注前的核对 */
 export function casinoStakeCheck(stake: number): StakeCheck {
   const chat = getChat();
-  return checkStake({ playerLevel: accountLevel(chat), stake, already: 0, balance: accountBalance(chat), lockedTips: lockedTips() });
+  return checkStake({ playerLevel: playerLevel(chat), stake, already: 0, balance: accountBalance(chat), lockedTips: lockedTips() });
 }
 
 /** 赌坊开一局：即开即结，每局记一行净得失（类型 bet，存在 chatMetadata，不随删楼撤销） */
@@ -1854,7 +1829,7 @@ export function playTable(tableId: string, betId: string, stake: number): { erro
   if (!outcome) return { error: '没有这种押法' };
   const chat = getChat();
   pinInitBalance(chat);
-  const level = accountLevel(chat);
+  const level = playerLevel(chat);
   const balance = accountBalance(chat);
   const after = chat.length - 1;
   const seq = meta.seq + 1;

@@ -143,8 +143,10 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
             <button
               v-for="lv in LEVELS"
               :key="lv"
+              type="button"
               class="rlzc-seg"
               :class="{ active: fixLevel === lv }"
+              :aria-pressed="fixLevel === lv ? 'true' : 'false'"
               @click="fixLevel = fixLevel === lv ? '' : lv"
             >{{ lv }}</button>
           </div>
@@ -171,23 +173,23 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
       <div v-if="!state.settings.cardCollapsed.depths" class="rlzc-collapse-body">
         <p class="rlzc-hint">数字越小越靠近最新消息，AI 越重视。一般不用改。</p>
         <div class="rlzc-depth">
-          <label class="rlzc-field">
+          <label class="rlzc-field rlzc-field-num">
             <span>副本暗号<small>触发世界书的副本条目</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.token" @change="setDepth('token', $event)" />
           </label>
-          <label class="rlzc-field">
+          <label class="rlzc-field rlzc-field-num">
             <span>副本进度<small>阶段、轮次、时限、副本状态</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.progress" @change="setDepth('progress', $event)" />
           </label>
-          <label class="rlzc-field">
+          <label class="rlzc-field rlzc-field-num">
             <span>本轮指令<small>本轮事件与时限写法</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.turn" @change="setDepth('turn', $event)" />
           </label>
-          <label class="rlzc-field">
+          <label class="rlzc-field rlzc-field-num">
             <span>账户<small>积分余额与清算状态</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.ledger" @change="setDepth('ledger', $event)" />
           </label>
-          <label class="rlzc-field">
+          <label class="rlzc-field rlzc-field-num">
             <span>直播<small>在看人数与最近弹幕</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.live" @change="setDepth('live', $event)" />
           </label>
@@ -213,7 +215,7 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
       </button>
       <div v-if="!state.settings.cardCollapsed.genericCaps" class="rlzc-collapse-body">
         <p class="rlzc-hint">未收录副本按等级取轮数上限，简报里写了「（最多N轮）」时以简报为准。</p>
-        <label v-for="lv in LEVELS" :key="lv" class="rlzc-field">
+        <label v-for="lv in LEVELS" :key="lv" class="rlzc-field rlzc-field-num">
           <span>{{ lv }} 级</span>
           <input type="number" min="1" class="rlzc-input rlzc-input-num" :value="state.settings.genericCaps[lv]" @change="setCap(lv, $event)" />
         </label>

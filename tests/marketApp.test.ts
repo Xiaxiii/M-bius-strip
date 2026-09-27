@@ -113,17 +113,36 @@ describe('开盘', () => {
     expect(book()!.freak).toBeUndefined();
   });
 
-  it('事件检测开着：加本包事件盘，并另发一次调用出2–3题怪盘（不合格的丢掉）', async () => {
+  it('事件检测开着：本局随机开2–5个，怪盘1–2个（另发一次调用出2–3题，不合格的丢掉，从中随机取），其余从结局、评价、事件盘里抽', async () => {
     app.state.settings.subApi.source = 'main';
     await enter();
     expect(freakCalls()).toHaveLength(1);
-    expect(kinds()).toEqual(['ending', 'rating', 'event', 'event', 'event', 'freak', 'freak']);
+    // 随机数固定 0.5：总数 2 + ⌊0.5×4⌋ = 4，怪盘 1 + ⌊0.5×2⌋ = 2，另2个从5个候选里抽到 M1、M2
+    expect(book()!.plan).toMatchObject({ total: 4, freak: 2 });
+    expect(book()!.markets.map((m) => m.id)).toEqual(['M1', 'M2', 'F1', 'F2']);
+    expect(kinds()).toEqual(['event', 'event', 'freak', 'freak']);
     const f = book()!.markets.filter((m) => m.kind === 'freak');
     expect(f.map((m) => [m.id, m.q, m.options.map((o) => o.label).join('/')])).toEqual([
       ['F1', '主播会在塔里迷路吗', '会/不会'],
       ['F2', '主播会唱歌吗', '会/不会'],
     ]);
     expect(book()!.freak).toMatchObject({ status: 'ok', count: 2 });
+    // 没抽中的留作备用，存在 chatMetadata.rlzc_market
+    expect(st.meta.rlzc_market.books[app.state.session!.id].reserve.map((m: { id: string }) => m.id)).toEqual(['ending', 'rating', 'M3']);
+  });
+
+  it('抽中的盘口存进盘口本：刷新、切走再切回，面板上的盘口不变', async () => {
+    app.state.settings.subApi.source = 'main';
+    await enter();
+    const ids = book()!.markets.map((m) => m.id);
+    const odds = book()!.markets.map((m) => m.options.map((o) => o.odds));
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    app.refresh();
+    app.onChatMutated();
+    app.onChatChanged();
+    await settle();
+    expect(book()!.markets.map((m) => m.id)).toEqual(ids);
+    expect(book()!.markets.map((m) => m.options.map((o) => o.odds))).toEqual(odds);
   });
 
   it('怪盘请求只有副本名、等级、简报原文、公开资料；没有事件表、隐藏状态、事件盘数据', async () => {
@@ -151,7 +170,9 @@ describe('开盘', () => {
     const before = st.popups.length;
     await enter();
     expect(freakCalls()).toHaveLength(2);
-    expect(kinds()).toEqual(['ending', 'rating', 'event', 'event', 'event']);
+    // 怪盘的2个名额改从没抽中的候选（结局、评价、M3）里补：总数仍是4
+    expect(book()!.markets.map((m) => m.id)).toEqual(['rating', 'M1', 'M2', 'M3']);
+    expect(book()!.reserve?.map((m) => m.id)).toEqual(['ending']);
     expect(book()!.freak?.status).toBe('failed');
     expect(book()!.freak?.error).toContain('返回格式不对');
     // 只有入场确认那一次弹窗
@@ -253,10 +274,16 @@ describe('给主AI的一次性提示', () => {
 });
 
 describe('开奖', () => {
+  /** 检测开着入场；这里测开奖，把没抽中的候选盘也放进盘口本，让结局、评价、M1–M3 都开着 */
   async function enterWithSub() {
     app.state.settings.subApi.source = 'main';
     freakReply = () => '坏';
     await enter();
+    const b = st.meta.rlzc_market.books[app.state.session!.id];
+    b.markets = [...b.markets, ...b.reserve].sort((x: { id: string }, y: { id: string }) => b.plan.order.indexOf(x.id) - b.plan.order.indexOf(y.id));
+    b.reserve = [];
+    app.refresh();
+    expect(kinds()).toEqual(['ending', 'rating', 'event', 'event', 'event']);
   }
 
   it('事件检测的 JSON 缺 markets 不算失败，但这一轮对盘口算没检测', async () => {
@@ -405,5 +432,42 @@ describe('赌坊', () => {
     user();
     await app.interceptor([], 0, null, 'normal');
     expect(st.prompts.rlzc_ledger.value).toContain('{{user}}刚在赌坊输掉800分，余额已低于斩杀线。');
+  });
+});
+
+describe('开盘用的玩家等级：与账本同一个取法', () => {
+  const STATUS_S = '<状态栏>\n地点：S级副本《钟楼》· 岩岸\n{{user}}：\n等级：S\n位格：执灯人\n积分：40000\n在场：路人玩家若干\n林默：\n等级：D\n状态：警惕\n</状态栏>';
+  const ending = () => book()!.markets.find((m) => m.id === 'ending')!;
+
+  it('新聊天里入场消息自带的状态栏写着「等级：S」：钟楼开盘时差值为0（通关 0.6）', async () => {
+    st.chat.push({ mes: '开场白', is_user: false, extra: {} });
+    user('进入副本');
+    await reply(`${BRIEFING}\n${STATUS_S}`);
+    expect(app.state.pack?.id).toBe('zhonglou');
+    expect(app.playerLevel()).toBe('S');
+    expect(ending().options.map((o) => o.p)).toEqual([0.6, 0.4]);
+    expect(book()!.markets.find((m) => m.id === 'rating')!.options.map((o) => o.p)).toEqual([0.08, 0.2, 0.35, 0.25, 0.12]);
+    // 押注上限也按 S
+    expect(app.marketStakeCheck('ending', 10).cap).toBe(300000);
+  });
+
+  it('开场白就是入场消息（新聊天、切换开场白）时同样读它自己的状态栏', async () => {
+    st.chat = [{ mes: `${BRIEFING}\n${STATUS_S.replace('等级：S', '等级：Lv.S')}`, is_user: false, extra: {} }];
+    app.onChatChanged();
+    await settle();
+    expect(app.state.session?.entryIndex).toBe(0);
+    expect(ending().options.map((o) => o.p)).toEqual([0.6, 0.4]);
+  });
+
+  it('待生效的等级校正优先；都找不到才按 D', async () => {
+    // 校正在收到下一条AI回复时清掉，所以用开场白入场（没有新回复）来测
+    st.chat = [{ mes: `${BRIEFING}\n${STATUS_S}`, is_user: false, extra: {} }];
+    st.meta.rlzc_ledger = { fix: { level: 'A', at: '', afterIndex: 0 } };
+    app.onChatChanged();
+    await settle();
+    expect(ending().options[0].p).toBe(0.4); // S 副本、A 玩家：差 +1
+    reset();
+    await enter();
+    expect(ending().options[0].p).toBe(0.15); // 没有状态栏：按 D，差 +4
   });
 });

@@ -4,6 +4,8 @@ import {
   computeBalance,
   calcSettlementDelta,
   parseBalanceFromStatusBar,
+  parsePlayerLevelFromStatusBar,
+  statusBarLevel,
   formatBalanceInjection,
   isPendingClearance,
   KILL_THRESHOLDS,
@@ -172,6 +174,44 @@ describe('parseBalanceFromStatusBar', () => {
   it('找不到时返回 null', () => {
     expect(parseBalanceFromStatusBar('等级：S')).toBeNull();
     expect(parseBalanceFromStatusBar('')).toBeNull();
+  });
+});
+
+// ───────────── parsePlayerLevelFromStatusBar ─────────────
+
+describe('parsePlayerLevelFromStatusBar：只读{{user}}的等级，与状态栏正则找{{user}}的规则一致', () => {
+  it('{{user}}详情块、顶层字段', () => {
+    expect(parsePlayerLevelFromStatusBar('地点：钟楼\n{{user}}：\n等级：S\n积分：5000')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('地点：钟楼\n等级：A\n积分：5000\n林默：\n等级：D')).toBe('A');
+    expect(parsePlayerLevelFromStatusBar('等级：S')).toBe('S');
+  });
+
+  it('等级一栏写法宽松：S级、Lv.S、**S**、全角、小写', () => {
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：S级\n积分：1')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：Lv.S\n积分：1')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n**等级**：**S**\n积分：1')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：Ｓ\n积分：1')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：s\n积分：1')).toBe('S');
+  });
+
+  it('{{user}}的等级读不出时不拿同伴的等级顶替', () => {
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：Lv.S\n积分：1\n林默：\n等级：D')).toBe('S');
+    expect(parsePlayerLevelFromStatusBar('{{user}}：\n等级：未知\n积分：1\n林默：\n等级：D')).toBeNull();
+    // 第一个详情块不带积分、位格、道具、在场：是同伴，{{user}}的字段在顶层
+    expect(parsePlayerLevelFromStatusBar('林默：\n等级：D\n状态：警惕')).toBeNull();
+    expect(parsePlayerLevelFromStatusBar('林默｜D｜人类｜警惕')).toBeNull();
+  });
+
+  it('statusBarLevel：从末尾往前找最近一条读得出等级的状态栏，含 before 之前的最后一条', () => {
+    const chat = [
+      { mes: '<状态栏>\n等级：C\n积分：1\n</状态栏>' },
+      { mes: '我', is_user: true },
+      { mes: '<状态栏>\n{{user}}：\n等级：S\n积分：1\n</状态栏>' },
+      { mes: '没有状态栏' },
+    ];
+    expect(statusBarLevel(chat)).toBe('S');
+    expect(statusBarLevel(chat, 2)).toBe('C');
+    expect(statusBarLevel([{ mes: '无' }])).toBeNull();
   });
 });
 

@@ -144,10 +144,10 @@
 .rlzc-grow { flex: 1; margin: 0; }
 .rlzc-grow > .rlzc-input { flex: 1; min-width: 0; }
 .rlzc-subline { font-size: 12px; color: var(--muted); margin: 0; }
-.rlzc-depth .rlzc-field { align-items: flex-start; }
 .rlzc-depth .rlzc-field > span { display: flex; flex-direction: column; gap: 2px; }
 .rlzc-depth .rlzc-field > span small { color: var(--muted); font-size: 11px; line-height: 1.4; }
-.rlzc-depth .rlzc-field > .rlzc-input { flex: 0 0 72px; width: 72px; }
+/* 数字设置行：名称和小字占满左边，数字框贴右 */
+.rlzc-field.rlzc-field-num > span { flex: 1 1 auto; min-width: 0; }
 
 /* ── 副本事件检测卡 ── */
 .rlzc-subapi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
@@ -227,10 +227,20 @@
 .rlzc-option-row:last-child { border-bottom: none; }
 .rlzc-option-label { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
 .rlzc-option-label small { font-size: 11px; color: var(--muted); }
-.rlzc-option-row-timeout { justify-content: flex-start; gap: 16px; }
 .rlzc-option-row-timeout > span { font-size: 13px; }
-.rlzc-timeout-wrap { display: flex; align-items: center; gap: 6px; }
-.rlzc-input-num { width: 72px; text-align: right; font-variant-numeric: tabular-nums; }
+.rlzc-timeout-wrap { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+/* 数字框：约4个字符宽，各行右端对齐 */
+.rlzc-input.rlzc-input-num {
+  flex: 0 0 auto; width: calc(4ch + 20px); margin-left: auto;
+  text-align: right; font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield;
+}
+.rlzc-input-num::-webkit-inner-spin-button, .rlzc-input-num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* 账户校正的等级按钮：未选中保持原样，选中的用主题强调色填满、文字反色 */
+.rlzc-seg.active {
+  background: var(--accent); border-color: var(--accent); font-weight: 700;
+  color: var(--bg); color: rgb(from var(--bg) r g b);
+}
 .rlzc-unit { font-size: 13px; color: var(--muted); }
 
 /* 拨动开关 */

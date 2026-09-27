@@ -262,6 +262,7 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
           </tbody>
         </table>
         <p class="rlzc-hint">庄家怪盘：{{ freakCell(marketDebug.book.freak) }}</p>
+        <p v-if="marketDebug.book.plan" class="rlzc-hint">计划开 {{ marketDebug.book.plan.total }} 个盘，其中怪盘 {{ marketDebug.book.plan.freak }} 个；实开 {{ marketDebug.book.markets.length }} 个</p>
         <p class="rlzc-hint">开盘 {{ marketDebug.book.openedAt }}　{{ marketDebug.book.closedAt ? `封盘 ${marketDebug.book.closedAt}` : '未封盘' }}{{ marketDebug.book.frozen ? '　已定格' : '' }}</p>
         <table v-if="marketDebug.rounds.length" class="rlzc-table">
           <thead><tr><th>楼</th><th>检测</th><th>判定为真</th></tr></thead>

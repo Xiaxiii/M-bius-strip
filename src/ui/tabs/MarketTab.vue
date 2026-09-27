@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** 黑市页（第四期）：盘口 / 票夹 / 赌坊 */
 import { computed, onBeforeUnmount, ref } from 'vue';
-import { accountLevel, casinoStakeCheck, marketStakeCheck, placeBet, playTable, state, type MarketTicketView } from '../../app';
+import { casinoStakeCheck, marketStakeCheck, placeBet, playerLevel, playTable, state, type MarketTicketView } from '../../app';
 import type { Market } from '../../core/market';
 import { payoutOf } from '../../core/market';
 import { tableOf, type CasinoOutcome } from '../../core/casino';
@@ -16,7 +16,7 @@ const odds = (n: number) => `×${n.toFixed(2)}`;
 const pendingCount = computed(() => state.market.pending);
 const level = computed(() => {
   void state.tick;
-  return accountLevel();
+  return playerLevel();
 });
 
 // ───────────── 盘口 ─────────────
@@ -25,7 +25,8 @@ const book = computed(() => state.market.book);
 const closed = computed(() => !!book.value?.closedAt);
 const statusLine = computed(() => {
   const b = book.value;
-  if (b) return b.closedAt ? `《${b.packName}》已封盘` : `《${b.packName}》开盘中 · 第1轮结束封盘`;
+  if (b && b.closedAt) return `《${b.packName}》已封盘`;
+  if (b) return `《${b.packName}》开盘中 · 第1轮结束封盘${b.freak?.status === 'pending' ? ' · 庄家出题中' : ''}`;
   if (state.session?.status === 'active' && state.pack?.rest) return '休整副本不开盘。';
   return '进副本后开盘。';
 });

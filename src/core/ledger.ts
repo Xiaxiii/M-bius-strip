@@ -57,10 +57,64 @@ export function formatTime(src: Date | string | number | undefined): string {
   return `${M}/${D} ${hh}:${mm}`;
 }
 
-/** 从 `<状态栏>` 正文中提取玩家等级（D/C/B/A/S）。找不到返回 null */
+const STATUS_KEY = /^(地点|时间|日期|等级|位格|积分|待清算|任务|道具|在场|状态|态度|os)\s*[：:]\s*([\s\S]*)$/i;
+const STATUS_BAR_RE = /<状态栏>([\s\S]*?)<\/状态栏>/;
+
+/** 等级一栏的值里第一个 S/A/B/C/D（不分大小写、全角半角），与状态栏正则的显示一致 */
+export function levelLetter(value: string): Level | null {
+  const v = String(value ?? '').replace(/[Ａ-Ｚａ-ｚ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  const m = /[SABCD]/i.exec(v);
+  return m ? (m[0].toUpperCase() as Level) : null;
+}
+
+/**
+ * 从 `<状态栏>` 正文中提取{{user}}的等级（D/C/B/A/S）。找不到返回 null。
+ * 按状态栏正则的规则找{{user}}：第一个详情块带积分、位格、道具或在场时就是它，否则是详情块之前的顶层字段；
+ * 同伴、NPC 详情块里的等级不算。
+ */
 export function parsePlayerLevelFromStatusBar(statusText: string): Level | null {
-  const m = /等级[：:]\s*([DCBAS])/.exec(statusText);
-  return m ? (m[1] as Level) : null;
+  const top: Record<string, string> = {};
+  const people: Record<string, string>[] = [];
+  let cur: Record<string, string> | null = null;
+  for (const raw of String(statusText ?? '').split('\n')) {
+    const l = raw.replace(/\*\*/g, '').trim();
+    if (!l || /^[━─—=\-]{3,}$/.test(l)) continue;
+    const kv = STATUS_KEY.exec(l);
+    if (kv) {
+      const k = /^os$/i.test(kv[1]) ? 'os' : kv[1];
+      if (cur && !['地点', '时间', '日期'].includes(k)) cur[k] = kv[2].trim();
+      else top[k] = kv[2].trim();
+      continue;
+    }
+    const head = /^(.+?)\s*[：:]\s*$/.exec(l);
+    if (head) {
+      cur = { 名: head[1].trim() };
+      people.push(cur);
+      continue;
+    }
+    if (l.includes('｜')) {
+      const p = l.split('｜').map((x) => x.trim());
+      people.push({ 名: p[0], 等级: p[1] ?? '' });
+      cur = null;
+    }
+  }
+  const first = people[0];
+  const isUser = !!first && ['积分', '位格', '道具', '在场'].some((k) => k in first);
+  const v = isUser ? first.等级 : top.等级;
+  return v ? levelLetter(v) : null;
+}
+
+/** 从聊天末尾往前（不含 before 及之后），最近一条读得出{{user}}等级的 <状态栏>；都没有返回 null */
+export function statusBarLevel(chat: { is_user?: boolean; mes?: string }[], before = chat.length): Level | null {
+  for (let i = Math.min(before, chat.length) - 1; i >= 0; i--) {
+    const m = chat[i];
+    if (!m || m.is_user || !m.mes) continue;
+    const s = STATUS_BAR_RE.exec(m.mes);
+    if (!s) continue;
+    const lv = parsePlayerLevelFromStatusBar(s[1]);
+    if (lv) return lv;
+  }
+  return null;
 }
 
 /** 从 `<状态栏>` 正文中提取「积分」字段的数值。找不到返回 null */
