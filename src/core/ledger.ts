@@ -239,6 +239,21 @@ export function mergeByTime<T extends { ts?: number }>(floor: T[], manual: T[]):
   return out;
 }
 
+/**
+ * 流水按时间先后排（精确到分钟，与显示一致）；同一分钟内保持原来的剧情先后。
+ * 读不到时间的条目跟在它前一笔后面。
+ */
+export function sortByTime<T extends { ts?: number }>(list: T[]): T[] {
+  let prev = -Infinity;
+  return list
+    .map((e, k) => {
+      if (e.ts !== undefined && Number.isFinite(e.ts)) prev = Math.floor(e.ts / 60000);
+      return { e, k, key: prev };
+    })
+    .sort((a, b) => a.key - b.key || a.k - b.k)
+    .map((x) => x.e);
+}
+
 /** 每一笔记完之后的余额（按流水顺序从初始积分累加） */
 export function runningBalances(initValue: number, entries: { delta: number }[]): number[] {
   let b = initValue;

@@ -414,6 +414,22 @@ describe('赌坊', () => {
     expect(app.state.market.tables).toEqual(tables);
   });
 
+  it('账本流水按时间排：开奖那一楼的时间早于之前在回廊里开的一局赌坊时，排在它前面，余额也按这个顺序算', async () => {
+    const y = new Date().getFullYear();
+    st.chat.push({ mes: '开场白', is_user: false, extra: {}, send_date: `${y}-09-27T16:00:00` });
+    user();
+    st.chat.push({
+      mes: '回廊。',
+      is_user: false,
+      send_date: `${y}-09-27T16:07:00`,
+      extra: { rlzc: { ledger: [{ delta: 100, source: '赌票退还·境界游乐园', type: 'bet', at: '9/27 16:07' }] } } as any,
+    });
+    const meta = app.readMarketMeta();
+    meta.casino.plays.push({ id: 'c1', seq: 1, table: 'door', bet: 'r3', label: '押11–15', stake: 100, win: false, payout: 0, net: -100, result: '', at: '9/27 16:12', after: 0 } as any);
+    app.onChatMutated();
+    expect(app.state.ledger.map((e) => e.source)).toEqual(['赌票退还·境界游乐园', '赌坊·门牌·押11–15']);
+  });
+
   it('结算回到回廊后重新摆桌', async () => {
     await enter();
     const key0 = app.readMarketMeta().casino.key;

@@ -349,6 +349,16 @@ describe('流水余额（界面小改1）', () => {
     expect(mergeByTime(floor, [f('手动0', 1)]).map((x) => x.n)).toEqual(['手动0', '楼4', '楼6', '楼8']);
   });
 
+  it('整条流水按时间排（精确到分钟）；同一分钟保持原来的先后；读不到时间的跟在前一笔后面', async () => {
+    const { sortByTime } = await import('../src/core/ledger');
+    const m = (min: number, sec = 0) => (min * 60 + sec) * 1000;
+    const f = (n: string, ts?: number) => ({ n, ts });
+    // 退还记在 16:07 那一楼，但在楼层顺序里排在 16:12 的赌坊之后
+    const list = [f('翻牌', m(7)), f('下注', m(7, 30)), f('门牌', m(12)), f('退还', m(7, 5)), f('?', undefined)];
+    expect(sortByTime(list).map((x) => x.n)).toEqual(['翻牌', '下注', '退还', '?', '门牌']);
+    expect(sortByTime([f('a', undefined), f('b', m(1))]).map((x) => x.n)).toEqual(['a', 'b']);
+  });
+
   it('旧数据的「M/D HH:MM」能解析成时间', async () => {
     const { parseAtTime } = await import('../src/core/ledger');
     expect(parseAtTime('9/26 15:37', 2026)).toBe(new Date(2026, 8, 26, 15, 37).getTime());
