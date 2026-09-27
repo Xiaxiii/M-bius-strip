@@ -52,8 +52,8 @@ describe('事件盘数据', () => {
   });
 
   it('五个包各升过小版本号（之后改资料又升了一次）', () => {
-    expect(pack('zhonglou').version).toBe('1.5.0');
-    expect(pack('dusongshu').version).toBe('1.2.0');
+    expect(pack('zhonglou').version).toBe('1.6.0');
+    expect(pack('dusongshu').version).toBe('1.3.0');
     expect(pack('jingjie').version).toBe('1.2.0');
     expect(pack('xiyan').version).toBe('1.2.0');
     expect(pack('youxi').version).toBe('1.2.0');
