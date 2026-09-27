@@ -458,6 +458,7 @@ interface Progress {
 
 - 直接在 main 分支上工作，不要新建分支
 - 每次改完代码后：运行 npm run build，然后 git add（不要包含 .claude/ 文件夹），git commit，git push
+- 扩展版本号写在 `manifest.json` 的 version（`package.json` 保持一致），格式 1.0.0；设置里「已是最新版本（1.0.0）」显示的就是它，不显示 git 提交号。每次发版改动时末位加一（1.0.0 → 1.0.1），大改动升中间一位
 
 ## 15. 积分账本决定
 
