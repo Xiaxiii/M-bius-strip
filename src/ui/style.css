@@ -326,6 +326,39 @@
 .rlzc-segsrc button:disabled { opacity: 0.4; cursor: not-allowed; }
 .rlzc-segsrc button:disabled:hover { background: none; color: var(--muted); }
 .rlzc-live-card .rlzc-input-num { min-height: 44px; }
+.rlzc-onair {
+  display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; padding: 10px 10px 10px 14px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--soft);
+}
+.rlzc-onair.on {
+  border-color: color-mix(in srgb, var(--bad) 45%, transparent);
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
+}
+.rlzc-onair-dot {
+  flex: none; width: 10px; height: 10px; border-radius: 50%;
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+.rlzc-onair.on .rlzc-onair-dot {
+  background: var(--bad); box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 22%, transparent);
+  animation: rlzc-onair-pulse 1.8s ease-in-out infinite;
+}
+@keyframes rlzc-onair-pulse { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--bad) 8%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .rlzc-onair.on .rlzc-onair-dot { animation: none; } }
+.rlzc-onair-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rlzc-onair-text strong { font-size: 14px; font-weight: 600; color: var(--fg); }
+.rlzc-onair.on .rlzc-onair-text strong { color: var(--bad); }
+.rlzc-onair-text small { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.rlzc-onair-btn {
+  flex: none; min-width: 76px; min-height: 44px; padding: 0 16px; border-radius: 22px;
+  font: inherit; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--bad); background: var(--bad); color: #fff;
+}
+.rlzc-onair-btn.stop { background: none; color: var(--bad); }
+.rlzc-onair-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rlzc-onair-lock {
+  flex: none; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 12px;
+  font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 22px;
+}
 .rlzc-option-row-stack { flex-direction: column; align-items: stretch; gap: 0; }
 .rlzc-option-row-stack .rlzc-segsrc { margin: 6px 0 2px; }
 .rlzc-option-row-stack .rlzc-hint { margin: 2px 0 0; }

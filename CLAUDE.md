@@ -498,6 +498,7 @@ interface Progress {
 ### 17.1 直播接入（实现说明，第三期b-第3段）
 
 - 入场卡片的「直播」开关上次选择存 `extensionSettings.rlzc.live.optIn`；本局直播记在会话 `chatMetadata.rlzc.live: true`，副本结算或手动结束即下播。手动选择副本的确认框带「开启直播」勾选框。
+- 设置页「直播」卡顶部有开播控件（`liveControl()`）：回廊中「开播 / 下播」随时切换；副本内按入场时的选择锁定，显示「已锁定」，不能开也不能关；disableLive 副本写「本副本自带直播玩法」。副本结束回到回廊后解锁。
 - 回廊直播存 `chatMetadata.rlzc_live`：`corridor { on, show, viewers }`、不绑定楼层的系统消息 `sys`、已用过的最大弹幕 id `seq`。不随删楼回滚；删楼、滑动后弹幕 id 从 `seq` 继续递增。
 - 每楼直播数据存 `chat[i].extra.rlzc.live`（精彩度、热度、人数、弹幕、打赏、撤回数额）；本轮打赏合并成一条 `type: 'tip'` 的流水写进同一楼的 `ledger`，死亡撤回也是这一楼的一条 tip 流水。直播数据与账本一样按当前显示的回复重放。
 - 开了事件检测时，等这一楼检测完再算直播（用它的 hype、hurt）；检测失败或跳过时按规则估。

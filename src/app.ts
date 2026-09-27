@@ -1658,6 +1658,26 @@ export function liveView(hidden: ReadonlySet<number>, chat: ChatMessage[] = getC
   );
 }
 
+/** 设置页「直播」卡的开播控件：副本内按入场时的选择锁定，回廊中可自由开关 */
+export interface LiveControl {
+  on: boolean;
+  locked: boolean;
+  scope: 'instance' | 'corridor';
+  /** 按钮旁的一行小字 */
+  note: string;
+}
+
+export function liveControl(): LiveControl {
+  const session = state.session;
+  const view = liveView(new Set());
+  const people = view.viewers > 0 ? ` · ${view.viewers.toLocaleString('en-US')}人在看` : '';
+  if (session?.status === 'active') {
+    const note = state.pack?.disableLive ? '本副本自带直播玩法' : view.on ? `副本内锁定${people}` : '副本内锁定，回廊可开播';
+    return { on: view.on, locked: true, scope: 'instance', note };
+  }
+  return { on: view.on, locked: false, scope: 'corridor', note: view.on ? `回廊直播${people}` : '回廊中可随时开播' };
+}
+
 /** RLZC_LIVE.toggle()：回廊中开播/下播；副本内返回 false */
 export function toggleCorridorLive(): boolean {
   if (state.session?.status === 'active') return false;

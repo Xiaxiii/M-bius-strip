@@ -168,6 +168,52 @@ describe('回廊直播', () => {
   });
 });
 
+describe('设置页「直播」卡的开播控件', () => {
+  it('回廊中可开播、下播，不锁定', () => {
+    st.chat.push({ mes: '开场白', is_user: false, extra: {} });
+    expect(app.liveControl()).toMatchObject({ on: false, locked: false, scope: 'corridor', note: '回廊中可随时开播' });
+    app.toggleCorridorLive();
+    releaseAll();
+    const on = app.liveControl();
+    expect(on).toMatchObject({ on: true, locked: false, scope: 'corridor' });
+    expect(on.note).toMatch(/^回廊直播/);
+    app.toggleCorridorLive();
+    releaseAll();
+    expect(app.liveControl()).toMatchObject({ on: false, locked: false });
+  });
+
+  it('副本内开了直播：锁定为开，不能下播', async () => {
+    await enterZhonglou(true);
+    releaseAll();
+    expect(app.liveControl()).toMatchObject({ on: true, locked: true, scope: 'instance' });
+    expect(app.toggleCorridorLive()).toBe(false);
+    expect(app.liveControl().on).toBe(true);
+  });
+
+  it('副本内没开直播：锁定为关，不能开播', async () => {
+    await enterZhonglou(false);
+    releaseAll();
+    expect(app.liveControl()).toMatchObject({ on: false, locked: true, scope: 'instance', note: '副本内锁定，回廊可开播' });
+    expect(app.toggleCorridorLive()).toBe(false);
+    expect(app.liveControl().on).toBe(false);
+  });
+
+  it('disableLive 副本：锁定为关，写明自带直播玩法', async () => {
+    st.chat.push({ mes: '开场白', is_user: false, extra: {} });
+    user();
+    await reply('「副本简报 - 污名」\n「人数：6人」\n「等级：B」');
+    expect(app.liveControl()).toMatchObject({ on: false, locked: true, note: '本副本自带直播玩法' });
+  });
+
+  it('副本结束回到回廊后解锁', async () => {
+    await enterZhonglou(true);
+    await app.endManually();
+    await flush();
+    releaseAll();
+    expect(app.liveControl()).toMatchObject({ on: false, locked: false, scope: 'corridor' });
+  });
+});
+
 describe('副本内直播', () => {
   it('每条新回复算一次直播并合并记账；continue 不算新一轮', async () => {
     await enterZhonglou(true);
