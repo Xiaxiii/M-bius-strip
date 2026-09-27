@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { detectBriefing, detectPanel, detectPhaseSwitch, detectRoles, detectSettlement, detectSkip } from '../src/core/detector';
-import { buildGenericPack, BUILTIN_PACKS, validatePack } from '../src/packs/loader';
+import { detectBriefing, detectEntry, detectPanel, detectPhaseSwitch, detectRoles, detectSettlement, detectSkip } from '../src/core/detector';
+import { buildGenericPack, BUILTIN_PACKS, genericLevel, validatePack } from '../src/packs/loader';
 import { stripHiddenTags } from '../src/core/hideTags';
 import { BRIEFING } from './helpers';
 
@@ -22,6 +22,40 @@ describe('识别', () => {
     expect(pack.phases).toEqual([{ id: 'main', name: '雾港', cap: 110, next: null }]);
     expect(pack.time).toEqual({ type: 'none' });
     expect(validatePack({ ...pack, id: 'wugang' })).toEqual([]);
+  });
+
+  it('简报识别容错：各种分隔符、书名号、名字中间的空格', () => {
+    const names = (line: string) => detectBriefing(line)?.name;
+    for (const line of [
+      '「副本简报 - 雾港」', '「副本简报——雾港」', '「副本简报：雾港」', '「副本简报 · 雾港」',
+      '「副本简报 - 《雾港》」', '副本简报 — 雾港', '副本简报－雾港', '副本简报: 雾港', '副本简报・雾港',
+      '副本简报 —— 「雾港」', '副本简报 - 【雾港】  ',
+    ]) expect(names(line), line).toBe('雾港');
+    expect(names('「副本简报 - 雾 港」')).toBe('雾 港');
+    expect(names('副本简报 - 《雾 港》\n等级：B')).toBe('雾 港');
+    expect(detectBriefing('副本简报')).toBeNull();
+    expect(detectBriefing('副本简报：')).toBeNull();
+    expect(detectBriefing('「副本简报 - 《》」')).toBeNull();
+  });
+
+  it('简报等级：取第一个 D/C/B/A/S，忽略「级」「（越级）」；取不到按 D', () => {
+    const lv = (s: string) => detectBriefing(`「副本简报 - 雾港」\n「${s}」`)?.level;
+    expect(lv('等级：B（越级）')).toBe('B');
+    expect(lv('等级：b级')).toBe('B');
+    expect(lv('等级：S级·越级')).toBe('S');
+    expect(lv('等级: a')).toBe('A');
+    expect(lv('等级：未知')).toBeUndefined();
+    expect(genericLevel(detectBriefing('「副本简报 - 雾港」\n「等级：未知」')!)).toBe('D');
+    expect(buildGenericPack(detectBriefing('「副本简报：《雾港》」\n「等级：S级·越级」')!).level).toBe('S');
+  });
+
+  it('已收录副本的简报识别不受影响', () => {
+    for (const p of BUILTIN_PACKS) {
+      for (const line of [`「副本简报 - ${p.detect.briefingName}」`, `副本简报：《${p.detect.briefingName}》`, `副本简报——${p.detect.briefingName}`]) {
+        expect(detectEntry(`${line}\n「等级：${p.level}」`, BUILTIN_PACKS), line).toMatchObject({ signal: 1, pack: { id: p.id } });
+      }
+    }
+    expect(detectBriefing(BRIEFING)).toMatchObject({ name: '钟楼', level: 'S', goal: '存活三夜' });
   });
 
   it('阶段切换、结算、角色登记', () => {

@@ -2,7 +2,19 @@ import type { BriefingInfo, Pack, Phase } from '../packs/types';
 
 /** 识别简报、标签与跳过关键词。全部是纯函数。 */
 
-export const BRIEFING_RE = /副本简报\s*[-－—]\s*([^\s」』\n]+)/;
+/**
+ * 「副本简报」+ 分隔符（- － — —— ： : · ・，前后可有空白）+ 副本名（到行尾或 」』 之前）。
+ * 名字自带的「…」『…』整对读进来，外层再由 cleanBriefingName 去掉。
+ */
+export const BRIEFING_RE = /副本简报[^\S\n]*(?:——|[-－—：:·・])[^\S\n]*((?:「[^」\n]*」|『[^』\n]*』|[^」』\n])+)/;
+const NAME_WRAPS: Record<string, string> = { '《': '》', '「': '」', '『': '』', '【': '】' };
+
+/** 副本名：去掉首尾空白和包在外面的《》「」『』【】，中间的空格保留 */
+function cleanBriefingName(raw: string): string {
+  let n = raw.trim();
+  while (n.length >= 2 && NAME_WRAPS[n[0]] === n[n.length - 1]) n = n.slice(1, -1).trim();
+  return n;
+}
 export const PHASE_SWITCH_RE = /<阶段切换>([\s\S]*?)<\/阶段切换>/;
 export const SETTLEMENT_RE = /<副本结算>([\s\S]*?)<\/副本结算>/;
 export const PANEL_RE = /<副本>([\s\S]*?)<\/副本>/;
@@ -14,15 +26,17 @@ export const SCORE_TAG_RE = /<积分变动>([\s\S]*?)<\/积分变动>/g;
 /** 读取简报：名称，以及后续几行的等级、目标、时限、人数 */
 export function detectBriefing(text: string): BriefingInfo | null {
   const m = BRIEFING_RE.exec(text ?? '');
-  if (!m) return null;
-  const info: BriefingInfo = { name: m[1] };
+  const name = m ? cleanBriefingName(m[1]) : '';
+  if (!m || !name) return null;
+  const info: BriefingInfo = { name };
   const rest = text.slice(m.index + m[0].length).split('\n').slice(0, 12).join('\n');
   const field = (key: string) => {
     const r = new RegExp(`${key}\\s*[：:]\\s*([^」』\\n]+)`).exec(rest);
     return r ? r[1].trim() : undefined;
   };
-  const level = field('等级');
-  if (level) info.level = level.replace(/级$/, '').trim().toUpperCase();
+  // 等级一栏里第一个 D/C/B/A/S（不分大小写），「级」「（越级）」等说明忽略；取不到留空，按 D 处理
+  const level = field('等级')?.match(/[DCBAS]/i)?.[0];
+  if (level) info.level = level.toUpperCase();
   info.goal = field('目标');
   info.limit = field('时限');
   info.players = field('人数');
