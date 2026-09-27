@@ -208,6 +208,8 @@ export const state = reactive({
   ledger: [] as LedgerDisplayEntry[],
   /** 黑市（第四期）：本局盘口、赌票、摆桌 */
   market: emptyMarketView(),
+  /** 入场提示小卡片（右上角，不挡操作）；同一时间只有一张 */
+  entryCard: null as EntryCardView | null,
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -700,42 +702,109 @@ function entrySearchStart(): number {
   return end !== undefined ? end + 1 : session.entryIndex + 1;
 }
 
-/** 弹窗确认入场。点「否」会记入 chatMetadata.rlzc.declined，同一条消息不再询问 */
-async function askEntry(cand: EntryCandidate): Promise<void> {
-  const { index, info } = cand;
+export interface EntryCardView {
+  /** 每次提示递增，用作界面 key */
+  id: number;
+  key: string;
+  chatId: string;
+  index: number;
+  name: string;
+  /** 等级字母；休整副本为「—」 */
+  level: string;
+  /** 未收录，将使用通用副本包 */
+  unknown: boolean;
+  /** 显示「直播」开关（disableLive 副本不显示） */
+  liveShow: boolean;
+  live: boolean;
+}
+
+let entryCardSeq = 0;
+let entryCardCand: EntryCandidate | null = null;
+
+/**
+ * 提示入场：右上角小卡片，不挡操作、不自动消失。
+ * 「进入」确认入场；「不是」记入 chatMetadata.rlzc.declined，同一条消息不再提示；「✕」这次先不处理，不记拒绝。
+ */
+function askEntry(cand: EntryCandidate): void {
+  const { index, info, pack } = cand;
   const chatId = getChatId();
   const key = `${chatId}:${index}:${info.name}`;
   if (askedEntry.has(key)) return;
+  const session = readSession();
+  if (session?.status === 'active') return;
   askedEntry.add(key);
-  const text = cand.pack
-    ? `检测到进入《${cand.pack.name}》，是否启用？`
-    : `检测到进入《${info.name}》，是否启用？（未收录的副本，将使用通用副本包）`;
-  // 通用副本也可以直播，只是没有专属弹幕；disableLive 副本不显示勾选框
-  const opt = entryLiveOption(cand.pack ?? ({} as Pack), state.settings.live.optIn);
-  const answer = await confirmWithCheck(text, opt.show ? { label: '开启直播', checked: opt.checked } : null);
-  // 弹窗开着时玩家切到了别的聊天：这次回答不算，也不记拒绝（切回来会再问）
-  if (getChatId() !== chatId) {
-    askedEntry.delete(key);
+  // 通用副本也可以直播，只是没有专属弹幕；disableLive 副本不显示开关
+  const opt = entryLiveOption(pack ?? ({} as Pack), state.settings.live.optIn);
+  entryCardCand = cand;
+  state.entryCard = {
+    id: ++entryCardSeq,
+    key,
+    chatId,
+    index,
+    name: pack?.name ?? info.name,
+    level: pack ? (pack.rest ? '—' : pack.level) : genericLevel(info),
+    unknown: !pack,
+    liveShow: opt.show,
+    live: opt.checked,
+  };
+}
+
+/** 撤掉卡片（滑动开场白、切换聊天、收到新的AI回复、入场消息被删改）：之后按新情况可以再提示 */
+function withdrawEntryCard(): void {
+  const card = state.entryCard;
+  if (!card) return;
+  askedEntry.delete(card.key);
+  state.entryCard = null;
+  entryCardCand = null;
+}
+
+/** 卡片上的「直播」开关：只改这一项，不关卡片 */
+export function setEntryCardLive(on: boolean): void {
+  if (state.entryCard) state.entryCard.live = on;
+}
+
+/** 「✕」：这次先不处理，不记拒绝；下次打开这个聊天或刷新后还会提示 */
+export function dismissEntryCard(): void {
+  state.entryCard = null;
+  entryCardCand = null;
+}
+
+/** 「不是」：记入拒绝，这条消息以后不再问 */
+export function declineEntryCard(): void {
+  const card = state.entryCard;
+  const cand = entryCardCand;
+  dismissEntryCard();
+  if (!card || !cand || getChatId() !== card.chatId) return;
+  addDeclined(declineKey(cand.index, cand.info.name));
+}
+
+/** 「进入」 */
+export function enterEntryCard(): void {
+  const card = state.entryCard;
+  const cand = entryCardCand;
+  dismissEntryCard();
+  if (!card || !cand) return;
+  // 卡片属于别的聊天：这次不算，也不记拒绝
+  if (getChatId() !== card.chatId) {
+    askedEntry.delete(card.key);
     return;
   }
-  if (!answer.ok) {
-    addDeclined(declineKey(index, info.name));
-    return;
-  }
-  if (opt.show) rememberLiveChoice(answer.checked);
-  // 弹窗期间消息可能已被删改，重新确认
+  const { index, info } = cand;
+  if (card.liveShow) rememberLiveChoice(card.live);
+  // 提示期间消息可能已被删改，重新确认
   const now = entryCandidateAt(getChat(), index, state.packs);
   if (!now || now.info.name !== info.name) {
     toast('warning', '入场消息已变化，未启用。');
     return;
   }
+  if (readSession()?.status === 'active') return;
   // 已收录的副本用副本包自己的数据；简报里有目标、时限等就一并存下
   const briefing = { ...info };
   if (!cand.pack) {
     // 通用副本包：轮数上限在入场时确定并记入会话，之后改设置不影响进行中的副本
     briefing.rounds = genericTiming(info.limit, genericLevel(info), state.settings.genericCaps).rounds;
   }
-  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), index, briefing, opt.show && answer.checked);
+  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), index, briefing, card.liveShow && card.live);
 }
 
 function rememberLiveChoice(checked: boolean): void {
@@ -750,7 +819,7 @@ function rememberLiveChoice(checked: boolean): void {
  */
 export function checkGreeting(): void {
   const hit = greetingEntryCandidate(getChat(), readSession(), readDeclined(), state.packs, entrySearchStart());
-  if (hit) void askEntry(hit);
+  if (hit) askEntry(hit);
 }
 
 /** 滑动的是（起点之后的）第一条AI消息（开场白）时检查 */
@@ -760,6 +829,8 @@ export function onMessageSwiped(id: number): void {
   const start = entrySearchStart();
   let first = -1;
   for (let i = start; i < chat.length; i++) if (isCountable(chat[i])) { first = i; break; }
+  // 滑动的正是卡片那一楼（或开场白）：旧卡片撤掉，按新情况决定是否重新提示
+  if (state.entryCard && (id === first || id === state.entryCard.index)) withdrawEntryCard();
   if (id === first) checkGreeting();
 }
 
@@ -788,6 +859,7 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
       session.clearance = true;
     }
   }
+  dismissEntryCard();
   msg.extra = msg.extra ?? {};
   msg.extra.rlzc = { phase: pack.phases[0]?.name ?? '进行中', round: 1, injected: [], entry: session.id } satisfies Snapshot;
   writeSession(session);
@@ -1130,12 +1202,14 @@ export function onMessageReceived(index: number, type?: string): void {
   const msg = chat[index];
   if (!isCountable(msg)) return;
   const session = readSession();
+  // 收到新的AI回复：旧的入场卡片撤掉（开场白补发的 first_message 不是新回复）
+  if (type !== 'first_message') withdrawEntryCard();
 
   if (!session || session.status === 'ended') {
     // 这条消息带入场信号时，入场消息取起点之后第一条带信号、没被拒绝过的AI消息
     if (entryCandidateAt(chat, index, state.packs)) {
       const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined());
-      if (cand) void askEntry(cand);
+      if (cand) askEntry(cand);
     }
     if (type === 'first_message') return;
     // 回廊：账本照常记账（<积分变动>），直播照常计算
@@ -1253,6 +1327,7 @@ function auditLedgerBalance(index: number): void {
 
 export function onChatChanged(): void {
   askedSkip.clear();
+  withdrawEntryCard();
   askedEntry.clear();
   lastInjectionIndex = -1;
   marketHold = -1;
@@ -1270,6 +1345,9 @@ export function onChatChanged(): void {
 
 export function onChatMutated(): void {
   refresh();
+  // 卡片那一楼被删改、已不再是入场信号：撤掉
+  const card = state.entryCard;
+  if (card && entryCandidateAt(getChat(), card.index, state.packs)?.info.name !== entryCardCand?.info.name) withdrawEntryCard();
 }
 
 /** 按「副本信息显示位置」决定要隐藏的标签：正文状态栏模式下保留 <副本> */
@@ -1477,6 +1555,13 @@ function startViewers(): number {
     return calcViewers({ packLevel: state.pack.level, playerLevel: playerLevelOf(getChat()), isRest: !!state.pack.rest, heat: 20, rand: 1 });
   }
   return meta.corridor.viewers ?? 0;
+}
+
+/** 是否在播：副本进行中看本局入场勾选，回廊看回廊直播（悬浮球左上角红点） */
+export function isOnAir(): boolean {
+  const session = state.session;
+  if (session?.status === 'active') return !!session.live;
+  return readLiveMeta().corridor.on;
 }
 
 /** RLZC_LIVE.get() */

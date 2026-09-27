@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectBriefing, detectPanel, detectPhaseSwitch, detectRoles, detectSettlement, detectSkip } from '../src/core/detector';
+import { detectBriefing, detectEntry, detectPanel, detectPhaseSwitch, detectRoles, detectSettlement, detectSkip } from '../src/core/detector';
 import { buildGenericPack, BUILTIN_PACKS, validatePack } from '../src/packs/loader';
 import { stripHiddenTags } from '../src/core/hideTags';
 import { BRIEFING } from './helpers';
@@ -22,6 +22,33 @@ describe('识别', () => {
     expect(pack.phases).toEqual([{ id: 'main', name: '雾港', cap: 110, next: null }]);
     expect(pack.time).toEqual({ type: 'none' });
     expect(validatePack({ ...pack, id: 'wugang' })).toEqual([]);
+  });
+
+  it('简报分隔符与副本名容错', () => {
+    for (const line of ['副本简报 - 雾港', '副本简报——雾港', '副本简报 —— 雾港', '副本简报：雾港', '副本简报:雾港', '副本简报 · 雾港', '副本简报・雾港', '副本简报 － 雾港', '副本简报 - 《雾港》', '「副本简报 - 「雾港」」', '【副本简报 - 【雾港】】']) {
+      expect(detectBriefing(`${line}\n等级：C`)?.name, line).toBe('雾港');
+    }
+    expect(detectBriefing('「副本简报 - 雾 港」')?.name).toBe('雾 港');
+    expect(detectBriefing('副本简报 - 雾港  \n时限：10小时')).toMatchObject({ name: '雾港', limit: '10小时' });
+    expect(detectBriefing('副本简报 - \n等级：C')).toBeNull();
+  });
+
+  it('等级取第一个 D/C/B/A/S 字母，取不到不写', () => {
+    const level = (v: string) => detectBriefing(`「副本简报 - 雾港」\n「等级：${v}」`)?.level;
+    expect(level('B（越级）')).toBe('B');
+    expect(level('b级')).toBe('B');
+    expect(level('S级·越级')).toBe('S');
+    expect(level('Ａ')).toBe('A');
+    expect(level('-')).toBeUndefined();
+    expect(buildGenericPack(detectBriefing('「副本简报 - 雾港」\n「等级：未知」')!).level).toBe('D');
+  });
+
+  it('已收录副本的识别不受影响', () => {
+    for (const p of BUILTIN_PACKS) {
+      expect(detectEntry(`「副本简报 - ${p.detect.briefingName}」\n「等级：${p.level}」`, BUILTIN_PACKS)?.pack?.id).toBe(p.id);
+      expect(detectEntry(`副本简报——《${p.detect.briefingName}》`, BUILTIN_PACKS)?.pack?.id).toBe(p.id);
+    }
+    expect(detectBriefing(BRIEFING)).toMatchObject({ name: '钟楼', level: 'S', goal: '存活三夜', players: '10人' });
   });
 
   it('阶段切换、结算、角色登记', () => {

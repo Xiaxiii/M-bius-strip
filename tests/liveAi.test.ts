@@ -1,6 +1,7 @@
 /** 直播：AI 生成弹幕、rlzc_live 注入（第三期b-第4段） */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installFakeSt } from './fakeSt';
+import { autoAnswerEntryCards } from './entryCard';
 import * as app from '../src/app';
 import { installLiveApi, releaseAll } from '../src/st/liveApi';
 import {
@@ -109,6 +110,7 @@ describe('rlzc_live 注入内容', () => {
 // ─────────────────── 接入流程 ───────────────────
 
 const st = installFakeSt();
+autoAnswerEntryCards(st);
 let stamp = 0;
 const SUB_JSON = '{"events":[{"id":"E02","status":"done","reason":"写了"}],"state":{"crank":"曲柄在谈缘手里（隐藏状态）"},"next":[],"hype":35,"hurt":false}';
 /** 模拟 AI 一次返回几条弹幕 */
@@ -127,6 +129,7 @@ function reset() {
   st.meta = {};
   st.prompts = {};
   st.popups = [];
+  st.cards = [];
   st.answer = (p) => {
     if (p.check) p.check.checked = true;
     return true;

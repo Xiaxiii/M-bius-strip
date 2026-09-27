@@ -2,7 +2,8 @@ import type { BriefingInfo, Pack, Phase } from '../packs/types';
 
 /** 识别简报、标签与跳过关键词。全部是纯函数。 */
 
-export const BRIEFING_RE = /副本简报\s*[-－—]\s*([^\s」』\n]+)/;
+/** 「副本简报」+ 分隔符（- － — —— ： : · ・，前后可有空白）+ 副本名（到行尾或 」』 之前） */
+export const BRIEFING_RE = /副本简报[^\S\n]*(?:——|[-－—：:·・])[^\S\n]*([^\n」』]*)/;
 export const PHASE_SWITCH_RE = /<阶段切换>([\s\S]*?)<\/阶段切换>/;
 export const SETTLEMENT_RE = /<副本结算>([\s\S]*?)<\/副本结算>/;
 export const PANEL_RE = /<副本>([\s\S]*?)<\/副本>/;
@@ -11,18 +12,39 @@ export const SKIP_RE = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|�
 /** 积分变动标签（CLAUDE.md 第三期）：<积分变动>+300（说明）</积分变动> */
 export const SCORE_TAG_RE = /<积分变动>([\s\S]*?)<\/积分变动>/g;
 
+const OPEN_BRACKETS = '《「『【';
+const CLOSE_BRACKETS = '》」』】';
+
+/** 简报里的副本名：去掉首尾空白和包在外面的《》「」『』【】，中间的空格保留 */
+function briefingName(raw: string): string {
+  let name = raw.trim();
+  for (;;) {
+    const before = name;
+    if (OPEN_BRACKETS.includes(name[0] ?? '\u0000')) name = name.slice(1).trim();
+    if (CLOSE_BRACKETS.includes(name[name.length - 1] ?? '\u0000')) name = name.slice(0, -1).trim();
+    if (name === before) return name;
+  }
+}
+
+function toHalfWidth(c: string): string {
+  const code = c.charCodeAt(0);
+  return code >= 0xff01 && code <= 0xff5e ? String.fromCharCode(code - 0xfee0) : c;
+}
+
 /** 读取简报：名称，以及后续几行的等级、目标、时限、人数 */
 export function detectBriefing(text: string): BriefingInfo | null {
   const m = BRIEFING_RE.exec(text ?? '');
-  if (!m) return null;
-  const info: BriefingInfo = { name: m[1] };
+  const name = m ? briefingName(m[1]) : '';
+  if (!m || !name) return null;
+  const info: BriefingInfo = { name };
   const rest = text.slice(m.index + m[0].length).split('\n').slice(0, 12).join('\n');
   const field = (key: string) => {
     const r = new RegExp(`${key}\\s*[：:]\\s*([^」』\\n]+)`).exec(rest);
     return r ? r[1].trim() : undefined;
   };
   const level = field('等级');
-  if (level) info.level = level.replace(/级$/, '').trim().toUpperCase();
+  const letter = level && /[DCBASｄｃｂａｓＤＣＢＡＳ]/i.exec(level);
+  if (letter) info.level = toHalfWidth(letter[0]).toUpperCase();
   info.goal = field('目标');
   info.limit = field('时限');
   info.players = field('人数');

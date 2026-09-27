@@ -131,6 +131,45 @@ export async function hasPopup(page, text) {
   return (await page.locator('dialog.popup[open]').filter({ hasText: text }).count()) > 0;
 }
 
+// ───────────── 入场提示卡片（右上角，扩展的 Shadow DOM 里；Playwright 的 CSS 选择器会穿透 open shadow root）─────────────
+
+export const ENTRY_CARD = '.rlzc-entry-card';
+
+/** 等入场卡片出现，返回 { card, name, level, unknown, liveShow, live, text } */
+export async function entryCard(page, timeout = 15000) {
+  const card = page.locator(ENTRY_CARD).first();
+  await card.waitFor({ state: 'visible', timeout });
+  await page.waitForTimeout(250); // 淡入
+  const name = (await card.locator('.rlzc-entry-name').innerText()).trim();
+  const level = (await card.locator('.rlzc-entry-level').innerText()).trim();
+  const unknown = (await card.locator('.rlzc-entry-note').count()) > 0;
+  const sw = card.locator('.rlzc-entry-live');
+  const liveShow = (await sw.count()) > 0;
+  const live = liveShow && (await sw.getAttribute('aria-checked')) === 'true';
+  const text = `检测到副本 ${level}《${name}》${unknown ? '（未收录，将使用通用副本包）' : ''}`;
+  return { card, name, level, unknown, liveShow, live, text };
+}
+
+/** 回答入场卡片：ok =「进入」，cancel =「不是」，close =「✕」；live 为布尔值时先把直播开关拨到该状态 */
+export async function answerEntryCard(page, answer = 'ok', { live, timeout = 15000 } = {}) {
+  const info = await entryCard(page, timeout);
+  const { card } = info;
+  if (live !== undefined && info.liveShow && info.live !== live) {
+    await press(page, card.locator('.rlzc-entry-live'));
+    await page.waitForTimeout(150);
+  }
+  const btn = answer === 'ok' ? '.rlzc-entry-go' : answer === 'cancel' ? '.rlzc-entry-actions .ghost' : '.rlzc-entry-close';
+  await press(page, card.locator(btn));
+  await page.locator(ENTRY_CARD).waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+  // 点卡片对 ST 来说是「点在抽屉外」，开着的侧边抽屉会自己收起：等动画走完，免得随后的关抽屉操作又把它点开
+  await page.waitForTimeout(600);
+  return info;
+}
+
+export async function hasEntryCard(page) {
+  return (await page.locator(ENTRY_CARD).count()) > 0;
+}
+
 // ───────────── API 连接（主AI → 模拟接口）─────────────
 
 export async function openDrawer(page, id) {

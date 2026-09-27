@@ -245,25 +245,16 @@ async function setDebug(page) {
 // ───────────── 入场 ─────────────
 
 async function answerEntry(page, { answer = 'ok' } = {}) {
-  const dlg = await ui.popup(page, '检测到进入', 20000);
-  const text = (await dlg.innerText()).trim().split('\n')[0];
-  const box = dlg.locator('#rlzc-live-optin');
-  if ((await box.count()) && (await box.isChecked())) await box.setChecked(false);
-  await dlg.locator(answer === 'ok' ? '.popup-button-ok' : '.popup-button-cancel').click();
-  await dlg.waitFor({ state: 'hidden' }).catch(() => {});
+  const card = await ui.answerEntryCard(page, answer, { live: false, timeout: 20000 });
   await page.waitForTimeout(800);
-  return text;
+  return card.text;
 }
 
 async function openNewChat(page, character) {
   await ui.closePanel(page);
   await ui.selectCharacter(page, character);
+  // 上一次的聊天（开场白带入场信号）会出现入场卡片：不挡操作，开新聊天时自动撤掉
   await sleep(1500);
-  const old = page.locator('dialog.popup[open]').filter({ hasText: '检测到进入' });
-  if (await old.count()) {
-    await old.locator('.popup-button-cancel').click();
-    await old.waitFor({ state: 'hidden' }).catch(() => {});
-  }
   await ui.closeRightPanel(page);
   await ui.newChat(page);
   await ui.closeRightPanel(page);
@@ -418,7 +409,7 @@ async function zhonglouMain(page, ev8) {
   const list = await cards(page);
   const status0 = await statusLine(page);
   const tagCount = (t) => list.filter((c) => c.tag === t).length;
-  ev1.push(`入场弹窗「${entryText}」→ 确定；盘口页顶部「${status0}」`);
+  ev1.push(`入场卡片「${entryText}」→ 进入；盘口页顶部「${status0}」`);
   ev1.push(`盘口：${list.map((c) => `【${c.tag}】${c.q}（${c.opts.join(' ')}）`).join('；')}`);
   const log0 = await P.mockLog(0, true);
   const freakReq = log0.filter((e) => e.caller === 'freak').slice(-1)[0];
@@ -616,7 +607,7 @@ async function nongxian(page) {
   const s = await statusLine(page);
   const list = await cards(page);
   const m = await marketMeta(page);
-  rec('M7', s === '休整副本不开盘。' && list.length === 0 && !Object.keys(m?.books ?? {}).length, [`入场弹窗「${t}」；盘口页「${s}」，盘口 ${list.length} 个，chatMetadata.rlzc_market.books ${Object.keys(m?.books ?? {}).length} 本`]);
+  rec('M7', s === '休整副本不开盘。' && list.length === 0 && !Object.keys(m?.books ?? {}).length, [`入场卡片「${t}」；盘口页「${s}」，盘口 ${list.length} 个，chatMetadata.rlzc_market.books ${Object.keys(m?.books ?? {}).length} 本`]);
 }
 
 // ───────────── 入口 ─────────────
