@@ -6,6 +6,7 @@ import type { Snapshot } from '../../packs/types';
 import { getChat } from '../../st/context';
 import { formatState, latestSubState } from '../../core/subapi';
 import { liveOf, type LiveRecord } from '../../core/liveFlow';
+import { FORMAT_LABEL, formatRows } from '../../core/statusBar';
 
 const editable = computed(() => state.settings.debug);
 const phaseSel = ref('');
@@ -42,8 +43,16 @@ const limitWarned = computed(() => {
   for (let i = start; i < chat.length; i++) {
     if (chat[i]?.extra?.rlzc?.ledgerMismatch) set.add(i);
   }
+  for (const r of formatList.value) set.add(r.index);
   return set;
 });
+
+/** 状态栏格式：有问题或自动修正过的楼层（按当前原文重算） */
+const formatList = computed(() => {
+  void state.tick;
+  return formatRows(getChat());
+});
+const formatOpen = computed(() => formatList.value.filter((r) => !r.fixed).length);
 
 /** 副API：当前隐藏状态与最近一次整理记录 */
 const subView = computed(() => {
@@ -286,7 +295,7 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
           <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.injectionDebug }">▸</span>
         </button>
         <div v-if="!state.settings.cardCollapsed.injectionDebug" class="rlzc-collapse-body">
-          <pre class="rlzc-pre">{{ [state.lastInjection.token, state.lastInjection.progress, state.lastInjection.turn].filter(Boolean).join('\n\n') || '（尚未生成）' }}</pre>
+          <pre class="rlzc-pre">{{ [state.lastInjection.token, state.lastInjection.progress, state.lastInjection.turn, state.lastInjection.format].filter(Boolean).join('\n\n') || '（尚未生成）' }}</pre>
         </div>
       </div>
       <details class="rlzc-card">
@@ -318,6 +327,31 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
       </details>
       <button class="rlzc-btn ghost" :disabled="!editable" @click="abandonSession">删除副本会话</button>
     </template>
+
+    <div class="rlzc-card rlzc-collapsible rlzc-format-debug">
+      <button
+        class="rlzc-collapse-head"
+        :aria-expanded="!state.settings.cardCollapsed.formatDebug"
+        @click="toggleCard('formatDebug')"
+      >
+        <h4>状态栏格式</h4>
+        <span v-if="state.settings.cardCollapsed.formatDebug" class="rlzc-collapse-status">{{ formatOpen ? '⚠️' : formatList.length ? `已修正×${formatList.length}` : '无' }}</span>
+        <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.formatDebug }">▸</span>
+      </button>
+      <div v-if="!state.settings.cardCollapsed.formatDebug" class="rlzc-collapse-body">
+        <p v-if="!formatList.length" class="rlzc-hint">没有发现问题。</p>
+        <table v-else class="rlzc-table">
+          <thead><tr><th>楼</th><th>问题</th><th>处理</th></tr></thead>
+          <tbody>
+            <tr v-for="r in formatList" :key="r.index" class="rlzc-row-warn">
+              <td>{{ r.index }}</td>
+              <td>{{ FORMAT_LABEL[r.kind] }}<template v-if="r.detail"><br /><small>{{ r.detail }}</small></template></td>
+              <td>{{ r.fixed ? `已自动修正（原标签 ${r.from}）` : '未修正' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <details v-if="liveRows.length" class="rlzc-card">
       <summary>直播（每楼，最近60条）</summary>

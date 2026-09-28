@@ -12,7 +12,9 @@ export const KEY_STATE = 'rlzc_state';
 export const KEY_LEDGER = 'rlzc_ledger';
 /** 直播：在看人数与最近弹幕（默认不注入，设置里开「弹幕传给AI」才注入） */
 export const KEY_LIVE = 'rlzc_live';
-export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE, KEY_LEDGER, KEY_LIVE] as const;
+/** 状态栏格式提醒：上一条AI回复的状态栏有问题时注入一次（CLAUDE.md 第20节） */
+export const KEY_FORMAT = 'rlzc_format';
+export const ALL_KEYS = [KEY_TOKEN, KEY_PROGRESS, KEY_TURN, KEY_STATE, KEY_LEDGER, KEY_LIVE, KEY_FORMAT] as const;
 
 export interface Injection {
   token: string;
@@ -26,6 +28,8 @@ export interface Injection {
   skipped?: { id: string; reason: string }[];
   /** rlzc_state：当前隐藏状态 */
   state?: string;
+  /** rlzc_format：状态栏格式提醒（由 app 在注入时附上） */
+  format?: string;
 }
 
 /** 快照里记录的本楼注入时限 */

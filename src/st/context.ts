@@ -81,6 +81,21 @@ export function setPrompt(key: string, value: string, depth: number, scan: boole
   ctx().setExtensionPrompt(key, value, PROMPT_IN_CHAT, depth, scan, ROLE_SYSTEM);
 }
 
+/** 保存聊天（消息原文改动后） */
+export function saveChat(): void {
+  const c = ctx() as any;
+  if (typeof c.saveChat === 'function') void c.saveChat();
+  else c.saveChatDebounced?.();
+}
+
+/** 按消息原文重新渲染这一楼（DOM 里还没有这一楼时什么都不做） */
+export function rerenderMessage(mesId: number): void {
+  const c = ctx() as any;
+  const msg = getChat()[mesId];
+  if (!msg || !document.querySelector(`#chat .mes[mesid="${mesId}"]`)) return;
+  if (typeof c.updateMessageBlock === 'function') c.updateMessageBlock(mesId, msg);
+}
+
 export function toast(kind: 'info' | 'success' | 'warning' | 'error', text: string): void {
   const t = window.toastr;
   if (t) t[kind](text, '回廊种菜系统');

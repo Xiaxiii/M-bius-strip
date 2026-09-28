@@ -48,7 +48,7 @@ function applyLevelFix() {
   toast('success', '校正已保存，下一轮生成时写入状态栏。');
 }
 
-function setDepth(key: 'token' | 'progress' | 'turn' | 'ledger' | 'live', e: Event) {
+function setDepth(key: keyof Settings['depths'], e: Event) {
   const v = Math.max(0, Math.min(10000, Math.floor(Number((e.target as HTMLInputElement).value) || 0)));
   state.settings.depths[key] = v;
   saveSettings();
@@ -78,6 +78,11 @@ function setDisplay(e: Event) {
   setPanelDisplay((e.target as HTMLSelectElement).value as Settings['panelDisplay']);
 }
 
+function setStatusBarFix(on: boolean) {
+  state.settings.statusBarFix = on;
+  saveSettings();
+}
+
 function toggle(key: 'debug' | 'showBall', e: Event) {
   state.settings[key] = (e.target as HTMLInputElement).checked;
   saveSettings();
@@ -98,6 +103,36 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
         <option value="statusbar">正文状态栏</option>
       </select>
       <p class="rlzc-hint">选「正文状态栏」时，时限和任务由状态栏显示，系统页不重复。</p>
+    </div>
+
+    <!-- 状态栏格式（可折叠） -->
+    <div class="rlzc-card rlzc-collapsible rlzc-format-card">
+      <button
+        class="rlzc-collapse-head"
+        :aria-expanded="!state.settings.cardCollapsed.statusBar"
+        @click="toggleCard('statusBar')"
+      >
+        <h4>状态栏格式</h4>
+        <span v-if="state.settings.cardCollapsed.statusBar" class="rlzc-collapse-status">{{ state.settings.statusBarFix ? '自动修正' : '只提醒' }}</span>
+        <span class="rlzc-collapse-arrow" :class="{ open: !state.settings.cardCollapsed.statusBar }">▸</span>
+      </button>
+      <div v-if="!state.settings.cardCollapsed.statusBar" class="rlzc-collapse-body">
+        <p class="rlzc-hint">AI 回复的状态栏缺失或标签写错时，下一轮提醒 AI 按原样输出。</p>
+        <div class="rlzc-option-row">
+          <div class="rlzc-option-label">
+            <span>自动修正状态栏标签</span>
+            <small>只改标签名，不动内容</small>
+          </div>
+          <button
+            role="switch"
+            type="button"
+            class="rlzc-toggle rlzc-format-fix"
+            :aria-checked="state.settings.statusBarFix ? 'true' : 'false'"
+            :class="{ on: state.settings.statusBarFix }"
+            @click="setStatusBarFix(!state.settings.statusBarFix)"
+          ><span /></button>
+        </div>
+      </div>
     </div>
 
     <!-- 账户校正（可折叠，默认收起） -->
@@ -192,6 +227,10 @@ function toggleCard(key: keyof typeof state.settings.cardCollapsed) {
           <label class="rlzc-field rlzc-field-num">
             <span>直播<small>在看人数与最近弹幕</small></span>
             <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.live" @change="setDepth('live', $event)" />
+          </label>
+          <label class="rlzc-field rlzc-field-num">
+            <span>格式提醒<small>状态栏格式出错后的提醒</small></span>
+            <input type="number" min="0" class="rlzc-input rlzc-input-num" :value="state.settings.depths.format" @change="setDepth('format', $event)" />
           </label>
         </div>
       </div>

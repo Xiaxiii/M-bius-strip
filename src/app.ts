@@ -6,7 +6,8 @@ import type { ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from '
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
-import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, type Injection } from './core/injector';
+import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, KEY_FORMAT, type Injection } from './core/injector';
+import { checkStatusBar, fixStatusBar, FORMAT_REMINDER, isGreeting, needFormatReminder, type FormatRecord } from './core/statusBar';
 import { buildDanmakuPrompt, callDanmakuWithRetry, formatLiveInjection, pickSamples, shouldGenAiDanmaku, type AiDanmaku } from './core/liveAi';
 import {
   buildSubPrompt,
@@ -42,7 +43,7 @@ import {
 } from './core/session';
 import { HIDDEN_TAGS, hideTagsInAll as hideAllWith, hideTagsInMessage as hideOneWith } from './core/hideTags';
 import { auditPanels, type AuditResult } from './core/audit';
-import { confirmBox, confirmWithCheck, ctx, getChat, getChatId, getMeta, saveMeta, setPrompt, toast } from './st/context';
+import { confirmBox, confirmWithCheck, ctx, getChat, getChatId, getMeta, rerenderMessage, saveChat, saveMeta, setPrompt, toast } from './st/context';
 import {
   appendLiveTipSentence,
   buildLiveRecord,
@@ -109,13 +110,15 @@ import { casinoSource, ensureTables, playCasino, type CasinoOutcome } from './co
 export const SETTINGS_KEY = 'rlzc';
 
 export interface Settings {
-  depths: { token: number; progress: number; turn: number; ledger: number; live: number };
+  depths: { token: number; progress: number; turn: number; ledger: number; live: number; format: number };
   ball: { x: number | null; y: number | null };
   showBall: boolean;
   debug: boolean;
   customPacks: Pack[];
   /** 副本信息显示位置：panel = 扩展面板（隐藏 <副本>）；statusbar = 正文状态栏（保留 <副本>） */
   panelDisplay: 'panel' | 'statusbar';
+  /** 自动修正状态栏标签（CLAUDE.md 第20节） */
+  statusBarFix: boolean;
   /** 通用副本包按等级的默认轮数上限（CLAUDE.md 12.4） */
   genericCaps: GenericCaps;
   /** 副API「记录员」（CLAUDE.md 14） */
@@ -128,10 +131,12 @@ export interface Settings {
     accountFix: boolean;
     rolesDebug: boolean;
     live: boolean;
-    /** 调试页：<副本> 核对、手动操作记录、本次注入 */
+    statusBar: boolean;
+    /** 调试页：<副本> 核对、手动操作记录、本次注入、状态栏格式 */
     auditDebug: boolean;
     manualDebug: boolean;
     injectionDebug: boolean;
+    formatDebug: boolean;
   };
   /** 直播（第三期b） */
   live: LiveSettings;
@@ -173,15 +178,16 @@ export const DEFAULT_SUB_API: SubApiSettings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
-  depths: { token: 4, progress: 4, turn: 0, ledger: 4, live: 4 },
+  depths: { token: 4, progress: 4, turn: 0, ledger: 4, live: 4, format: 0 },
   ball: { x: null, y: null },
   showBall: true,
   debug: false,
   customPacks: [],
   panelDisplay: 'panel',
+  statusBarFix: true,
   genericCaps: { ...DEFAULT_GENERIC_CAPS },
   subApi: structuredClone(DEFAULT_SUB_API),
-  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true, live: true, auditDebug: true, manualDebug: true, injectionDebug: true },
+  cardCollapsed: { depths: true, subApi: true, genericCaps: true, accountFix: true, rolesDebug: true, live: true, statusBar: true, auditDebug: true, manualDebug: true, injectionDebug: true, formatDebug: true },
   live: { ...DEFAULT_LIVE },
 };
 
@@ -235,6 +241,7 @@ export function loadSettings(): void {
     ball: { ...DEFAULT_SETTINGS.ball, ...(saved.ball ?? {}) },
     customPacks: Array.isArray(saved.customPacks) ? saved.customPacks.filter((p) => validatePack(p).length === 0) : [],
     panelDisplay: saved.panelDisplay === 'statusbar' ? 'statusbar' : 'panel',
+    statusBarFix: typeof saved.statusBarFix === 'boolean' ? saved.statusBarFix : true,
     genericCaps: { ...DEFAULT_GENERIC_CAPS, ...(saved.genericCaps ?? {}) },
     subApi: {
       ...structuredClone(DEFAULT_SUB_API),
@@ -250,9 +257,11 @@ export function loadSettings(): void {
       accountFix: (saved.cardCollapsed as any)?.accountFix ?? true,
       rolesDebug: (saved.cardCollapsed as any)?.rolesDebug ?? true,
       live: (saved.cardCollapsed as any)?.live ?? true,
+      statusBar: (saved.cardCollapsed as any)?.statusBar ?? true,
       auditDebug: (saved.cardCollapsed as any)?.auditDebug ?? true,
       manualDebug: (saved.cardCollapsed as any)?.manualDebug ?? true,
       injectionDebug: (saved.cardCollapsed as any)?.injectionDebug ?? true,
+      formatDebug: (saved.cardCollapsed as any)?.formatDebug ?? true,
     },
     live: normalizeLiveSettings(saved.live),
   };
@@ -656,7 +665,10 @@ function injectFor(type: string | undefined): void {
     const liveText = formatLiveInjection(liveView(new Set(), chat));
     if (liveText) setPrompt(KEY_LIVE, liveText, d.live, false);
   }
-  state.lastInjection = inj;
+  // 状态栏格式提醒：上一条AI回复的状态栏有问题时注入一次（回廊和副本内都一样）
+  const format = needFormatReminder(chat) ? FORMAT_REMINDER : '';
+  if (format) setPrompt(KEY_FORMAT, format, d.format, false);
+  state.lastInjection = format ? { ...inj, format } : inj;
   lastInjectionIndex = chat.length;
   log('注入', type, inj);
 }
@@ -921,7 +933,8 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
   }
   dismissEntryCard();
   msg.extra = msg.extra ?? {};
-  msg.extra.rlzc = { phase: pack.phases[0]?.name ?? '进行中', round: 1, injected: [], entry: session.id } satisfies Snapshot;
+  const format = msg.extra.rlzc?.format;
+  msg.extra.rlzc = { phase: pack.phases[0]?.name ?? '进行中', round: 1, injected: [], entry: session.id, ...(format ? { format } : {}) } satisfies Snapshot;
   writeSession(session);
   // 黑市：入场确认后开盘（休整副本不开）
   openBook(session, pack, entryIndex);
@@ -1264,6 +1277,8 @@ export function onMessageReceived(index: number, type?: string): void {
   const chat = getChat();
   const msg = chat[index];
   if (!isCountable(msg)) return;
+  // 状态栏格式守护：先于其他处理，账本等读到的是修正后的原文
+  guardStatusBar(index, type);
   const session = readSession();
   // 收到新的AI回复：旧的入场卡片撤掉（开场白补发的 first_message 不是新回复）
   if (type !== 'first_message') withdrawEntryCard();
@@ -1318,6 +1333,7 @@ export function onMessageReceived(index: number, type?: string): void {
     if (limit) snap.limit = limit;
     const entry = msg.extra?.rlzc?.entry;
     if (entry) snap.entry = entry;
+    if (msg.extra?.rlzc?.format) snap.format = msg.extra.rlzc.format;
     if (lastInjectionIndex === index && state.lastInjection.skipped?.length) snap.skippedEvents = state.lastInjection.skipped;
     // 继续（continue）不重新整理，保留这一楼原来的整理结果；也不算新一轮直播
     if (type === 'continue' && msg.extra?.rlzc?.sub) snap.sub = msg.extra.rlzc.sub;
@@ -1351,6 +1367,42 @@ export function onMessageReceived(index: number, type?: string): void {
   } else applyLive(index, type);
   clearLevelFix();
   clearMarketHints();
+}
+
+// ───────────── 状态栏格式守护（CLAUDE.md 第20节）─────────────
+
+/**
+ * 检查这条AI回复的 <状态栏>，结果记进快照；开着「自动修正状态栏标签」时只改标签名或补结尾，
+ * 修完保存聊天、重新渲染这一楼。开场白、quiet、impersonate 不检查。
+ */
+export function guardStatusBar(index: number, type?: string): void {
+  if (type === 'first_message' || type === 'quiet' || type === 'impersonate') return;
+  const chat = getChat();
+  const msg = chat[index];
+  if (!isCountable(msg) || isGreeting(chat, index)) return;
+  const check = checkStatusBar(msg.mes);
+  let record: FormatRecord | undefined;
+  if (check.kind !== 'ok') {
+    record = { kind: check.kind, detail: check.detail };
+    const fixed = state.settings.statusBarFix ? fixStatusBar(msg.mes) : null;
+    if (fixed) {
+      msg.mes = fixed.text;
+      if (Array.isArray(msg.swipes) && msg.swipe_id !== undefined && msg.swipe_id < msg.swipes.length) msg.swipes[msg.swipe_id] = fixed.text;
+      record.fixed = true;
+      record.from = fixed.from;
+      saveChat();
+      rerenderMessage(index);
+      hideTagsInMessage(index);
+      toast('info', '已修正本轮状态栏标签');
+    }
+  }
+  const snap = msg.extra?.rlzc;
+  // 续写后没问题了：保留先前的修正记录
+  if (!record && (type === 'continue' || !snap?.format)) return;
+  msg.extra = msg.extra ?? {};
+  const base: Snapshot = snap ?? { phase: '', round: 0, injected: [] };
+  msg.extra.rlzc = plain({ ...base, format: record });
+  saveMeta();
 }
 
 /** 账户校正：收到 AI 回复后清除待生效的校正（CLAUDE.md 甲二.2） */

@@ -169,6 +169,8 @@ export interface Snapshot {
   ledger?: LedgerEntry[];
   /** 积分核对：状态栏与账本不一致时记录（仅调试页显示） */
   ledgerMismatch?: { status: number; ledger: number };
+  /** 状态栏格式问题与自动修正记录（CLAUDE.md 第20节） */
+  format?: import('../core/statusBar').FormatRecord;
 }
 
 /** 积分账本流水条目（存在 chat[i].extra.rlzc.ledger，CLAUDE.md 第三期） */

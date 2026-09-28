@@ -15,6 +15,7 @@
 | `run-live.mjs` | 直播与账本的检查（第三期b）：装酒馆助手、导入状态栏正则，回廊开播 → 钟楼 → 结算 → 回廊、喜宴不开播、污名、死亡撤回、入场卡片、账户校正、AI 弹幕的 token |
 | `run-market.mjs` | 黑市的检查（第四期）：钟楼开盘、下注、封盘、事件盘开奖、结算开奖、删结算与重新生成、死亡结算、检测关闭、农闲、赌坊四张桌、一次性提示、截图 |
 | `run-greeting.mjs` | 开场白跳转：新建聊天后不滑动，直接跳到第3个（喜宴）、第5个（钟楼）开场白，1秒内出现入场卡片；跳到不是副本的开场白，旧卡片消失。ST 自带的滑动计数跳转、酒馆助手 `setChatMessages`、不发事件的 `updateMessageBlock` 各跑一遍 |
+| `run-format.mjs` | 状态栏格式守护：装酒馆助手、导入状态栏正则；自动修正开启时模拟AI输出 `<系统面板>……</系统面板>`，原文被改成 `<状态栏>`、提示出现、正则渲染出来、下一轮没有提醒；关闭时原文不动、下一轮提醒一次 |
 | `shots-card.mjs` | 入场卡片（已收录、未收录、直播开关）与悬浮球（回廊、副本进度环）的截图，桌面 1280px 与手机 390px；需要先跑过 `run.mjs` 建好角色卡 |
 | `regex-huilang-statusbar.json` | 玩家用的状态栏正则（测试素材，不要改）；由酒馆助手渲染成 iframe，从主页面读 `window.RLZC_LIVE` |
 | `RLZC_LIVE_mock.js` | 直播接口的样例（测试素材），扩展的 `window.RLZC_LIVE` 按它的行为实现 |
@@ -38,6 +39,7 @@ node report.mjs           # 生成报告草稿
 node run-live.mjs --fresh # 直播与账本（约 7 分钟，需要能访问 GitHub 装酒馆助手），结果在 out/live-results.json
 node run-market.mjs --fresh # 黑市（约 4 分钟），结果在 out/market-results.json
 node run-greeting.mjs      # 开场白跳转（约 1 分钟，需要能访问 GitHub 装酒馆助手），结果在 out/greeting-results.json
+node run-format.mjs --fresh # 状态栏格式守护（约 1 分钟，需要能访问 GitHub 装酒馆助手），结果在 out/format-results.json
 ```
 
 - `--only=desktop,cost,mobile,coexist`：只跑其中几部分。
