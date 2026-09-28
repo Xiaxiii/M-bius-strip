@@ -10216,7 +10216,7 @@ async function Tk(e) {
   const t = await su("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const Ik = "回廊种菜系统", Nk = 100, Pk = [], Rk = [], Lk = "dist/index.js", Fk = "xiaxiii", jk = "1.0.11", Dk = "https://github.com/xiaxiii/M-bius-strip", Ok = !0, Bk = "rlzcInterceptor", Vk = {
+const Ik = "回廊种菜系统", Nk = 100, Pk = [], Rk = [], Lk = "dist/index.js", Fk = "xiaxiii", jk = "1.1.0", Dk = "https://github.com/xiaxiii/M-bius-strip", Ok = !0, Bk = "rlzcInterceptor", Vk = {
   display_name: Ik,
   loading_order: Nk,
   requires: Pk,
