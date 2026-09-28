@@ -171,18 +171,6 @@ export function isGreeting(chat: ChatMessage[], index: number): boolean {
   return true;
 }
 
-/** 「缺失」只在最近用过状态栏时才算问题：往前5条AI回复里有过状态栏（写对写错都算） */
-const RECENT = 5;
-function usedRecently(chat: ChatMessage[], index: number): boolean {
-  let n = 0;
-  for (let i = index - 1; i >= 0 && n < RECENT; i--) {
-    if (!isCountable(chat[i])) continue;
-    n++;
-    if (checkStatusBar(chat[i].mes).kind !== 'missing') return true;
-  }
-  return false;
-}
-
 /**
  * 这一楼的状态栏问题（按当前原文重算，删楼、滑动后自然正确）。
  * 开场白、用户消息、系统消息不检查；没问题返回 null。
@@ -191,9 +179,7 @@ export function formatProblem(chat: ChatMessage[], index: number): FormatCheck |
   const msg = chat[index];
   if (!isCountable(msg) || isGreeting(chat, index)) return null;
   const c = checkStatusBar(msg.mes);
-  if (c.kind === 'ok') return null;
-  if (c.kind === 'missing' && !usedRecently(chat, index)) return null;
-  return c;
+  return c.kind === 'ok' ? null : c;
 }
 
 export const FORMAT_REMINDER =

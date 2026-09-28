@@ -143,11 +143,9 @@ describe('提醒与重放', () => {
     expect(needFormatReminder(chat)).toBe(false);
   });
 
-  it('缺失只在最近用过状态栏时才算问题', () => {
-    const chat = [ai(STORY), user(), ai(STORY), user(), ai(STORY)];
-    expect(needFormatReminder(chat)).toBe(false);
-    const used = [ai(good), user(), ai(good), user(), ai(STORY)];
-    expect(needFormatReminder(used)).toBe(true);
+  it('缺失每轮都算问题：状态栏每轮都要输出', () => {
+    expect(needFormatReminder([ai(STORY), user(), ai(STORY)])).toBe(true);
+    expect(needFormatReminder([ai(good), user(), ai(STORY)])).toBe(true);
   });
 
   it('用户消息与 ST 系统消息不计', () => {
