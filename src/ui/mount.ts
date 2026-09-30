@@ -4,7 +4,7 @@ import css from './style.css?inline';
 import { saveSettings, state } from '../app';
 import { checkForUpdate, runUpdate, type UpdateInfo } from '../st/updater';
 import manifest from '../../manifest.json';
-import { choiceBox, toast } from '../st/context';
+import { actionToast, toast } from '../st/context';
 import { pickQuote } from './quotes';
 
 const HOST_ID = 'rlzc-host';
@@ -144,8 +144,8 @@ function addSettingsDrawer(tries = 0): void {
     } finally {
       busy = false;
     }
-    // 页面加载后的那次检查：有新版本就弹窗（每次打开都弹，不记已看过）
-    if (auto && info?.isGit && !info.isUpToDate) void promptUpdate();
+    // 页面加载后的那次检查：有新版本就在顶部弹一条小通知（每次打开都弹，不记已看过）
+    if (auto && info?.isGit && !info.isUpToDate) promptUpdate();
   };
 
   /** 执行更新；成功后状态栏出现「刷新页面」按钮。返回是否成功 */
@@ -169,20 +169,15 @@ function addSettingsDrawer(tries = 0): void {
     }
   };
 
-  const promptUpdate = async () => {
-    try {
-      if (!(await choiceBox(updateQuote(), '立即更新', '稍后', '回廊种菜系统'))) return;
-      try {
-        if (!(await doUpdate())) return;
-      } catch (e) {
-        toast('error', `更新失败：${(e as Error).message}`);
-        return;
-      }
-      if (await choiceBox('更新完成，刷新页面后生效。', '刷新页面', '稍后', '回廊种菜系统')) location.reload();
-    } catch (e) {
-      console.warn('[rlzc] 更新提醒弹窗出错', e);
-    }
-  };
+  /** 顶部小通知：一句语录，下面一个「立即更新」；不理它会自己消失 */
+  const promptUpdate = () =>
+    actionToast(updateQuote(), '立即更新', () => {
+      void doUpdate()
+        .then((ok) => {
+          if (ok) actionToast('更新完成，刷新页面后生效。', '刷新页面', () => location.reload());
+        })
+        .catch((e) => toast('error', `更新失败：${(e as Error).message}`));
+    });
 
   checkBtn.addEventListener('click', () => void check());
   updateBtn.addEventListener('click', () => void doUpdate().catch(() => {}));

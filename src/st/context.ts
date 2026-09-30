@@ -130,28 +130,31 @@ export async function confirmBox(text: string): Promise<boolean> {
 }
 
 /**
- * 带自定义按钮文字的确认框；title 为小字标题（可空），text 用 textContent 放入。
- * 没有 ST 弹窗时退回浏览器 confirm。
+ * 酒馆顶部的小通知，下面带一个文字按钮；text 用 textContent 放入。
+ * 点按钮时先关掉这条通知再执行 onAction。没有 toastr 时什么都不做。
  */
-export async function choiceBox(text: string, okText: string, cancelText: string, title = ''): Promise<boolean> {
-  const c = ctx();
-  if (c.callGenericPopup && c.POPUP_TYPE && c.POPUP_RESULT) {
-    const el = document.createElement('div');
-    el.style.cssText = 'text-align:center;';
-    if (title) {
-      const t = document.createElement('small');
-      t.style.cssText = 'display:block;opacity:.6;margin-bottom:8px;';
-      t.textContent = title;
-      el.appendChild(t);
-    }
-    const p = document.createElement('div');
-    p.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.6;';
-    p.textContent = text;
-    el.appendChild(p);
-    const result = await c.callGenericPopup(el, c.POPUP_TYPE.CONFIRM, '', { okButton: okText, cancelButton: cancelText });
-    return result === c.POPUP_RESULT.AFFIRMATIVE;
-  }
-  return window.confirm(title ? `${title}\n\n${text}` : text);
+export function actionToast(text: string, actionText: string, onAction: () => void, title = '回廊种菜系统'): void {
+  const t = window.toastr as any;
+  const $ = (window as any).jQuery;
+  if (!t || typeof $ !== 'function') return;
+  const box = document.createElement('div');
+  const p = document.createElement('div');
+  p.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;';
+  p.textContent = text;
+  const btn = document.createElement('a');
+  btn.href = '#';
+  btn.textContent = actionText;
+  btn.className = 'rlzc-toast-action';
+  btn.style.cssText = 'display:inline-block;margin-top:6px;padding:4px 0;text-decoration:underline;cursor:pointer;';
+  box.append(p, btn);
+  // 内容是用 textContent 拼好的元素，不需要 toastr 再转义（它只会转义字符串）
+  const $toast = t.info($(box), title, { timeOut: 12000, extendedTimeOut: 8000, closeButton: true, escapeHtml: false });
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    t.clear($toast);
+    onAction();
+  });
 }
 
 /** 输入框：优先用 ST 的弹窗，缺失时退回浏览器 prompt；取消返回 null */

@@ -2,7 +2,7 @@
  * 回廊种菜系统 · 更新提醒弹窗的端到端检查
  * 用工作目录里的本地仓库代替 GitHub：装好扩展后往本地仓库再提交一次，ST 检查更新时就是「有新版本」。
  *
- *  U1 有新版本：打开酒馆后弹窗，只有一句语录，版本号是当前安装的；扩展设置里的状态小字是同一句
+ *  U1 有新版本：打开酒馆后顶部弹出小通知，只有一句语录，版本号是当前安装的；扩展设置里的状态小字是同一句
  *  U2 点「稍后」后刷新：还会弹
  *  U3 点「立即更新」：更新成功、提示刷新；刷新后已是最新，不再弹窗
  *  U4 不是用仓库地址安装：不弹窗
@@ -37,9 +37,9 @@ function bumpOrigin() {
   execSync('git add -A && git -c user.name=e2e -c user.email=e2e@example.invalid commit -q -m bump', { cwd: origin });
 }
 
-/** 等更新提醒弹窗（最多 12 秒），返回弹窗文字或 null */
+/** 等顶部的更新小通知（最多 12 秒），返回通知或 null */
 async function waitPopup(page) {
-  const dlg = page.locator('dialog.popup[open]').filter({ hasText: '立即更新' });
+  const dlg = page.locator('#toast-container .toast').filter({ hasText: '立即更新' });
   try {
     await dlg.first().waitFor({ state: 'visible', timeout: 12000 });
     return dlg.first();
@@ -63,7 +63,7 @@ async function main() {
   try {
     // U1
     let dlg = await waitPopup(page);
-    let text = dlg ? (await dlg.locator('.popup-content').innerText()).trim() : '';
+    let text = dlg ? (await dlg.innerText()).trim() : '';
     const quote = QUOTES.find((q) => text.includes(q));
     const status = await statusLine(page);
     if (dlg) await ui.shotEl(dlg, 'update-popup').catch(() => {});
@@ -73,7 +73,7 @@ async function main() {
       `当前版本 ${manifest.version}`,
     ]);
     // U2
-    if (dlg) await dlg.locator('.popup-button-cancel').click();
+    if (dlg) await dlg.locator('.toast-close-button').click();
     await sleep(500);
     const seen = new Set([quote]);
     let again = 0;
@@ -82,17 +82,17 @@ async function main() {
       dlg = await waitPopup(page);
       if (dlg) {
         again++;
-        text = (await dlg.locator('.popup-content').innerText()).trim();
+        text = (await dlg.innerText()).trim();
         seen.add(QUOTES.find((q) => text.includes(q)));
-        await dlg.locator('.popup-button-cancel').click();
+        await dlg.locator('.toast-close-button').click();
       }
     }
     rec('U2', '点「稍后」后刷新还会弹', again === 3, [`刷新 3 次弹了 ${again} 次，见到的语录 ${seen.size} 种`]);
     // U3
     await ui.reload(page);
     dlg = await waitPopup(page);
-    await dlg.locator('.popup-button-ok').click();
-    const done = page.locator('dialog.popup[open]').filter({ hasText: '更新完成' });
+    await dlg.locator('.rlzc-toast-action').click();
+    const done = page.locator('#toast-container .toast').filter({ hasText: '更新完成' });
     let doneOk = true;
     try {
       await done.first().waitFor({ state: 'visible', timeout: 30000 });
@@ -102,7 +102,7 @@ async function main() {
     const head1 = execSync('git rev-parse HEAD', { cwd: EXT_DIR }).toString().trim();
     const head0 = execSync('git rev-parse HEAD', { cwd: origin }).toString().trim();
     if (doneOk) {
-      await Promise.all([page.waitForEvent('load', { timeout: 30000 }), done.first().locator('.popup-button-ok').click()]);
+      await Promise.all([page.waitForEvent('load', { timeout: 30000 }), done.first().locator('.rlzc-toast-action').click()]);
       await ui.waitReady(page);
       await ui.onboarding(page);
     }
