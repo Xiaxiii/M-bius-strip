@@ -5427,7 +5427,7 @@ function Yo(e, t, n, s = "回廊种菜系统") {
   o.style.cssText = "overflow-wrap:anywhere;", o.append(document.createTextNode(e));
   const l = document.createElement("a");
   l.href = "#", l.textContent = t, l.className = "rlzc-toast-action", l.style.cssText = "margin-left:.5em;color:inherit;font-weight:bold;text-decoration:underline;white-space:nowrap;cursor:pointer;", o.append(l);
-  const a = r.info(i(o), s, { timeOut: 12e3, extendedTimeOut: 8e3, closeButton: !0, escapeHtml: !1 });
+  const a = r.info(i(o), s, { timeOut: 6e3, extendedTimeOut: 2e3, closeButton: !0, escapeHtml: !1 });
   l.addEventListener("click", (c) => {
     c.preventDefault(), c.stopPropagation(), r.clear(a), n();
   });
@@ -10266,7 +10266,7 @@ async function Ok(e) {
   const t = await cu("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const Bk = "回廊种菜系统", Vk = 100, Uk = [], Hk = [], Wk = "dist/index.js", Gk = "xiaxiii", Kk = "1.1.6", qk = "https://github.com/xiaxiii/M-bius-strip", Yk = !0, Jk = "rlzcInterceptor", zl = {
+const Bk = "回廊种菜系统", Vk = 100, Uk = [], Hk = [], Wk = "dist/index.js", Gk = "xiaxiii", Kk = "1.1.7", qk = "https://github.com/xiaxiii/M-bius-strip", Yk = !0, Jk = "rlzcInterceptor", zl = {
   display_name: Bk,
   loading_order: Vk,
   requires: Uk,
@@ -10377,7 +10377,7 @@ function du(e = 0) {
     }).catch((f) => Se("error", `更新失败：${f.message}`));
   });
   L.addEventListener("click", () => void Q()), U.addEventListener("click", () => void re().catch(() => {
-  })), D.addEventListener("click", () => location.reload()), setTimeout(() => void Q(!0), 3e3), a.append(x, p, _, n("small", "", "也可以从输入框左侧的魔棒菜单打开面板。")), r.append(i, a), s.append(r), t.append(s);
+  })), D.addEventListener("click", () => location.reload()), setTimeout(() => void Q(!0), 1e3), a.append(x, p, _, n("small", "", "也可以从输入框左侧的魔棒菜单打开面板。")), r.append(i, a), s.append(r), t.append(s);
 }
 globalThis.rlzcInterceptor = Px;
 function Zr() {

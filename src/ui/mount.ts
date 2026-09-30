@@ -182,8 +182,8 @@ function addSettingsDrawer(tries = 0): void {
   checkBtn.addEventListener('click', () => void check());
   updateBtn.addEventListener('click', () => void doUpdate().catch(() => {}));
   reloadBtn.addEventListener('click', () => location.reload());
-  // 页面加载后自动检查一次（服务器端 git fetch，不阻塞界面）
-  setTimeout(() => void check(true), 3000);
+  // 页面加载约1秒后自动检查一次（服务器端 git fetch，不阻塞界面）
+  setTimeout(() => void check(true), 1000);
 
   content.append(buttons, label, updateRow, el('small', '', '也可以从输入框左侧的魔棒菜单打开面板。'));
   drawer.append(header, content);

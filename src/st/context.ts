@@ -148,7 +148,7 @@ export function actionToast(text: string, actionText: string, onAction: () => vo
   btn.style.cssText = 'margin-left:.5em;color:inherit;font-weight:bold;text-decoration:underline;white-space:nowrap;cursor:pointer;';
   box.append(btn);
   // 内容是用 textContent 拼好的元素，不需要 toastr 再转义（它只会转义字符串）
-  const $toast = t.info($(box), title, { timeOut: 12000, extendedTimeOut: 8000, closeButton: true, escapeHtml: false });
+  const $toast = t.info($(box), title, { timeOut: 6000, extendedTimeOut: 2000, closeButton: true, escapeHtml: false });
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
