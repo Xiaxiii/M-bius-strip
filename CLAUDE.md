@@ -227,6 +227,8 @@ interface Progress {
 
 以上所有标签（`<阶段切换>`、`<副本结算>`、`<副本>`、`<角色登记>`、以及预留的`<积分变动>`）**只从显示中隐藏，不改动消息原文**（原文是重放的依据）。在 `CHARACTER_MESSAGE_RENDERED`、`MESSAGE_UPDATED`、`CHAT_CHANGED` 后处理对应消息的 DOM。注意用户卡中已有一条同时渲染 `<副本>` 和 `<状态栏>` 的正则，隐藏时只处理 `<副本>`，不要动 `<状态栏>`。
 
+与酒馆助手共存（实现说明）：酒馆助手在 `chatLoaded`、`CHARACTER_MESSAGE_RENDERED`、`MESSAGE_UPDATED`、`MESSAGE_SWIPED`、`MORE_MESSAGES_LOADED` 里把状态栏代码块渲染成界面，之后不再看这一楼，改写 `.mes_text` 会把界面冲回代码。所以隐藏标签的处理用 `eventSource.makeFirst` 排在它前面，`CHAT_CHANGED` 里同步执行；改写过的 `.mes_text` 开头留注释记号，同样的原文和设置不再重复改写。万一执行时界面已渲染：去掉标签前后显示相同就不动，否则调用酒馆助手的 `TavernHelper.refreshOneMessage` 让它按原文重渲染这一楼（它发出的 `CHARACTER_MESSAGE_RENDERED` 里再由本扩展先改写，正在重渲染的楼层不再重复请求）。端到端测试见 `tests/e2e/run-hidetags.mjs`。
+
 ### 5.6 角色登记
 
 有 `roles` 的副本包，入场确认后的下一次生成（即第2轮），`rlzc_turn` 追加以下内容；入场那条简报消息本身就是第1轮，事件E01已由它完成：

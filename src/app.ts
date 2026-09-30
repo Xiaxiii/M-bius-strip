@@ -1466,7 +1466,9 @@ export function onChatChanged(): void {
     greetingRecheckTimer = null;
     if (getChatId() === chatId) recheckGreeting();
   }, 300);
-  setTimeout(() => hideTagsInAll(), 50);
+  // 同步执行：ST 在 CHAT_CHANGED 之前已画好整页，之后才发 chatLoaded 让酒馆助手渲染状态栏。
+  // 扩展加载时也走这里，那时整页可能已被酒馆助手渲染过，所以不按「它随后会渲染」处理
+  hideTagsInAll();
 }
 
 /** 删楼（id 不传）、消息被更新或编辑（id = 楼层） */
@@ -1483,13 +1485,14 @@ export function hiddenTags(): readonly string[] {
   return state.settings.panelDisplay === 'statusbar' ? HIDDEN_TAGS.filter((t) => t !== '副本') : HIDDEN_TAGS;
 }
 
-export function hideTagsInMessage(id: number): void {
-  hideOneWith(id, hiddenTags());
+/** helperNext：在排在酒馆助手之前的事件里调用（它随后会重新渲染这一楼） */
+export function hideTagsInMessage(id: number, helperNext = false): void {
+  hideOneWith(id, hiddenTags(), false, helperNext);
 }
 
 /** force：切换显示位置后，把所有带机器标签的消息按新设置重新渲染 */
-export function hideTagsInAll(force = false): void {
-  hideAllWith(hiddenTags(), force);
+export function hideTagsInAll(force = false, helperNext = false): void {
+  hideAllWith(hiddenTags(), force, helperNext);
 }
 
 export function setPanelDisplay(mode: Settings['panelDisplay']): void {

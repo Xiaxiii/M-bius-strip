@@ -17,7 +17,7 @@ export interface StContext {
   chat: ChatMessage[];
   chatMetadata: Record<string, any>;
   extensionSettings: Record<string, any>;
-  eventSource: { on(ev: string, fn: AnyFn): void; removeListener?(ev: string, fn: AnyFn): void };
+  eventSource: { on(ev: string, fn: AnyFn): void; makeFirst?(ev: string, fn: AnyFn): void; removeListener?(ev: string, fn: AnyFn): void };
   eventTypes?: Record<string, string>;
   event_types?: Record<string, string>;
   setExtensionPrompt: AnyFn;
@@ -56,6 +56,21 @@ export function onEvent(name: string, fn: AnyFn): void {
     return;
   }
   ctx().eventSource.on(type, fn);
+}
+
+/**
+ * 注册在最前面（ST 的 eventSource.makeFirst），先于酒馆助手等其他扩展执行。
+ * 用于改写正文显示：酒馆助手在同一事件里把代码块渲染成界面，必须让它在我们改完之后再扫描。
+ */
+export function onEventFirst(name: string, fn: AnyFn): void {
+  const type = eventTypes()[name];
+  if (!type) {
+    console.warn(`[rlzc] 当前 ST 没有事件 ${name}，已跳过`);
+    return;
+  }
+  const es = ctx().eventSource;
+  if (typeof es.makeFirst === 'function') es.makeFirst(type, fn);
+  else es.on(type, fn);
 }
 
 export function getChat(): ChatMessage[] {

@@ -15,7 +15,7 @@ import {
   toggleCorridorLive,
 } from './app';
 import { installLiveApi } from './st/liveApi';
-import { onEvent } from './st/context';
+import { onEvent, onEventFirst } from './st/context';
 import { mountUi } from './ui/mount';
 
 declare global {
@@ -30,19 +30,18 @@ function init() {
   loadSettings();
 
   onEvent('MESSAGE_RECEIVED', (id: number, type?: string) => onMessageReceived(Number(id), type));
-  onEvent('CHARACTER_MESSAGE_RENDERED', (id: number) => hideTagsInMessage(Number(id)));
   onEvent('MESSAGE_DELETED', () => onChatMutated());
-  onEvent('MESSAGE_SWIPED', (id: number) => {
-    onMessageSwiped(Number(id));
-    hideTagsInMessage(Number(id));
-  });
+  onEvent('MESSAGE_SWIPED', (id: number) => onMessageSwiped(Number(id)));
   onEvent('MESSAGE_EDITED', (id: number) => onChatMutated(Number(id)));
-  onEvent('MESSAGE_UPDATED', (id: number) => {
-    onChatMutated(Number(id));
-    hideTagsInMessage(Number(id));
-  });
+  onEvent('MESSAGE_UPDATED', (id: number) => onChatMutated(Number(id)));
   onEvent('CHAT_CHANGED', () => onChatChanged());
-  onEvent('MORE_MESSAGES_LOADED', () => hideTagsInAll());
+  // 隐藏机器标签要改写正文显示：排在酒馆助手前面，让它在改写之后再把状态栏代码块渲染成界面
+  onEventFirst('CHARACTER_MESSAGE_RENDERED', (id: number) => hideTagsInMessage(Number(id), true));
+  onEventFirst('MESSAGE_SWIPED', (id: number) => hideTagsInMessage(Number(id), true));
+  onEventFirst('MESSAGE_UPDATED', (id: number) => hideTagsInMessage(Number(id), true));
+  onEventFirst('MORE_MESSAGES_LOADED', () => hideTagsInAll(false, true));
+  // 酒馆助手在 chatLoaded 里整页渲染；CHAT_CHANGED 已同步处理过，这里只补上 CHAT_CHANGED 之后才画出来的楼层
+  onEventFirst('CHAT_LOADED', () => hideTagsInAll(false, true));
 
   mountUi();
   // 直播数据接口：状态栏正则从主页面读取 window.RLZC_LIVE
