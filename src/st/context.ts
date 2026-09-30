@@ -137,16 +137,16 @@ export function actionToast(text: string, actionText: string, onAction: () => vo
   const t = window.toastr as any;
   const $ = (window as any).jQuery;
   if (!t || typeof $ !== 'function') return;
+  // 文字和按钮在同一段里，按钮跟在句末，不单独占一行，通知框不会被撑高
   const box = document.createElement('div');
-  const p = document.createElement('div');
-  p.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;';
-  p.textContent = text;
+  box.style.cssText = 'overflow-wrap:anywhere;';
+  box.append(document.createTextNode(text));
   const btn = document.createElement('a');
   btn.href = '#';
   btn.textContent = actionText;
   btn.className = 'rlzc-toast-action';
-  btn.style.cssText = 'display:inline-block;margin-top:6px;padding:4px 0;text-decoration:underline;cursor:pointer;';
-  box.append(p, btn);
+  btn.style.cssText = 'margin-left:.5em;color:inherit;font-weight:bold;text-decoration:underline;white-space:nowrap;cursor:pointer;';
+  box.append(btn);
   // 内容是用 textContent 拼好的元素，不需要 toastr 再转义（它只会转义字符串）
   const $toast = t.info($(box), title, { timeOut: 12000, extendedTimeOut: 8000, closeButton: true, escapeHtml: false });
   btn.addEventListener('click', (e) => {

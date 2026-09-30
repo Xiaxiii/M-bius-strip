@@ -5423,13 +5423,13 @@ async function Ht(e) {
 function Yo(e, t, n, s = "回廊种菜系统") {
   const r = window.toastr, i = window.jQuery;
   if (!r || typeof i != "function") return;
-  const o = document.createElement("div"), l = document.createElement("div");
-  l.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere;", l.textContent = e;
-  const a = document.createElement("a");
-  a.href = "#", a.textContent = t, a.className = "rlzc-toast-action", a.style.cssText = "display:inline-block;margin-top:6px;padding:4px 0;text-decoration:underline;cursor:pointer;", o.append(l, a);
-  const c = r.info(i(o), s, { timeOut: 12e3, extendedTimeOut: 8e3, closeButton: !0, escapeHtml: !1 });
-  a.addEventListener("click", (d) => {
-    d.preventDefault(), d.stopPropagation(), r.clear(c), n();
+  const o = document.createElement("div");
+  o.style.cssText = "overflow-wrap:anywhere;", o.append(document.createTextNode(e));
+  const l = document.createElement("a");
+  l.href = "#", l.textContent = t, l.className = "rlzc-toast-action", l.style.cssText = "margin-left:.5em;color:inherit;font-weight:bold;text-decoration:underline;white-space:nowrap;cursor:pointer;", o.append(l);
+  const a = r.info(i(o), s, { timeOut: 12e3, extendedTimeOut: 8e3, closeButton: !0, escapeHtml: !1 });
+  l.addEventListener("click", (c) => {
+    c.preventDefault(), c.stopPropagation(), r.clear(a), n();
   });
 }
 async function Jo(e, t = "") {
@@ -10266,7 +10266,7 @@ async function Ok(e) {
   const t = await cu("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const Bk = "回廊种菜系统", Vk = 100, Uk = [], Hk = [], Wk = "dist/index.js", Gk = "xiaxiii", Kk = "1.1.4", qk = "https://github.com/xiaxiii/M-bius-strip", Yk = !0, Jk = "rlzcInterceptor", zl = {
+const Bk = "回廊种菜系统", Vk = 100, Uk = [], Hk = [], Wk = "dist/index.js", Gk = "xiaxiii", Kk = "1.1.5", qk = "https://github.com/xiaxiii/M-bius-strip", Yk = !0, Jk = "rlzcInterceptor", zl = {
   display_name: Bk,
   loading_order: Vk,
   requires: Uk,
