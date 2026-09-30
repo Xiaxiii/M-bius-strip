@@ -4,6 +4,8 @@ import css from './style.css?inline';
 import { saveSettings, state } from '../app';
 import { checkForUpdate, runUpdate, type UpdateInfo } from '../st/updater';
 import manifest from '../../manifest.json';
+import { choiceBox, toast } from '../st/context';
+import { pickQuote } from './quotes';
 
 const HOST_ID = 'rlzc-host';
 const MENU_ID = 'rlzc-menu-btn';
@@ -116,8 +118,11 @@ function addSettingsDrawer(tries = 0): void {
   updateRow.append(status, checkBtn, updateBtn, reloadBtn);
   let info: UpdateInfo | null = null;
   let busy = false;
+  // 同一次打开里只挑一句：弹窗和这里的状态小字一致
+  let quote = '';
+  const updateQuote = () => (quote ||= pickQuote('有新版本', { 版本: manifest.version }));
 
-  const check = async () => {
+  const check = async (auto = false) => {
     if (busy) return;
     busy = true;
     status.textContent = '正在检查更新…';
@@ -129,19 +134,23 @@ function addSettingsDrawer(tries = 0): void {
       if (!info.isGit) status.textContent = '不是用仓库地址安装的，无法检查更新。';
       else if (info.isUpToDate) status.textContent = `已是最新版本${ver}`;
       else {
-        status.textContent = `有新版本可以更新，当前${ver}`;
+        status.textContent = updateQuote();
         updateBtn.style.display = '';
       }
       badge.style.display = info.isGit && !info.isUpToDate ? '' : 'none';
     } catch (e) {
       status.textContent = `检查更新失败：${(e as Error).message}`;
+      return;
     } finally {
       busy = false;
     }
+    // 页面加载后的那次检查：有新版本就弹窗（每次打开都弹，不记已看过）
+    if (auto && info?.isGit && !info.isUpToDate) void promptUpdate();
   };
-  checkBtn.addEventListener('click', () => void check());
-  updateBtn.addEventListener('click', async () => {
-    if (!info || busy) return;
+
+  /** 执行更新；成功后状态栏出现「刷新页面」按钮。返回是否成功 */
+  const doUpdate = async (): Promise<boolean> => {
+    if (!info || busy) return false;
     busy = true;
     status.textContent = '正在更新…';
     updateBtn.style.display = 'none';
@@ -150,16 +159,36 @@ function addSettingsDrawer(tries = 0): void {
       badge.style.display = 'none';
       status.textContent = '更新完成，刷新页面后生效。';
       reloadBtn.style.display = '';
+      return true;
     } catch (e) {
       status.textContent = `更新失败：${(e as Error).message}`;
       updateBtn.style.display = '';
+      throw e;
     } finally {
       busy = false;
     }
-  });
+  };
+
+  const promptUpdate = async () => {
+    try {
+      if (!(await choiceBox(updateQuote(), '立即更新', '稍后', '回廊种菜系统'))) return;
+      try {
+        if (!(await doUpdate())) return;
+      } catch (e) {
+        toast('error', `更新失败：${(e as Error).message}`);
+        return;
+      }
+      if (await choiceBox('更新完成，刷新页面后生效。', '刷新页面', '稍后', '回廊种菜系统')) location.reload();
+    } catch (e) {
+      console.warn('[rlzc] 更新提醒弹窗出错', e);
+    }
+  };
+
+  checkBtn.addEventListener('click', () => void check());
+  updateBtn.addEventListener('click', () => void doUpdate().catch(() => {}));
   reloadBtn.addEventListener('click', () => location.reload());
   // 页面加载后自动检查一次（服务器端 git fetch，不阻塞界面）
-  setTimeout(() => void check(), 3000);
+  setTimeout(() => void check(true), 3000);
 
   content.append(buttons, label, updateRow, el('small', '', '也可以从输入框左侧的魔棒菜单打开面板。'));
   drawer.append(header, content);

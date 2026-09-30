@@ -114,6 +114,31 @@ export async function confirmBox(text: string): Promise<boolean> {
   return window.confirm(text);
 }
 
+/**
+ * 带自定义按钮文字的确认框；title 为小字标题（可空），text 用 textContent 放入。
+ * 没有 ST 弹窗时退回浏览器 confirm。
+ */
+export async function choiceBox(text: string, okText: string, cancelText: string, title = ''): Promise<boolean> {
+  const c = ctx();
+  if (c.callGenericPopup && c.POPUP_TYPE && c.POPUP_RESULT) {
+    const el = document.createElement('div');
+    el.style.cssText = 'text-align:center;';
+    if (title) {
+      const t = document.createElement('small');
+      t.style.cssText = 'display:block;opacity:.6;margin-bottom:8px;';
+      t.textContent = title;
+      el.appendChild(t);
+    }
+    const p = document.createElement('div');
+    p.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.6;';
+    p.textContent = text;
+    el.appendChild(p);
+    const result = await c.callGenericPopup(el, c.POPUP_TYPE.CONFIRM, '', { okButton: okText, cancelButton: cancelText });
+    return result === c.POPUP_RESULT.AFFIRMATIVE;
+  }
+  return window.confirm(title ? `${title}\n\n${text}` : text);
+}
+
 /** 输入框：优先用 ST 的弹窗，缺失时退回浏览器 prompt；取消返回 null */
 export async function inputBox(text: string, value = ''): Promise<string | null> {
   const c = ctx();
