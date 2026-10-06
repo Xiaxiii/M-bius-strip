@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { dropPending, endManually, enterPending, skipToPhaseEnd, startManual, state } from '../../app';
+import { collectPending, dropPending, endManually, enterPending, skipToPhaseEnd, startManual, state } from '../../app';
 import { INF_PATH } from '../icons';
 import PackDocs from '../PackDocs.vue';
 import LedgerSummary from '../LedgerSummary.vue';
@@ -133,6 +133,7 @@ async function choose() {
           </button>
           <span v-else></span>
           <div class="rlzc-entry-actions">
+            <button v-if="e.unknown" type="button" class="rlzc-btn ghost rlzc-pending-save" title="现在不玩，以后在手动选择副本里进入" @click="collectPending(e.key)">收录</button>
             <button type="button" class="rlzc-btn rlzc-entry-go" @click="enterPending(e.key, liveOf(e.key, e.live))">进入</button>
           </div>
         </div>

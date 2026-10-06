@@ -3,7 +3,7 @@
  */
 import { reactive, toRaw } from 'vue';
 import type { BriefingInfo, ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from './packs/types';
-import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
+import { allPacks, buildGenericPack, genericLevel, savedPackFromBriefing, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
 import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, KEY_FORMAT, type Injection } from './core/injector';
@@ -1048,6 +1048,31 @@ export function enterPending(key: string, live: boolean): void {
   }
   withdrawEntryCard();
   startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), idx, briefing, opt.show && live);
+}
+
+/** 「收录」：未收录的副本存成自定义副本包，现在不玩、以后在「手动选择副本」里也能进入；这张卡随即收起 */
+export function collectPending(key: string): void {
+  const chat = getChat();
+  const cand = pendingCandidates(chat).find((c) => declineKey(c.index, c.info.name) === key);
+  if (!cand) {
+    toast('warning', '这条副本信息已不存在。');
+    refresh();
+    return;
+  }
+  if (cand.pack) return;
+  // 简报原文：通常就在这一楼；从后面的消息再次提示时在更早的那一楼
+  let source = '';
+  for (let i = cand.index; i >= 0 && !source; i--) {
+    if (isCountable(chat[i]) && detectBriefing(String(chat[i].mes ?? ''))?.name === cand.info.name) source = briefingText(String(chat[i].mes ?? ''));
+  }
+  const pack = savedPackFromBriefing(cand.info, state.settings.genericCaps, `saved_${Date.now().toString(36)}`, source);
+  state.settings.customPacks = [...state.settings.customPacks, pack];
+  saveSettings();
+  // 卡片收起：同名的拒绝记录都记为关掉（之后它是已收录的副本，后面的消息写到它时照常提示入场）
+  const keys = readDeclined().filter((k) => k.slice(k.indexOf(':') + 1) === cand.info.name && Number(k.slice(0, k.indexOf(':'))) >= entrySearchStart());
+  addDropped(keys.length ? keys : [key]);
+  refresh();
+  toast('success', `已收录《${pack.name}》，可在「手动选择副本」里进入`);
 }
 
 /** 「✕」：这个副本不再收录——同名的拒绝记录都记为关掉，后面的消息提到它也不再提示 */

@@ -6,6 +6,7 @@
  *  R2 点「不是」后系统页出现「待确认的副本」卡，点「进入」以最新一条AI回复为第1轮；手动选择副本下拉框里不列它
  *  R3 待确认卡点「✕」后不再收录：之后状态栏写进副本也不再提示，刷新后也不出现
  *  R4 控制台没有本扩展的报错
+ *  R5 待确认卡点「收录」：存成自定义副本包、卡片收起；换个聊天也能从「手动选择副本」进入
  *
  * 用法：node run-reentry.mjs [--fresh] [--no-build]
  */
@@ -127,6 +128,7 @@ async function runDrop(page) {
   await sleep(1500);
   const noCard = !(await ui.hasEntryCard(page));
   await ui.reload(page);
+  await ui.connectMainApi(page, { stream: true });
   await ui.tab(page, '系统');
   const afterReload = (await pendingCard(page).count()) === 0;
   await ui.closePanel(page);
@@ -135,6 +137,46 @@ async function runDrop(page) {
     `待确认卡：${shown ? '出现' : '没有'}，点 ✕ 后${gone ? '消失' : '还在'}`,
     `之后状态栏写进副本：${noCard ? '没有' : '又出'}入场卡片`,
     `刷新后待确认卡${afterReload ? '不出现' : '又出现'}；会话：${JSON.stringify(s)}`,
+  ]);
+}
+
+async function runCollect(page) {
+  await newChat(page);
+  await say(page, '去站台。', BRIEF);
+  await ui.answerEntryCard(page, 'cancel');
+  await ui.tab(page, '系统');
+  const card = pendingCard(page);
+  const hasBtn = (await card.locator('.rlzc-pending-save').count()) === 1;
+  if (hasBtn) await card.locator('.rlzc-pending-save').click();
+  await sleep(600);
+  const toasts = await page.locator('#toast-container .toast').allInnerTexts().catch(() => []);
+  const gone = (await pendingCard(page).count()) === 0;
+  const select = host(page).locator('.rlzc-card select.rlzc-input').first();
+  const options = await select.locator('option').allInnerTexts();
+  const opt = options.find((o) => o.includes('永昼列车'));
+  if (opt) await select.selectOption({ label: opt });
+  await sleep(400);
+  const docs = await host(page).locator('.rlzc-system').innerText();
+  await ui.shotEl(host(page).locator('.rlzc-panel'), `reentry-collected${process.env.E2E_MOBILE ? '-mobile' : ''}`).catch(() => {});
+  await ui.closePanel(page);
+  const saved = await page.evaluate(() => (SillyTavern.getContext().extensionSettings.rlzc.customPacks ?? []).filter((p) => p.name === '永昼列车').map((p) => ({ id: p.id, level: p.level, cap: p.phases[0]?.cap, docs: p.docs.length })));
+  // 以后再玩：换个聊天，从手动选择副本进入
+  await newChat(page);
+  const i = await say(page, '去站台。', STORY);
+  await ui.tab(page, '系统');
+  const sel2 = host(page).locator('.rlzc-card select.rlzc-input').first();
+  if (opt) await sel2.selectOption({ label: opt });
+  await host(page).locator('.rlzc-card .rlzc-row .rlzc-btn', { hasText: '进入' }).click();
+  const dlg = await ui.popup(page, '永昼列车', 8000).catch(() => null);
+  if (dlg) await dlg.locator('.popup-button-ok').click();
+  await sleep(800);
+  const s = await sessionOf(page);
+  await ui.closePanel(page);
+  rec('R5', '待确认卡点「收录」：存成自定义副本包，卡片收起；换个聊天也能从手动选择副本进入', hasBtn && gone && !!opt && saved.length === 1 && s?.packId === saved[0].id && s?.entryIndex === i && /副本简报/.test(docs), [
+    `「收录」按钮：${hasBtn ? '有' : '没有'}；提示：${JSON.stringify(toasts.slice(-1))}`,
+    `收录后待确认卡${gone ? '收起' : '还在'}；下拉框里：${opt ?? '没有'}；选中后资料页：${/副本简报/.test(docs) ? '有「副本简报」' : '没有'}`,
+    `存下的副本包：${JSON.stringify(saved)}`,
+    `新聊天里手动进入后会话：${JSON.stringify(s)}（最新AI回复是 ${i}）`,
   ]);
 }
 
@@ -150,7 +192,20 @@ async function main() {
     await ui.connectMainApi(page, { stream: true });
     const names = await page.evaluate(() => SillyTavern.getContext().characters.map((c) => c.name));
     if (!names.includes(CHAR)) await ui.createCharacter(page, CHAR, CORRIDOR.slice(0, 2).join('\n\n'), '端到端测试用角色卡');
-    for (const [id, fn] of [['R1', runCard], ['R2', runPending], ['R3', runDrop]]) {
+    // 上一次运行收录过的《永昼列车》删掉，免得它变成已收录的副本
+    const stale = await page.evaluate(() => {
+      const s = SillyTavern.getContext().extensionSettings.rlzc;
+      const before = (s?.customPacks ?? []).length;
+      if (s?.customPacks) s.customPacks = s.customPacks.filter((p) => p.name !== '永昼列车');
+      SillyTavern.getContext().saveSettingsDebounced();
+      return before - (s?.customPacks ?? []).length;
+    });
+    if (stale) {
+      await sleep(2000);
+      await ui.reload(page);
+      await ui.connectMainApi(page, { stream: true });
+    }
+    for (const [id, fn] of [['R1', runCard], ['R2', runPending], ['R3', runDrop], ['R5', runCollect]]) {
       console.log(`\n▶ ${id}`);
       try {
         await fn(page);

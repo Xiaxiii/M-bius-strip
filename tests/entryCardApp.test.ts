@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { flush, installFakeSt } from './fakeSt';
 import * as app from '../src/app';
 import { BRIEFING } from './helpers';
+import { validatePack } from '../src/packs/loader';
 import type { ChatMessage } from '../src/packs/types';
 
 const st = installFakeSt();
@@ -150,6 +151,38 @@ describe('入场提示小卡片', () => {
     user();
     const again = await reply(YONGZHOU);
     expect(app.state.entryCard).toMatchObject({ index: again, name: '永昼列车' });
+  });
+
+  it('待确认的副本：「收录」存成自定义副本包，卡片收起；之后在手动选择副本里进入，别的聊天里也认得出', async () => {
+    st.chat.push(ai('开场白'));
+    user();
+    const b = await reply(YONGZHOU + '\n「简报：列车不会停。」');
+    app.declineEntryCard();
+    app.collectPending(`${b}:永昼列车`);
+    expect(app.state.pendingEntries).toEqual([]);
+    const saved = app.state.settings.customPacks.find((p) => p.name === '永昼列车')!;
+    expect(saved).toMatchObject({ level: 'B', players: '4人', detect: { briefingName: '永昼列车' }, phases: [{ cap: 110 }] });
+    expect(saved.id).toMatch(/^saved_/);
+    expect(validatePack(saved)).toEqual([]);
+    expect(saved.docs[0]).toMatchObject({ title: '副本简报' });
+    expect(saved.docs[0].md).toContain('简报：列车不会停。');
+    expect(app.state.packs.some((p) => p.id === saved.id)).toBe(true);
+    // 以后再玩：手动选择副本
+    user();
+    const i = await reply('又过了一天。');
+    await app.startManual(saved.id);
+    expect(app.state.session).toMatchObject({ packId: saved.id, entryIndex: i, status: 'active' });
+    expect(app.state.pack).toMatchObject({ name: '永昼列车', level: 'B' });
+    expect(app.state.progress?.phase.cap).toBe(110);
+    // 别的聊天里 AI 再给出这个副本的简报：按已收录的副本提示
+    st.chatId = 'chat-2';
+    st.chat = [];
+    st.meta = {};
+    app.onChatChanged();
+    st.chat.push(ai('开场白'));
+    user();
+    await reply(YONGZHOU);
+    expect(app.state.entryCard).toMatchObject({ name: '永昼列车', unknown: false });
   });
 
   it('待确认的副本：已收录的也一样；同名只留最近一次；上一个副本结算之前的不列', async () => {

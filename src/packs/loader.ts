@@ -215,6 +215,27 @@ export function buildGenericPack(info: BriefingInfo, caps: GenericCaps = DEFAULT
   };
 }
 
+/**
+ * 「收录」：把未收录的副本按简报存成自定义副本包（单阶段、轮数上限在收录时定下），
+ * 以后在「手动选择副本」里进入；简报原文存成一页资料，没有就不放。
+ */
+export function savedPackFromBriefing(info: BriefingInfo, caps: GenericCaps, id: string, briefing = ''): Pack {
+  const level = genericLevel(info);
+  const rounds = info.rounds && info.rounds > 0 ? info.rounds : genericTiming(info.limit, level, caps).rounds;
+  const pack = buildGenericPack({ ...info, rounds }, caps);
+  const md = briefing
+    .split('\n')
+    .map((l) => l.trim().replace(/^[「『]|[」』]$/g, ''))
+    .filter(Boolean)
+    .join('\n\n');
+  return {
+    ...pack,
+    id,
+    ...(info.players ? { players: info.players } : {}),
+    docs: md ? [{ title: '副本简报', md }] : [],
+  };
+}
+
 export function allPacks(custom: Pack[]): Pack[] {
   const ids = new Set(BUILTIN_PACKS.map((p) => p.id));
   return [...BUILTIN_PACKS, ...custom.filter((p) => !ids.has(p.id))];
