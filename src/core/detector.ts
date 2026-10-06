@@ -232,12 +232,21 @@ function compilePattern(packId: string, src: string): RegExp | null {
 
 /**
  * 判断一条AI消息是否表明进入了某个副本，按 1→5 的顺序检查，返回第一个命中的信号。
- * 只有信号1（副本简报）能认出未收录的副本；2–5 只认已收录的副本包。
+ * 只有信号1（副本简报）能直接认出未收录的副本；2–4 认已收录的副本包，以及 seen 里
+ * 这段聊天之前出现过简报的未收录副本（玩家先点了「不是」、剧情走完才真正入场时还能再提示）。
  */
-export function detectEntry(text: string, packs: Pack[]): EntryHit | null {
+export function detectEntry(text: string, packs: Pack[], seen: BriefingInfo[] = []): EntryHit | null {
   const t = String(text ?? '');
   const known = (pack: Pack | undefined, signal: EntrySignal): EntryHit | null =>
     pack ? { signal, pack, info: { name: pack.name, level: pack.level } } : null;
+  /** 先认已收录的副本包，再认之前出现过简报的副本（同名取最近一次简报） */
+  const byName = (name: string, signal: EntrySignal): EntryHit | null => {
+    const hit = known(packByName(packs, name), signal);
+    if (hit) return hit;
+    const n = cleanName(name);
+    const info = n ? [...seen].reverse().find((b) => cleanName(b.name) === n) : undefined;
+    return info ? { signal, info: { ...info } } : null;
+  };
 
   // 1. 副本简报 - 名称
   const briefing = detectBriefing(t);
@@ -250,13 +259,13 @@ export function detectEntry(text: string, packs: Pack[]): EntryHit | null {
   const panel = PANEL_RE.exec(t);
   if (panel) {
     const m = /副本名\s*[：:]\s*([^\n｜|]+)/.exec(panel[1]);
-    const hit = m && known(packByName(packs, m[1]), 2);
+    const hit = m && byName(m[1], 2);
     if (hit) return hit;
   }
 
   // 3. 正文中的「本次副本《X》」「此次副本《X》」（不认不带本次/此次的写法，避免闲聊误触发）
   for (const m of t.matchAll(/(?:本次|此次)副本《([^》]+)》/g)) {
-    const hit = known(packByName(packs, m[1]), 3);
+    const hit = byName(m[1], 3);
     if (hit) return hit;
   }
 
@@ -266,7 +275,7 @@ export function detectEntry(text: string, packs: Pack[]): EntryHit | null {
     for (const line of status[1].split('\n')) {
       if (!line.includes('地点')) continue;
       for (const m of line.matchAll(/副本《([^》]+)》/g)) {
-        const hit = known(packByName(packs, m[1]), 4);
+        const hit = byName(m[1], 4);
         if (hit) return hit;
       }
     }

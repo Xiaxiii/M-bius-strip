@@ -1,6 +1,6 @@
-import type { ChatMessage, ManualAction, Pack, Session } from '../packs/types';
+import type { BriefingInfo, ChatMessage, ManualAction, Pack, Session } from '../packs/types';
 import { BUILTIN_PACKS, buildGenericPack, GENERIC_PACK_ID } from '../packs/loader';
-import { detectEntry, type EntryHit } from './detector';
+import { detectBriefing, detectEntry, type EntryHit } from './detector';
 import { isCountable } from './replay';
 
 /** 会话数据的纯逻辑部分；读写 chatMetadata 的部分在 src/st/ 与 src/index.ts */
@@ -95,10 +95,27 @@ export interface EntryCandidate extends EntryHit {
 /** 算不算AI消息：与计轮口径一致（被 /hide 隐藏的AI回复也算） */
 const isAi = isCountable;
 
-/** 某一楼是否带入场信号（只看AI消息） */
-export function entryCandidateAt(chat: ChatMessage[], index: number, packs: Pack[]): EntryCandidate | null {
+/**
+ * from 到 to（不含）之间AI消息里出现过的副本简报，按出现先后排列；同名只留最近一次。
+ * 用来认出之前点过「不是」的未收录副本，也用于「手动选择副本」列出本段聊天里出现过的副本。
+ */
+export function seenBriefings(chat: ChatMessage[], from: number, to: number): BriefingInfo[] {
+  const out: BriefingInfo[] = [];
+  for (let i = Math.max(0, from); i < Math.min(to, chat.length); i++) {
+    if (!isAi(chat[i])) continue;
+    const b = detectBriefing(String(chat[i].mes ?? ''));
+    if (!b) continue;
+    const at = out.findIndex((x) => x.name === b.name);
+    if (at >= 0) out.splice(at, 1);
+    out.push(b);
+  }
+  return out;
+}
+
+/** 某一楼是否带入场信号（只看AI消息）；seen 为这一楼之前出现过的副本简报 */
+export function entryCandidateAt(chat: ChatMessage[], index: number, packs: Pack[], seen: BriefingInfo[] = []): EntryCandidate | null {
   if (!isAi(chat[index])) return null;
-  const hit = detectEntry(String(chat[index].mes ?? ''), packs);
+  const hit = detectEntry(String(chat[index].mes ?? ''), packs, seen);
   return hit ? { ...hit, index } : null;
 }
 
@@ -113,9 +130,16 @@ export function firstEntryCandidate(
   to: number,
   declined: string[] = [],
 ): EntryCandidate | null {
+  // 边找边记下出现过的简报：之前点过「不是」的未收录副本，后面的消息再提到它时还能认出来
+  const seen: BriefingInfo[] = [];
   for (let i = Math.max(0, from); i <= Math.min(to, chat.length - 1); i++) {
-    const c = entryCandidateAt(chat, i, packs);
+    const c = entryCandidateAt(chat, i, packs, seen);
     if (c && !declined.includes(declineKey(i, c.info.name))) return c;
+    if (c?.signal === 1) {
+      const at = seen.findIndex((x) => x.name === c.info.name);
+      if (at >= 0) seen.splice(at, 1);
+      seen.push(c.info);
+    }
   }
   return null;
 }

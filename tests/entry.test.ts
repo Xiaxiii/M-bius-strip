@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { detectEntry } from '../src/core/detector';
-import { declineKey, entryCandidateAt, firstEntryCandidate, greetingEntryCandidate } from '../src/core/session';
+import { declineKey, entryCandidateAt, firstEntryCandidate, greetingEntryCandidate, seenBriefings } from '../src/core/session';
 import { replay } from '../src/core/replay';
 import { BUILTIN_PACKS, validatePack } from '../src/packs/loader';
 import type { ChatMessage, Pack } from '../src/packs/types';
@@ -70,6 +70,35 @@ describe('拒绝与重新询问', () => {
     const chat = [ai(XIYAN_GREETING), user(), ai('天色暗了。'), user(), ai(STATUS_XIYAN)];
     expect(firstEntryCandidate(chat, packs, 0, 4, [])!.index).toBe(0);
     expect(firstEntryCandidate(chat, packs, 0, 4, [declineKey(0, '喜宴')])).toMatchObject({ index: 4, signal: 4 });
+  });
+
+  it('未收录副本的简报被拒绝后，之后的消息提到它（地点、副本名、本次副本）可以再问一次，用之前简报里的信息', () => {
+    const BRIEF = '车厢里很安静。\n「副本简报 - 永昼列车」\n「人数：4人」\n「等级：B」\n「时限：8小时」';
+    const story = ai('你们还在站台上道别。');
+    const inside = ai('列车开动了。\n<状态栏>\n地点：B级副本《永昼列车》· 3号车厢\n</状态栏>');
+    const chat = [ai('开场白'), user(), ai(BRIEF), user(), story, user(), inside];
+    const declined = [declineKey(2, '永昼列车')];
+    const c = firstEntryCandidate(chat, packs, 0, 6, declined)!;
+    expect(c).toMatchObject({ index: 6, signal: 4, info: { name: '永昼列车', level: 'B', limit: '8小时', players: '4人' } });
+    expect(c.pack).toBeUndefined();
+    // 中间没提到副本的消息不算
+    expect(firstEntryCandidate(chat, packs, 0, 4, declined)).toBeNull();
+    // <副本> 副本名、本次副本《X》也认
+    const seen = seenBriefings(chat, 0, 6);
+    expect(detectEntry('<副本>\n副本名：永昼列车\n</副本>', packs, seen)).toMatchObject({ signal: 2, info: { name: '永昼列车', level: 'B' } });
+    expect(detectEntry('本次副本《永昼列车》正式开始。', packs, seen)).toMatchObject({ signal: 3 });
+    // 没出现过简报的未收录副本照旧不认
+    expect(detectEntry('本次副本《雾港》开始。', packs, seen)).toBeNull();
+    // 简报在起点（上一个副本结算）之前：不认
+    expect(firstEntryCandidate(chat, packs, 3, 6, [])).toBeNull();
+    expect(entryCandidateAt(chat, 6, packs)).toBeNull();
+    expect(entryCandidateAt(chat, 6, packs, seen)).toMatchObject({ index: 6, signal: 4 });
+  });
+
+  it('seenBriefings：只看AI消息，同名只留最近一次，按出现先后', () => {
+    const chat = [ai('「副本简报 - 甲」\n「等级：C」'), user('「副本简报 - 乙」'), ai('「副本简报 - 乙」'), ai('「副本简报 - 甲」\n「等级：A」')];
+    expect(seenBriefings(chat, 0, chat.length).map((b) => `${b.name}${b.level}`)).toEqual(['乙undefined', '甲A']);
+    expect(seenBriefings(chat, 1, 3).map((b) => b.name)).toEqual(['乙']);
   });
 
   it('从上一个副本结算之后开始找', () => {

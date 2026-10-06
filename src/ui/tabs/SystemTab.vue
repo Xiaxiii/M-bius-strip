@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { endManually, skipToPhaseEnd, startManual, state } from '../../app';
+import { endManually, GENERIC_PICK_PREFIX, skipToPhaseEnd, startManual, state } from '../../app';
+import { genericLevel } from '../../packs/loader';
 import PackDocs from '../PackDocs.vue';
 import LedgerSummary from '../LedgerSummary.vue';
 
@@ -11,6 +12,8 @@ const p = computed(() => state.progress);
 const active = computed(() => inDungeon.value && !!p.value && !p.value.ended);
 /** 回廊中下拉框选中、还没进入的副本：预览它的资料 */
 const picked = computed(() => state.packs.find((pk) => pk.id === pickId.value) ?? null);
+/** 选中的是本段聊天出现过简报、但没收录的副本 */
+const pickedGeneric = computed(() => pickId.value.startsWith(GENERIC_PICK_PREFIX));
 const hasPhases = computed(() => !!state.pack?.phases.length);
 /** 正文状态栏模式：时限、进度条、任务、ps 由正文显示，系统页不重复 */
 const inPanel = computed(() => state.settings.panelDisplay !== 'statusbar');
@@ -106,10 +109,12 @@ async function choose() {
       <div class="rlzc-row">
         <select v-model="pickId" class="rlzc-input">
           <option value="">选择副本…</option>
+          <option v-for="b in state.seenGeneric" :key="`g-${b.name}`" :value="GENERIC_PICK_PREFIX + b.name">{{ genericLevel(b) }}｜{{ b.name }}（未收录）</option>
           <option v-for="pk in state.packs" :key="pk.id" :value="pk.id">{{ pk.level }}｜{{ pk.name }}</option>
         </select>
         <button class="rlzc-btn" :disabled="!pickId" @click="choose">进入</button>
       </div>
+      <p v-if="pickedGeneric" class="rlzc-hint">未收录，将使用通用副本包</p>
     </div>
     <PackDocs v-if="!active && picked?.docs?.length" :pack="picked" />
   </div>

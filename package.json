@@ -1,7 +1,7 @@
 {
   "name": "rlzc-huilang-zhongcai",
   "private": true,
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "回廊种菜系统 · SillyTavern 第三方扩展",
   "type": "module",
   "scripts": {

@@ -89,6 +89,55 @@ describe('入场提示小卡片', () => {
     expect(app.state.entryCard).toBeNull();
   });
 
+  it('未收录副本：简报时点了「不是」，剧情走完后状态栏地点进入副本时再提示，用简报里的等级和时限', async () => {
+    st.chat.push(ai('开场白'));
+    user();
+    const b = await reply('站台上人很多。\n「副本简报 - 永昼列车」\n「人数：4人」\n「等级：B」\n「时限：8小时」');
+    expect(app.state.entryCard).toMatchObject({ index: b, name: '永昼列车', unknown: true });
+    app.declineEntryCard();
+    // 剧情还没走完：不提示
+    user();
+    await reply('你和朋友在站台上道别。');
+    expect(app.state.entryCard).toBeNull();
+    // 手动选择副本里也能选到它
+    expect(app.state.seenGeneric.map((x) => x.name)).toEqual(['永昼列车']);
+    // 真正上车：状态栏地点写进了副本
+    user();
+    const i = await reply('列车开动了。\n<状态栏>\n地点：B级副本《永昼列车》· 3号车厢\n</状态栏>');
+    expect(app.state.entryCard).toMatchObject({ index: i, name: '永昼列车', level: 'B', unknown: true });
+    app.enterEntryCard();
+    expect(app.state.session).toMatchObject({ packId: 'generic', entryIndex: i, status: 'active', briefing: { name: '永昼列车', limit: '8小时' } });
+    expect(app.state.pack).toMatchObject({ name: '永昼列车', level: 'B' });
+  });
+
+  it('手动选择副本：可以选本聊天出现过简报的未收录副本，以最新一条AI回复为第1轮', async () => {
+    st.chat.push(ai('开场白'));
+    user();
+    await reply('「副本简报 - 永昼列车」\n「等级：b」\n「时限：8小时（最多40轮）」');
+    app.declineEntryCard();
+    user();
+    const i = await reply('列车开动了。');
+    expect(app.state.seenGeneric).toHaveLength(1);
+    await app.startManual(`${app.GENERIC_PICK_PREFIX}永昼列车`);
+    expect(st.popups[st.popups.length - 1]?.text).toContain('《永昼列车》的第1轮');
+    expect(app.state.session).toMatchObject({ packId: 'generic', entryIndex: i, status: 'active', briefing: { rounds: 40 } });
+    expect(app.state.pack).toMatchObject({ name: '永昼列车', level: 'B' });
+    expect(app.state.progress?.phase.cap).toBe(40);
+  });
+
+  it('已收录的副本不重复列进「本聊天出现过」；上一个副本结算之前的简报不列', async () => {
+    const i = await briefingCard();
+    expect(app.state.seenGeneric).toEqual([]);
+    app.enterEntryCard();
+    expect(app.state.session?.entryIndex).toBe(i);
+    user();
+    await reply('「副本简报 - 雾港」\n「等级：C」');
+    user();
+    await reply('<副本结算>结果=通关｜评价=A</副本结算>');
+    expect(app.state.progress?.ended).toBe(true);
+    expect(app.state.seenGeneric).toEqual([]);
+  });
+
   it('「✕」：这次先不处理，不记拒绝；重新打开聊天后还会提示', async () => {
     st.chat.push(ai(XIYAN_GREETING));
     app.onChatChanged();

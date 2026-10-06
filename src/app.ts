@@ -2,7 +2,7 @@
  * 扩展的运行时状态与 ST 事件处理。核心计算全部交给 core/ 下的纯函数。
  */
 import { reactive, toRaw } from 'vue';
-import type { ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from './packs/types';
+import type { BriefingInfo, ChatMessage, Level, ManualAction, Pack, Session, Snapshot } from './packs/types';
 import { allPacks, buildGenericPack, genericLevel, validatePack } from './packs/loader';
 import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/timeLimit';
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
@@ -33,6 +33,7 @@ import {
   DECLINED_KEY,
   entryCandidateAt,
   firstEntryCandidate,
+  seenBriefings,
   type EntryCandidate,
   effectiveRoles,
   greetingEntryCandidate,
@@ -218,6 +219,8 @@ export const state = reactive({
   market: emptyMarketView(),
   /** 入场提示小卡片（右上角，不挡操作）；同一时间只有一张 */
   entryCard: null as EntryCardView | null,
+  /** 本段聊天（开头或上一个副本结算之后）里出现过简报、但没收录的副本：「手动选择副本」里也能选 */
+  seenGeneric: [] as BriefingInfo[],
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -599,6 +602,9 @@ export function refresh(): void {
   state.subLine = subStatusLine(chat, c.progress);
   refreshMarket(chat, c.session);
   state.ledger = replayLedger(chat);
+  state.seenGeneric = seenBriefings(chat, entrySearchStart(), chat.length).filter(
+    (b) => !state.packs.some((p) => p.detect.briefingName === b.name),
+  );
   state.tick++;
   notifyLive();
   syncGreetingWatch(c.session);
@@ -726,6 +732,11 @@ function entrySearchStart(): number {
   return end !== undefined ? end + 1 : session.entryIndex + 1;
 }
 
+/** 起点到 index（不含）之间出现过的副本简报：认出之前点过「不是」的未收录副本 */
+function seenBefore(chat: ChatMessage[], index: number): BriefingInfo[] {
+  return seenBriefings(chat, entrySearchStart(), index);
+}
+
 export interface EntryCardView {
   /** 每次提示递增，用作界面 key */
   id: number;
@@ -816,7 +827,7 @@ export function enterEntryCard(): void {
   const { index, info } = cand;
   if (card.liveShow) rememberLiveChoice(card.live);
   // 提示期间消息可能已被删改，重新确认
-  const now = entryCandidateAt(getChat(), index, state.packs);
+  const now = entryCandidateAt(getChat(), index, state.packs, seenBefore(getChat(), index));
   if (!now || now.info.name !== info.name) {
     toast('warning', '入场消息已变化，未启用。');
     return;
@@ -867,7 +878,7 @@ export function checkGreeting(): void {
 /** 卡片那一楼已不再是卡片上的副本（被删改、换了开场白）：撤掉 */
 function withdrawStaleEntryCard(): void {
   const card = state.entryCard;
-  if (card && entryCandidateAt(getChat(), card.index, state.packs)?.info.name !== entryCardCand?.info.name) withdrawEntryCard();
+  if (card && entryCandidateAt(getChat(), card.index, state.packs, seenBefore(getChat(), card.index))?.info.name !== entryCardCand?.info.name) withdrawEntryCard();
 }
 
 /**
@@ -945,9 +956,17 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
 }
 
 /** 手动选择副本：以最后一条AI消息作为第1轮 */
+/** 「手动选择副本」里本段聊天出现过的未收录副本的选项值 */
+export const GENERIC_PICK_PREFIX = 'generic:';
+
 export async function startManual(packId: string): Promise<void> {
-  const pack = state.packs.find((p) => p.id === packId);
-  if (!pack) return;
+  // 未收录的副本：用它出现过的简报生成通用副本包
+  const seen = packId.startsWith(GENERIC_PICK_PREFIX)
+    ? state.seenGeneric.find((b) => b.name === packId.slice(GENERIC_PICK_PREFIX.length))
+    : undefined;
+  const pack = seen ? undefined : state.packs.find((p) => p.id === packId);
+  if (!pack && !seen) return;
+  const name = pack?.name ?? seen!.name;
   const chat = getChat();
   let idx = chat.length - 1;
   while (idx >= 0 && !isCountable(chat[idx])) idx--;
@@ -957,11 +976,18 @@ export async function startManual(packId: string): Promise<void> {
   }
   const existing = readSession();
   if (existing?.status === 'active' && !(await confirmBox('当前已有进行中的副本，确定要替换吗？'))) return;
-  const opt = entryLiveOption(pack, state.settings.live.optIn);
-  const answer = await confirmWithCheck(`以最新一条AI回复作为《${pack.name}》的第1轮，确定进入吗？`, opt.show ? { label: '开启直播', checked: opt.checked } : null);
+  const opt = entryLiveOption(pack ?? ({} as Pack), state.settings.live.optIn);
+  const answer = await confirmWithCheck(`以最新一条AI回复作为《${name}》的第1轮，确定进入吗？`, opt.show ? { label: '开启直播', checked: opt.checked } : null);
   if (!answer.ok) return;
   if (opt.show) rememberLiveChoice(answer.checked);
-  startSession(pack, idx, detectBriefing(chat[idx].mes) ?? { name: pack.name }, opt.show && answer.checked);
+  if (pack) {
+    startSession(pack, idx, detectBriefing(chat[idx].mes) ?? { name: pack.name }, opt.show && answer.checked);
+    return;
+  }
+  // 通用副本包：轮数上限在入场时确定并记入会话（与入场卡片「进入」一致）
+  const briefing: BriefingInfo = { ...seen! };
+  briefing.rounds = genericTiming(briefing.limit, genericLevel(briefing), state.settings.genericCaps).rounds;
+  startSession(buildGenericPack(briefing, state.settings.genericCaps), idx, briefing, opt.show && answer.checked);
 }
 
 function addAction(action: ManualAction): void {
@@ -1285,7 +1311,7 @@ export function onMessageReceived(index: number, type?: string): void {
 
   if (!session || session.status === 'ended') {
     // 这条消息带入场信号时，入场消息取起点之后第一条带信号、没被拒绝过的AI消息
-    if (entryCandidateAt(chat, index, state.packs)) {
+    if (entryCandidateAt(chat, index, state.packs, seenBefore(chat, index))) {
       const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined());
       if (cand) askEntry(cand);
     }
