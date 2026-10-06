@@ -1072,7 +1072,7 @@ export function collectPending(key: string): void {
   const keys = readDeclined().filter((k) => k.slice(k.indexOf(':') + 1) === cand.info.name && Number(k.slice(0, k.indexOf(':'))) >= entrySearchStart());
   addDropped(keys.length ? keys : [key]);
   refresh();
-  toast('success', `已收录《${pack.name}》，可在「手动选择副本」里进入`);
+  toast('success', `叮咚～《${pack.name}》已收录`);
 }
 
 /** 「✕」：这个副本不再收录——同名的拒绝记录都记为关掉，后面的消息提到它也不再提示 */

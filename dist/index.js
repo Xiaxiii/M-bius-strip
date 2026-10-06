@@ -7448,7 +7448,7 @@ function Jx(e) {
   const r = gh(n.info, A.settings.genericCaps, `saved_${Date.now().toString(36)}`, s);
   A.settings.customPacks = [...A.settings.customPacks, r], ye();
   const i = mn().filter((o) => o.slice(o.indexOf(":") + 1) === n.info.name && Number(o.slice(0, o.indexOf(":"))) >= gn());
-  tu(i.length ? i : [e]), ze(), we("success", `已收录《${r.name}》，可在「手动选择副本」里进入`);
+  tu(i.length ? i : [e]), ze(), we("success", `叮咚～《${r.name}》已收录`);
 }
 function Zx(e) {
   const t = e.slice(e.indexOf(":") + 1), n = gn(), s = mn().filter((r) => r.slice(r.indexOf(":") + 1) === t && Number(r.slice(0, r.indexOf(":"))) >= n);
@@ -10448,7 +10448,7 @@ async function Aw(e) {
   const t = await mu("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const fw = "回廊种菜系统", pw = 100, hw = [], mw = [], gw = "dist/index.js", xw = "xiaxiii", vw = "1.1.9", yw = "https://github.com/xiaxiii/M-bius-strip", bw = !0, kw = "rlzcInterceptor", Dl = {
+const fw = "回廊种菜系统", pw = 100, hw = [], mw = [], gw = "dist/index.js", xw = "xiaxiii", vw = "1.2.0", yw = "https://github.com/xiaxiii/M-bius-strip", bw = !0, kw = "rlzcInterceptor", Dl = {
   display_name: fw,
   loading_order: pw,
   requires: hw,
