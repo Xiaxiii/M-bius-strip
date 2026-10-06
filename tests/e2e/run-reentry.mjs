@@ -3,8 +3,9 @@
  *
  *  R1 未收录副本的简报出现时点「不是」，剧情没走完的回复不提示；
  *     之后状态栏地点写进「副本《X》」时再提示，点「进入」后以这一楼为第1轮，等级与时限来自简报
- *  R2 简报时点「不是」后不再有任何信号：「手动选择副本」下拉框里有「X（未收录）」，选中后进入，以最新一条AI回复为第1轮
- *  R3 控制台没有本扩展的报错
+ *  R2 点「不是」后系统页出现「待确认的副本」卡，点「进入」以最新一条AI回复为第1轮；手动选择副本下拉框里不列它
+ *  R3 待确认卡点「✕」后不再收录：之后状态栏写进副本也不再提示，刷新后也不出现
+ *  R4 控制台没有本扩展的报错
  *
  * 用法：node run-reentry.mjs [--fresh] [--no-build]
  */
@@ -80,32 +81,60 @@ async function runCard(page) {
   ]);
 }
 
-async function runManual(page) {
+/** 系统页「待确认的副本」卡 */
+const pendingCard = (page) => host(page).locator('.rlzc-pending');
+
+async function runPending(page) {
   await newChat(page);
   await say(page, '去站台。', BRIEF);
   await ui.answerEntryCard(page, 'cancel');
+  const meta = await page.evaluate(() => JSON.stringify(SillyTavern.getContext().chatMetadata.rlzc ?? null));
   const i = await say(page, '上车。', '车门在身后合上，列车开动了。');
   await sleep(1000);
+  const quiet = !(await ui.hasEntryCard(page));
   await ui.tab(page, '系统');
-  const select = host(page).locator('.rlzc-rest ~ .rlzc-card select.rlzc-input, .rlzc-card select.rlzc-input').first();
-  const options = await select.locator('option').allInnerTexts();
-  const opt = options.find((o) => o.includes('永昼列车'));
-  if (opt) await select.selectOption({ label: opt });
-  await sleep(300);
-  const hint = await host(page).locator('.rlzc-hint', { hasText: '未收录' }).count();
-  await ui.shotEl(host(page).locator('.rlzc-panel'), 'reentry-manual').catch(() => {});
-  await host(page).locator('.rlzc-card .rlzc-row .rlzc-btn', { hasText: '进入' }).click();
-  const dlg = await ui.popup(page, '永昼列车', 8000).catch(() => null);
-  const dlgText = dlg ? (await dlg.innerText()).replace(/\s+/g, ' ').slice(0, 60) : '';
-  if (dlg) await dlg.locator('.popup-button-ok').click();
+  const card = pendingCard(page);
+  const shown = (await card.count()) === 1;
+  const text = shown ? (await card.innerText()).replace(/\s+/g, ' ') : '';
+  await ui.shotEl(host(page).locator('.rlzc-panel'), `reentry-pending${process.env.E2E_MOBILE ? '-mobile' : ''}`).catch(() => {});
+  const options = await host(page).locator('.rlzc-card select.rlzc-input').first().locator('option').allInnerTexts();
+  if (shown) await card.locator('.rlzc-entry-go').click();
   await sleep(800);
   const s = await sessionOf(page);
+  const gone = (await pendingCard(page).count()) === 0;
   await ui.closePanel(page);
-  rec('R2', '手动选择副本里能选到本聊天出现过的未收录副本', !!opt && hint === 1 && s?.packId === 'generic' && s?.entryIndex === i && s?.briefing?.name === '永昼列车', [
-    `下拉框：${JSON.stringify(options)}`,
-    `选中后小字：${hint ? '未收录，将使用通用副本包' : '没有'}`,
-    `确认框：${dlgText}`,
-    `会话：${JSON.stringify(s)}（最新AI回复是 ${i}）`,
+  rec('R2', '点「不是」后系统页出现「待确认的副本」，点「进入」以最新一条AI回复为第1轮', quiet && shown && /永昼列车/.test(text) && /未收录/.test(text) && s?.packId === 'generic' && s?.entryIndex === i && gone && !options.some((o) => o.includes('永昼列车')), [
+    `点「不是」后 chatMetadata.rlzc：${meta}`,
+    `剧情里没再提到副本：${quiet ? '没有' : '又有'}入场卡片`,
+    `待确认卡：${text || '没有'}`,
+    `手动选择副本下拉框：${JSON.stringify(options.slice(0, 3))}…`,
+    `进入后会话：${JSON.stringify(s)}（最新AI回复是 ${i}）；待确认卡${gone ? '已消失' : '还在'}`,
+  ]);
+}
+
+async function runDrop(page) {
+  await newChat(page);
+  await say(page, '去站台。', BRIEF);
+  await ui.answerEntryCard(page, 'cancel');
+  await ui.tab(page, '系统');
+  const card = pendingCard(page);
+  const shown = (await card.count()) === 1;
+  if (shown) await card.locator('.rlzc-entry-close').click();
+  await sleep(500);
+  const gone = (await pendingCard(page).count()) === 0;
+  await ui.closePanel(page);
+  await say(page, '上车。', INSIDE);
+  await sleep(1500);
+  const noCard = !(await ui.hasEntryCard(page));
+  await ui.reload(page);
+  await ui.tab(page, '系统');
+  const afterReload = (await pendingCard(page).count()) === 0;
+  await ui.closePanel(page);
+  const s = await sessionOf(page);
+  rec('R3', '待确认卡点「✕」后不再收录：状态栏写进副本也不再提示，刷新后也不出现', shown && gone && noCard && afterReload && !s, [
+    `待确认卡：${shown ? '出现' : '没有'}，点 ✕ 后${gone ? '消失' : '还在'}`,
+    `之后状态栏写进副本：${noCard ? '没有' : '又出'}入场卡片`,
+    `刷新后待确认卡${afterReload ? '不出现' : '又出现'}；会话：${JSON.stringify(s)}`,
   ]);
 }
 
@@ -121,7 +150,7 @@ async function main() {
     await ui.connectMainApi(page, { stream: true });
     const names = await page.evaluate(() => SillyTavern.getContext().characters.map((c) => c.name));
     if (!names.includes(CHAR)) await ui.createCharacter(page, CHAR, CORRIDOR.slice(0, 2).join('\n\n'), '端到端测试用角色卡');
-    for (const [id, fn] of [['R1', runCard], ['R2', runManual]]) {
+    for (const [id, fn] of [['R1', runCard], ['R2', runPending], ['R3', runDrop]]) {
       console.log(`\n▶ ${id}`);
       try {
         await fn(page);
@@ -132,7 +161,7 @@ async function main() {
     }
   } finally {
     const ours = page.consoleLog.filter((l) => ['error', 'pageerror'].includes(l.type) && /rlzc|回廊种菜|third-party\/rlzc/.test(l.text));
-    rec('R3', '控制台没有本扩展的报错', ours.length === 0, ours.map((l) => l.text.slice(0, 200)));
+    rec('R4', '控制台没有本扩展的报错', ours.length === 0, ours.map((l) => l.text.slice(0, 200)));
     console.log('\n结果：');
     for (const r of results) console.log(`  ${r.id} ${r.ok ? '通过' : '不通过'}`);
     await browser.close().catch(() => {});

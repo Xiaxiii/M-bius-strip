@@ -99,12 +99,13 @@ const isAi = isCountable;
  * from 到 to（不含）之间AI消息里出现过的副本简报，按出现先后排列；同名只留最近一次。
  * 用来认出之前点过「不是」的未收录副本，也用于「手动选择副本」列出本段聊天里出现过的副本。
  */
-export function seenBriefings(chat: ChatMessage[], from: number, to: number): BriefingInfo[] {
+export function seenBriefings(chat: ChatMessage[], from: number, to: number, dropped: string[] = []): BriefingInfo[] {
   const out: BriefingInfo[] = [];
   for (let i = Math.max(0, from); i < Math.min(to, chat.length); i++) {
     if (!isAi(chat[i])) continue;
     const b = detectBriefing(String(chat[i].mes ?? ''));
-    if (!b) continue;
+    // 玩家在「待确认的副本」里关掉的简报不再算
+    if (!b || dropped.includes(declineKey(i, b.name))) continue;
     const at = out.findIndex((x) => x.name === b.name);
     if (at >= 0) out.splice(at, 1);
     out.push(b);
@@ -129,19 +130,46 @@ export function firstEntryCandidate(
   from: number,
   to: number,
   declined: string[] = [],
+  dropped: string[] = [],
 ): EntryCandidate | null {
   // 边找边记下出现过的简报：之前点过「不是」的未收录副本，后面的消息再提到它时还能认出来
   const seen: BriefingInfo[] = [];
   for (let i = Math.max(0, from); i <= Math.min(to, chat.length - 1); i++) {
     const c = entryCandidateAt(chat, i, packs, seen);
     if (c && !declined.includes(declineKey(i, c.info.name))) return c;
-    if (c?.signal === 1) {
+    if (c?.signal === 1 && !dropped.includes(declineKey(i, c.info.name))) {
       const at = seen.findIndex((x) => x.name === c.info.name);
       if (at >= 0) seen.splice(at, 1);
       seen.push(c.info);
     }
   }
   return null;
+}
+
+/**
+ * 待确认的副本：起点之后点过「不是」、还没在「待确认的副本」里关掉的入场信号。
+ * 按拒绝记录逐条重查原消息（删楼、改了正文就自然消失），同名只留最近一次，最近的排在前面。
+ */
+export function pendingEntries(
+  chat: ChatMessage[],
+  packs: Pack[],
+  from: number,
+  declined: string[] = [],
+  dropped: string[] = [],
+): EntryCandidate[] {
+  const byName = new Map<string, EntryCandidate>();
+  for (const key of declined) {
+    if (dropped.includes(key)) continue;
+    const sep = key.indexOf(':');
+    const index = Number(key.slice(0, sep));
+    const name = key.slice(sep + 1);
+    if (!Number.isInteger(index) || index < from || index >= chat.length) continue;
+    const c = entryCandidateAt(chat, index, packs, seenBriefings(chat, from, index, dropped));
+    if (!c || c.info.name !== name) continue;
+    const old = byName.get(name);
+    if (!old || old.index < index) byName.set(name, c);
+  }
+  return [...byName.values()].sort((a, b) => b.index - a.index);
 }
 
 /**

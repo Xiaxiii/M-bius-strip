@@ -4,52 +4,52 @@
 * @license MIT
 **/
 // @__NO_SIDE_EFFECTS__
-function vi(e) {
+function yi(e) {
   const t = /* @__PURE__ */ Object.create(null);
   for (const n of e.split(",")) t[n] = 1;
   return (n) => n in t;
 }
 const ve = {}, en = [], sn = () => {
-}, Ll = () => !1, sr = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // uppercase letter
-(e.charCodeAt(2) > 122 || e.charCodeAt(2) < 97), rr = (e) => e.startsWith("onUpdate:"), Oe = Object.assign, Dl = (e, t) => {
+}, Fl = () => !1, or = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // uppercase letter
+(e.charCodeAt(2) > 122 || e.charCodeAt(2) < 97), lr = (e) => e.startsWith("onUpdate:"), je = Object.assign, jl = (e, t) => {
   const n = e.indexOf(t);
   n > -1 && e.splice(n, 1);
-}, hu = Object.prototype.hasOwnProperty, fe = (e, t) => hu.call(e, t), se = Array.isArray, Pt = (e) => cs(e) === "[object Map]", ln = (e) => cs(e) === "[object Set]", ho = (e) => cs(e) === "[object Date]", de = (e) => typeof e == "function", ye = (e) => typeof e == "string", ht = (e) => typeof e == "symbol", he = (e) => e !== null && typeof e == "object", Fl = (e) => (he(e) || de(e)) && de(e.then) && de(e.catch), jl = Object.prototype.toString, cs = (e) => jl.call(e), mu = (e) => cs(e).slice(8, -1), Ol = (e) => cs(e) === "[object Object]", yi = (e) => ye(e) && e !== "NaN" && e[0] !== "-" && "" + parseInt(e, 10) === e, Fn = /* @__PURE__ */ vi(
+}, gu = Object.prototype.hasOwnProperty, fe = (e, t) => gu.call(e, t), se = Array.isArray, Dt = (e) => fs(e) === "[object Map]", ln = (e) => fs(e) === "[object Set]", xo = (e) => fs(e) === "[object Date]", de = (e) => typeof e == "function", ye = (e) => typeof e == "string", gt = (e) => typeof e == "symbol", he = (e) => e !== null && typeof e == "object", Bl = (e) => (he(e) || de(e)) && de(e.then) && de(e.catch), Vl = Object.prototype.toString, fs = (e) => Vl.call(e), xu = (e) => fs(e).slice(8, -1), Ul = (e) => fs(e) === "[object Object]", bi = (e) => ye(e) && e !== "NaN" && e[0] !== "-" && "" + parseInt(e, 10) === e, Vn = /* @__PURE__ */ yi(
   // the leading comma is intentional so empty string "" is also included
   ",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted"
-), ir = (e) => {
+), ar = (e) => {
   const t = /* @__PURE__ */ Object.create(null);
   return ((n) => t[n] || (t[n] = e(n)));
-}, gu = /-\w/g, Qe = ir(
-  (e) => e.replace(gu, (t) => t.slice(1).toUpperCase())
-), xu = /\B([A-Z])/g, An = ir(
-  (e) => e.replace(xu, "-$1").toLowerCase()
-), Bl = ir((e) => e.charAt(0).toUpperCase() + e.slice(1)), Cr = ir(
-  (e) => e ? `on${Bl(e)}` : ""
-), ft = (e, t) => !Object.is(e, t), Cs = (e, ...t) => {
+}, vu = /-\w/g, et = ar(
+  (e) => e.replace(vu, (t) => t.slice(1).toUpperCase())
+), yu = /\B([A-Z])/g, fn = ar(
+  (e) => e.replace(yu, "-$1").toLowerCase()
+), Hl = ar((e) => e.charAt(0).toUpperCase() + e.slice(1)), Mr = ar(
+  (e) => e ? `on${Hl(e)}` : ""
+), ht = (e, t) => !Object.is(e, t), Is = (e, ...t) => {
   for (let n = 0; n < e.length; n++)
     e[n](...t);
-}, Vl = (e, t, n, s = !1) => {
+}, Wl = (e, t, n, s = !1) => {
   Object.defineProperty(e, t, {
     configurable: !0,
     enumerable: !1,
     writable: s,
     value: n
   });
-}, or = (e) => {
+}, cr = (e) => {
   const t = parseFloat(e);
   return isNaN(t) ? e : t;
-}, vu = (e) => {
+}, bu = (e) => {
   const t = ye(e) ? Number(e) : NaN;
   return isNaN(t) ? e : t;
 };
-let mo;
-const lr = () => mo || (mo = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : typeof global < "u" ? global : {});
-function ar(e) {
+let vo;
+const ur = () => vo || (vo = typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : typeof window < "u" ? window : typeof global < "u" ? global : {});
+function dr(e) {
   if (se(e)) {
     const t = {};
     for (let n = 0; n < e.length; n++) {
-      const s = e[n], r = ye(s) ? wu(s) : ar(s);
+      const s = e[n], r = ye(s) ? _u(s) : dr(s);
       if (r)
         for (const i in r)
           t[i] = r[i];
@@ -58,12 +58,12 @@ function ar(e) {
   } else if (ye(e) || he(e))
     return e;
 }
-const yu = /;(?![^(]*\))/g, bu = /:([^]+)/, ku = /"(?:[^"\\]|\\[^])*"|'(?:[^'\\]|\\[^])*'|\\[^]|\/\*[^]*?\*\//g;
-function wu(e) {
+const ku = /;(?![^(]*\))/g, wu = /:([^]+)/, zu = /"(?:[^"\\]|\\[^])*"|'(?:[^'\\]|\\[^])*'|\\[^]|\/\*[^]*?\*\//g;
+function _u(e) {
   const t = {};
-  return e.replace(ku, (n) => n.startsWith("/*") ? "" : n).split(yu).forEach((n) => {
+  return e.replace(zu, (n) => n.startsWith("/*") ? "" : n).split(ku).forEach((n) => {
     if (n) {
-      const s = n.split(bu);
+      const s = n.split(wu);
       s.length > 1 && (t[s[0].trim()] = s[1].trim());
     }
   }), t;
@@ -82,24 +82,24 @@ function Z(e) {
       e[n] && (t += n + " ");
   return t.trim();
 }
-const zu = "itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly", _u = /* @__PURE__ */ vi(zu);
-function Ul(e) {
+const $u = "itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly", Su = /* @__PURE__ */ yi($u);
+function Gl(e) {
   return !!e || e === "";
 }
-function $u(e, t, n) {
+function Cu(e, t, n) {
   if (e.length !== t.length) return !1;
   let s = !0;
   for (let r = 0; s && r < e.length; r++)
-    s = Dt(e[r], t[r], n);
+    s = Rt(e[r], t[r], n);
   return s;
 }
-function go(e, t, n) {
+function yo(e, t, n) {
   if (e.size !== t.size) return !1;
   const s = Array.from(t), r = new Uint8Array(s.length);
   for (const i of e) {
     let o = -1;
     for (let l = 0; l < s.length; l++)
-      if (!r[l] && Dt(i, s[l], n)) {
+      if (!r[l] && Rt(i, s[l], n)) {
         o = l;
         break;
       }
@@ -108,21 +108,21 @@ function go(e, t, n) {
   }
   return !0;
 }
-function Su(e, t, n) {
-  let s = Pt(e), r = Pt(t);
+function Eu(e, t, n) {
+  let s = Dt(e), r = Dt(t);
   if (s || r || (s = ln(e), r = ln(t), s || r))
-    return s && r ? go(e, t, n) : !1;
+    return s && r ? yo(e, t, n) : !1;
   const i = Object.keys(e).length, o = Object.keys(t).length;
   if (i !== o)
     return !1;
   for (const l in e) {
     const c = e.hasOwnProperty(l), a = t.hasOwnProperty(l);
-    if (c && !a || !c && a || !Dt(e[l], t[l], n))
+    if (c && !a || !c && a || !Rt(e[l], t[l], n))
       return !1;
   }
   return String(e) === String(t);
 }
-function xo(e, t, n, s) {
+function bo(e, t, n, s) {
   n || (n = [/* @__PURE__ */ new Map(), /* @__PURE__ */ new Map()]);
   const [r, i] = n;
   if (r.has(e) || i.has(t))
@@ -131,27 +131,27 @@ function xo(e, t, n, s) {
   const o = s(e, t, n);
   return r.delete(e), i.delete(t), o;
 }
-function Dt(e, t, n) {
+function Rt(e, t, n) {
   if (e === t) return !0;
-  let s = ho(e), r = ho(t);
-  return s || r ? s && r ? e.getTime() === t.getTime() : !1 : (s = ht(e), r = ht(t), s || r ? e === t : (s = se(e), r = se(t), s || r ? s && r ? xo(e, t, n, $u) : !1 : (s = he(e), r = he(t), s || r ? !s || !r ? !1 : xo(e, t, n, Su) : String(e) === String(t))));
+  let s = xo(e), r = xo(t);
+  return s || r ? s && r ? e.getTime() === t.getTime() : !1 : (s = gt(e), r = gt(t), s || r ? e === t : (s = se(e), r = se(t), s || r ? s && r ? bo(e, t, n, Cu) : !1 : (s = he(e), r = he(t), s || r ? !s || !r ? !1 : bo(e, t, n, Eu) : String(e) === String(t))));
 }
-function Cu(e, t) {
-  return e.findIndex((n) => Dt(n, t));
+function Mu(e, t) {
+  return e.findIndex((n) => Rt(n, t));
 }
-const Hl = (e) => !!(e && e.__v_isRef === !0), _ = (e) => ye(e) ? e : e == null ? "" : se(e) || he(e) && (e.toString === jl || !de(e.toString)) ? Hl(e) ? _(e.value) : JSON.stringify(e, Wl, 2) : String(e), Wl = (e, t) => Hl(t) ? Wl(e, t.value) : Pt(t) ? {
+const Kl = (e) => !!(e && e.__v_isRef === !0), _ = (e) => ye(e) ? e : e == null ? "" : se(e) || he(e) && (e.toString === Vl || !de(e.toString)) ? Kl(e) ? _(e.value) : JSON.stringify(e, ql, 2) : String(e), ql = (e, t) => Kl(t) ? ql(e, t.value) : Dt(t) ? {
   [`Map(${t.size})`]: [...t.entries()].reduce(
-    (n, [s, r], i) => (n[Er(s, i) + " =>"] = r, n),
+    (n, [s, r], i) => (n[Tr(s, i) + " =>"] = r, n),
     {}
   )
 } : ln(t) ? {
-  [`Set(${t.size})`]: [...t.values()].map((n) => Er(n))
-} : ht(t) ? Er(t) : he(t) && !se(t) && !Ol(t) ? String(t) : t, Er = (e, t = "") => {
+  [`Set(${t.size})`]: [...t.values()].map((n) => Tr(n))
+} : gt(t) ? Tr(t) : he(t) && !se(t) && !Ul(t) ? String(t) : t, Tr = (e, t = "") => {
   var n;
   return (
     // Symbol.description in es2019+ so we need to cast here to pass
     // the lib: es2016 check
-    ht(e) ? `Symbol(${(n = e.description) != null ? n : t})` : e
+    gt(e) ? `Symbol(${(n = e.description) != null ? n : t})` : e
   );
 };
 /**
@@ -159,11 +159,11 @@ const Hl = (e) => !!(e && e.__v_isRef === !0), _ = (e) => ye(e) ? e : e == null 
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
-let ze;
-class Eu {
+let $e;
+class Tu {
   // TODO isolatedDeclarations "__v_skip"
   constructor(t = !1) {
-    this.detached = t, this._active = !0, this._on = 0, this.effects = [], this.cleanups = [], this._isPaused = !1, this._warnOnRun = !0, this.__v_skip = !0, !t && ze && (ze.active ? (this.parent = ze, this.index = (ze.scopes || (ze.scopes = [])).push(
+    this.detached = t, this._active = !0, this._on = 0, this.effects = [], this.cleanups = [], this._isPaused = !1, this._warnOnRun = !0, this.__v_skip = !0, !t && $e && ($e.active ? (this.parent = $e, this.index = ($e.scopes || ($e.scopes = [])).push(
       this
     ) - 1) : (this._active = !1, this._warnOnRun = !1));
   }
@@ -202,11 +202,11 @@ class Eu {
   }
   run(t) {
     if (this._active) {
-      const n = ze;
+      const n = $e;
       try {
-        return ze = this, t();
+        return $e = this, t();
       } finally {
-        ze = n;
+        $e = n;
       }
     }
   }
@@ -215,7 +215,7 @@ class Eu {
    * @internal
    */
   on() {
-    ++this._on === 1 && (this.prevScope = ze, ze = this);
+    ++this._on === 1 && (this.prevScope = $e, $e = this);
   }
   /**
    * This should only be called on non-detached scopes
@@ -223,10 +223,10 @@ class Eu {
    */
   off() {
     if (this._on > 0 && --this._on === 0) {
-      if (ze === this)
-        ze = this.prevScope;
+      if ($e === this)
+        $e = this.prevScope;
       else {
-        let t = ze;
+        let t = $e;
         for (; t; ) {
           if (t.prevScope === this) {
             t.prevScope = this.prevScope;
@@ -260,84 +260,84 @@ class Eu {
     }
   }
 }
-function Mu() {
-  return ze;
+function Iu() {
+  return $e;
 }
 let pe;
-const Mr = /* @__PURE__ */ new WeakSet();
-class Gl {
+const Ir = /* @__PURE__ */ new WeakSet();
+class Yl {
   constructor(t) {
-    this.fn = t, this.deps = void 0, this.depsTail = void 0, this.flags = 5, this.next = void 0, this.cleanup = void 0, this.scheduler = void 0, ze && (ze.active ? ze.effects.push(this) : this.flags &= -2);
+    this.fn = t, this.deps = void 0, this.depsTail = void 0, this.flags = 5, this.next = void 0, this.cleanup = void 0, this.scheduler = void 0, $e && ($e.active ? $e.effects.push(this) : this.flags &= -2);
   }
   pause() {
     this.flags |= 64;
   }
   resume() {
-    this.flags & 64 && (this.flags &= -65, Mr.has(this) && (Mr.delete(this), this.trigger()));
+    this.flags & 64 && (this.flags &= -65, Ir.has(this) && (Ir.delete(this), this.trigger()));
   }
   /**
    * @internal
    */
   notify() {
-    this.flags & 2 && !(this.flags & 32) || this.flags & 8 || ql(this);
+    this.flags & 2 && !(this.flags & 32) || this.flags & 8 || Zl(this);
   }
   run() {
     if (!(this.flags & 1))
       return this.fn();
-    this.flags |= 2, vo(this), Yl(this);
-    const t = pe, n = et;
-    pe = this, et = !0;
+    this.flags |= 2, ko(this), Ql(this);
+    const t = pe, n = tt;
+    pe = this, tt = !0;
     try {
       return this.fn();
     } finally {
-      Jl(this), pe = t, et = n, this.flags &= -3;
+      Xl(this), pe = t, tt = n, this.flags &= -3;
     }
   }
   stop() {
     if (this.flags & 1) {
       for (let t = this.deps; t; t = t.nextDep)
-        wi(t);
-      this.deps = this.depsTail = void 0, vo(this), this.onStop && this.onStop(), this.flags &= -2;
+        zi(t);
+      this.deps = this.depsTail = void 0, ko(this), this.onStop && this.onStop(), this.flags &= -2;
     }
   }
   trigger() {
-    this.flags & 64 ? Mr.add(this) : this.scheduler ? this.scheduler() : this.runIfDirty();
+    this.flags & 64 ? Ir.add(this) : this.scheduler ? this.scheduler() : this.runIfDirty();
   }
   /**
    * @internal
    */
   runIfDirty() {
-    ei(this) && this.run();
+    ni(this) && this.run();
   }
   get dirty() {
-    return ei(this);
+    return ni(this);
   }
 }
-let Kl = 0, jn, On;
-function ql(e, t = !1) {
+let Jl = 0, Un, Hn;
+function Zl(e, t = !1) {
   if (e.flags |= 8, t) {
-    e.next = On, On = e;
+    e.next = Hn, Hn = e;
     return;
   }
-  e.next = jn, jn = e;
-}
-function bi() {
-  Kl++;
+  e.next = Un, Un = e;
 }
 function ki() {
-  if (--Kl > 0)
+  Jl++;
+}
+function wi() {
+  if (--Jl > 0)
     return;
-  if (On) {
-    let t = On;
-    for (On = void 0; t; ) {
+  if (Hn) {
+    let t = Hn;
+    for (Hn = void 0; t; ) {
       const n = t.next;
       t.next = void 0, t.flags &= -9, t = n;
     }
   }
   let e;
-  for (; jn; ) {
-    let t = jn;
-    for (jn = void 0; t; ) {
+  for (; Un; ) {
+    let t = Un;
+    for (Un = void 0; t; ) {
       const n = t.next;
       if (t.next = void 0, t.flags &= -9, t.flags & 1)
         try {
@@ -350,63 +350,63 @@ function ki() {
   }
   if (e) throw e;
 }
-function Yl(e) {
+function Ql(e) {
   for (let t = e.deps; t; t = t.nextDep)
     t.version = -1, t.prevActiveLink = t.dep.activeLink, t.dep.activeLink = t;
 }
-function Jl(e) {
+function Xl(e) {
   let t, n = e.depsTail, s = n;
   for (; s; ) {
     const r = s.prevDep;
-    s.version === -1 ? (s === n && (n = r), wi(s), Tu(s)) : t = s, s.dep.activeLink = s.prevActiveLink, s.prevActiveLink = void 0, s = r;
+    s.version === -1 ? (s === n && (n = r), zi(s), Nu(s)) : t = s, s.dep.activeLink = s.prevActiveLink, s.prevActiveLink = void 0, s = r;
   }
   e.deps = t, e.depsTail = n;
 }
-function ei(e) {
+function ni(e) {
   for (let t = e.deps; t; t = t.nextDep)
-    if (t.dep.version !== t.version || t.dep.computed && (Zl(t.dep.computed) || t.dep.version !== t.version))
+    if (t.dep.version !== t.version || t.dep.computed && (ea(t.dep.computed) || t.dep.version !== t.version))
       return !0;
   return !!e._dirty;
 }
-function Zl(e) {
-  if (e.flags & 4 && !(e.flags & 16) || (e.flags &= -17, e.globalVersion === qn) || (e.globalVersion = qn, !e.isSSR && e.flags & 128 && (!e.deps && !e._dirty || !ei(e))))
+function ea(e) {
+  if (e.flags & 4 && !(e.flags & 16) || (e.flags &= -17, e.globalVersion === Qn) || (e.globalVersion = Qn, !e.isSSR && e.flags & 128 && (!e.deps && !e._dirty || !ni(e))))
     return;
   e.flags |= 2;
-  const t = e.dep, n = pe, s = et;
-  pe = e, et = !0;
+  const t = e.dep, n = pe, s = tt;
+  pe = e, tt = !0;
   try {
-    Yl(e);
+    Ql(e);
     const r = e.fn(e._value);
-    (t.version === 0 || ft(r, e._value)) && (e.flags |= 128, e._value = r, t.version++);
+    (t.version === 0 || ht(r, e._value)) && (e.flags |= 128, e._value = r, t.version++);
   } catch (r) {
     throw t.version++, r;
   } finally {
-    pe = n, et = s, Jl(e), e.flags &= -3;
+    pe = n, tt = s, Xl(e), e.flags &= -3;
   }
 }
-function wi(e, t = !1) {
+function zi(e, t = !1) {
   const { dep: n, prevSub: s, nextSub: r } = e;
   if (s && (s.nextSub = r, e.prevSub = void 0), r && (r.prevSub = s, e.nextSub = void 0), n.subs === e && (n.subs = s, !s && n.computed)) {
     n.computed.flags &= -5;
     for (let i = n.computed.deps; i; i = i.nextDep)
-      wi(i, !0);
+      zi(i, !0);
   }
   !t && !--n.sc && n.map && n.map.delete(n.key);
 }
-function Tu(e) {
+function Nu(e) {
   const { prevDep: t, nextDep: n } = e;
   t && (t.nextDep = n, e.prevDep = void 0), n && (n.prevDep = t, e.nextDep = void 0);
 }
-let et = !0;
-const Xl = [];
+let tt = !0;
+const ta = [];
+function Ot() {
+  ta.push(tt), tt = !1;
+}
 function Ft() {
-  Xl.push(et), et = !1;
+  const e = ta.pop();
+  tt = e === void 0 ? !0 : e;
 }
-function jt() {
-  const e = Xl.pop();
-  et = e === void 0 ? !0 : e;
-}
-function vo(e) {
+function ko(e) {
   const { cleanup: t } = e;
   if (e.cleanup = void 0, t) {
     const n = pe;
@@ -418,23 +418,23 @@ function vo(e) {
     }
   }
 }
-let qn = 0;
-class Iu {
+let Qn = 0;
+class Pu {
   constructor(t, n) {
     this.sub = t, this.dep = n, this.version = n.version, this.nextDep = this.prevDep = this.nextSub = this.prevSub = this.prevActiveLink = void 0;
   }
 }
-class zi {
+class _i {
   // TODO isolatedDeclarations "__v_skip"
   constructor(t) {
     this.computed = t, this.version = 0, this.activeLink = void 0, this.subs = void 0, this.map = void 0, this.key = void 0, this.sc = 0, this.__v_skip = !0;
   }
   track(t) {
-    if (!pe || !et || pe === this.computed)
+    if (!pe || !tt || pe === this.computed)
       return;
     let n = this.activeLink;
     if (n === void 0 || n.sub !== pe)
-      n = this.activeLink = new Iu(pe, this), pe.deps ? (n.prevDep = pe.depsTail, pe.depsTail.nextDep = n, pe.depsTail = n) : pe.deps = pe.depsTail = n, Ql(n);
+      n = this.activeLink = new Pu(pe, this), pe.deps ? (n.prevDep = pe.depsTail, pe.depsTail.nextDep = n, pe.depsTail = n) : pe.deps = pe.depsTail = n, na(n);
     else if (n.version === -1 && (n.version = this.version, n.nextDep)) {
       const s = n.nextDep;
       s.prevDep = n.prevDep, n.prevDep && (n.prevDep.nextDep = s), n.prevDep = pe.depsTail, n.nextDep = void 0, pe.depsTail.nextDep = n, pe.depsTail = n, pe.deps === n && (pe.deps = s);
@@ -442,252 +442,252 @@ class zi {
     return n;
   }
   trigger(t) {
-    this.version++, qn++, this.notify(t);
+    this.version++, Qn++, this.notify(t);
   }
   notify(t) {
-    bi();
+    ki();
     try {
       for (let n = this.subs; n; n = n.prevSub)
         n.sub.notify() && n.sub.dep.notify();
     } finally {
-      ki();
+      wi();
     }
   }
 }
-function Ql(e) {
+function na(e) {
   if (e.dep.sc++, e.sub.flags & 4) {
     const t = e.dep.computed;
     if (t && !e.dep.subs) {
       t.flags |= 20;
       for (let s = t.deps; s; s = s.nextDep)
-        Ql(s);
+        na(s);
     }
     const n = e.dep.subs;
     n !== e && (e.prevSub = n, n && (n.nextSub = e)), e.dep.subs = e;
   }
 }
-const ti = /* @__PURE__ */ new WeakMap(), rn = /* @__PURE__ */ Symbol(
+const si = /* @__PURE__ */ new WeakMap(), rn = /* @__PURE__ */ Symbol(
   ""
-), ni = /* @__PURE__ */ Symbol(
+), ri = /* @__PURE__ */ Symbol(
   ""
-), Yn = /* @__PURE__ */ Symbol(
+), Xn = /* @__PURE__ */ Symbol(
   ""
 );
-function Me(e, t, n) {
-  if (et && pe) {
-    let s = ti.get(e);
-    s || ti.set(e, s = /* @__PURE__ */ new Map());
+function Te(e, t, n) {
+  if (tt && pe) {
+    let s = si.get(e);
+    s || si.set(e, s = /* @__PURE__ */ new Map());
     let r = s.get(n);
-    r || (s.set(n, r = new zi()), r.map = s, r.key = n), r.track();
+    r || (s.set(n, r = new _i()), r.map = s, r.key = n), r.track();
   }
 }
-function wt(e, t, n, s, r, i) {
-  const o = ti.get(e);
+function zt(e, t, n, s, r, i) {
+  const o = si.get(e);
   if (!o) {
-    qn++;
+    Qn++;
     return;
   }
   const l = (c) => {
     c && c.trigger();
   };
-  if (bi(), t === "clear")
+  if (ki(), t === "clear")
     o.forEach(l);
   else {
-    const c = se(e), a = c && yi(n);
+    const c = se(e), a = c && bi(n);
     if (c && n === "length") {
       const u = Number(s);
-      o.forEach((f, h) => {
-        (h === "length" || h === Yn || !ht(h) && h >= u) && l(f);
+      o.forEach((f, m) => {
+        (m === "length" || m === Xn || !gt(m) && m >= u) && l(f);
       });
     } else
-      switch ((n !== void 0 || o.has(void 0)) && l(o.get(n)), a && l(o.get(Yn)), t) {
+      switch ((n !== void 0 || o.has(void 0)) && l(o.get(n)), a && l(o.get(Xn)), t) {
         case "add":
-          c ? a && l(o.get("length")) : (l(o.get(rn)), Pt(e) && l(o.get(ni)));
+          c ? a && l(o.get("length")) : (l(o.get(rn)), Dt(e) && l(o.get(ri)));
           break;
         case "delete":
-          c || (l(o.get(rn)), Pt(e) && l(o.get(ni)));
+          c || (l(o.get(rn)), Dt(e) && l(o.get(ri)));
           break;
         case "set":
-          Pt(e) && l(o.get(rn));
+          Dt(e) && l(o.get(rn));
           break;
       }
   }
-  ki();
+  wi();
 }
-function mn(e) {
+function gn(e) {
   const t = /* @__PURE__ */ ae(e);
-  return t === e || (Me(t, "iterate", Yn), /* @__PURE__ */ Ke(e)) ? t : /* @__PURE__ */ mt(e) ? /* @__PURE__ */ Rt(e) ? t.map((n) => Ot(qe(n))) : t.map(Ot) : t.map(qe);
+  return t === e || (Te(t, "iterate", Xn), /* @__PURE__ */ qe(e)) ? t : /* @__PURE__ */ xt(e) ? /* @__PURE__ */ Lt(e) ? t.map((n) => jt(Ye(n))) : t.map(jt) : t.map(Ye);
 }
-function cr(e) {
-  return Me(e = /* @__PURE__ */ ae(e), "iterate", Yn), e;
+function Ar(e) {
+  return Te(e = /* @__PURE__ */ ae(e), "iterate", Xn), e;
 }
-function ut(e, t) {
-  return /* @__PURE__ */ mt(e) ? Ot(/* @__PURE__ */ Rt(e) ? qe(t) : t) : qe(t);
+function At(e, t) {
+  return /* @__PURE__ */ xt(e) ? jt(/* @__PURE__ */ Lt(e) ? Ye(t) : t) : Ye(t);
 }
-const Nu = {
+const Du = {
   __proto__: null,
   [Symbol.iterator]() {
-    return Tr(this, Symbol.iterator, (e) => ut(this, e));
+    return Nr(this, Symbol.iterator, (e) => At(this, e));
   },
   concat(...e) {
-    return mn(this).concat(
-      ...e.map((t) => se(t) ? mn(t) : t)
+    return gn(this).concat(
+      ...e.map((t) => se(t) ? gn(t) : t)
     );
   },
   entries() {
-    return Tr(this, "entries", (e) => (e[1] = ut(this, e[1]), e));
+    return Nr(this, "entries", (e) => (e[1] = At(this, e[1]), e));
   },
   every(e, t) {
-    return vt(this, "every", e, t, void 0, arguments);
+    return yt(this, "every", e, t, void 0, arguments);
   },
   filter(e, t) {
-    return vt(
+    return yt(
       this,
       "filter",
       e,
       t,
-      (n) => n.map((s) => ut(this, s)),
+      (n) => n.map((s) => At(this, s)),
       arguments
     );
   },
   find(e, t) {
-    return vt(
+    return yt(
       this,
       "find",
       e,
       t,
-      (n) => ut(this, n),
+      (n) => At(this, n),
       arguments
     );
   },
   findIndex(e, t) {
-    return vt(this, "findIndex", e, t, void 0, arguments);
+    return yt(this, "findIndex", e, t, void 0, arguments);
   },
   findLast(e, t) {
-    return vt(
+    return yt(
       this,
       "findLast",
       e,
       t,
-      (n) => ut(this, n),
+      (n) => At(this, n),
       arguments
     );
   },
   findLastIndex(e, t) {
-    return vt(this, "findLastIndex", e, t, void 0, arguments);
+    return yt(this, "findLastIndex", e, t, void 0, arguments);
   },
   // flat, flatMap could benefit from ARRAY_ITERATE but are not straight-forward to implement
   forEach(e, t) {
-    return vt(this, "forEach", e, t, void 0, arguments);
+    return yt(this, "forEach", e, t, void 0, arguments);
   },
   includes(...e) {
-    return Ir(this, "includes", e);
+    return Pr(this, "includes", e);
   },
   indexOf(...e) {
-    return Ir(this, "indexOf", e);
+    return Pr(this, "indexOf", e);
   },
   join(e) {
-    return mn(this).join(e);
+    return gn(this).join(e);
   },
   // keys() iterator only reads `length`, no optimization required
   lastIndexOf(...e) {
-    return Ir(this, "lastIndexOf", e);
+    return Pr(this, "lastIndexOf", e);
   },
   map(e, t) {
-    return vt(this, "map", e, t, void 0, arguments);
+    return yt(this, "map", e, t, void 0, arguments);
   },
   pop() {
-    return Mn(this, "pop");
+    return Pn(this, "pop");
   },
   push(...e) {
-    return Mn(this, "push", e);
+    return Pn(this, "push", e);
   },
   reduce(e, ...t) {
-    return yo(this, "reduce", e, t);
+    return wo(this, "reduce", e, t);
   },
   reduceRight(e, ...t) {
-    return yo(this, "reduceRight", e, t);
+    return wo(this, "reduceRight", e, t);
   },
   shift() {
-    return Mn(this, "shift");
+    return Pn(this, "shift");
   },
   // slice could use ARRAY_ITERATE but also seems to beg for range tracking
   some(e, t) {
-    return vt(this, "some", e, t, void 0, arguments);
+    return yt(this, "some", e, t, void 0, arguments);
   },
   splice(...e) {
-    return Mn(this, "splice", e);
+    return Pn(this, "splice", e);
   },
   toReversed() {
-    return mn(this).toReversed();
+    return gn(this).toReversed();
   },
   toSorted(e) {
-    return mn(this).toSorted(e);
+    return gn(this).toSorted(e);
   },
   toSpliced(...e) {
-    return mn(this).toSpliced(...e);
+    return gn(this).toSpliced(...e);
   },
   unshift(...e) {
-    return Mn(this, "unshift", e);
+    return Pn(this, "unshift", e);
   },
   values() {
-    return Tr(this, "values", (e) => ut(this, e));
+    return Nr(this, "values", (e) => At(this, e));
   }
 };
-function Tr(e, t, n) {
-  const s = cr(e), r = s[t]();
-  return s !== e && !/* @__PURE__ */ Ke(e) && (r._next = r.next, r.next = () => {
+function Nr(e, t, n) {
+  const s = Ar(e), r = s[t]();
+  return s !== e && !/* @__PURE__ */ qe(e) && (r._next = r.next, r.next = () => {
     const i = r._next();
     return i.done || (i.value = n(i.value)), i;
   }), r;
 }
-const Pu = Array.prototype;
-function vt(e, t, n, s, r, i) {
-  const o = cr(e), l = o !== e && !/* @__PURE__ */ Ke(e), c = o[t];
-  if (c !== Pu[t]) {
+const Lu = Array.prototype;
+function yt(e, t, n, s, r, i) {
+  const o = Ar(e), l = o !== e && !/* @__PURE__ */ qe(e), c = o[t];
+  if (c !== Lu[t]) {
     const f = c.apply(e, i);
-    return l ? qe(f) : f;
+    return l ? Ye(f) : f;
   }
   let a = n;
-  o !== e && (l ? a = function(f, h) {
-    return n.call(this, ut(e, f), h, e);
-  } : n.length > 2 && (a = function(f, h) {
-    return n.call(this, f, h, e);
+  o !== e && (l ? a = function(f, m) {
+    return n.call(this, At(e, f), m, e);
+  } : n.length > 2 && (a = function(f, m) {
+    return n.call(this, f, m, e);
   }));
   const u = c.call(o, a, s);
   return l && r ? r(u) : u;
 }
-function yo(e, t, n, s) {
-  const r = cr(e), i = r !== e && !/* @__PURE__ */ Ke(e);
+function wo(e, t, n, s) {
+  const r = Ar(e), i = r !== e && !/* @__PURE__ */ qe(e);
   let o = n, l = !1;
   r !== e && (i ? (l = s.length === 0, o = function(a, u, f) {
-    return l && (l = !1, a = ut(e, a)), n.call(this, a, ut(e, u), f, e);
+    return l && (l = !1, a = At(e, a)), n.call(this, a, At(e, u), f, e);
   }) : n.length > 3 && (o = function(a, u, f) {
     return n.call(this, a, u, f, e);
   }));
   const c = r[t](o, ...s);
-  return l ? ut(e, c) : c;
+  return l ? At(e, c) : c;
 }
-function Ir(e, t, n) {
+function Pr(e, t, n) {
   const s = /* @__PURE__ */ ae(e);
-  Me(s, "iterate", Yn);
+  Te(s, "iterate", Xn);
   const r = s[t](...n);
-  return (r === -1 || r === !1) && /* @__PURE__ */ Si(n[0]) ? (n[0] = /* @__PURE__ */ ae(n[0]), s[t](...n)) : r;
+  return (r === -1 || r === !1) && /* @__PURE__ */ Ci(n[0]) ? (n[0] = /* @__PURE__ */ ae(n[0]), s[t](...n)) : r;
 }
-function Mn(e, t, n = []) {
-  Ft(), bi();
+function Pn(e, t, n = []) {
+  Ot(), ki();
   const s = (/* @__PURE__ */ ae(e))[t].apply(e, n);
-  return ki(), jt(), s;
+  return wi(), Ft(), s;
 }
-const Ru = /* @__PURE__ */ vi("__proto__,__v_isRef,__isVue"), ea = new Set(
-  /* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((e) => e !== "arguments" && e !== "caller").map((e) => Symbol[e]).filter(ht)
+const Ru = /* @__PURE__ */ yi("__proto__,__v_isRef,__isVue"), sa = new Set(
+  /* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((e) => e !== "arguments" && e !== "caller").map((e) => Symbol[e]).filter(gt)
 );
-function Lu(e) {
-  ht(e) || (e = String(e));
+function Ou(e) {
+  gt(e) || (e = String(e));
   const t = /* @__PURE__ */ ae(this);
-  return Me(t, "has", e), t.hasOwnProperty(e);
+  return Te(t, "has", e), t.hasOwnProperty(e);
 }
-class ta {
+class ra {
   constructor(t = !1, n = !1) {
     this._isReadonly = t, this._isShallow = n;
   }
@@ -701,16 +701,16 @@ class ta {
     if (n === "__v_isShallow")
       return i;
     if (n === "__v_raw")
-      return s === (r ? i ? Gu : ia : i ? ra : sa).get(t) || // receiver is not the reactive proxy, but has the same prototype
+      return s === (r ? i ? qu : aa : i ? la : oa).get(t) || // receiver is not the reactive proxy, but has the same prototype
       // this means the receiver is a user proxy of the reactive proxy
       Object.getPrototypeOf(t) === Object.getPrototypeOf(s) ? t : void 0;
     const o = se(t);
     if (!r) {
       let c;
-      if (o && (c = Nu[n]))
+      if (o && (c = Du[n]))
         return c;
       if (n === "hasOwnProperty")
-        return Lu;
+        return Ou;
     }
     const l = Reflect.get(
       t,
@@ -718,56 +718,56 @@ class ta {
       // if this is a proxy wrapping a ref, return methods using the raw ref
       // as receiver so that we don't have to call `toRaw` on the ref in all
       // its class methods
-      /* @__PURE__ */ Ne(t) ? t : s
+      /* @__PURE__ */ Pe(t) ? t : s
     );
-    if ((ht(n) ? ea.has(n) : Ru(n)) || (r || Me(t, "get", n), i))
+    if ((gt(n) ? sa.has(n) : Ru(n)) || (r || Te(t, "get", n), i))
       return l;
-    if (/* @__PURE__ */ Ne(l)) {
-      const c = o && yi(n) ? l : l.value;
-      return r && he(c) ? /* @__PURE__ */ ri(c) : c;
+    if (/* @__PURE__ */ Pe(l)) {
+      const c = o && bi(n) ? l : l.value;
+      return r && he(c) ? /* @__PURE__ */ oi(c) : c;
     }
-    return he(l) ? r ? /* @__PURE__ */ ri(l) : /* @__PURE__ */ ur(l) : l;
+    return he(l) ? r ? /* @__PURE__ */ oi(l) : /* @__PURE__ */ fr(l) : l;
   }
 }
-class na extends ta {
+class ia extends ra {
   constructor(t = !1) {
     super(!1, t);
   }
   set(t, n, s, r) {
     let i = t[n];
-    const o = se(t) && yi(n);
+    const o = se(t) && bi(n);
     if (!this._isShallow) {
-      const a = /* @__PURE__ */ mt(i);
-      if (!/* @__PURE__ */ Ke(s) && !/* @__PURE__ */ mt(s) && (i = /* @__PURE__ */ ae(i), s = /* @__PURE__ */ ae(s)), !o && /* @__PURE__ */ Ne(i) && !/* @__PURE__ */ Ne(s))
+      const a = /* @__PURE__ */ xt(i);
+      if (!/* @__PURE__ */ qe(s) && !/* @__PURE__ */ xt(s) && (i = /* @__PURE__ */ ae(i), s = /* @__PURE__ */ ae(s)), !o && /* @__PURE__ */ Pe(i) && !/* @__PURE__ */ Pe(s))
         return a || (i.value = s), !0;
     }
     const l = o ? Number(n) < t.length : fe(t, n), c = Reflect.set(
       t,
       n,
       s,
-      /* @__PURE__ */ Ne(t) ? t : r
+      /* @__PURE__ */ Pe(t) ? t : r
     );
-    return t === /* @__PURE__ */ ae(r) && c && (l ? ft(s, i) && wt(t, "set", n, s) : wt(t, "add", n, s)), c;
+    return t === /* @__PURE__ */ ae(r) && c && (l ? ht(s, i) && zt(t, "set", n, s) : zt(t, "add", n, s)), c;
   }
   deleteProperty(t, n) {
     const s = fe(t, n);
     t[n];
     const r = Reflect.deleteProperty(t, n);
-    return r && s && wt(t, "delete", n, void 0), r;
+    return r && s && zt(t, "delete", n, void 0), r;
   }
   has(t, n) {
     const s = Reflect.has(t, n);
-    return (!ht(n) || !ea.has(n)) && Me(t, "has", n), s;
+    return (!gt(n) || !sa.has(n)) && Te(t, "has", n), s;
   }
   ownKeys(t) {
-    return Me(
+    return Te(
       t,
       "iterate",
       se(t) ? "length" : rn
     ), Reflect.ownKeys(t);
   }
 }
-class Du extends ta {
+class Fu extends ra {
   constructor(t = !1) {
     super(!0, t);
   }
@@ -778,42 +778,42 @@ class Du extends ta {
     return !0;
   }
 }
-const Fu = /* @__PURE__ */ new na(), ju = /* @__PURE__ */ new Du(), Ou = /* @__PURE__ */ new na(!0);
-const si = (e) => e, vs = (e) => Reflect.getPrototypeOf(e);
-function Bu(e, t, n) {
+const ju = /* @__PURE__ */ new ia(), Bu = /* @__PURE__ */ new Fu(), Vu = /* @__PURE__ */ new ia(!0);
+const ii = (e) => e, ws = (e) => Reflect.getPrototypeOf(e);
+function Uu(e, t, n) {
   return function(...s) {
-    const r = this.__v_raw, i = /* @__PURE__ */ ae(r), o = Pt(i), l = e === "entries" || e === Symbol.iterator && o, c = e === "keys" && o, a = r[e](...s), u = n ? si : t ? Ot : qe;
-    return !t && Me(
+    const r = this.__v_raw, i = /* @__PURE__ */ ae(r), o = Dt(i), l = e === "entries" || e === Symbol.iterator && o, c = e === "keys" && o, a = r[e](...s), u = n ? ii : t ? jt : Ye;
+    return !t && Te(
       i,
       "iterate",
-      c ? ni : rn
-    ), Oe(
+      c ? ri : rn
+    ), je(
       // inheriting all iterator properties
       Object.create(a),
       {
         // iterator protocol
         next() {
-          const { value: f, done: h } = a.next();
-          return h ? { value: f, done: h } : {
+          const { value: f, done: m } = a.next();
+          return m ? { value: f, done: m } : {
             value: l ? [u(f[0]), u(f[1])] : u(f),
-            done: h
+            done: m
           };
         }
       }
     );
   };
 }
-function ys(e) {
+function zs(e) {
   return function(...t) {
     return e === "delete" ? !1 : e === "clear" ? void 0 : this;
   };
 }
-function Vu(e, t) {
+function Hu(e, t) {
   const n = {
     get(r) {
       const i = this.__v_raw, o = /* @__PURE__ */ ae(i), l = /* @__PURE__ */ ae(r);
-      e || (ft(r, l) && Me(o, "get", r), Me(o, "get", l));
-      const { has: c } = vs(o), a = t ? si : e ? Ot : qe;
+      e || (ht(r, l) && Te(o, "get", r), Te(o, "get", l));
+      const { has: c } = ws(o), a = t ? ii : e ? jt : Ye;
       if (c.call(o, r))
         return a(i.get(r));
       if (c.call(o, l))
@@ -822,47 +822,47 @@ function Vu(e, t) {
     },
     get size() {
       const r = this.__v_raw;
-      return !e && Me(/* @__PURE__ */ ae(r), "iterate", rn), r.size;
+      return !e && Te(/* @__PURE__ */ ae(r), "iterate", rn), r.size;
     },
     has(r) {
       const i = this.__v_raw, o = /* @__PURE__ */ ae(i), l = /* @__PURE__ */ ae(r);
-      return e || (ft(r, l) && Me(o, "has", r), Me(o, "has", l)), r === l ? i.has(r) : i.has(r) || i.has(l);
+      return e || (ht(r, l) && Te(o, "has", r), Te(o, "has", l)), r === l ? i.has(r) : i.has(r) || i.has(l);
     },
     forEach(r, i) {
-      const o = this, l = o.__v_raw, c = /* @__PURE__ */ ae(l), a = t ? si : e ? Ot : qe;
-      return !e && Me(c, "iterate", rn), l.forEach((u, f) => r.call(i, a(u), a(f), o));
+      const o = this, l = o.__v_raw, c = /* @__PURE__ */ ae(l), a = t ? ii : e ? jt : Ye;
+      return !e && Te(c, "iterate", rn), l.forEach((u, f) => r.call(i, a(u), a(f), o));
     }
   };
-  return Oe(
+  return je(
     n,
     e ? {
-      add: ys("add"),
-      set: ys("set"),
-      delete: ys("delete"),
-      clear: ys("clear")
+      add: zs("add"),
+      set: zs("set"),
+      delete: zs("delete"),
+      clear: zs("clear")
     } : {
       add(r) {
-        const i = /* @__PURE__ */ ae(this), o = vs(i), l = /* @__PURE__ */ ae(r), c = !t && !/* @__PURE__ */ Ke(r) && !/* @__PURE__ */ mt(r) ? l : r;
-        return o.has.call(i, c) || ft(r, c) && o.has.call(i, r) || ft(l, c) && o.has.call(i, l) || (i.add(c), wt(i, "add", c, c)), this;
+        const i = /* @__PURE__ */ ae(this), o = ws(i), l = /* @__PURE__ */ ae(r), c = !t && !/* @__PURE__ */ qe(r) && !/* @__PURE__ */ xt(r) ? l : r;
+        return o.has.call(i, c) || ht(r, c) && o.has.call(i, r) || ht(l, c) && o.has.call(i, l) || (i.add(c), zt(i, "add", c, c)), this;
       },
       set(r, i) {
-        !t && !/* @__PURE__ */ Ke(i) && !/* @__PURE__ */ mt(i) && (i = /* @__PURE__ */ ae(i));
-        const o = /* @__PURE__ */ ae(this), { has: l, get: c } = vs(o);
+        !t && !/* @__PURE__ */ qe(i) && !/* @__PURE__ */ xt(i) && (i = /* @__PURE__ */ ae(i));
+        const o = /* @__PURE__ */ ae(this), { has: l, get: c } = ws(o);
         let a = l.call(o, r);
         a || (r = /* @__PURE__ */ ae(r), a = l.call(o, r));
         const u = c.call(o, r);
-        return o.set(r, i), a ? ft(i, u) && wt(o, "set", r, i) : wt(o, "add", r, i), this;
+        return o.set(r, i), a ? ht(i, u) && zt(o, "set", r, i) : zt(o, "add", r, i), this;
       },
       delete(r) {
-        const i = /* @__PURE__ */ ae(this), { has: o, get: l } = vs(i);
+        const i = /* @__PURE__ */ ae(this), { has: o, get: l } = ws(i);
         let c = o.call(i, r);
         c || (r = /* @__PURE__ */ ae(r), c = o.call(i, r)), l && l.call(i, r);
         const a = i.delete(r);
-        return c && wt(i, "delete", r, void 0), a;
+        return c && zt(i, "delete", r, void 0), a;
       },
       clear() {
         const r = /* @__PURE__ */ ae(this), i = r.size !== 0, o = r.clear();
-        return i && wt(
+        return i && zt(
           r,
           "clear",
           void 0,
@@ -876,26 +876,26 @@ function Vu(e, t) {
     "entries",
     Symbol.iterator
   ].forEach((r) => {
-    n[r] = Bu(r, e, t);
+    n[r] = Uu(r, e, t);
   }), n;
 }
-function _i(e, t) {
-  const n = Vu(e, t);
+function $i(e, t) {
+  const n = Hu(e, t);
   return (s, r, i) => r === "__v_isReactive" ? !e : r === "__v_isReadonly" ? e : r === "__v_raw" ? s : Reflect.get(
     fe(n, r) && r in s ? n : s,
     r,
     i
   );
 }
-const Uu = {
-  get: /* @__PURE__ */ _i(!1, !1)
-}, Hu = {
-  get: /* @__PURE__ */ _i(!1, !0)
-}, Wu = {
-  get: /* @__PURE__ */ _i(!0, !1)
+const Wu = {
+  get: /* @__PURE__ */ $i(!1, !1)
+}, Gu = {
+  get: /* @__PURE__ */ $i(!1, !0)
+}, Ku = {
+  get: /* @__PURE__ */ $i(!0, !1)
 };
-const sa = /* @__PURE__ */ new WeakMap(), ra = /* @__PURE__ */ new WeakMap(), ia = /* @__PURE__ */ new WeakMap(), Gu = /* @__PURE__ */ new WeakMap();
-function Ku(e) {
+const oa = /* @__PURE__ */ new WeakMap(), la = /* @__PURE__ */ new WeakMap(), aa = /* @__PURE__ */ new WeakMap(), qu = /* @__PURE__ */ new WeakMap();
+function Yu(e) {
   switch (e) {
     case "Object":
     case "Array":
@@ -910,42 +910,42 @@ function Ku(e) {
   }
 }
 // @__NO_SIDE_EFFECTS__
-function ur(e) {
-  return /* @__PURE__ */ mt(e) ? e : $i(
+function fr(e) {
+  return /* @__PURE__ */ xt(e) ? e : Si(
     e,
     !1,
-    Fu,
-    Uu,
-    sa
-  );
-}
-// @__NO_SIDE_EFFECTS__
-function qu(e) {
-  return $i(
-    e,
-    !1,
-    Ou,
-    Hu,
-    ra
-  );
-}
-// @__NO_SIDE_EFFECTS__
-function ri(e) {
-  return $i(
-    e,
-    !0,
     ju,
     Wu,
-    ia
+    oa
   );
 }
-function $i(e, t, n, s, r) {
+// @__NO_SIDE_EFFECTS__
+function Ju(e) {
+  return Si(
+    e,
+    !1,
+    Vu,
+    Gu,
+    la
+  );
+}
+// @__NO_SIDE_EFFECTS__
+function oi(e) {
+  return Si(
+    e,
+    !0,
+    Bu,
+    Ku,
+    aa
+  );
+}
+function Si(e, t, n, s, r) {
   if (!he(e) || e.__v_raw && !(t && e.__v_isReactive) || e.__v_skip || !Object.isExtensible(e))
     return e;
   const i = r.get(e);
   if (i)
     return i;
-  const o = Ku(mu(e));
+  const o = Yu(xu(e));
   if (o === 0)
     return e;
   const l = new Proxy(
@@ -955,19 +955,19 @@ function $i(e, t, n, s, r) {
   return r.set(e, l), l;
 }
 // @__NO_SIDE_EFFECTS__
-function Rt(e) {
-  return /* @__PURE__ */ mt(e) ? /* @__PURE__ */ Rt(e.__v_raw) : !!(e && e.__v_isReactive);
+function Lt(e) {
+  return /* @__PURE__ */ xt(e) ? /* @__PURE__ */ Lt(e.__v_raw) : !!(e && e.__v_isReactive);
 }
 // @__NO_SIDE_EFFECTS__
-function mt(e) {
+function xt(e) {
   return !!(e && e.__v_isReadonly);
 }
 // @__NO_SIDE_EFFECTS__
-function Ke(e) {
+function qe(e) {
   return !!(e && e.__v_isShallow);
 }
 // @__NO_SIDE_EFFECTS__
-function Si(e) {
+function Ci(e) {
   return e ? !!e.__v_raw : !1;
 }
 // @__NO_SIDE_EFFECTS__
@@ -975,49 +975,49 @@ function ae(e) {
   const t = e && e.__v_raw;
   return t ? /* @__PURE__ */ ae(t) : e;
 }
-function Yu(e) {
-  return !fe(e, "__v_skip") && Object.isExtensible(e) && Vl(e, "__v_skip", !0), e;
+function Zu(e) {
+  return !fe(e, "__v_skip") && Object.isExtensible(e) && Wl(e, "__v_skip", !0), e;
 }
-const qe = (e) => he(e) ? /* @__PURE__ */ ur(e) : e, Ot = (e) => he(e) ? /* @__PURE__ */ ri(e) : e;
+const Ye = (e) => he(e) ? /* @__PURE__ */ fr(e) : e, jt = (e) => he(e) ? /* @__PURE__ */ oi(e) : e;
 // @__NO_SIDE_EFFECTS__
-function Ne(e) {
+function Pe(e) {
   return e ? e.__v_isRef === !0 : !1;
 }
 // @__NO_SIDE_EFFECTS__
 function xe(e) {
-  return Ju(e, !1);
+  return Qu(e, !1);
 }
-function Ju(e, t) {
-  return /* @__PURE__ */ Ne(e) ? e : new Zu(e, t);
+function Qu(e, t) {
+  return /* @__PURE__ */ Pe(e) ? e : new Xu(e, t);
 }
-class Zu {
+class Xu {
   constructor(t, n) {
-    this.dep = new zi(), this.__v_isRef = !0, this.__v_isShallow = !1, this._rawValue = n ? t : /* @__PURE__ */ ae(t), this._value = n ? t : qe(t), this.__v_isShallow = n;
+    this.dep = new _i(), this.__v_isRef = !0, this.__v_isShallow = !1, this._rawValue = n ? t : /* @__PURE__ */ ae(t), this._value = n ? t : Ye(t), this.__v_isShallow = n;
   }
   get value() {
     return this.dep.track(), this._value;
   }
   set value(t) {
-    const n = this._rawValue, s = this.__v_isShallow || /* @__PURE__ */ Ke(t) || /* @__PURE__ */ mt(t);
-    t = s ? t : /* @__PURE__ */ ae(t), ft(t, n) && (this._rawValue = t, this._value = s ? t : qe(t), this.dep.trigger());
+    const n = this._rawValue, s = this.__v_isShallow || /* @__PURE__ */ qe(t) || /* @__PURE__ */ xt(t);
+    t = s ? t : /* @__PURE__ */ ae(t), ht(t, n) && (this._rawValue = t, this._value = s ? t : Ye(t), this.dep.trigger());
   }
 }
-function S(e) {
-  return /* @__PURE__ */ Ne(e) ? e.value : e;
+function C(e) {
+  return /* @__PURE__ */ Pe(e) ? e.value : e;
 }
-const Xu = {
-  get: (e, t, n) => t === "__v_raw" ? e : S(Reflect.get(e, t, n)),
+const ed = {
+  get: (e, t, n) => t === "__v_raw" ? e : C(Reflect.get(e, t, n)),
   set: (e, t, n, s) => {
     const r = e[t];
-    return /* @__PURE__ */ Ne(r) && !/* @__PURE__ */ Ne(n) ? (r.value = n, !0) : Reflect.set(e, t, n, s);
+    return /* @__PURE__ */ Pe(r) && !/* @__PURE__ */ Pe(n) ? (r.value = n, !0) : Reflect.set(e, t, n, s);
   }
 };
-function oa(e) {
-  return /* @__PURE__ */ Rt(e) ? e : new Proxy(e, Xu);
+function ca(e) {
+  return /* @__PURE__ */ Lt(e) ? e : new Proxy(e, ed);
 }
-class Qu {
+class td {
   constructor(t, n, s) {
-    this.fn = t, this.setter = n, this._value = void 0, this.dep = new zi(this), this.__v_isRef = !0, this.deps = void 0, this.depsTail = void 0, this.flags = 16, this.globalVersion = qn - 1, this.next = void 0, this.effect = this, this.__v_isReadonly = !n, this.isSSR = s;
+    this.fn = t, this.setter = n, this._value = void 0, this.dep = new _i(this), this.__v_isRef = !0, this.deps = void 0, this.depsTail = void 0, this.flags = 16, this.globalVersion = Qn - 1, this.next = void 0, this.effect = this, this.__v_isReadonly = !n, this.isSSR = s;
   }
   /**
    * @internal
@@ -1025,88 +1025,88 @@ class Qu {
   notify() {
     if (this.flags |= 16, !(this.flags & 8) && // avoid infinite self recursion
     pe !== this)
-      return ql(this, !0), !0;
+      return Zl(this, !0), !0;
   }
   get value() {
     const t = this.dep.track();
-    return Zl(this), t && (t.version = this.dep.version), this._value;
+    return ea(this), t && (t.version = this.dep.version), this._value;
   }
   set value(t) {
     this.setter && this.setter(t);
   }
 }
 // @__NO_SIDE_EFFECTS__
-function ed(e, t, n = !1) {
+function nd(e, t, n = !1) {
   let s, r;
-  return de(e) ? s = e : (s = e.get, r = e.set), new Qu(s, r, n);
+  return de(e) ? s = e : (s = e.get, r = e.set), new td(s, r, n);
 }
-const bs = {}, Ls = /* @__PURE__ */ new WeakMap();
+const _s = {}, js = /* @__PURE__ */ new WeakMap();
 let Zt;
-function td(e, t = !1, n = Zt) {
+function sd(e, t = !1, n = Zt) {
   if (n) {
-    let s = Ls.get(n);
-    s || Ls.set(n, s = []), s.push(e);
+    let s = js.get(n);
+    s || js.set(n, s = []), s.push(e);
   }
 }
-function nd(e, t, n = ve) {
-  const { immediate: s, deep: r, once: i, scheduler: o, augmentJob: l, call: c } = n, a = (M) => r ? M : /* @__PURE__ */ Ke(M) || r === !1 || r === 0 ? zt(M, 1) : zt(M);
-  let u, f, h, x, z = !1, k = !1;
-  if (/* @__PURE__ */ Ne(e) ? (f = () => e.value, z = /* @__PURE__ */ Ke(e)) : /* @__PURE__ */ Rt(e) ? (f = () => a(e), z = !0) : se(e) ? (k = !0, z = e.some((M) => /* @__PURE__ */ Rt(M) || /* @__PURE__ */ Ke(M)), f = () => e.map((M) => {
-    if (/* @__PURE__ */ Ne(M))
-      return M.value;
-    if (/* @__PURE__ */ Rt(M))
-      return a(M);
-    if (de(M))
-      return c ? c(M, 2) : M();
+function rd(e, t, n = ve) {
+  const { immediate: s, deep: r, once: i, scheduler: o, augmentJob: l, call: c } = n, a = (T) => r ? T : /* @__PURE__ */ qe(T) || r === !1 || r === 0 ? _t(T, 1) : _t(T);
+  let u, f, m, k, z = !1, x = !1;
+  if (/* @__PURE__ */ Pe(e) ? (f = () => e.value, z = /* @__PURE__ */ qe(e)) : /* @__PURE__ */ Lt(e) ? (f = () => a(e), z = !0) : se(e) ? (x = !0, z = e.some((T) => /* @__PURE__ */ Lt(T) || /* @__PURE__ */ qe(T)), f = () => e.map((T) => {
+    if (/* @__PURE__ */ Pe(T))
+      return T.value;
+    if (/* @__PURE__ */ Lt(T))
+      return a(T);
+    if (de(T))
+      return c ? c(T, 2) : T();
   })) : de(e) ? t ? f = c ? () => c(e, 2) : e : f = () => {
-    if (h) {
-      Ft();
+    if (m) {
+      Ot();
       try {
-        h();
+        m();
       } finally {
-        jt();
+        Ft();
       }
     }
-    const M = Zt;
+    const T = Zt;
     Zt = u;
     try {
-      return c ? c(e, 3, [x]) : e(x);
+      return c ? c(e, 3, [k]) : e(k);
     } finally {
-      Zt = M;
+      Zt = T;
     }
   } : f = sn, t && r) {
-    const M = f, ee = r === !0 ? 1 / 0 : r;
-    f = () => zt(M(), ee);
+    const T = f, ee = r === !0 ? 1 / 0 : r;
+    f = () => _t(T(), ee);
   }
-  const R = Mu(), U = () => {
-    u.stop(), R && R.active && Dl(R.effects, u);
+  const $ = Iu(), j = () => {
+    u.stop(), $ && $.active && jl($.effects, u);
   };
   if (i && t) {
-    const M = t;
+    const T = t;
     t = (...ee) => {
-      const te = M(...ee);
-      return U(), te;
+      const te = T(...ee);
+      return j(), te;
     };
   }
-  let D = k ? new Array(e.length).fill(bs) : bs;
-  const E = (M) => {
-    if (!(!(u.flags & 1) || !u.dirty && !M))
+  let O = x ? new Array(e.length).fill(_s) : _s;
+  const M = (T) => {
+    if (!(!(u.flags & 1) || !u.dirty && !T))
       if (t) {
         const ee = u.run();
-        if (M || r || z || (k ? ee.some((te, X) => ft(te, D[X])) : ft(ee, D))) {
-          h && h();
+        if (T || r || z || (x ? ee.some((te, Q) => ht(te, O[Q])) : ht(ee, O))) {
+          m && m();
           const te = Zt;
           Zt = u;
           try {
-            const X = [
+            const Q = [
               ee,
               // pass undefined as the old value when it's changed for the first time
-              D === bs ? void 0 : k && D[0] === bs ? [] : D,
-              x
+              O === _s ? void 0 : x && O[0] === _s ? [] : O,
+              k
             ];
-            D = ee, c ? c(t, 3, X) : (
+            O = ee, c ? c(t, 3, Q) : (
               // @ts-expect-error
-              t(...X)
+              t(...Q)
             );
           } finally {
             Zt = te;
@@ -1115,34 +1115,34 @@ function nd(e, t, n = ve) {
       } else
         u.run();
   };
-  return l && l(E), u = new Gl(f), u.scheduler = o ? () => o(E, !1) : E, x = (M) => td(M, !1, u), h = u.onStop = () => {
-    const M = Ls.get(u);
-    if (M) {
+  return l && l(M), u = new Yl(f), u.scheduler = o ? () => o(M, !1) : M, k = (T) => sd(T, !1, u), m = u.onStop = () => {
+    const T = js.get(u);
+    if (T) {
       if (c)
-        c(M, 4);
+        c(T, 4);
       else
-        for (const ee of M) ee();
-      Ls.delete(u);
+        for (const ee of T) ee();
+      js.delete(u);
     }
-  }, t ? s ? E(!0) : D = u.run() : o ? o(E.bind(null, !0), !0) : u.run(), U.pause = u.pause.bind(u), U.resume = u.resume.bind(u), U.stop = U, U;
+  }, t ? s ? M(!0) : O = u.run() : o ? o(M.bind(null, !0), !0) : u.run(), j.pause = u.pause.bind(u), j.resume = u.resume.bind(u), j.stop = j, j;
 }
-function zt(e, t = 1 / 0, n) {
+function _t(e, t = 1 / 0, n) {
   if (t <= 0 || !he(e) || e.__v_skip || (n = n || /* @__PURE__ */ new Map(), (n.get(e) || 0) >= t))
     return e;
-  if (n.set(e, t), t--, /* @__PURE__ */ Ne(e))
-    zt(e.value, t, n);
+  if (n.set(e, t), t--, /* @__PURE__ */ Pe(e))
+    _t(e.value, t, n);
   else if (se(e))
     for (let s = 0; s < e.length; s++)
-      zt(e[s], t, n);
-  else if (ln(e) || Pt(e))
+      _t(e[s], t, n);
+  else if (ln(e) || Dt(e))
     e.forEach((s) => {
-      zt(s, t, n);
+      _t(s, t, n);
     });
-  else if (Ol(e)) {
+  else if (Ul(e)) {
     for (const s in e)
-      zt(e[s], t, n);
+      _t(e[s], t, n);
     for (const s of Object.getOwnPropertySymbols(e))
-      Object.prototype.propertyIsEnumerable.call(e, s) && zt(e[s], t, n);
+      Object.prototype.propertyIsEnumerable.call(e, s) && _t(e[s], t, n);
   }
   return e;
 }
@@ -1151,28 +1151,28 @@ function zt(e, t = 1 / 0, n) {
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
-function us(e, t, n, s) {
+function ps(e, t, n, s) {
   try {
     return s ? e(...s) : e();
   } catch (r) {
-    dr(r, t, n);
+    pr(r, t, n);
   }
 }
-function tt(e, t, n, s) {
+function st(e, t, n, s) {
   if (de(e)) {
-    const r = us(e, t, n, s);
-    return r && Fl(r) && r.catch((i) => {
-      dr(i, t, n);
+    const r = ps(e, t, n, s);
+    return r && Bl(r) && r.catch((i) => {
+      pr(i, t, n);
     }), r;
   }
   if (se(e)) {
     const r = [];
     for (let i = 0; i < e.length; i++)
-      r.push(tt(e[i], t, n, s));
+      r.push(st(e[i], t, n, s));
     return r;
   }
 }
-function dr(e, t, n, s = !0) {
+function pr(e, t, n, s = !0) {
   const r = t ? t.vnode : null, { errorHandler: i, throwUnhandledErrorInProduction: o } = t && t.appContext.config || ve;
   if (t) {
     let l = t.parent;
@@ -1187,135 +1187,135 @@ function dr(e, t, n, s = !0) {
       l = l.parent;
     }
     if (i) {
-      Ft(), us(i, null, 10, [
+      Ot(), ps(i, null, 10, [
         e,
         c,
         a
-      ]), jt();
+      ]), Ft();
       return;
     }
   }
-  sd(e, n, r, s, o);
+  id(e, n, r, s, o);
 }
-function sd(e, t, n, s = !0, r = !1) {
+function id(e, t, n, s = !0, r = !1) {
   if (r)
     throw e;
   console.error(e);
 }
-const Te = [];
-let ct = -1;
-const bn = [];
-let It = null, xn = 0;
-const la = /* @__PURE__ */ Promise.resolve();
-let Ds = null;
-function aa(e) {
-  const t = Ds || la;
+const Ie = [];
+let dt = -1;
+const kn = [];
+let Nt = null, vn = 0;
+const ua = /* @__PURE__ */ Promise.resolve();
+let Bs = null;
+function da(e) {
+  const t = Bs || ua;
   return e ? t.then(this ? e.bind(this) : e) : t;
 }
-function rd(e) {
-  let t = ct + 1, n = Te.length;
+function od(e) {
+  let t = dt + 1, n = Ie.length;
   for (; t < n; ) {
-    const s = t + n >>> 1, r = Te[s], i = Jn(r);
+    const s = t + n >>> 1, r = Ie[s], i = es(r);
     i < e || i === e && r.flags & 2 ? t = s + 1 : n = s;
   }
   return t;
 }
-function Ci(e) {
+function Ei(e) {
   if (!(e.flags & 1)) {
-    const t = Jn(e), n = Te[Te.length - 1];
+    const t = es(e), n = Ie[Ie.length - 1];
     !n || // fast path when the job id is larger than the tail
-    !(e.flags & 2) && t >= Jn(n) ? Te.push(e) : Te.splice(rd(t), 0, e), e.flags |= 1, ca();
+    !(e.flags & 2) && t >= es(n) ? Ie.push(e) : Ie.splice(od(t), 0, e), e.flags |= 1, Aa();
   }
 }
-function ca() {
-  Ds || (Ds = la.then(da));
+function Aa() {
+  Bs || (Bs = ua.then(pa));
 }
-function id(e) {
+function ld(e) {
   if (!se(e))
-    It && e.id === -1 ? It.splice(xn + 1, 0, e) : e.flags & 1 || (bn.push(e), e.flags |= 1);
+    Nt && e.id === -1 ? Nt.splice(vn + 1, 0, e) : e.flags & 1 || (kn.push(e), e.flags |= 1);
   else
     for (let t = 0; t < e.length; t++)
-      bn.push(e[t]);
-  ca();
+      kn.push(e[t]);
+  Aa();
 }
-function bo(e, t, n = ct + 1) {
-  for (; n < Te.length; n++) {
-    const s = Te[n];
+function zo(e, t, n = dt + 1) {
+  for (; n < Ie.length; n++) {
+    const s = Ie[n];
     if (s && s.flags & 2) {
       if (e && s.id !== e.uid)
         continue;
-      Te.splice(n, 1), n--, s.flags & 4 && (s.flags &= -2), s(), s.flags & 4 || (s.flags &= -2);
+      Ie.splice(n, 1), n--, s.flags & 4 && (s.flags &= -2), s(), s.flags & 4 || (s.flags &= -2);
     }
   }
 }
-function ua(e) {
-  if (bn.length) {
-    const t = [...new Set(bn)].sort(
-      (n, s) => Jn(n) - Jn(s)
+function fa(e) {
+  if (kn.length) {
+    const t = [...new Set(kn)].sort(
+      (n, s) => es(n) - es(s)
     );
-    if (bn.length = 0, It) {
+    if (kn.length = 0, Nt) {
       for (let n = 0; n < t.length; n++)
-        It.push(t[n]);
+        Nt.push(t[n]);
       return;
     }
-    for (It = t, xn = 0; xn < It.length; xn++) {
-      const n = It[xn];
+    for (Nt = t, vn = 0; vn < Nt.length; vn++) {
+      const n = Nt[vn];
       n.flags & 4 && (n.flags &= -2), n.flags & 8 || n(), n.flags &= -2;
     }
-    It = null, xn = 0;
+    Nt = null, vn = 0;
   }
 }
-const Jn = (e) => e.id == null ? e.flags & 2 ? -1 : 1 / 0 : e.id;
-function da(e) {
+const es = (e) => e.id == null ? e.flags & 2 ? -1 : 1 / 0 : e.id;
+function pa(e) {
   try {
-    for (ct = 0; ct < Te.length; ct++) {
-      const t = Te[ct];
-      t && !(t.flags & 8) && (t.flags & 4 && (t.flags &= -2), us(
+    for (dt = 0; dt < Ie.length; dt++) {
+      const t = Ie[dt];
+      t && !(t.flags & 8) && (t.flags & 4 && (t.flags &= -2), ps(
         t,
         t.i,
         t.i ? 15 : 14
       ), t.flags & 4 || (t.flags &= -2));
     }
   } finally {
-    for (; ct < Te.length; ct++) {
-      const t = Te[ct];
+    for (; dt < Ie.length; dt++) {
+      const t = Ie[dt];
       t && (t.flags &= -2);
     }
-    ct = -1, Te.length = 0, ua(), Ds = null, (Te.length || bn.length) && da();
+    dt = -1, Ie.length = 0, fa(), Bs = null, (Ie.length || kn.length) && pa();
   }
 }
-let Ge = null, Aa = null;
-function Fs(e) {
-  const t = Ge;
-  return Ge = e, Aa = e && e.type.__scopeId || null, t;
+let Ke = null, ha = null;
+function Vs(e) {
+  const t = Ke;
+  return Ke = e, ha = e && e.type.__scopeId || null, t;
 }
-function fa(e, t = Ge, n) {
+function ma(e, t = Ke, n) {
   if (!t || e._n)
     return e;
   const s = (...r) => {
-    s._d && Bs(-1);
-    const i = Fs(t), o = on.length;
+    s._d && Ws(-1);
+    const i = Vs(t), o = on.length;
     let l;
     try {
       l = e(...r);
     } finally {
-      for (let c = on.length; c > o; c--) Pa();
-      Fs(i), s._d && Bs(1);
+      for (let c = on.length; c > o; c--) Ra();
+      Vs(i), s._d && Ws(1);
     }
     return l;
   };
   return s._n = !0, s._c = !0, s._d = !0, s;
 }
-function pt(e, t) {
-  if (Ge === null)
+function mt(e, t) {
+  if (Ke === null)
     return e;
-  const n = mr(Ge), s = e.dirs || (e.dirs = []);
+  const n = vr(Ke), s = e.dirs || (e.dirs = []);
   for (let r = 0; r < t.length; r++) {
     let [i, o, l, c = ve] = t[r];
     i && (de(i) && (i = {
       mounted: i,
       updated: i
-    }), i.deep && zt(o), s.push({
+    }), i.deep && _t(o), s.push({
       dir: i,
       instance: n,
       value: o,
@@ -1332,110 +1332,110 @@ function Kt(e, t, n, s) {
     const l = r[o];
     i && (l.oldValue = i[o].value);
     let c = l.dir[s];
-    c && (Ft(), tt(c, n, 8, [
+    c && (Ot(), st(c, n, 8, [
       e.el,
       l,
       e,
       t
-    ]), jt());
+    ]), Ft());
   }
 }
-function od(e, t, n = !1) {
-  const s = Da();
-  if (s || kn) {
-    let r = kn ? kn._context.provides : s ? s.parent == null || s.ce ? s.vnode.appContext && s.vnode.appContext.provides : s.parent.provides : void 0;
+function ad(e, t, n = !1) {
+  const s = ja();
+  if (s || wn) {
+    let r = wn ? wn._context.provides : s ? s.parent == null || s.ce ? s.vnode.appContext && s.vnode.appContext.provides : s.parent.provides : void 0;
     if (r && e in r)
       return r[e];
     if (arguments.length > 1)
       return n && de(t) ? t.call(s && s.proxy) : t;
   }
 }
-const ld = /* @__PURE__ */ Symbol.for("v-scx"), ad = () => od(ld);
-function Ar(e, t, n) {
-  return cd(e, t, n);
+const cd = /* @__PURE__ */ Symbol.for("v-scx"), ud = () => ad(cd);
+function hr(e, t, n) {
+  return dd(e, t, n);
 }
-function cd(e, t, n = ve) {
-  const { immediate: s, deep: r, flush: i, once: o } = n, l = Oe({}, n), c = t && s || !t && i !== "post";
+function dd(e, t, n = ve) {
+  const { immediate: s, deep: r, flush: i, once: o } = n, l = je({}, n), c = t && s || !t && i !== "post";
   let a;
-  if (es) {
+  if (rs) {
     if (i === "sync") {
-      const x = ad();
-      a = x.__watcherHandles || (x.__watcherHandles = []);
+      const k = ud();
+      a = k.__watcherHandles || (k.__watcherHandles = []);
     } else if (!c) {
-      const x = () => {
+      const k = () => {
       };
-      return x.stop = sn, x.resume = sn, x.pause = sn, x;
+      return k.stop = sn, k.resume = sn, k.pause = sn, k;
     }
   }
   const u = Vt;
-  l.call = (x, z, k) => tt(x, u, z, k);
+  l.call = (k, z, x) => st(k, u, z, x);
   let f = !1;
-  i === "post" ? l.scheduler = (x) => {
-    Re(x, u && u.suspense);
-  } : i !== "sync" && (f = !0, l.scheduler = (x, z) => {
-    z ? x() : Ci(x);
-  }), l.augmentJob = (x) => {
-    t && (x.flags |= 4), f && (x.flags |= 2, u && (x.id = u.uid, x.i = u));
+  i === "post" ? l.scheduler = (k) => {
+    Le(k, u && u.suspense);
+  } : i !== "sync" && (f = !0, l.scheduler = (k, z) => {
+    z ? k() : Ei(k);
+  }), l.augmentJob = (k) => {
+    t && (k.flags |= 4), f && (k.flags |= 2, u && (k.id = u.uid, k.i = u));
   };
-  const h = nd(e, t, l);
-  return es && (a ? a.push(h) : c && h()), h;
+  const m = rd(e, t, l);
+  return rs && (a ? a.push(m) : c && m()), m;
 }
-const ud = /* @__PURE__ */ Symbol("_vte"), fr = (e) => e.__isTeleport, He = /* @__PURE__ */ Symbol("_leaveCb"), Tn = /* @__PURE__ */ Symbol("_enterCb");
-function dd() {
+const Ad = /* @__PURE__ */ Symbol("_vte"), mr = (e) => e.__isTeleport, We = /* @__PURE__ */ Symbol("_leaveCb"), Dn = /* @__PURE__ */ Symbol("_enterCb");
+function fd() {
   const e = {
     isMounted: !1,
     isLeaving: !1,
     isUnmounting: !1,
     leavingVNodes: /* @__PURE__ */ new Map()
   };
-  return ya(() => {
+  return wa(() => {
     e.isMounted = !0;
-  }), Mi(() => {
+  }), Ti(() => {
     e.isUnmounting = !0;
   }), e;
 }
-const Ue = [Function, Array], pa = {
+const He = [Function, Array], ga = {
   mode: String,
   appear: Boolean,
   persisted: Boolean,
   // enter
-  onBeforeEnter: Ue,
-  onEnter: Ue,
-  onAfterEnter: Ue,
-  onEnterCancelled: Ue,
+  onBeforeEnter: He,
+  onEnter: He,
+  onAfterEnter: He,
+  onEnterCancelled: He,
   // leave
-  onBeforeLeave: Ue,
-  onLeave: Ue,
-  onAfterLeave: Ue,
-  onLeaveCancelled: Ue,
+  onBeforeLeave: He,
+  onLeave: He,
+  onAfterLeave: He,
+  onLeaveCancelled: He,
   // appear
-  onBeforeAppear: Ue,
-  onAppear: Ue,
-  onAfterAppear: Ue,
-  onAppearCancelled: Ue
-}, ha = (e) => {
+  onBeforeAppear: He,
+  onAppear: He,
+  onAfterAppear: He,
+  onAppearCancelled: He
+}, xa = (e) => {
   const t = e.subTree;
-  return t.component ? ha(t.component) : t;
-}, Ad = {
+  return t.component ? xa(t.component) : t;
+}, pd = {
   name: "BaseTransition",
-  props: pa,
+  props: ga,
   setup(e, { slots: t }) {
-    const n = Da(), s = dd();
+    const n = ja(), s = fd();
     return () => {
-      const r = t.default && xa(t.default(), !0), i = r && r.length ? ma(r) : (
+      const r = t.default && ba(t.default(), !0), i = r && r.length ? va(r) : (
         // Keep explicit default-slot conditionals on the same transition path
         // as regular v-if branches, which render a comment placeholder.
-        n.subTree ? F() : void 0
+        n.subTree ? R() : void 0
       );
       if (!i)
         return;
       const o = /* @__PURE__ */ ae(e), { mode: l } = o;
       if (s.isLeaving)
-        return Nr(i);
-      const c = js(i);
+        return Dr(i);
+      const c = Us(i);
       if (!c)
-        return Nr(i);
-      let a = ii(
+        return Dr(i);
+      let a = li(
         c,
         o,
         s,
@@ -1443,26 +1443,26 @@ const Ue = [Function, Array], pa = {
         // #11061, ensure enterHooks is fresh after clone
         (f) => a = f
       );
-      c.type !== Ie && Zn(c, a);
-      let u = n.subTree && js(n.subTree);
-      if (u && u.type !== Ie && !Xt(u, c) && ha(n).type !== Ie) {
-        let f = ii(
+      c.type !== Ne && ts(c, a);
+      let u = n.subTree && Us(n.subTree);
+      if (u && u.type !== Ne && !Qt(u, c) && xa(n).type !== Ne) {
+        let f = li(
           u,
           o,
           s,
           n
         );
-        if (Zn(u, f), l === "out-in" && c.type !== Ie)
+        if (ts(u, f), l === "out-in" && c.type !== Ne)
           return s.isLeaving = !0, f.afterLeave = () => {
             s.isLeaving = !1, n.job.flags & 8 || n.update(), delete f.afterLeave, u = void 0;
-          }, Nr(i);
-        l === "in-out" && c.type !== Ie ? f.delayLeave = (h, x, z) => {
-          const k = ga(
+          }, Dr(i);
+        l === "in-out" && c.type !== Ne ? f.delayLeave = (m, k, z) => {
+          const x = ya(
             s,
             u
           );
-          k[String(u.key)] = u, h[He] = () => {
-            x(), h[He] = void 0, delete a.delayedLeave, u = void 0;
+          x[String(u.key)] = u, m[We] = () => {
+            k(), m[We] = void 0, delete a.delayedLeave, u = void 0;
           }, a.delayedLeave = () => {
             z(), delete a.delayedLeave, u = void 0;
           };
@@ -1472,24 +1472,24 @@ const Ue = [Function, Array], pa = {
     };
   }
 };
-function ma(e) {
+function va(e) {
   let t = e[0];
   if (e.length > 1) {
     for (const n of e)
-      if (n.type !== Ie) {
+      if (n.type !== Ne) {
         t = n;
         break;
       }
   }
   return t;
 }
-const fd = Ad;
-function ga(e, t) {
+const hd = pd;
+function ya(e, t) {
   const { leavingVNodes: n } = e;
   let s = n.get(t.type);
   return s || (s = /* @__PURE__ */ Object.create(null), n.set(t.type, s)), s;
 }
-function ii(e, t, n, s, r) {
+function li(e, t, n, s, r) {
   const {
     appear: i,
     mode: o,
@@ -1498,74 +1498,74 @@ function ii(e, t, n, s, r) {
     onEnter: a,
     onAfterEnter: u,
     onEnterCancelled: f,
-    onBeforeLeave: h,
-    onLeave: x,
+    onBeforeLeave: m,
+    onLeave: k,
     onAfterLeave: z,
-    onLeaveCancelled: k,
-    onBeforeAppear: R,
-    onAppear: U,
-    onAfterAppear: D,
-    onAppearCancelled: E
-  } = t, M = String(e.key), ee = ga(n, e), te = (C, p) => {
-    C && tt(
-      C,
+    onLeaveCancelled: x,
+    onBeforeAppear: $,
+    onAppear: j,
+    onAfterAppear: O,
+    onAppearCancelled: M
+  } = t, T = String(e.key), ee = ya(n, e), te = (E, p) => {
+    E && st(
+      E,
       s,
       9,
       p
     );
-  }, X = (C, p) => {
-    const m = p[1];
-    te(C, p), se(C) ? C.every((v) => v.length <= 1) && m() : C.length <= 1 && m();
+  }, Q = (E, p) => {
+    const h = p[1];
+    te(E, p), se(E) ? E.every((v) => v.length <= 1) && h() : E.length <= 1 && h();
   }, re = {
     mode: o,
     persisted: l,
-    beforeEnter(C) {
+    beforeEnter(E) {
       let p = c;
       if (!n.isMounted)
         if (i)
-          p = R || c;
+          p = $ || c;
         else
           return;
-      C[He] && C[He](
+      E[We] && E[We](
         !0
         /* cancelled */
       );
-      const m = ee[M];
-      m && Xt(e, m) && m.el[He] && m.el[He](), te(p, [C]);
+      const h = ee[T];
+      h && Qt(e, h) && h.el[We] && h.el[We](), te(p, [E]);
     },
-    enter(C) {
-      if (ee[M] === e) return;
-      let p = a, m = u, v = f;
+    enter(E) {
+      if (ee[T] === e) return;
+      let p = a, h = u, v = f;
       if (!n.isMounted)
         if (i)
-          p = U || a, m = D || u, v = E || f;
+          p = j || a, h = O || u, v = M || f;
         else
           return;
-      let N = !1;
-      C[Tn] = (le) => {
-        N || (N = !0, le ? te(v, [C]) : te(m, [C]), re.delayedLeave && re.delayedLeave(), C[Tn] = void 0);
+      let P = !1;
+      E[Dn] = (le) => {
+        P || (P = !0, le ? te(v, [E]) : te(h, [E]), re.delayedLeave && re.delayedLeave(), E[Dn] = void 0);
       };
-      const ie = C[Tn].bind(null, !1);
-      p ? X(p, [C, ie]) : ie();
+      const ie = E[Dn].bind(null, !1);
+      p ? Q(p, [E, ie]) : ie();
     },
-    leave(C, p) {
-      const m = String(e.key);
-      if (C[Tn] && C[Tn](
+    leave(E, p) {
+      const h = String(e.key);
+      if (E[Dn] && E[Dn](
         !0
         /* cancelled */
       ), n.isUnmounting)
         return p();
-      te(h, [C]);
+      te(m, [E]);
       let v = !1;
-      C[He] = (ie) => {
-        v || (v = !0, p(), ie ? te(k, [C]) : te(z, [C]), C[He] = void 0, ee[m] === e && delete ee[m]);
+      E[We] = (ie) => {
+        v || (v = !0, p(), ie ? te(x, [E]) : te(z, [E]), E[We] = void 0, ee[h] === e && delete ee[h]);
       };
-      const N = C[He].bind(null, !1);
-      ee[m] = e, x ? X(x, [C, N]) : N();
+      const P = E[We].bind(null, !1);
+      ee[h] = e, k ? Q(k, [E, P]) : P();
     },
-    clone(C) {
-      const p = ii(
-        C,
+    clone(E) {
+      const p = li(
+        E,
         t,
         n,
         s,
@@ -1576,13 +1576,13 @@ function ii(e, t, n, s, r) {
   };
   return re;
 }
-function Nr(e) {
-  if (Ei(e))
+function Dr(e) {
+  if (Mi(e))
     return e = Bt(e), e.children = null, e;
 }
-function js(e) {
-  if (!Ei(e))
-    return fr(e.type) && e.children ? ma(e.children) : e;
+function Us(e) {
+  if (!Mi(e))
+    return mr(e.type) && e.children ? va(e.children) : e;
   if (e.component)
     return e.component.subTree;
   const { shapeFlag: t, children: n } = e;
@@ -1593,24 +1593,24 @@ function js(e) {
       return n.default();
   }
 }
-function Zn(e, t) {
+function ts(e, t) {
   if (e.shapeFlag & 6 && e.component) {
     e.transition = t;
     const n = e.component.subTree;
-    Zn(
-      fr(n.type) && js(n) || n,
+    ts(
+      mr(n.type) && Us(n) || n,
       t
     );
   } else e.shapeFlag & 128 ? (e.ssContent.transition = t.clone(e.ssContent), e.ssFallback.transition = t.clone(e.ssFallback)) : e.transition = t;
 }
-function xa(e, t = !1, n) {
+function ba(e, t = !1, n) {
   let s = [], r = 0;
   for (let i = 0; i < e.length; i++) {
     let o = e[i];
     const l = n == null ? o.key : String(n) + String(o.key != null ? o.key : i);
     o.type === J ? (o.patchFlag & 128 && r++, s = s.concat(
-      xa(o.children, t, l)
-    )) : (t || o.type !== Ie) && s.push(l != null ? Bt(o, { key: l }) : o);
+      ba(o.children, t, l)
+    )) : (t || o.type !== Ne) && s.push(l != null ? Bt(o, { key: l }) : o);
   }
   if (r > 1)
     for (let i = 0; i < s.length; i++)
@@ -1622,23 +1622,23 @@ function Be(e, t) {
   return de(e) ? (
     // #8236: extend call and options.name access are considered side-effects
     // by Rollup, so we have to wrap it in a pure-annotated IIFE.
-    Oe({ name: e.name }, t, { setup: e })
+    je({ name: e.name }, t, { setup: e })
   ) : e;
 }
-function pd(e) {
+function md(e) {
   e.ids = [e.ids[0] + e.ids[2]++ + "-", 0, 0];
 }
-function ko(e, t) {
+function _o(e, t) {
   let n;
   return !!((n = Object.getOwnPropertyDescriptor(e, t)) && !n.configurable);
 }
-const Os = /* @__PURE__ */ new WeakMap();
-function Bn(e, t, n, s, r = !1) {
+const Hs = /* @__PURE__ */ new WeakMap();
+function Wn(e, t, n, s, r = !1) {
   if (se(e)) {
     e.forEach(
-      (k, R) => Bn(
-        k,
-        t && (se(t) ? t[R] : t),
+      (x, $) => Wn(
+        x,
+        t && (se(t) ? t[$] : t),
         n,
         s,
         r
@@ -1646,81 +1646,81 @@ function Bn(e, t, n, s, r = !1) {
     );
     return;
   }
-  if (Vn(s) && !r) {
-    s.shapeFlag & 512 && s.type.__asyncResolved && s.component.subTree.component && Bn(e, t, n, s.component.subTree);
+  if (Gn(s) && !r) {
+    s.shapeFlag & 512 && s.type.__asyncResolved && s.component.subTree.component && Wn(e, t, n, s.component.subTree);
     return;
   }
-  const i = s.shapeFlag & 4 ? mr(s.component) : s.el, o = r ? null : i, { i: l, r: c } = e, a = t && t.r, u = l.refs === ve ? l.refs = {} : l.refs, f = l.setupState, h = /* @__PURE__ */ ae(f), x = f === ve ? Ll : (k) => ko(u, k) ? !1 : fe(h, k), z = (k, R) => !(R && ko(u, R));
+  const i = s.shapeFlag & 4 ? vr(s.component) : s.el, o = r ? null : i, { i: l, r: c } = e, a = t && t.r, u = l.refs === ve ? l.refs = {} : l.refs, f = l.setupState, m = /* @__PURE__ */ ae(f), k = f === ve ? Fl : (x) => _o(u, x) ? !1 : fe(m, x), z = (x, $) => !($ && _o(u, $));
   if (a != null && a !== c) {
-    if (wo(t), ye(a))
-      u[a] = null, x(a) && (f[a] = null);
-    else if (/* @__PURE__ */ Ne(a)) {
-      const k = t;
-      z(a, k.k) && (a.value = null), k.k && (u[k.k] = null);
+    if ($o(t), ye(a))
+      u[a] = null, k(a) && (f[a] = null);
+    else if (/* @__PURE__ */ Pe(a)) {
+      const x = t;
+      z(a, x.k) && (a.value = null), x.k && (u[x.k] = null);
     }
   }
   if (de(c))
-    us(c, l, 12, [o, u]);
+    ps(c, l, 12, [o, u]);
   else {
-    const k = ye(c), R = /* @__PURE__ */ Ne(c);
-    if (k || R) {
-      const U = () => {
+    const x = ye(c), $ = /* @__PURE__ */ Pe(c);
+    if (x || $) {
+      const j = () => {
         if (e.f) {
-          const D = k ? x(c) ? f[c] : u[c] : z() || !e.k ? c.value : u[e.k];
+          const O = x ? k(c) ? f[c] : u[c] : z() || !e.k ? c.value : u[e.k];
           if (r)
-            se(D) && Dl(D, i);
-          else if (se(D))
-            D.includes(i) || D.push(i);
-          else if (k)
-            u[c] = [i], x(c) && (f[c] = u[c]);
+            se(O) && jl(O, i);
+          else if (se(O))
+            O.includes(i) || O.push(i);
+          else if (x)
+            u[c] = [i], k(c) && (f[c] = u[c]);
           else {
-            const E = [i];
-            z(c, e.k) && (c.value = E), e.k && (u[e.k] = E);
+            const M = [i];
+            z(c, e.k) && (c.value = M), e.k && (u[e.k] = M);
           }
-        } else k ? (u[c] = o, x(c) && (f[c] = o)) : R && (z(c, e.k) && (c.value = o), e.k && (u[e.k] = o));
+        } else x ? (u[c] = o, k(c) && (f[c] = o)) : $ && (z(c, e.k) && (c.value = o), e.k && (u[e.k] = o));
       };
       if (o) {
-        const D = () => {
-          U(), Os.delete(e);
+        const O = () => {
+          j(), Hs.delete(e);
         };
-        D.id = -1, Os.set(e, D), Re(D, n);
+        O.id = -1, Hs.set(e, O), Le(O, n);
       } else
-        wo(e), U();
+        $o(e), j();
     }
   }
 }
-function wo(e) {
-  const t = Os.get(e);
-  t && (t.flags |= 8, Os.delete(e));
+function $o(e) {
+  const t = Hs.get(e);
+  t && (t.flags |= 8, Hs.delete(e));
 }
-lr().requestIdleCallback;
-lr().cancelIdleCallback;
-const Vn = (e) => !!e.type.__asyncLoader, Ei = (e) => e.type.__isKeepAlive;
-function hd(e, t, n = Vt, s = !1) {
+ur().requestIdleCallback;
+ur().cancelIdleCallback;
+const Gn = (e) => !!e.type.__asyncLoader, Mi = (e) => e.type.__isKeepAlive;
+function gd(e, t, n = Vt, s = !1) {
   if (n) {
     const r = n[e] || (n[e] = []), i = t.__weh || (t.__weh = (...o) => {
-      Ft();
-      const l = Ni(n), c = tt(t, n, e, o);
-      return l(), jt(), c;
+      Ot();
+      const l = Pi(n), c = st(t, n, e, o);
+      return l(), Ft(), c;
     });
     return s ? r.unshift(i) : r.push(i), i;
   }
 }
-const va = (e) => (t, n = Vt) => {
-  (!es || e === "sp") && hd(e, (...s) => t(...s), n);
-}, ya = va("m"), Mi = va(
+const ka = (e) => (t, n = Vt) => {
+  (!rs || e === "sp") && gd(e, (...s) => t(...s), n);
+}, wa = ka("m"), Ti = ka(
   "bum"
-), md = /* @__PURE__ */ Symbol.for("v-ndc");
+), xd = /* @__PURE__ */ Symbol.for("v-ndc");
 function ce(e, t, n, s) {
   let r;
   const i = n, o = se(e);
   if (o || ye(e)) {
-    const l = o && /* @__PURE__ */ Rt(e);
+    const l = o && /* @__PURE__ */ Lt(e);
     let c = !1, a = !1;
-    l && (c = !/* @__PURE__ */ Ke(e), a = /* @__PURE__ */ mt(e), e = cr(e)), r = new Array(e.length);
+    l && (c = !/* @__PURE__ */ qe(e), a = /* @__PURE__ */ xt(e), e = Ar(e)), r = new Array(e.length);
     for (let u = 0, f = e.length; u < f; u++)
       r[u] = t(
-        c ? a ? Ot(qe(e[u])) : qe(e[u]) : e[u],
+        c ? a ? jt(Ye(e[u])) : Ye(e[u]) : e[u],
         u,
         void 0,
         i
@@ -1747,10 +1747,10 @@ function ce(e, t, n, s) {
     r = [];
   return r;
 }
-const oi = (e) => e ? Fa(e) ? mr(e) : oi(e.parent) : null, Un = (
+const ai = (e) => e ? Ba(e) ? vr(e) : ai(e.parent) : null, Kn = (
   // Move PURE marker to new line to workaround compiler discarding it
   // due to type annotation
-  /* @__PURE__ */ Oe(/* @__PURE__ */ Object.create(null), {
+  /* @__PURE__ */ je(/* @__PURE__ */ Object.create(null), {
     $: (e) => e,
     $el: (e) => e.vnode.el,
     $data: (e) => e.data,
@@ -1758,26 +1758,26 @@ const oi = (e) => e ? Fa(e) ? mr(e) : oi(e.parent) : null, Un = (
     $attrs: (e) => e.attrs,
     $slots: (e) => e.slots,
     $refs: (e) => e.refs,
-    $parent: (e) => oi(e.parent),
-    $root: (e) => oi(e.root),
+    $parent: (e) => ai(e.parent),
+    $root: (e) => ai(e.root),
     $host: (e) => e.ce,
     $emit: (e) => e.emit,
     $options: (e) => e.type,
     $forceUpdate: (e) => e.f || (e.f = () => {
-      Ci(e.update);
+      Ei(e.update);
     }),
-    $nextTick: (e) => e.n || (e.n = aa.bind(e.proxy)),
+    $nextTick: (e) => e.n || (e.n = da.bind(e.proxy)),
     $watch: (e) => sn
   })
-), Pr = (e, t) => e !== ve && !e.__isScriptSetup && fe(e, t), gd = {
+), Lr = (e, t) => e !== ve && !e.__isScriptSetup && fe(e, t), vd = {
   get({ _: e }, t) {
     if (t === "__v_skip")
       return !0;
     const { ctx: n, setupState: s, data: r, props: i, accessCache: o, type: l, appContext: c } = e;
     if (t[0] !== "$") {
-      const h = o[t];
-      if (h !== void 0)
-        switch (h) {
+      const m = o[t];
+      if (m !== void 0)
+        switch (m) {
           case 1:
             return s[t];
           case 2:
@@ -1788,7 +1788,7 @@ const oi = (e) => e ? Fa(e) ? mr(e) : oi(e.parent) : null, Un = (
             return i[t];
         }
       else {
-        if (Pr(s, t))
+        if (Lr(s, t))
           return o[t] = 1, s[t];
         if (fe(i, t))
           return o[t] = 3, i[t];
@@ -1797,10 +1797,10 @@ const oi = (e) => e ? Fa(e) ? mr(e) : oi(e.parent) : null, Un = (
         o[t] = 0;
       }
     }
-    const a = Un[t];
+    const a = Kn[t];
     let u, f;
     if (a)
-      return t === "$attrs" && Me(e.attrs, "get", ""), a(e);
+      return t === "$attrs" && Te(e.attrs, "get", ""), a(e);
     if (
       // css module (injected by vue-loader)
       (u = l.__cssModules) && (u = u[t])
@@ -1816,23 +1816,23 @@ const oi = (e) => e ? Fa(e) ? mr(e) : oi(e.parent) : null, Un = (
   },
   set({ _: e }, t, n) {
     const { data: s, setupState: r, ctx: i } = e;
-    return Pr(r, t) ? (r[t] = n, !0) : fe(e.props, t) || t[0] === "$" && t.slice(1) in e ? !1 : (i[t] = n, !0);
+    return Lr(r, t) ? (r[t] = n, !0) : fe(e.props, t) || t[0] === "$" && t.slice(1) in e ? !1 : (i[t] = n, !0);
   },
   has({
     _: { data: e, setupState: t, accessCache: n, ctx: s, appContext: r, props: i, type: o }
   }, l) {
     let c;
-    return !!(n[l] || Pr(t, l) || fe(i, l) || fe(s, l) || fe(Un, l) || fe(r.config.globalProperties, l) || (c = o.__cssModules) && c[l]);
+    return !!(n[l] || Lr(t, l) || fe(i, l) || fe(s, l) || fe(Kn, l) || fe(r.config.globalProperties, l) || (c = o.__cssModules) && c[l]);
   },
   defineProperty(e, t, n) {
     return n.get != null ? e._.accessCache[t] = 0 : fe(n, "value") && this.set(e, t, n.value, null), Reflect.defineProperty(e, t, n);
   }
 };
-function ba() {
+function za() {
   return {
     app: null,
     config: {
-      isNativeTag: Ll,
+      isNativeTag: Fl,
       performance: !1,
       globalProperties: {},
       optionMergeStrategies: {},
@@ -1849,20 +1849,20 @@ function ba() {
     emitsCache: /* @__PURE__ */ new WeakMap()
   };
 }
-let xd = 0;
-function vd(e, t) {
+let yd = 0;
+function bd(e, t) {
   return function(s, r = null) {
-    de(s) || (s = Oe({}, s)), r != null && !he(r) && (r = null);
-    const i = ba(), o = /* @__PURE__ */ new WeakSet(), l = [];
+    de(s) || (s = je({}, s)), r != null && !he(r) && (r = null);
+    const i = za(), o = /* @__PURE__ */ new WeakSet(), l = [];
     let c = !1;
     const a = i.app = {
-      _uid: xd++,
+      _uid: yd++,
       _component: s,
       _props: r,
       _container: null,
       _context: i,
       _instance: null,
-      version: Jd,
+      version: Qd,
       get config() {
         return i.config;
       },
@@ -1880,17 +1880,17 @@ function vd(e, t) {
       directive(u, f) {
         return f ? (i.directives[u] = f, a) : i.directives[u];
       },
-      mount(u, f, h) {
+      mount(u, f, m) {
         if (!c) {
-          const x = a._ceVNode || _e(s, r);
-          return x.appContext = i, h === !0 ? h = "svg" : h === !1 && (h = void 0), e(x, u, h), c = !0, a._container = u, u.__vue_app__ = a, mr(x.component);
+          const k = a._ceVNode || Se(s, r);
+          return k.appContext = i, m === !0 ? m = "svg" : m === !1 && (m = void 0), e(k, u, m), c = !0, a._container = u, u.__vue_app__ = a, vr(k.component);
         }
       },
       onUnmount(u) {
         l.push(u);
       },
       unmount() {
-        c && (tt(
+        c && (st(
           l,
           a._instance,
           16
@@ -1900,29 +1900,29 @@ function vd(e, t) {
         return i.provides[u] = f, a;
       },
       runWithContext(u) {
-        const f = kn;
-        kn = a;
+        const f = wn;
+        wn = a;
         try {
           return u();
         } finally {
-          kn = f;
+          wn = f;
         }
       }
     };
     return a;
   };
 }
-let kn = null;
-const yd = (e, t) => t === "modelValue" || t === "model-value" ? e.modelModifiers : e[`${t}Modifiers`] || e[`${Qe(t)}Modifiers`] || e[`${An(t)}Modifiers`];
-function bd(e, t, ...n) {
+let wn = null;
+const kd = (e, t) => t === "modelValue" || t === "model-value" ? e.modelModifiers : e[`${t}Modifiers`] || e[`${et(t)}Modifiers`] || e[`${fn(t)}Modifiers`];
+function wd(e, t, ...n) {
   if (e.isUnmounted) return;
   const s = e.vnode.props || ve;
   let r = n;
-  const i = t.startsWith("update:"), o = i && yd(s, t.slice(7));
-  o && (o.trim && (r = n.map((u) => ye(u) ? u.trim() : u)), o.number && (r = r.map(or)));
-  let l, c = s[l = Cr(t)] || // also try camelCase event handler (#2249)
-  s[l = Cr(Qe(t))];
-  !c && i && (c = s[l = Cr(An(t))]), c && tt(
+  const i = t.startsWith("update:"), o = i && kd(s, t.slice(7));
+  o && (o.trim && (r = n.map((u) => ye(u) ? u.trim() : u)), o.number && (r = r.map(cr)));
+  let l, c = s[l = Mr(t)] || // also try camelCase event handler (#2249)
+  s[l = Mr(et(t))];
+  !c && i && (c = s[l = Mr(fn(t))]), c && st(
     c,
     e,
     6,
@@ -1934,7 +1934,7 @@ function bd(e, t, ...n) {
       e.emitted = {};
     else if (e.emitted[l])
       return;
-    e.emitted[l] = !0, tt(
+    e.emitted[l] = !0, st(
       a,
       e,
       6,
@@ -1942,18 +1942,18 @@ function bd(e, t, ...n) {
     );
   }
 }
-function kd(e, t, n = !1) {
+function zd(e, t, n = !1) {
   const s = t.emitsCache, r = s.get(e);
   if (r !== void 0)
     return r;
   const i = e.emits;
   let o = {};
-  return i ? (se(i) ? i.forEach((l) => o[l] = null) : Oe(o, i), he(e) && s.set(e, o), o) : (he(e) && s.set(e, null), null);
+  return i ? (se(i) ? i.forEach((l) => o[l] = null) : je(o, i), he(e) && s.set(e, o), o) : (he(e) && s.set(e, null), null);
 }
-function pr(e, t) {
-  return !e || !sr(t) ? !1 : (t = t.slice(2), t = t === "Once" ? t : t.replace(/Once$/, ""), fe(e, t[0].toLowerCase() + t.slice(1)) || fe(e, An(t)) || fe(e, t));
+function gr(e, t) {
+  return !e || !or(t) ? !1 : (t = t.slice(2), t = t === "Once" ? t : t.replace(/Once$/, ""), fe(e, t[0].toLowerCase() + t.slice(1)) || fe(e, fn(t)) || fe(e, t));
 }
-function zo(e) {
+function So(e) {
   const {
     type: t,
     vnode: n,
@@ -1966,67 +1966,67 @@ function zo(e) {
     render: a,
     renderCache: u,
     props: f,
-    data: h,
-    setupState: x,
+    data: m,
+    setupState: k,
     ctx: z,
-    inheritAttrs: k
-  } = e, R = Fs(e);
-  let U, D;
+    inheritAttrs: x
+  } = e, $ = Vs(e);
+  let j, O;
   try {
     if (n.shapeFlag & 4) {
-      const M = r || s, ee = M;
-      U = dt(
+      const T = r || s, ee = T;
+      j = ft(
         a.call(
           ee,
-          M,
+          T,
           u,
           f,
-          x,
-          h,
+          k,
+          m,
           z
         )
-      ), D = l;
+      ), O = l;
     } else {
-      const M = t;
-      U = dt(
-        M.length > 1 ? M(
+      const T = t;
+      j = ft(
+        T.length > 1 ? T(
           f,
           { attrs: l, slots: o, emit: c }
-        ) : M(
+        ) : T(
           f,
           null
         )
-      ), D = t.props ? l : wd(l);
+      ), O = t.props ? l : _d(l);
     }
-  } catch (M) {
-    on.length = 0, dr(M, e, 1), U = _e(Ie);
+  } catch (T) {
+    on.length = 0, pr(T, e, 1), j = Se(Ne);
   }
-  let E = U;
-  if (D && k !== !1) {
-    const M = Object.keys(D), { shapeFlag: ee } = E;
-    M.length && ee & 7 && (i && M.some(rr) && (D = zd(
-      D,
+  let M = j;
+  if (O && x !== !1) {
+    const T = Object.keys(O), { shapeFlag: ee } = M;
+    T.length && ee & 7 && (i && T.some(lr) && (O = $d(
+      O,
       i
-    )), E = Bt(E, D, !1, !0));
+    )), M = Bt(M, O, !1, !0));
   }
-  if (n.dirs && (E = Bt(E, null, !1, !0), E.dirs = E.dirs ? E.dirs.concat(n.dirs) : n.dirs), n.transition) {
-    const M = fr(E.type) && js(E) || E;
-    Zn(M, n.transition);
+  if (n.dirs && (M = Bt(M, null, !1, !0), M.dirs = M.dirs ? M.dirs.concat(n.dirs) : n.dirs), n.transition) {
+    const T = mr(M.type) && Us(M) || M;
+    ts(T, n.transition);
   }
-  return U = E, Fs(R), U;
+  return j = M, Vs($), j;
 }
-const wd = (e) => {
+const _d = (e) => {
   let t;
   for (const n in e)
-    (n === "class" || n === "style" || sr(n)) && ((t || (t = {}))[n] = e[n]);
+    (n === "class" || n === "style" || or(n)) && ((t || (t = {}))[n] = e[n]);
   return t;
-}, zd = (e, t) => {
+}, $d = (e, t) => {
   const n = {};
   for (const s in e)
-    (!rr(s) || !(s.slice(9) in t)) && (n[s] = e[s]);
+    (!lr(s) || !(s.slice(9) in t)) && (n[s] = e[s]);
   return n;
 };
-function _d(e, t, n) {
+function Sd(e, t, n) {
   const { props: s, children: r, component: i } = e, { props: o, children: l, patchFlag: c } = t, a = i.emitsOptions;
   if (t.dirs || t.transition)
     return !0;
@@ -2034,35 +2034,35 @@ function _d(e, t, n) {
     if (c & 1024)
       return !0;
     if (c & 16)
-      return s ? _o(s, o, a) : !!o;
+      return s ? Co(s, o, a) : !!o;
     if (c & 8) {
       const u = t.dynamicProps;
       for (let f = 0; f < u.length; f++) {
-        const h = u[f];
-        if (ka(o, s, h) && !pr(a, h))
+        const m = u[f];
+        if (_a(o, s, m) && !gr(a, m))
           return !0;
       }
     }
   } else
-    return (r || l) && (!l || !l.$stable) ? !0 : s === o ? !1 : s ? o ? _o(s, o, a) : !0 : !!o;
+    return (r || l) && (!l || !l.$stable) ? !0 : s === o ? !1 : s ? o ? Co(s, o, a) : !0 : !!o;
   return !1;
 }
-function _o(e, t, n) {
+function Co(e, t, n) {
   const s = Object.keys(t);
   if (s.length !== Object.keys(e).length)
     return !0;
   for (let r = 0; r < s.length; r++) {
     const i = s[r];
-    if (ka(t, e, i) && !pr(n, i))
+    if (_a(t, e, i) && !gr(n, i))
       return !0;
   }
   return !1;
 }
-function ka(e, t, n) {
+function _a(e, t, n) {
   const s = e[n], r = t[n];
-  return n === "style" && he(s) && he(r) ? !Dt(s, r) : s !== r;
+  return n === "style" && he(s) && he(r) ? !Rt(s, r) : s !== r;
 }
-function $d({ vnode: e, parent: t, suspense: n }, s) {
+function Cd({ vnode: e, parent: t, suspense: n }, s) {
   for (; t; ) {
     const r = t.subTree;
     if (r.suspense && r.suspense.activeBranch === e && (r.suspense.vnode.el = r.el = s, e = r), r === e)
@@ -2072,15 +2072,15 @@ function $d({ vnode: e, parent: t, suspense: n }, s) {
   }
   n && n.activeBranch === e && (n.vnode.el = s);
 }
-const wa = {}, za = () => Object.create(wa), _a = (e) => Object.getPrototypeOf(e) === wa;
-function Sd(e, t, n, s = !1) {
-  const r = {}, i = za();
-  e.propsDefaults = /* @__PURE__ */ Object.create(null), $a(e, t, r, i);
+const $a = {}, Sa = () => Object.create($a), Ca = (e) => Object.getPrototypeOf(e) === $a;
+function Ed(e, t, n, s = !1) {
+  const r = {}, i = Sa();
+  e.propsDefaults = /* @__PURE__ */ Object.create(null), Ea(e, t, r, i);
   for (const o in e.propsOptions[0])
     o in r || (r[o] = void 0);
-  n ? e.props = s ? r : /* @__PURE__ */ qu(r) : e.type.props ? e.props = r : e.props = i, e.attrs = i;
+  n ? e.props = s ? r : /* @__PURE__ */ Ju(r) : e.type.props ? e.props = r : e.props = i, e.attrs = i;
 }
-function Cd(e, t, n, s) {
+function Md(e, t, n, s) {
   const {
     props: r,
     attrs: i,
@@ -2096,38 +2096,38 @@ function Cd(e, t, n, s) {
     if (o & 8) {
       const u = e.vnode.dynamicProps;
       for (let f = 0; f < u.length; f++) {
-        let h = u[f];
-        if (pr(e.emitsOptions, h))
+        let m = u[f];
+        if (gr(e.emitsOptions, m))
           continue;
-        const x = t[h];
+        const k = t[m];
         if (c)
-          if (fe(i, h))
-            x !== i[h] && (i[h] = x, a = !0);
+          if (fe(i, m))
+            k !== i[m] && (i[m] = k, a = !0);
           else {
-            const z = Qe(h);
-            r[z] = li(
+            const z = et(m);
+            r[z] = ci(
               c,
               l,
               z,
-              x,
+              k,
               e,
               !1
             );
           }
         else
-          x !== i[h] && (i[h] = x, a = !0);
+          k !== i[m] && (i[m] = k, a = !0);
       }
     }
   } else {
-    $a(e, t, r, i) && (a = !0);
+    Ea(e, t, r, i) && (a = !0);
     let u;
     for (const f in l)
       (!t || // for camelCase
       !fe(t, f) && // it's possible the original props was passed in as kebab-case
       // and converted to camelCase (#955)
-      ((u = An(f)) === f || !fe(t, u))) && (c ? n && // for camelCase
+      ((u = fn(f)) === f || !fe(t, u))) && (c ? n && // for camelCase
       (n[f] !== void 0 || // for kebab-case
-      n[u] !== void 0) && (r[f] = li(
+      n[u] !== void 0) && (r[f] = ci(
         c,
         l,
         f,
@@ -2139,24 +2139,24 @@ function Cd(e, t, n, s) {
       for (const f in i)
         (!t || !fe(t, f)) && (delete i[f], a = !0);
   }
-  a && wt(e.attrs, "set", "");
+  a && zt(e.attrs, "set", "");
 }
-function $a(e, t, n, s) {
+function Ea(e, t, n, s) {
   const [r, i] = e.propsOptions;
   let o = !1, l;
   if (t)
     for (let c in t) {
-      if (Fn(c))
+      if (Vn(c))
         continue;
       const a = t[c];
       let u;
-      r && fe(r, u = Qe(c)) ? !i || !i.includes(u) ? n[u] = a : (l || (l = {}))[u] = a : pr(e.emitsOptions, c) || (!(c in s) || a !== s[c]) && (s[c] = a, o = !0);
+      r && fe(r, u = et(c)) ? !i || !i.includes(u) ? n[u] = a : (l || (l = {}))[u] = a : gr(e.emitsOptions, c) || (!(c in s) || a !== s[c]) && (s[c] = a, o = !0);
     }
   if (i) {
     const c = /* @__PURE__ */ ae(n), a = l || ve;
     for (let u = 0; u < i.length; u++) {
       const f = i[u];
-      n[f] = li(
+      n[f] = ci(
         r,
         c,
         f,
@@ -2168,7 +2168,7 @@ function $a(e, t, n, s) {
   }
   return o;
 }
-function li(e, t, n, s, r, i) {
+function ci(e, t, n, s, r, i) {
   const o = e[n];
   if (o != null) {
     const l = fe(o, "default");
@@ -2179,7 +2179,7 @@ function li(e, t, n, s, r, i) {
         if (n in a)
           s = a[n];
         else {
-          const u = Ni(r);
+          const u = Pi(r);
           s = a[n] = c.call(
             null,
             t
@@ -2195,11 +2195,11 @@ function li(e, t, n, s, r, i) {
     ] && (i && !l ? s = !1 : o[
       1
       /* shouldCastTrue */
-    ] && (s === "" || s === An(n)) && (s = !0));
+    ] && (s === "" || s === fn(n)) && (s = !0));
   }
   return s;
 }
-function Ed(e, t, n = !1) {
+function Td(e, t, n = !1) {
   const s = t.propsCache, r = s.get(e);
   if (r)
     return r;
@@ -2208,85 +2208,85 @@ function Ed(e, t, n = !1) {
     return he(e) && s.set(e, en), en;
   if (se(i))
     for (let a = 0; a < i.length; a++) {
-      const u = Qe(i[a]);
-      $o(u) && (o[u] = ve);
+      const u = et(i[a]);
+      Eo(u) && (o[u] = ve);
     }
   else if (i)
     for (const a in i) {
-      const u = Qe(a);
-      if ($o(u)) {
-        const f = i[a], h = o[u] = se(f) || de(f) ? { type: f } : Oe({}, f), x = h.type;
-        let z = !1, k = !0;
-        if (se(x))
-          for (let R = 0; R < x.length; ++R) {
-            const U = x[R], D = de(U) && U.name;
-            if (D === "Boolean") {
+      const u = et(a);
+      if (Eo(u)) {
+        const f = i[a], m = o[u] = se(f) || de(f) ? { type: f } : je({}, f), k = m.type;
+        let z = !1, x = !0;
+        if (se(k))
+          for (let $ = 0; $ < k.length; ++$) {
+            const j = k[$], O = de(j) && j.name;
+            if (O === "Boolean") {
               z = !0;
               break;
-            } else D === "String" && (k = !1);
+            } else O === "String" && (x = !1);
           }
         else
-          z = de(x) && x.name === "Boolean";
-        h[
+          z = de(k) && k.name === "Boolean";
+        m[
           0
           /* shouldCast */
-        ] = z, h[
+        ] = z, m[
           1
           /* shouldCastTrue */
-        ] = k, (z || fe(h, "default")) && l.push(u);
+        ] = x, (z || fe(m, "default")) && l.push(u);
       }
     }
   const c = [o, l];
   return he(e) && s.set(e, c), c;
 }
-function $o(e) {
-  return e[0] !== "$" && !Fn(e);
+function Eo(e) {
+  return e[0] !== "$" && !Vn(e);
 }
-const Ti = (e) => e === "_" || e === "_ctx" || e === "$stable", Ii = (e) => se(e) ? e.map(dt) : [dt(e)], Md = (e, t, n) => {
+const Ii = (e) => e === "_" || e === "_ctx" || e === "$stable", Ni = (e) => se(e) ? e.map(ft) : [ft(e)], Id = (e, t, n) => {
   if (t._n)
     return t;
-  const s = fa((...r) => Ii(t(...r)), n);
+  const s = ma((...r) => Ni(t(...r)), n);
   return s._c = !1, s;
-}, Sa = (e, t, n) => {
+}, Ma = (e, t, n) => {
   const s = e._ctx;
   for (const r in e) {
-    if (Ti(r)) continue;
+    if (Ii(r)) continue;
     const i = e[r];
     if (de(i))
-      t[r] = Md(r, i, s);
+      t[r] = Id(r, i, s);
     else if (i != null) {
-      const o = Ii(i);
+      const o = Ni(i);
       t[r] = () => o;
     }
   }
-}, Ca = (e, t) => {
-  const n = Ii(t);
+}, Ta = (e, t) => {
+  const n = Ni(t);
   e.slots.default = () => n;
-}, Ea = (e, t, n) => {
+}, Ia = (e, t, n) => {
   for (const s in t)
-    (n || !Ti(s)) && (e[s] = t[s]);
-}, Td = (e, t, n) => {
-  const s = e.slots = za();
+    (n || !Ii(s)) && (e[s] = t[s]);
+}, Nd = (e, t, n) => {
+  const s = e.slots = Sa();
   if (e.vnode.shapeFlag & 32) {
     const r = t._;
-    r ? (Ea(s, t, n), n && Vl(s, "_", r, !0)) : Sa(t, s);
-  } else t && Ca(e, t);
-}, Id = (e, t, n) => {
+    r ? (Ia(s, t, n), n && Wl(s, "_", r, !0)) : Ma(t, s);
+  } else t && Ta(e, t);
+}, Pd = (e, t, n) => {
   const { vnode: s, slots: r } = e;
   let i = !0, o = ve;
   if (s.shapeFlag & 32) {
     const l = t._;
-    l ? n && l === 1 ? i = !1 : Ea(r, t, n) : (i = !t.$stable, Sa(t, r)), o = t;
-  } else t && (Ca(e, t), o = { default: 1 });
+    l ? n && l === 1 ? i = !1 : Ia(r, t, n) : (i = !t.$stable, Ma(t, r)), o = t;
+  } else t && (Ta(e, t), o = { default: 1 });
   if (i)
     for (const l in r)
-      !Ti(l) && o[l] == null && delete r[l];
-}, Re = Dd;
-function Nd(e) {
-  return Pd(e);
+      !Ii(l) && o[l] == null && delete r[l];
+}, Le = Fd;
+function Dd(e) {
+  return Ld(e);
 }
-function Pd(e, t) {
-  const n = lr();
+function Ld(e, t) {
+  const n = ur();
   n.__VUE__ = !0;
   const {
     insert: s,
@@ -2298,814 +2298,814 @@ function Pd(e, t) {
     setText: a,
     setElementText: u,
     parentNode: f,
-    nextSibling: h,
-    setScopeId: x = sn,
+    nextSibling: m,
+    setScopeId: k = sn,
     insertStaticContent: z
-  } = e, k = (g, y, $, L = null, T = null, P = null, V = void 0, B = null, O = !!y.dynamicChildren) => {
-    if (g === y)
+  } = e, x = (g, b, S, L = null, I = null, D = null, U = void 0, V = null, B = !!b.dynamicChildren) => {
+    if (g === b)
       return;
-    g && !Xt(g, y) && (L = xs(g), K(g, T, P, !0), g = null), y.patchFlag === -2 && (O = !1, y.dynamicChildren = null), y.dynamicChildren && g && g.dynamicChildren && g.dynamicChildren.hasOnce && (y.dynamicChildren === en && (y.dynamicChildren = []), y.dynamicChildren.hasOnce = !0);
-    const { type: I, ref: Q, shapeFlag: W } = y;
-    switch (I) {
-      case hr:
-        R(g, y, $, L);
+    g && !Qt(g, b) && (L = ks(g), K(g, I, D, !0), g = null), b.patchFlag === -2 && (B = !1, b.dynamicChildren = null), b.dynamicChildren && g && g.dynamicChildren && g.dynamicChildren.hasOnce && (b.dynamicChildren === en && (b.dynamicChildren = []), b.dynamicChildren.hasOnce = !0);
+    const { type: N, ref: X, shapeFlag: W } = b;
+    switch (N) {
+      case xr:
+        $(g, b, S, L);
         break;
-      case Ie:
-        U(g, y, $, L);
+      case Ne:
+        j(g, b, S, L);
         break;
-      case Lr:
-        g == null && D(y, $, L, V);
+      case Or:
+        g == null && O(b, S, L, U);
         break;
       case J:
         v(
           g,
-          y,
-          $,
+          b,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         );
         break;
       default:
         W & 1 ? ee(
           g,
-          y,
-          $,
+          b,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
-        ) : W & 6 ? N(
+          B
+        ) : W & 6 ? P(
           g,
-          y,
-          $,
+          b,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
-        ) : (W & 64 || W & 128) && I.process(
+          B
+        ) : (W & 64 || W & 128) && N.process(
           g,
-          y,
-          $,
+          b,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
           B,
-          O,
-          Cn
+          In
         );
     }
-    Q != null && T ? Bn(Q, g && g.ref, P, y || g, !y) : Q == null && g && g.ref != null && Bn(g.ref, null, P, g, !0);
-  }, R = (g, y, $, L) => {
+    X != null && I ? Wn(X, g && g.ref, D, b || g, !b) : X == null && g && g.ref != null && Wn(g.ref, null, D, g, !0);
+  }, $ = (g, b, S, L) => {
     if (g == null)
       s(
-        y.el = l(y.children),
-        $,
+        b.el = l(b.children),
+        S,
         L
       );
     else {
-      const T = y.el = g.el;
-      y.children !== g.children && a(T, y.children);
+      const I = b.el = g.el;
+      b.children !== g.children && a(I, b.children);
     }
-  }, U = (g, y, $, L) => {
+  }, j = (g, b, S, L) => {
     g == null ? s(
-      y.el = c(y.children || ""),
-      $,
+      b.el = c(b.children || ""),
+      S,
       L
-    ) : y.el = g.el;
-  }, D = (g, y, $, L) => {
+    ) : b.el = g.el;
+  }, O = (g, b, S, L) => {
     [g.el, g.anchor] = z(
       g.children,
-      y,
-      $,
+      b,
+      S,
       L,
       g.el,
       g.anchor
     );
-  }, E = ({ el: g, anchor: y }, $, L) => {
-    let T;
-    for (; g && g !== y; )
-      T = h(g), s(g, $, L), g = T;
-    s(y, $, L);
-  }, M = ({ el: g, anchor: y }) => {
-    let $;
-    for (; g && g !== y; )
-      $ = h(g), r(g), g = $;
-    r(y);
-  }, ee = (g, y, $, L, T, P, V, B, O) => {
-    if (y.type === "svg" ? V = "svg" : y.type === "math" && (V = "mathml"), g == null)
+  }, M = ({ el: g, anchor: b }, S, L) => {
+    let I;
+    for (; g && g !== b; )
+      I = m(g), s(g, S, L), g = I;
+    s(b, S, L);
+  }, T = ({ el: g, anchor: b }) => {
+    let S;
+    for (; g && g !== b; )
+      S = m(g), r(g), g = S;
+    r(b);
+  }, ee = (g, b, S, L, I, D, U, V, B) => {
+    if (b.type === "svg" ? U = "svg" : b.type === "math" && (U = "mathml"), g == null)
       te(
-        y,
-        $,
+        b,
+        S,
         L,
-        T,
-        P,
-        V,
-        B,
-        O
-      );
-    else {
-      const I = g.el && g.el._isVueCE ? g.el : null;
-      try {
-        I && I._beginPatch(), C(
-          g,
-          y,
-          T,
-          P,
-          V,
-          B,
-          O
-        );
-      } finally {
-        I && I._endPatch();
-      }
-    }
-  }, te = (g, y, $, L, T, P, V, B) => {
-    let O, I;
-    const { props: Q, shapeFlag: W, transition: Y, dirs: ne } = g;
-    if (O = g.el = o(
-      g.type,
-      P,
-      Q && Q.is,
-      Q
-    ), W & 8 ? u(O, g.children) : W & 16 && re(
-      g.children,
-      O,
-      null,
-      L,
-      T,
-      Rr(g, P),
-      V,
-      B
-    ), ne && Kt(g, null, L, "created"), X(O, g, g.scopeId, V, L), Q) {
-      for (const Ae in Q)
-        Ae !== "value" && !Fn(Ae) && i(O, Ae, null, Q[Ae], P, L);
-      "value" in Q && i(O, "value", null, Q.value, P), (I = Q.onVnodeBeforeMount) && at(I, L, g);
-    }
-    ne && Kt(g, null, L, "beforeMount");
-    const oe = Rd(T, Y);
-    oe && Y.beforeEnter(O), s(O, y, $), ((I = Q && Q.onVnodeMounted) || oe || ne) && Re(() => {
-      try {
-        I && at(I, L, g), oe && Y.enter(O), ne && Kt(g, null, L, "mounted");
-      } finally {
-      }
-    }, T);
-  }, X = (g, y, $, L, T) => {
-    if ($ && x(g, $), L)
-      for (let P = 0; P < L.length; P++)
-        x(g, L[P]);
-    if (T) {
-      let P = T.subTree;
-      if (y === P || Na(P.type) && (P.ssContent === y || P.ssFallback === y)) {
-        const V = T.vnode;
-        X(
-          g,
-          V,
-          V.scopeId,
-          V.slotScopeIds,
-          T.parent
-        );
-      }
-    }
-  }, re = (g, y, $, L, T, P, V, B, O = 0) => {
-    for (let I = O; I < g.length; I++) {
-      const Q = g[I] = B ? kt(g[I]) : dt(g[I]);
-      k(
-        null,
-        Q,
-        y,
-        $,
-        L,
-        T,
-        P,
+        I,
+        D,
+        U,
         V,
         B
       );
+    else {
+      const N = g.el && g.el._isVueCE ? g.el : null;
+      try {
+        N && N._beginPatch(), E(
+          g,
+          b,
+          I,
+          D,
+          U,
+          V,
+          B
+        );
+      } finally {
+        N && N._endPatch();
+      }
     }
-  }, C = (g, y, $, L, T, P, V) => {
-    const B = y.el = g.el;
-    let { patchFlag: O, dynamicChildren: I, dirs: Q } = y;
-    O |= g.patchFlag & 16;
-    const W = g.props || ve, Y = y.props || ve;
-    let ne;
-    if ($ && qt($, !1), (ne = Y.onVnodeBeforeUpdate) && at(ne, $, y, g), Q && Kt(y, g, $, "beforeUpdate"), $ && qt($, !0), // #6385 the old vnode may be a user-wrapped non-isomorphic block
-    // Force full diff when block metadata is unstable.
-    I && (!g.dynamicChildren || g.dynamicChildren.length !== I.length) && (O = 0, V = !1, I = null), (W.innerHTML && Y.innerHTML == null || W.textContent && Y.textContent == null) && u(B, ""), I ? p(
-      g.dynamicChildren,
-      I,
-      B,
-      $,
-      L,
-      Rr(y, T),
-      P
-    ) : V || Xe(
-      g,
-      y,
+  }, te = (g, b, S, L, I, D, U, V) => {
+    let B, N;
+    const { props: X, shapeFlag: W, transition: Y, dirs: ne } = g;
+    if (B = g.el = o(
+      g.type,
+      D,
+      X && X.is,
+      X
+    ), W & 8 ? u(B, g.children) : W & 16 && re(
+      g.children,
       B,
       null,
-      $,
       L,
-      Rr(y, T),
-      P,
+      I,
+      Rr(g, D),
+      U,
+      V
+    ), ne && Kt(g, null, L, "created"), Q(B, g, g.scopeId, U, L), X) {
+      for (const Ae in X)
+        Ae !== "value" && !Vn(Ae) && i(B, Ae, null, X[Ae], D, L);
+      "value" in X && i(B, "value", null, X.value, D), (N = X.onVnodeBeforeMount) && ut(N, L, g);
+    }
+    ne && Kt(g, null, L, "beforeMount");
+    const oe = Rd(I, Y);
+    oe && Y.beforeEnter(B), s(B, b, S), ((N = X && X.onVnodeMounted) || oe || ne) && Le(() => {
+      try {
+        N && ut(N, L, g), oe && Y.enter(B), ne && Kt(g, null, L, "mounted");
+      } finally {
+      }
+    }, I);
+  }, Q = (g, b, S, L, I) => {
+    if (S && k(g, S), L)
+      for (let D = 0; D < L.length; D++)
+        k(g, L[D]);
+    if (I) {
+      let D = I.subTree;
+      if (b === D || La(D.type) && (D.ssContent === b || D.ssFallback === b)) {
+        const U = I.vnode;
+        Q(
+          g,
+          U,
+          U.scopeId,
+          U.slotScopeIds,
+          I.parent
+        );
+      }
+    }
+  }, re = (g, b, S, L, I, D, U, V, B = 0) => {
+    for (let N = B; N < g.length; N++) {
+      const X = g[N] = V ? wt(g[N]) : ft(g[N]);
+      x(
+        null,
+        X,
+        b,
+        S,
+        L,
+        I,
+        D,
+        U,
+        V
+      );
+    }
+  }, E = (g, b, S, L, I, D, U) => {
+    const V = b.el = g.el;
+    let { patchFlag: B, dynamicChildren: N, dirs: X } = b;
+    B |= g.patchFlag & 16;
+    const W = g.props || ve, Y = b.props || ve;
+    let ne;
+    if (S && qt(S, !1), (ne = Y.onVnodeBeforeUpdate) && ut(ne, S, b, g), X && Kt(b, g, S, "beforeUpdate"), S && qt(S, !0), // #6385 the old vnode may be a user-wrapped non-isomorphic block
+    // Force full diff when block metadata is unstable.
+    N && (!g.dynamicChildren || g.dynamicChildren.length !== N.length) && (B = 0, U = !1, N = null), (W.innerHTML && Y.innerHTML == null || W.textContent && Y.textContent == null) && u(V, ""), N ? p(
+      g.dynamicChildren,
+      N,
+      V,
+      S,
+      L,
+      Rr(b, I),
+      D
+    ) : U || Xe(
+      g,
+      b,
+      V,
+      null,
+      S,
+      L,
+      Rr(b, I),
+      D,
       !1
-    ), O > 0) {
-      if (O & 16)
-        m(B, W, Y, $, T);
-      else if (O & 2 && W.class !== Y.class && i(B, "class", null, Y.class, T), O & 4 && i(B, "style", W.style, Y.style, T), O & 8) {
-        const oe = y.dynamicProps;
+    ), B > 0) {
+      if (B & 16)
+        h(V, W, Y, S, I);
+      else if (B & 2 && W.class !== Y.class && i(V, "class", null, Y.class, I), B & 4 && i(V, "style", W.style, Y.style, I), B & 8) {
+        const oe = b.dynamicProps;
         for (let Ae = 0; Ae < oe.length; Ae++) {
-          const ue = oe[Ae], be = W[ue], we = Y[ue];
-          (we !== be || ue === "value") && i(B, ue, be, we, T, $);
+          const ue = oe[Ae], be = W[ue], _e = Y[ue];
+          (_e !== be || ue === "value") && i(V, ue, be, _e, I, S);
         }
       }
-      O & 1 && g.children !== y.children && u(B, y.children);
-    } else !V && I == null && m(B, W, Y, $, T);
-    ((ne = Y.onVnodeUpdated) || Q) && Re(() => {
-      ne && at(ne, $, y, g), Q && Kt(y, g, $, "updated");
+      B & 1 && g.children !== b.children && u(V, b.children);
+    } else !U && N == null && h(V, W, Y, S, I);
+    ((ne = Y.onVnodeUpdated) || X) && Le(() => {
+      ne && ut(ne, S, b, g), X && Kt(b, g, S, "updated");
     }, L);
-  }, p = (g, y, $, L, T, P, V) => {
-    for (let B = 0; B < y.length; B++) {
-      const O = g[B], I = y[B], Q = (
+  }, p = (g, b, S, L, I, D, U) => {
+    for (let V = 0; V < b.length; V++) {
+      const B = g[V], N = b[V], X = (
         // oldVNode may be an errored async setup() component inside Suspense
         // which will not have a mounted element
-        O.el && // - In the case of a Fragment, we need to provide the actual parent
+        B.el && // - In the case of a Fragment, we need to provide the actual parent
         // of the Fragment itself so it can move its children.
-        (O.type === J || // - In the case of different nodes, there is going to be a replacement
+        (B.type === J || // - In the case of different nodes, there is going to be a replacement
         // which also requires the correct parent container
-        !Xt(O, I) || // - In the case of a component, it could contain anything.
-        O.shapeFlag & 198) ? f(O.el) : (
+        !Qt(B, N) || // - In the case of a component, it could contain anything.
+        B.shapeFlag & 198) ? f(B.el) : (
           // In other cases, the parent container is not actually used so we
           // just pass the block element here to avoid a DOM parentNode call.
-          $
+          S
         )
       );
-      k(
-        O,
-        I,
-        Q,
+      x(
+        B,
+        N,
+        X,
         null,
         L,
-        T,
-        P,
-        V,
+        I,
+        D,
+        U,
         !0
       );
     }
-  }, m = (g, y, $, L, T) => {
-    if (y !== $) {
-      if (y !== ve)
-        for (const P in y)
-          !Fn(P) && !(P in $) && i(
+  }, h = (g, b, S, L, I) => {
+    if (b !== S) {
+      if (b !== ve)
+        for (const D in b)
+          !Vn(D) && !(D in S) && i(
             g,
-            P,
-            y[P],
+            D,
+            b[D],
             null,
-            T,
+            I,
             L
           );
-      for (const P in $) {
-        if (Fn(P)) continue;
-        const V = $[P], B = y[P];
-        V !== B && P !== "value" && i(g, P, B, V, T, L);
+      for (const D in S) {
+        if (Vn(D)) continue;
+        const U = S[D], V = b[D];
+        U !== V && D !== "value" && i(g, D, V, U, I, L);
       }
-      "value" in $ && i(g, "value", y.value, $.value, T);
+      "value" in S && i(g, "value", b.value, S.value, I);
     }
-  }, v = (g, y, $, L, T, P, V, B, O) => {
-    const I = y.el = g ? g.el : l(""), Q = y.anchor = g ? g.anchor : l("");
-    let { patchFlag: W, dynamicChildren: Y, slotScopeIds: ne } = y;
-    ne && (B = B ? B.concat(ne) : ne), g == null ? (s(I, $, L), s(Q, $, L), re(
+  }, v = (g, b, S, L, I, D, U, V, B) => {
+    const N = b.el = g ? g.el : l(""), X = b.anchor = g ? g.anchor : l("");
+    let { patchFlag: W, dynamicChildren: Y, slotScopeIds: ne } = b;
+    ne && (V = V ? V.concat(ne) : ne), g == null ? (s(N, S, L), s(X, S, L), re(
       // #10007
       // such fragment like `<></>` will be compiled into
       // a fragment which doesn't have a children.
       // In this case fallback to an empty array
-      y.children || [],
-      $,
-      Q,
-      T,
-      P,
+      b.children || [],
+      S,
+      X,
+      I,
+      D,
+      U,
       V,
-      B,
-      O
+      B
     )) : W > 0 && W & 64 && Y && // #2715 the previous fragment could've been a BAILed one as a result
     // of renderSlot() with no valid children
     g.dynamicChildren && g.dynamicChildren.length === Y.length ? (p(
       g.dynamicChildren,
       Y,
-      $,
-      T,
-      P,
-      V,
-      B
+      S,
+      I,
+      D,
+      U,
+      V
     ), // #2080 if the stable fragment has a key, it's a <template v-for> that may
     //  get moved around. Make sure all root level vnodes inherit el.
     // #2134 or if it's a component root, it may also get moved around
     // as the component is being moved.
-    (y.key != null || T && y === T.subTree) && Ma(
+    (b.key != null || I && b === I.subTree) && Na(
       g,
-      y,
+      b,
       !0
       /* shallow */
     )) : Xe(
       g,
-      y,
-      $,
-      Q,
-      T,
-      P,
+      b,
+      S,
+      X,
+      I,
+      D,
+      U,
       V,
-      B,
-      O
+      B
     );
-  }, N = (g, y, $, L, T, P, V, B, O) => {
-    y.slotScopeIds = B, g == null ? y.shapeFlag & 512 ? T.ctx.activate(
-      y,
-      $,
+  }, P = (g, b, S, L, I, D, U, V, B) => {
+    b.slotScopeIds = V, g == null ? b.shapeFlag & 512 ? I.ctx.activate(
+      b,
+      S,
       L,
-      V,
-      O
+      U,
+      B
     ) : ie(
-      y,
-      $,
+      b,
+      S,
       L,
-      T,
-      P,
-      V,
-      O
-    ) : le(g, y, O);
-  }, ie = (g, y, $, L, T, P, V) => {
-    const B = g.component = Ud(
+      I,
+      D,
+      U,
+      B
+    ) : le(g, b, B);
+  }, ie = (g, b, S, L, I, D, U) => {
+    const V = g.component = Wd(
       g,
       L,
-      T
+      I
     );
-    if (Ei(g) && (B.ctx.renderer = Cn), Hd(B, !1, V), B.asyncDep) {
-      if (T && T.registerDep(B, Pe, V), !g.el) {
-        const O = B.subTree = _e(Ie);
-        U(null, O, y, $), g.placeholder = O.el;
+    if (Mi(g) && (V.ctx.renderer = In), Gd(V, !1, U), V.asyncDep) {
+      if (I && I.registerDep(V, De, U), !g.el) {
+        const B = V.subTree = Se(Ne);
+        j(null, B, b, S), g.placeholder = B.el;
       }
     } else
-      Pe(
-        B,
+      De(
+        V,
         g,
-        y,
-        $,
-        T,
-        P,
-        V
+        b,
+        S,
+        I,
+        D,
+        U
       );
-  }, le = (g, y, $) => {
-    const L = y.component = g.component;
-    if (_d(g, y, $))
+  }, le = (g, b, S) => {
+    const L = b.component = g.component;
+    if (Sd(g, b, S))
       if (L.asyncDep && !L.asyncResolved) {
-        y.el = g.el, rt(L, y, $);
+        b.el = g.el, ot(L, b, S);
         return;
       } else
-        L.next = y, L.update();
+        L.next = b, L.update();
     else
-      y.el = g.el, L.vnode = y;
-  }, Pe = (g, y, $, L, T, P, V) => {
-    const B = () => {
+      b.el = g.el, L.vnode = b;
+  }, De = (g, b, S, L, I, D, U) => {
+    const V = () => {
       if (g.isMounted) {
         let { next: W, bu: Y, u: ne, parent: oe, vnode: Ae } = g;
         {
-          const ot = Ta(g);
-          if (ot) {
-            W && (W.el = Ae.el, rt(g, W, V)), ot.asyncDep.then(() => {
-              Re(() => {
-                g.isUnmounted || I();
-              }, T);
+          const at = Pa(g);
+          if (at) {
+            W && (W.el = Ae.el, ot(g, W, U)), at.asyncDep.then(() => {
+              Le(() => {
+                g.isUnmounted || N();
+              }, I);
             });
             return;
           }
         }
         let ue = W, be;
-        qt(g, !1), W ? (W.el = Ae.el, rt(g, W, V)) : W = Ae, Y && Cs(Y), (be = W.props && W.props.onVnodeBeforeUpdate) && at(be, oe, W, Ae), qt(g, !0);
-        const we = zo(g), it = g.subTree;
-        g.subTree = we, k(
-          it,
-          we,
+        qt(g, !1), W ? (W.el = Ae.el, ot(g, W, U)) : W = Ae, Y && Is(Y), (be = W.props && W.props.onVnodeBeforeUpdate) && ut(be, oe, W, Ae), qt(g, !0);
+        const _e = So(g), lt = g.subTree;
+        g.subTree = _e, x(
+          lt,
+          _e,
           // parent may have changed if it's in a teleport
-          f(it.el),
+          f(lt.el),
           // anchor may have changed if it's in a fragment
-          xs(it),
+          ks(lt),
           g,
-          T,
-          P
-        ), W.el = we.el, ue === null && $d(g, we.el), ne && Re(ne, T), (be = W.props && W.props.onVnodeUpdated) && Re(
-          () => at(be, oe, W, Ae),
-          T
+          I,
+          D
+        ), W.el = _e.el, ue === null && Cd(g, _e.el), ne && Le(ne, I), (be = W.props && W.props.onVnodeUpdated) && Le(
+          () => ut(be, oe, W, Ae),
+          I
         );
       } else {
         let W;
-        const { el: Y, props: ne } = y, { bm: oe, m: Ae, parent: ue, root: be, type: we } = g, it = Vn(y);
-        qt(g, !1), oe && Cs(oe), !it && (W = ne && ne.onVnodeBeforeMount) && at(W, ue, y), qt(g, !0);
+        const { el: Y, props: ne } = b, { bm: oe, m: Ae, parent: ue, root: be, type: _e } = g, lt = Gn(b);
+        qt(g, !1), oe && Is(oe), !lt && (W = ne && ne.onVnodeBeforeMount) && ut(W, ue, b), qt(g, !0);
         {
           be.ce && be.ce._hasShadowRoot() && be.ce._injectChildStyle(
-            we,
+            _e,
             g.parent ? g.parent.type : void 0
           );
-          const ot = g.subTree = zo(g);
-          k(
+          const at = g.subTree = So(g);
+          x(
             null,
-            ot,
-            $,
+            at,
+            S,
             L,
             g,
-            T,
-            P
-          ), y.el = ot.el;
+            I,
+            D
+          ), b.el = at.el;
         }
-        if (Ae && Re(Ae, T), !it && (W = ne && ne.onVnodeMounted)) {
-          const ot = y;
-          Re(
-            () => at(W, ue, ot),
-            T
+        if (Ae && Le(Ae, I), !lt && (W = ne && ne.onVnodeMounted)) {
+          const at = b;
+          Le(
+            () => ut(W, ue, at),
+            I
           );
         }
-        (y.shapeFlag & 256 || ue && Vn(ue.vnode) && ue.vnode.shapeFlag & 256) && g.a && Re(g.a, T), g.isMounted = !0, y = $ = L = null;
+        (b.shapeFlag & 256 || ue && Gn(ue.vnode) && ue.vnode.shapeFlag & 256) && g.a && Le(g.a, I), g.isMounted = !0, b = S = L = null;
       }
     };
     g.scope.on();
-    const O = g.effect = new Gl(B);
+    const B = g.effect = new Yl(V);
     g.scope.off();
-    const I = g.update = O.run.bind(O), Q = g.job = O.runIfDirty.bind(O);
-    Q.i = g, Q.id = g.uid, O.scheduler = () => Ci(Q), qt(g, !0), I();
-  }, rt = (g, y, $) => {
-    y.component = g;
+    const N = g.update = B.run.bind(B), X = g.job = B.runIfDirty.bind(B);
+    X.i = g, X.id = g.uid, B.scheduler = () => Ei(X), qt(g, !0), N();
+  }, ot = (g, b, S) => {
+    b.component = g;
     const L = g.vnode.props;
-    g.vnode = y, g.next = null, Cd(g, y.props, L, $), Id(g, y.children, $), Ft(), bo(g), jt();
-  }, Xe = (g, y, $, L, T, P, V, B, O = !1) => {
-    const I = g && g.children, Q = g ? g.shapeFlag : 0, W = y.children, { patchFlag: Y, shapeFlag: ne } = y;
+    g.vnode = b, g.next = null, Md(g, b.props, L, S), Pd(g, b.children, S), Ot(), zo(g), Ft();
+  }, Xe = (g, b, S, L, I, D, U, V, B = !1) => {
+    const N = g && g.children, X = g ? g.shapeFlag : 0, W = b.children, { patchFlag: Y, shapeFlag: ne } = b;
     if (Y > 0) {
       if (Y & 128) {
         Gt(
-          I,
+          N,
           W,
-          $,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         );
         return;
       } else if (Y & 256) {
-        hn(
-          I,
+        mn(
+          N,
           W,
-          $,
+          S,
           L,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         );
         return;
       }
     }
-    ne & 8 ? (Q & 16 && Et(I, T, P), W !== I && u($, W)) : Q & 16 ? ne & 16 ? Gt(
+    ne & 8 ? (X & 16 && Mt(N, I, D), W !== N && u(S, W)) : X & 16 ? ne & 16 ? Gt(
+      N,
+      W,
+      S,
+      L,
       I,
-      W,
-      $,
-      L,
-      T,
-      P,
+      D,
+      U,
       V,
-      B,
-      O
-    ) : Et(I, T, P, !0) : (Q & 8 && u($, ""), ne & 16 && re(
+      B
+    ) : Mt(N, I, D, !0) : (X & 8 && u(S, ""), ne & 16 && re(
       W,
-      $,
+      S,
       L,
-      T,
-      P,
+      I,
+      D,
+      U,
       V,
-      B,
-      O
+      B
     ));
-  }, hn = (g, y, $, L, T, P, V, B, O) => {
-    g = g || en, y = y || en;
-    const I = g.length, Q = y.length, W = Math.min(I, Q);
+  }, mn = (g, b, S, L, I, D, U, V, B) => {
+    g = g || en, b = b || en;
+    const N = g.length, X = b.length, W = Math.min(N, X);
     let Y;
     for (Y = 0; Y < W; Y++) {
-      const ne = y[Y] = O ? kt(y[Y]) : dt(y[Y]);
-      k(
+      const ne = b[Y] = B ? wt(b[Y]) : ft(b[Y]);
+      x(
         g[Y],
         ne,
-        $,
+        S,
         null,
-        T,
-        P,
+        I,
+        D,
+        U,
         V,
-        B,
-        O
+        B
       );
     }
-    I > Q ? Et(
+    N > X ? Mt(
       g,
-      T,
-      P,
+      I,
+      D,
       !0,
       !1,
       W
     ) : re(
-      y,
-      $,
+      b,
+      S,
       L,
-      T,
-      P,
+      I,
+      D,
+      U,
       V,
       B,
-      O,
       W
     );
-  }, Gt = (g, y, $, L, T, P, V, B, O) => {
-    let I = 0;
-    const Q = y.length;
-    let W = g.length - 1, Y = Q - 1;
-    for (; I <= W && I <= Y; ) {
-      const ne = g[I], oe = y[I] = O ? kt(y[I]) : dt(y[I]);
-      if (Xt(ne, oe))
-        k(
+  }, Gt = (g, b, S, L, I, D, U, V, B) => {
+    let N = 0;
+    const X = b.length;
+    let W = g.length - 1, Y = X - 1;
+    for (; N <= W && N <= Y; ) {
+      const ne = g[N], oe = b[N] = B ? wt(b[N]) : ft(b[N]);
+      if (Qt(ne, oe))
+        x(
           ne,
           oe,
-          $,
+          S,
           null,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         );
       else
         break;
-      I++;
+      N++;
     }
-    for (; I <= W && I <= Y; ) {
-      const ne = g[W], oe = y[Y] = O ? kt(y[Y]) : dt(y[Y]);
-      if (Xt(ne, oe))
-        k(
+    for (; N <= W && N <= Y; ) {
+      const ne = g[W], oe = b[Y] = B ? wt(b[Y]) : ft(b[Y]);
+      if (Qt(ne, oe))
+        x(
           ne,
           oe,
-          $,
+          S,
           null,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         );
       else
         break;
       W--, Y--;
     }
-    if (I > W) {
-      if (I <= Y) {
-        const ne = Y + 1, oe = ne < Q ? y[ne].el : L;
-        for (; I <= Y; )
-          k(
+    if (N > W) {
+      if (N <= Y) {
+        const ne = Y + 1, oe = ne < X ? b[ne].el : L;
+        for (; N <= Y; )
+          x(
             null,
-            y[I] = O ? kt(y[I]) : dt(y[I]),
-            $,
+            b[N] = B ? wt(b[N]) : ft(b[N]),
+            S,
             oe,
-            T,
-            P,
+            I,
+            D,
+            U,
             V,
-            B,
-            O
-          ), I++;
+            B
+          ), N++;
       }
-    } else if (I > Y)
-      for (; I <= W; )
-        K(g[I], T, P, !0), I++;
+    } else if (N > Y)
+      for (; N <= W; )
+        K(g[N], I, D, !0), N++;
     else {
-      const ne = I, oe = I, Ae = /* @__PURE__ */ new Map();
-      for (I = oe; I <= Y; I++) {
-        const De = y[I] = O ? kt(y[I]) : dt(y[I]);
-        De.key != null && Ae.set(De.key, I);
+      const ne = N, oe = N, Ae = /* @__PURE__ */ new Map();
+      for (N = oe; N <= Y; N++) {
+        const Re = b[N] = B ? wt(b[N]) : ft(b[N]);
+        Re.key != null && Ae.set(Re.key, N);
       }
       let ue, be = 0;
-      const we = Y - oe + 1;
-      let it = !1, ot = 0;
-      const En = new Array(we);
-      for (I = 0; I < we; I++) En[I] = 0;
-      for (I = ne; I <= W; I++) {
-        const De = g[I];
-        if (be >= we) {
-          K(De, T, P, !0);
+      const _e = Y - oe + 1;
+      let lt = !1, at = 0;
+      const Nn = new Array(_e);
+      for (N = 0; N < _e; N++) Nn[N] = 0;
+      for (N = ne; N <= W; N++) {
+        const Re = g[N];
+        if (be >= _e) {
+          K(Re, I, D, !0);
           continue;
         }
-        let lt;
-        if (De.key != null)
-          lt = Ae.get(De.key);
+        let ct;
+        if (Re.key != null)
+          ct = Ae.get(Re.key);
         else
           for (ue = oe; ue <= Y; ue++)
-            if (En[ue - oe] === 0 && Xt(De, y[ue])) {
-              lt = ue;
+            if (Nn[ue - oe] === 0 && Qt(Re, b[ue])) {
+              ct = ue;
               break;
             }
-        lt === void 0 ? K(De, T, P, !0) : (En[lt - oe] = I + 1, lt >= ot ? ot = lt : it = !0, k(
-          De,
-          y[lt],
-          $,
+        ct === void 0 ? K(Re, I, D, !0) : (Nn[ct - oe] = N + 1, ct >= at ? at = ct : lt = !0, x(
+          Re,
+          b[ct],
+          S,
           null,
-          T,
-          P,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
+          B
         ), be++);
       }
-      const Ao = it ? Ld(En) : en;
-      for (ue = Ao.length - 1, I = we - 1; I >= 0; I--) {
-        const De = oe + I, lt = y[De], fo = y[De + 1], po = De + 1 < Q ? (
+      const ho = lt ? Od(Nn) : en;
+      for (ue = ho.length - 1, N = _e - 1; N >= 0; N--) {
+        const Re = oe + N, ct = b[Re], mo = b[Re + 1], go = Re + 1 < X ? (
           // #13559, #14173 fallback to el placeholder for unresolved async component
-          fo.el || Ia(fo)
+          mo.el || Da(mo)
         ) : L;
-        En[I] === 0 ? k(
+        Nn[N] === 0 ? x(
           null,
-          lt,
-          $,
-          po,
-          T,
-          P,
+          ct,
+          S,
+          go,
+          I,
+          D,
+          U,
           V,
-          B,
-          O
-        ) : it && (ue < 0 || I !== Ao[ue] ? j(lt, $, po, 2) : ue--);
+          B
+        ) : lt && (ue < 0 || N !== ho[ue] ? F(ct, S, go, 2) : ue--);
       }
     }
-  }, j = (g, y, $, L, T = null) => {
-    const { el: P, type: V, transition: B, children: O, shapeFlag: I } = g;
-    if (I & 6) {
-      j(g.component.subTree, y, $, L);
+  }, F = (g, b, S, L, I = null) => {
+    const { el: D, type: U, transition: V, children: B, shapeFlag: N } = g;
+    if (N & 6) {
+      F(g.component.subTree, b, S, L);
       return;
     }
-    if (I & 128) {
-      g.suspense.move(y, $, L);
+    if (N & 128) {
+      g.suspense.move(b, S, L);
       return;
     }
-    if (I & 64) {
-      V.move(g, y, $, Cn);
+    if (N & 64) {
+      U.move(g, b, S, In);
       return;
     }
-    if (V === J) {
-      s(P, y, $);
-      for (let W = 0; W < O.length; W++)
-        j(O[W], y, $, L);
-      s(g.anchor, y, $);
+    if (U === J) {
+      s(D, b, S);
+      for (let W = 0; W < B.length; W++)
+        F(B[W], b, S, L);
+      s(g.anchor, b, S);
       return;
     }
-    if (V === Lr) {
-      E(g, y, $);
+    if (U === Or) {
+      M(g, b, S);
       return;
     }
-    if (L !== 2 && I & 1 && B)
+    if (L !== 2 && N & 1 && V)
       if (L === 0)
-        B.persisted && !P[He] ? s(P, y, $) : (B.beforeEnter(P), s(P, y, $), Re(() => B.enter(P), T));
+        V.persisted && !D[We] ? s(D, b, S) : (V.beforeEnter(D), s(D, b, S), Le(() => V.enter(D), I));
       else {
-        const { leave: W, delayLeave: Y, afterLeave: ne } = B, oe = () => {
-          g.ctx.isUnmounted ? r(P) : s(P, y, $);
+        const { leave: W, delayLeave: Y, afterLeave: ne } = V, oe = () => {
+          g.ctx.isUnmounted ? r(D) : s(D, b, S);
         }, Ae = () => {
-          const ue = P._isLeaving || !!P[He];
-          P._isLeaving && P[He](
+          const ue = D._isLeaving || !!D[We];
+          D._isLeaving && D[We](
             !0
             /* cancelled */
-          ), B.persisted && !ue ? oe() : W(P, () => {
+          ), V.persisted && !ue ? oe() : W(D, () => {
             oe(), ne && ne();
           });
         };
-        Y ? Y(P, oe, Ae) : Ae();
+        Y ? Y(D, oe, Ae) : Ae();
       }
     else
-      s(P, y, $);
-  }, K = (g, y, $, L = !1, T = !1) => {
+      s(D, b, S);
+  }, K = (g, b, S, L = !1, I = !1) => {
     const {
-      type: P,
-      props: V,
-      ref: B,
-      children: O,
-      dynamicChildren: I,
-      shapeFlag: Q,
+      type: D,
+      props: U,
+      ref: V,
+      children: B,
+      dynamicChildren: N,
+      shapeFlag: X,
       patchFlag: W,
       dirs: Y,
       cacheIndex: ne,
       memo: oe
     } = g;
-    if ((W === -2 || I && I.hasOnce) && (T = !1), B != null && (Ft(), Bn(B, null, $, g, !0), jt()), ne != null && (!g.ctx || g.ctx === y) && (y.renderCache[ne] = void 0), Q & 256) {
-      y.ctx.deactivate(g);
+    if ((W === -2 || N && N.hasOnce) && (I = !1), V != null && (Ot(), Wn(V, null, S, g, !0), Ft()), ne != null && (!g.ctx || g.ctx === b) && (b.renderCache[ne] = void 0), X & 256) {
+      b.ctx.deactivate(g);
       return;
     }
-    const Ae = Q & 1 && Y, ue = !Vn(g);
+    const Ae = X & 1 && Y, ue = !Gn(g);
     let be;
-    if (ue && (be = V && V.onVnodeBeforeUnmount) && at(be, y, g), Q & 6)
-      gs(g.component, $, L);
+    if (ue && (be = U && U.onVnodeBeforeUnmount) && ut(be, b, g), X & 6)
+      bs(g.component, S, L);
     else {
-      if (Q & 128) {
-        g.suspense.unmount($, L);
+      if (X & 128) {
+        g.suspense.unmount(S, L);
         return;
       }
-      Ae && Kt(g, null, y, "beforeUnmount"), Q & 64 ? g.type.remove(
+      Ae && Kt(g, null, b, "beforeUnmount"), X & 64 ? g.type.remove(
         g,
-        y,
-        $,
-        Cn,
+        b,
+        S,
+        In,
         L
-      ) : I && // #5154
+      ) : N && // #5154
       // when v-once is used inside a block, setBlockTracking(-1) marks the
       // parent block with hasOnce: true
       // so that it doesn't take the fast path during unmount - otherwise
       // components nested in v-once are never unmounted.
-      !I.hasOnce && // #1153: fast path should not be taken for non-stable (v-for) fragments
-      (P !== J || W > 0 && W & 64) ? Et(
-        I,
-        y,
-        $,
+      !N.hasOnce && // #1153: fast path should not be taken for non-stable (v-for) fragments
+      (D !== J || W > 0 && W & 64) ? Mt(
+        N,
+        b,
+        S,
         !1,
         !0
-      ) : (P === J && W & 384 || !T && Q & 16) && Et(O, y, $), L && G(g);
+      ) : (D === J && W & 384 || !I && X & 16) && Mt(B, b, S), L && G(g);
     }
-    const we = oe != null && ne == null;
-    (ue && (be = V && V.onVnodeUnmounted) || Ae || we) && Re(() => {
-      be && at(be, y, g), Ae && Kt(g, null, y, "unmounted"), we && (g.el = null);
-    }, $);
+    const _e = oe != null && ne == null;
+    (ue && (be = U && U.onVnodeUnmounted) || Ae || _e) && Le(() => {
+      be && ut(be, b, g), Ae && Kt(g, null, b, "unmounted"), _e && (g.el = null);
+    }, S);
   }, G = (g) => {
-    const { type: y, el: $, anchor: L, transition: T } = g;
-    if (y === J) {
-      ge($, L);
+    const { type: b, el: S, anchor: L, transition: I } = g;
+    if (b === J) {
+      ge(S, L);
       return;
     }
-    if (y === Lr) {
-      M(g), T && !T.persisted && T.afterLeave && T.afterLeave();
+    if (b === Or) {
+      T(g), I && !I.persisted && I.afterLeave && I.afterLeave();
       return;
     }
-    const P = () => {
-      r($), T && !T.persisted && T.afterLeave && T.afterLeave();
+    const D = () => {
+      r(S), I && !I.persisted && I.afterLeave && I.afterLeave();
     };
-    if (g.shapeFlag & 1 && T && !T.persisted) {
-      const { leave: V, delayLeave: B } = T, O = () => V($, P);
-      B ? B(g.el, P, O) : O();
+    if (g.shapeFlag & 1 && I && !I.persisted) {
+      const { leave: U, delayLeave: V } = I, B = () => U(S, D);
+      V ? V(g.el, D, B) : B();
     } else
-      P();
-  }, ge = (g, y) => {
-    let $;
-    for (; g !== y; )
-      $ = h(g), r(g), g = $;
-    r(y);
-  }, gs = (g, y, $) => {
-    const { bum: L, scope: T, job: P, subTree: V, um: B, m: O, a: I } = g;
-    So(O), So(I), L && Cs(L), T.stop(), P ? (P.flags |= 8, K(V, g, y, $)) : g.vnode.el && V && (V.transition = g.vnode.transition, K(V, g, y, $)), B && Re(B, y), Re(() => {
+      D();
+  }, ge = (g, b) => {
+    let S;
+    for (; g !== b; )
+      S = m(g), r(g), g = S;
+    r(b);
+  }, bs = (g, b, S) => {
+    const { bum: L, scope: I, job: D, subTree: U, um: V, m: B, a: N } = g;
+    Mo(B), Mo(N), L && Is(L), I.stop(), D ? (D.flags |= 8, K(U, g, b, S)) : g.vnode.el && U && (U.transition = g.vnode.transition, K(U, g, b, S)), V && Le(V, b), Le(() => {
       g.isUnmounted = !0;
-    }, y);
-  }, Et = (g, y, $, L = !1, T = !1, P = 0) => {
-    for (let V = P; V < g.length; V++)
-      K(g[V], y, $, L, T);
-  }, xs = (g) => {
+    }, b);
+  }, Mt = (g, b, S, L = !1, I = !1, D = 0) => {
+    for (let U = D; U < g.length; U++)
+      K(g[U], b, S, L, I);
+  }, ks = (g) => {
     if (g.shapeFlag & 6)
-      return xs(g.component.subTree);
+      return ks(g.component.subTree);
     if (g.shapeFlag & 128)
       return g.suspense.next();
-    const y = h(g.anchor || g.el), $ = y && y[ud];
-    return $ ? h($) : y;
+    const b = m(g.anchor || g.el), S = b && b[Ad];
+    return S ? m(S) : b;
   };
-  let Sr = !1;
-  const uo = (g, y, $) => {
+  let Er = !1;
+  const po = (g, b, S) => {
     let L;
-    g == null ? y._vnode && (K(y._vnode, null, null, !0), L = y._vnode.component) : k(
-      y._vnode || null,
+    g == null ? b._vnode && (K(b._vnode, null, null, !0), L = b._vnode.component) : x(
+      b._vnode || null,
       g,
-      y,
+      b,
       null,
       null,
       null,
-      $
-    ), y._vnode = g, Sr || (Sr = !0, bo(L), ua(), Sr = !1);
-  }, Cn = {
-    p: k,
+      S
+    ), b._vnode = g, Er || (Er = !0, zo(L), fa(), Er = !1);
+  }, In = {
+    p: x,
     um: K,
-    m: j,
+    m: F,
     r: G,
     mt: ie,
     mc: re,
     pc: Xe,
     pbc: p,
-    n: xs,
+    n: ks,
     o: e
   };
   return {
-    render: uo,
+    render: po,
     hydrate: void 0,
-    createApp: vd(uo)
+    createApp: bd(po)
   };
 }
 function Rr({ type: e, props: t }, n) {
@@ -3117,16 +3117,16 @@ function qt({ effect: e, job: t }, n) {
 function Rd(e, t) {
   return (!e || e && !e.pendingBranch) && t && !t.persisted;
 }
-function Ma(e, t, n = !1) {
+function Na(e, t, n = !1) {
   const s = e.children, r = t.children;
   if (se(s) && se(r))
     for (let i = 0; i < s.length; i++) {
       const o = s[i];
       let l = r[i];
-      l.shapeFlag & 1 && !l.dynamicChildren && ((l.patchFlag <= 0 || l.patchFlag === 32) && (l = r[i] = kt(r[i]), l.el = o.el), !n && l.patchFlag !== -2 && Ma(o, l)), l.type === hr && (l.patchFlag === -1 && (l = r[i] = kt(l)), l.el = o.el), l.type === Ie && !l.el && (l.el = o.el);
+      l.shapeFlag & 1 && !l.dynamicChildren && ((l.patchFlag <= 0 || l.patchFlag === 32) && (l = r[i] = wt(r[i]), l.el = o.el), !n && l.patchFlag !== -2 && Na(o, l)), l.type === xr && (l.patchFlag === -1 && (l = r[i] = wt(l)), l.el = o.el), l.type === Ne && !l.el && (l.el = o.el);
     }
 }
-function Ld(e) {
+function Od(e) {
   const t = e.slice(), n = [0];
   let s, r, i, o, l;
   const c = e.length;
@@ -3146,43 +3146,43 @@ function Ld(e) {
     n[i] = o, o = t[o];
   return n;
 }
-function Ta(e) {
+function Pa(e) {
   const t = e.subTree.component;
   if (t)
-    return t.asyncDep && !t.asyncResolved ? t : Ta(t);
+    return t.asyncDep && !t.asyncResolved ? t : Pa(t);
 }
-function So(e) {
+function Mo(e) {
   if (e)
     for (let t = 0; t < e.length; t++)
       e[t].flags |= 8;
 }
-function Ia(e) {
+function Da(e) {
   if (e.placeholder)
     return e.placeholder;
   const t = e.component;
-  return t ? Ia(t.subTree) : null;
+  return t ? Da(t.subTree) : null;
 }
-const Na = (e) => e.__isSuspense;
-function Dd(e, t) {
-  t && t.pendingBranch ? se(e) ? t.effects.push(...e) : t.effects.push(e) : id(e);
+const La = (e) => e.__isSuspense;
+function Fd(e, t) {
+  t && t.pendingBranch ? se(e) ? t.effects.push(...e) : t.effects.push(e) : ld(e);
 }
-const J = /* @__PURE__ */ Symbol.for("v-fgt"), hr = /* @__PURE__ */ Symbol.for("v-txt"), Ie = /* @__PURE__ */ Symbol.for("v-cmt"), Lr = /* @__PURE__ */ Symbol.for("v-stc"), on = [];
-let Fe = null;
-function b(e = !1) {
-  on.push(Fe = e ? null : []);
+const J = /* @__PURE__ */ Symbol.for("v-fgt"), xr = /* @__PURE__ */ Symbol.for("v-txt"), Ne = /* @__PURE__ */ Symbol.for("v-cmt"), Or = /* @__PURE__ */ Symbol.for("v-stc"), on = [];
+let Oe = null;
+function y(e = !1) {
+  on.push(Oe = e ? null : []);
 }
-function Pa() {
-  on.pop(), Fe = on[on.length - 1] || null;
+function Ra() {
+  on.pop(), Oe = on[on.length - 1] || null;
 }
-let Xn = 1;
-function Bs(e, t = !1) {
-  Xn += e, e < 0 && Fe && t && (Fe.hasOnce = !0);
+let ns = 1;
+function Ws(e, t = !1) {
+  ns += e, e < 0 && Oe && t && (Oe.hasOnce = !0);
 }
-function Ra(e) {
-  return e.dynamicChildren = Xn > 0 ? Fe || en : null, Pa(), Xn > 0 && Fe && Fe.push(e), e;
+function Oa(e) {
+  return e.dynamicChildren = ns > 0 ? Oe || en : null, Ra(), ns > 0 && Oe && Oe.push(e), e;
 }
 function w(e, t, n, s, r, i) {
-  return Ra(
+  return Oa(
     d(
       e,
       t,
@@ -3194,9 +3194,9 @@ function w(e, t, n, s, r, i) {
     )
   );
 }
-function We(e, t, n, s, r) {
-  return Ra(
-    _e(
+function Ge(e, t, n, s, r) {
+  return Oa(
+    Se(
       e,
       t,
       n,
@@ -3206,26 +3206,26 @@ function We(e, t, n, s, r) {
     )
   );
 }
-function Vs(e) {
+function Gs(e) {
   return e ? e.__v_isVNode === !0 : !1;
 }
-function Xt(e, t) {
+function Qt(e, t) {
   return e.type === t.type && e.key === t.key;
 }
-const La = ({ key: e }) => e ?? null, Es = ({
+const Fa = ({ key: e }) => e ?? null, Ns = ({
   ref: e,
   ref_key: t,
   ref_for: n
-}) => (typeof e == "number" && (e = "" + e), e != null ? ye(e) || /* @__PURE__ */ Ne(e) || de(e) ? { i: Ge, r: e, k: t, f: !!n } : e : null);
+}) => (typeof e == "number" && (e = "" + e), e != null ? ye(e) || /* @__PURE__ */ Pe(e) || de(e) ? { i: Ke, r: e, k: t, f: !!n } : e : null);
 function d(e, t = null, n = null, s = 0, r = null, i = e === J ? 0 : 1, o = !1, l = !1) {
   const c = {
     __v_isVNode: !0,
     __v_skip: !0,
     type: e,
     props: t,
-    key: t && La(t),
-    ref: t && Es(t),
-    scopeId: Aa,
+    key: t && Fa(t),
+    ref: t && Ns(t),
+    scopeId: ha,
     slotScopeIds: null,
     children: n,
     component: null,
@@ -3245,35 +3245,35 @@ function d(e, t = null, n = null, s = 0, r = null, i = e === J ? 0 : 1, o = !1, 
     dynamicProps: r,
     dynamicChildren: null,
     appContext: null,
-    ctx: Ge
+    ctx: Ke
   };
-  return l ? (Us(c, n), i & 128 && e.normalize(c)) : n && (c.shapeFlag |= ye(n) ? 8 : 16), Xn > 0 && // avoid a block node from tracking itself
+  return l ? (Ks(c, n), i & 128 && e.normalize(c)) : n && (c.shapeFlag |= ye(n) ? 8 : 16), ns > 0 && // avoid a block node from tracking itself
   !o && // has current parent block
-  Fe && // presence of a patch flag indicates this node needs patching on updates.
+  Oe && // presence of a patch flag indicates this node needs patching on updates.
   // component nodes also should always be patched, because even if the
   // component doesn't need to update, it needs to persist the instance on to
   // the next vnode so that it can be properly unmounted later.
   (c.patchFlag > 0 || i & 6) && // the EVENTS flag is only for hydration and if it is the only flag, the
   // vnode should not be considered dynamic due to handler caching.
-  c.patchFlag !== 32 && Fe.push(c), c;
+  c.patchFlag !== 32 && Oe.push(c), c;
 }
-const _e = Fd;
-function Fd(e, t = null, n = null, s = 0, r = null, i = !1) {
-  if ((!e || e === md) && (e = Ie), Vs(e)) {
+const Se = jd;
+function jd(e, t = null, n = null, s = 0, r = null, i = !1) {
+  if ((!e || e === xd) && (e = Ne), Gs(e)) {
     const l = Bt(
       e,
       t,
       !0
       /* mergeRef: true */
     );
-    return n && Us(l, n), Xn > 0 && !i && Fe && (l.shapeFlag & 6 ? Fe[Fe.indexOf(e)] = l : Fe.push(l)), l.patchFlag = -2, l;
+    return n && Ks(l, n), ns > 0 && !i && Oe && (l.shapeFlag & 6 ? Oe[Oe.indexOf(e)] = l : Oe.push(l)), l.patchFlag = -2, l;
   }
-  if (qd(e) && (e = e.__vccOpts), t) {
-    t = jd(t);
+  if (Jd(e) && (e = e.__vccOpts), t) {
+    t = Bd(t);
     let { class: l, style: c } = t;
-    l && !ye(l) && (t.class = Z(l)), he(c) && (/* @__PURE__ */ Si(c) && !se(c) && (c = Oe({}, c)), t.style = ar(c));
+    l && !ye(l) && (t.class = Z(l)), he(c) && (/* @__PURE__ */ Ci(c) && !se(c) && (c = je({}, c)), t.style = dr(c));
   }
-  const o = ye(e) ? 1 : Na(e) ? 128 : fr(e) ? 64 : he(e) ? 4 : de(e) ? 2 : 0;
+  const o = ye(e) ? 1 : La(e) ? 128 : mr(e) ? 64 : he(e) ? 4 : de(e) ? 2 : 0;
   return d(
     e,
     t,
@@ -3285,21 +3285,21 @@ function Fd(e, t = null, n = null, s = 0, r = null, i = !1) {
     !0
   );
 }
-function jd(e) {
-  return e ? /* @__PURE__ */ Si(e) || _a(e) ? Oe({}, e) : e : null;
+function Bd(e) {
+  return e ? /* @__PURE__ */ Ci(e) || Ca(e) ? je({}, e) : e : null;
 }
 function Bt(e, t, n = !1, s = !1) {
-  const { props: r, ref: i, patchFlag: o, children: l, transition: c } = e, a = t ? Od(r || {}, t) : r, u = {
+  const { props: r, ref: i, patchFlag: o, children: l, transition: c } = e, a = t ? Vd(r || {}, t) : r, u = {
     __v_isVNode: !0,
     __v_skip: !0,
     type: e.type,
     props: a,
-    key: a && La(a),
+    key: a && Fa(a),
     ref: t && t.ref ? (
       // #2078 in the case of <component :is="vnode" ref="extra"/>
       // if the vnode itself already has a ref, cloneVNode will need to merge
       // the refs so the single vnode can be set on multiple refs
-      n && i ? se(i) ? i.concat(Es(t)) : [i, Es(t)] : Es(t)
+      n && i ? se(i) ? i.concat(Ns(t)) : [i, Ns(t)] : Ns(t)
     ) : i,
     scopeId: e.scopeId,
     slotScopeIds: e.slotScopeIds,
@@ -3334,29 +3334,29 @@ function Bt(e, t, n = !1, s = !1) {
     ce: e.ce,
     cacheIndex: e.cacheIndex
   };
-  return c && s && Zn(
+  return c && s && ts(
     u,
     c.clone(u)
   ), u;
 }
-function Ee(e = " ", t = 0) {
-  return _e(hr, null, e, t);
+function Me(e = " ", t = 0) {
+  return Se(xr, null, e, t);
 }
-function F(e = "", t = !1) {
-  return t ? (b(), We(Ie, null, e)) : _e(Ie, null, e);
+function R(e = "", t = !1) {
+  return t ? (y(), Ge(Ne, null, e)) : Se(Ne, null, e);
 }
-function dt(e) {
-  return e == null || typeof e == "boolean" ? _e(Ie) : se(e) ? _e(
+function ft(e) {
+  return e == null || typeof e == "boolean" ? Se(Ne) : se(e) ? Se(
     J,
     null,
     // #3666, avoid reference pollution when reusing vnode
     e.slice()
-  ) : Vs(e) ? kt(e) : _e(hr, null, String(e));
+  ) : Gs(e) ? wt(e) : Se(xr, null, String(e));
 }
-function kt(e) {
+function wt(e) {
   return e.el === null && e.patchFlag !== -1 || e.memo ? e : Bt(e);
 }
-function Us(e, t) {
+function Ks(e, t) {
   let n = 0;
   const { shapeFlag: s } = e;
   if (t == null)
@@ -3366,24 +3366,24 @@ function Us(e, t) {
   else if (typeof t == "object")
     if (s & 65) {
       const r = t.default;
-      r && (r._c && (r._d = !1), Us(e, r()), r._c && (r._d = !0));
+      r && (r._c && (r._d = !1), Ks(e, r()), r._c && (r._d = !0));
       return;
     } else {
       n = 32;
       const r = t._;
-      !r && !_a(t) ? t._ctx = Ge : r === 3 && Ge && (Ge.slots._ === 1 ? t._ = 1 : (t._ = 2, e.patchFlag |= 1024));
+      !r && !Ca(t) ? t._ctx = Ke : r === 3 && Ke && (Ke.slots._ === 1 ? t._ = 1 : (t._ = 2, e.patchFlag |= 1024));
     }
   else if (de(t)) {
     if (s & 65) {
-      Us(e, { default: t });
+      Ks(e, { default: t });
       return;
     }
-    t = { default: t, _ctx: Ge }, n = 32;
+    t = { default: t, _ctx: Ke }, n = 32;
   } else
-    t = String(t), s & 64 ? (n = 16, t = [Ee(t)]) : n = 8;
+    t = String(t), s & 64 ? (n = 16, t = [Me(t)]) : n = 8;
   e.children = t, e.shapeFlag |= n;
 }
-function Od(...e) {
+function Vd(...e) {
   const t = {};
   for (let n = 0; n < e.length; n++) {
     const s = e[n];
@@ -3391,27 +3391,27 @@ function Od(...e) {
       if (r === "class")
         t.class !== s.class && (t.class = Z([t.class, s.class]));
       else if (r === "style")
-        t.style = ar([t.style, s.style]);
-      else if (sr(r)) {
+        t.style = dr([t.style, s.style]);
+      else if (or(r)) {
         const i = t[r], o = s[r];
         o && i !== o && !(se(i) && i.includes(o)) ? t[r] = i ? [].concat(i, o) : o : o == null && i == null && // mergeProps({ 'onUpdate:modelValue': undefined }) should not retain
         // the model listener.
-        !rr(r) && (t[r] = o);
+        !lr(r) && (t[r] = o);
       } else r !== "" && (t[r] = s[r]);
   }
   return t;
 }
-function at(e, t, n, s = null) {
-  tt(e, t, 7, [
+function ut(e, t, n, s = null) {
+  st(e, t, 7, [
     n,
     s
   ]);
 }
-const Bd = ba();
-let Vd = 0;
-function Ud(e, t, n) {
-  const s = e.type, r = (t ? t.appContext : e.appContext) || Bd, i = {
-    uid: Vd++,
+const Ud = za();
+let Hd = 0;
+function Wd(e, t, n) {
+  const s = e.type, r = (t ? t.appContext : e.appContext) || Ud, i = {
+    uid: Hd++,
     vnode: e,
     type: s,
     parent: t,
@@ -3425,7 +3425,7 @@ function Ud(e, t, n) {
     update: null,
     // will be set synchronously right after creation
     job: null,
-    scope: new Eu(
+    scope: new Tu(
       !0
       /* detached */
     ),
@@ -3442,8 +3442,8 @@ function Ud(e, t, n) {
     components: null,
     directives: null,
     // resolved props and emits options
-    propsOptions: Ed(s, r),
-    emitsOptions: kd(s, r),
+    propsOptions: Td(s, r),
+    emitsOptions: zd(s, r),
     // emit
     emit: null,
     // to be set immediately
@@ -3486,52 +3486,52 @@ function Ud(e, t, n) {
     ec: null,
     sp: null
   };
-  return i.ctx = { _: i }, i.root = t ? t.root : i, i.emit = bd.bind(null, i), e.ce && e.ce(i), i;
+  return i.ctx = { _: i }, i.root = t ? t.root : i, i.emit = wd.bind(null, i), e.ce && e.ce(i), i;
 }
 let Vt = null;
-const Da = () => Vt || Ge;
-let Hs, Qn;
+const ja = () => Vt || Ke;
+let qs, ss;
 {
-  const e = lr(), t = (n, s) => {
+  const e = ur(), t = (n, s) => {
     let r;
     return (r = e[n]) || (r = e[n] = []), r.push(s), (i) => {
       r.length > 1 ? r.forEach((o) => o(i)) : r[0](i);
     };
   };
-  Hs = t(
+  qs = t(
     "__VUE_INSTANCE_SETTERS__",
     (n) => Vt = n
-  ), Qn = t(
+  ), ss = t(
     "__VUE_SSR_SETTERS__",
-    (n) => es = n
+    (n) => rs = n
   );
 }
-const Ni = (e) => {
+const Pi = (e) => {
   const t = Vt;
-  return Hs(e), e.scope.on(), () => {
-    e.scope.off(), Hs(t);
+  return qs(e), e.scope.on(), () => {
+    e.scope.off(), qs(t);
   };
-}, Co = () => {
-  Vt && Vt.scope.off(), Hs(null);
+}, To = () => {
+  Vt && Vt.scope.off(), qs(null);
 };
-function Fa(e) {
+function Ba(e) {
   return e.vnode.shapeFlag & 4;
 }
-let es = !1;
-function Hd(e, t = !1, n = !1) {
-  t && Qn(t);
-  const { props: s, children: r } = e.vnode, i = Fa(e);
-  Sd(e, s, i, t), Td(e, r, n || t);
-  const o = i ? Wd(e, t) : void 0;
-  return t && Qn(!1), o;
+let rs = !1;
+function Gd(e, t = !1, n = !1) {
+  t && ss(t);
+  const { props: s, children: r } = e.vnode, i = Ba(e);
+  Ed(e, s, i, t), Nd(e, r, n || t);
+  const o = i ? Kd(e, t) : void 0;
+  return t && ss(!1), o;
 }
-function Wd(e, t) {
+function Kd(e, t) {
   const n = e.type;
-  e.accessCache = /* @__PURE__ */ Object.create(null), e.proxy = new Proxy(e.ctx, gd);
+  e.accessCache = /* @__PURE__ */ Object.create(null), e.proxy = new Proxy(e.ctx, vd);
   const { setup: s } = n;
   if (s) {
-    Ft();
-    const r = e.setupContext = s.length > 1 ? Kd(e) : null, i = Ni(e), o = us(
+    Ot();
+    const r = e.setupContext = s.length > 1 ? Yd(e) : null, i = Pi(e), o = ps(
       s,
       e,
       0,
@@ -3539,90 +3539,90 @@ function Wd(e, t) {
         e.props,
         r
       ]
-    ), l = Fl(o);
-    if (jt(), i(), (l || e.sp) && !Vn(e) && pd(e), l) {
-      if (o.then(Co, Co), t)
+    ), l = Bl(o);
+    if (Ft(), i(), (l || e.sp) && !Gn(e) && md(e), l) {
+      if (o.then(To, To), t)
         return o.then((c) => {
-          Qn(!0);
+          ss(!0);
           try {
-            Eo(e, c, t);
+            Io(e, c, t);
           } finally {
-            Qn(!1);
+            ss(!1);
           }
         }).catch((c) => {
-          dr(c, e, 0);
+          pr(c, e, 0);
         });
       e.asyncDep = o;
     } else
-      Eo(e, o);
+      Io(e, o);
   } else
-    ja(e);
+    Va(e);
 }
-function Eo(e, t, n) {
-  de(t) ? e.type.__ssrInlineRender ? e.ssrRender = t : e.render = t : he(t) && (e.setupState = oa(t)), ja(e);
+function Io(e, t, n) {
+  de(t) ? e.type.__ssrInlineRender ? e.ssrRender = t : e.render = t : he(t) && (e.setupState = ca(t)), Va(e);
 }
-function ja(e, t, n) {
+function Va(e, t, n) {
   const s = e.type;
   e.render || (e.render = s.render || sn);
 }
-const Gd = {
+const qd = {
   get(e, t) {
-    return Me(e, "get", ""), e[t];
+    return Te(e, "get", ""), e[t];
   }
 };
-function Kd(e) {
+function Yd(e) {
   const t = (n) => {
     e.exposed = n || {};
   };
   return {
-    attrs: new Proxy(e.attrs, Gd),
+    attrs: new Proxy(e.attrs, qd),
     slots: e.slots,
     emit: e.emit,
     expose: t
   };
 }
-function mr(e) {
-  return e.exposed ? e.exposeProxy || (e.exposeProxy = new Proxy(oa(Yu(e.exposed)), {
+function vr(e) {
+  return e.exposed ? e.exposeProxy || (e.exposeProxy = new Proxy(ca(Zu(e.exposed)), {
     get(t, n) {
       if (n in t)
         return t[n];
-      if (n in Un)
-        return Un[n](e);
+      if (n in Kn)
+        return Kn[n](e);
     },
     has(t, n) {
-      return n in t || n in Un;
+      return n in t || n in Kn;
     }
   })) : e.proxy;
 }
-function qd(e) {
+function Jd(e) {
   return de(e) && "__vccOpts" in e;
 }
-const H = (e, t) => /* @__PURE__ */ ed(e, t, es);
-function Yd(e, t, n) {
+const H = (e, t) => /* @__PURE__ */ nd(e, t, rs);
+function Zd(e, t, n) {
   try {
-    Bs(-1);
+    Ws(-1);
     const s = arguments.length;
-    return s === 2 ? he(t) && !se(t) ? Vs(t) ? _e(e, null, [t]) : _e(e, t) : _e(e, null, t) : (s > 3 ? n = Array.prototype.slice.call(arguments, 2) : s === 3 && Vs(n) && (n = [n]), _e(e, t, n));
+    return s === 2 ? he(t) && !se(t) ? Gs(t) ? Se(e, null, [t]) : Se(e, t) : Se(e, null, t) : (s > 3 ? n = Array.prototype.slice.call(arguments, 2) : s === 3 && Gs(n) && (n = [n]), Se(e, t, n));
   } finally {
-    Bs(1);
+    Ws(1);
   }
 }
-const Jd = "3.5.43";
+const Qd = "3.5.43";
 /**
 * @vue/runtime-dom v3.5.43
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
-let ai;
-const Mo = typeof window < "u" && window.trustedTypes;
-if (Mo)
+let ui;
+const No = typeof window < "u" && window.trustedTypes;
+if (No)
   try {
-    ai = /* @__PURE__ */ Mo.createPolicy("vue", {
+    ui = /* @__PURE__ */ No.createPolicy("vue", {
       createHTML: (e) => e
     });
   } catch {
   }
-const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000/svg", Xd = "http://www.w3.org/1998/Math/MathML", bt = typeof document < "u" ? document : null, To = bt && /* @__PURE__ */ bt.createElement("template"), Qd = {
+const Ua = ui ? (e) => ui.createHTML(e) : (e) => e, Xd = "http://www.w3.org/2000/svg", eA = "http://www.w3.org/1998/Math/MathML", kt = typeof document < "u" ? document : null, Po = kt && /* @__PURE__ */ kt.createElement("template"), tA = {
   insert: (e, t, n) => {
     t.insertBefore(e, n || null);
   },
@@ -3631,11 +3631,11 @@ const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000
     t && t.removeChild(e);
   },
   createElement: (e, t, n, s) => {
-    const r = t === "svg" ? bt.createElementNS(Zd, e) : t === "mathml" ? bt.createElementNS(Xd, e) : n ? bt.createElement(e, { is: n }) : bt.createElement(e);
+    const r = t === "svg" ? kt.createElementNS(Xd, e) : t === "mathml" ? kt.createElementNS(eA, e) : n ? kt.createElement(e, { is: n }) : kt.createElement(e);
     return e === "select" && s && s.multiple != null && r.setAttribute("multiple", s.multiple), r;
   },
-  createText: (e) => bt.createTextNode(e),
-  createComment: (e) => bt.createComment(e),
+  createText: (e) => kt.createTextNode(e),
+  createComment: (e) => kt.createComment(e),
   setText: (e, t) => {
     e.nodeValue = t;
   },
@@ -3644,7 +3644,7 @@ const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000
   },
   parentNode: (e) => e.parentNode,
   nextSibling: (e) => e.nextSibling,
-  querySelector: (e) => bt.querySelector(e),
+  querySelector: (e) => kt.querySelector(e),
   setScopeId(e, t) {
     e.setAttribute(t, "");
   },
@@ -3658,10 +3658,10 @@ const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000
       for (; t.insertBefore(r.cloneNode(!0), n), !(r === i || !(r = r.nextSibling)); )
         ;
     else {
-      To.innerHTML = Oa(
+      Po.innerHTML = Ua(
         s === "svg" ? `<svg>${e}</svg>` : s === "mathml" ? `<math>${e}</math>` : e
       );
-      const l = To.content;
+      const l = Po.content;
       if (s === "svg" || s === "mathml") {
         const c = l.firstChild;
         for (; c.firstChild; )
@@ -3677,7 +3677,7 @@ const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000
       n ? n.previousSibling : t.lastChild
     ];
   }
-}, Mt = "transition", In = "animation", ts = /* @__PURE__ */ Symbol("_vtc"), Ba = {
+}, Tt = "transition", Ln = "animation", is = /* @__PURE__ */ Symbol("_vtc"), Ha = {
   name: String,
   type: String,
   css: {
@@ -3694,19 +3694,19 @@ const Oa = ai ? (e) => ai.createHTML(e) : (e) => e, Zd = "http://www.w3.org/2000
   leaveFromClass: String,
   leaveActiveClass: String,
   leaveToClass: String
-}, eA = /* @__PURE__ */ Oe(
+}, nA = /* @__PURE__ */ je(
   {},
-  pa,
-  Ba
-), tA = (e) => (e.displayName = "Transition", e.props = eA, e), nA = /* @__PURE__ */ tA(
-  (e, { slots: t }) => Yd(fd, sA(e), t)
+  ga,
+  Ha
+), sA = (e) => (e.displayName = "Transition", e.props = nA, e), rA = /* @__PURE__ */ sA(
+  (e, { slots: t }) => Zd(hd, iA(e), t)
 ), Yt = (e, t = []) => {
   se(e) ? e.forEach((n) => n(...t)) : e && e(...t);
-}, Io = (e) => e ? se(e) ? e.some((t) => t.length > 1) : e.length > 1 : !1;
-function sA(e) {
+}, Do = (e) => e ? se(e) ? e.some((t) => t.length > 1) : e.length > 1 : !1;
+function iA(e) {
   const t = {};
   for (const v in e)
-    v in Ba || (t[v] = e[v]);
+    v in Ha || (t[v] = e[v]);
   if (e.css === !1)
     return t;
   const {
@@ -3720,132 +3720,132 @@ function sA(e) {
     appearActiveClass: a = o,
     appearToClass: u = l,
     leaveFromClass: f = `${n}-leave-from`,
-    leaveActiveClass: h = `${n}-leave-active`,
-    leaveToClass: x = `${n}-leave-to`
-  } = e, z = rA(r), k = z && z[0], R = z && z[1], {
-    onBeforeEnter: U,
-    onEnter: D,
-    onEnterCancelled: E,
-    onLeave: M,
+    leaveActiveClass: m = `${n}-leave-active`,
+    leaveToClass: k = `${n}-leave-to`
+  } = e, z = oA(r), x = z && z[0], $ = z && z[1], {
+    onBeforeEnter: j,
+    onEnter: O,
+    onEnterCancelled: M,
+    onLeave: T,
     onLeaveCancelled: ee,
-    onBeforeAppear: te = U,
-    onAppear: X = D,
-    onAppearCancelled: re = E
-  } = t, C = (v, N, ie, le) => {
-    v._enterCancelled = le, Jt(v, N ? u : l), Jt(v, N ? a : o), ie && ie();
-  }, p = (v, N) => {
-    v._isLeaving = !1, Jt(v, f), Jt(v, x), Jt(v, h), N && N();
-  }, m = (v) => (N, ie) => {
-    const le = v ? X : D, Pe = () => C(N, v, ie);
-    Yt(le, [N, Pe]), No(() => {
-      Jt(N, v ? c : i), yt(N, v ? u : l), Io(le) || Po(N, s, k, Pe);
+    onBeforeAppear: te = j,
+    onAppear: Q = O,
+    onAppearCancelled: re = M
+  } = t, E = (v, P, ie, le) => {
+    v._enterCancelled = le, Jt(v, P ? u : l), Jt(v, P ? a : o), ie && ie();
+  }, p = (v, P) => {
+    v._isLeaving = !1, Jt(v, f), Jt(v, k), Jt(v, m), P && P();
+  }, h = (v) => (P, ie) => {
+    const le = v ? Q : O, De = () => E(P, v, ie);
+    Yt(le, [P, De]), Lo(() => {
+      Jt(P, v ? c : i), bt(P, v ? u : l), Do(le) || Ro(P, s, x, De);
     });
   };
-  return Oe(t, {
+  return je(t, {
     onBeforeEnter(v) {
-      Yt(U, [v]), yt(v, i), yt(v, o);
+      Yt(j, [v]), bt(v, i), bt(v, o);
     },
     onBeforeAppear(v) {
-      Yt(te, [v]), yt(v, c), yt(v, a);
+      Yt(te, [v]), bt(v, c), bt(v, a);
     },
-    onEnter: m(!1),
-    onAppear: m(!0),
-    onLeave(v, N) {
+    onEnter: h(!1),
+    onAppear: h(!0),
+    onLeave(v, P) {
       v._isLeaving = !0;
-      const ie = () => p(v, N);
-      yt(v, f), v._enterCancelled ? (yt(v, h), Do(v)) : (Do(v), yt(v, h)), No(() => {
-        v._isLeaving && (Jt(v, f), yt(v, x), Io(M) || Po(v, s, R, ie));
-      }), Yt(M, [v, ie]);
+      const ie = () => p(v, P);
+      bt(v, f), v._enterCancelled ? (bt(v, m), jo(v)) : (jo(v), bt(v, m)), Lo(() => {
+        v._isLeaving && (Jt(v, f), bt(v, k), Do(T) || Ro(v, s, $, ie));
+      }), Yt(T, [v, ie]);
     },
     onEnterCancelled(v) {
-      C(v, !1, void 0, !0), Yt(E, [v]);
+      E(v, !1, void 0, !0), Yt(M, [v]);
     },
     onAppearCancelled(v) {
-      C(v, !0, void 0, !0), Yt(re, [v]);
+      E(v, !0, void 0, !0), Yt(re, [v]);
     },
     onLeaveCancelled(v) {
       p(v), Yt(ee, [v]);
     }
   });
 }
-function rA(e) {
+function oA(e) {
   if (e == null)
     return null;
   if (he(e))
-    return [Dr(e.enter), Dr(e.leave)];
+    return [Fr(e.enter), Fr(e.leave)];
   {
-    const t = Dr(e);
+    const t = Fr(e);
     return [t, t];
   }
 }
-function Dr(e) {
-  return vu(e);
+function Fr(e) {
+  return bu(e);
 }
-function yt(e, t) {
-  t.split(/\s+/).forEach((n) => n && e.classList.add(n)), (e[ts] || (e[ts] = /* @__PURE__ */ new Set())).add(t);
+function bt(e, t) {
+  t.split(/\s+/).forEach((n) => n && e.classList.add(n)), (e[is] || (e[is] = /* @__PURE__ */ new Set())).add(t);
 }
 function Jt(e, t) {
   t.split(/\s+/).forEach((s) => s && e.classList.remove(s));
-  const n = e[ts];
-  n && (n.delete(t), n.size || (e[ts] = void 0));
+  const n = e[is];
+  n && (n.delete(t), n.size || (e[is] = void 0));
 }
-function No(e) {
+function Lo(e) {
   requestAnimationFrame(() => {
     requestAnimationFrame(e);
   });
 }
-let iA = 0;
-function Po(e, t, n, s) {
-  const r = e._endId = ++iA, i = () => {
+let lA = 0;
+function Ro(e, t, n, s) {
+  const r = e._endId = ++lA, i = () => {
     r === e._endId && s();
   };
   if (n != null)
     return setTimeout(i, n);
-  const { type: o, timeout: l, propCount: c } = oA(e, t);
+  const { type: o, timeout: l, propCount: c } = aA(e, t);
   if (!o)
     return s();
   const a = o + "end";
   let u = 0;
   const f = () => {
-    e.removeEventListener(a, h), i();
-  }, h = (x) => {
-    x.target === e && ++u >= c && f();
+    e.removeEventListener(a, m), i();
+  }, m = (k) => {
+    k.target === e && ++u >= c && f();
   };
   setTimeout(() => {
     u < c && f();
-  }, l + 1), e.addEventListener(a, h);
+  }, l + 1), e.addEventListener(a, m);
 }
-function oA(e, t) {
-  const n = window.getComputedStyle(e), s = (z) => (n[z] || "").split(", "), r = s(`${Mt}Delay`), i = s(`${Mt}Duration`), o = Ro(r, i), l = s(`${In}Delay`), c = s(`${In}Duration`), a = Ro(l, c);
-  let u = null, f = 0, h = 0;
-  t === Mt ? o > 0 && (u = Mt, f = o, h = i.length) : t === In ? a > 0 && (u = In, f = a, h = c.length) : (f = Math.max(o, a), u = f > 0 ? o > a ? Mt : In : null, h = u ? u === Mt ? i.length : c.length : 0);
-  const x = u === Mt && /\b(?:transform|all)(?:,|$)/.test(
-    s(`${Mt}Property`).toString()
+function aA(e, t) {
+  const n = window.getComputedStyle(e), s = (z) => (n[z] || "").split(", "), r = s(`${Tt}Delay`), i = s(`${Tt}Duration`), o = Oo(r, i), l = s(`${Ln}Delay`), c = s(`${Ln}Duration`), a = Oo(l, c);
+  let u = null, f = 0, m = 0;
+  t === Tt ? o > 0 && (u = Tt, f = o, m = i.length) : t === Ln ? a > 0 && (u = Ln, f = a, m = c.length) : (f = Math.max(o, a), u = f > 0 ? o > a ? Tt : Ln : null, m = u ? u === Tt ? i.length : c.length : 0);
+  const k = u === Tt && /\b(?:transform|all)(?:,|$)/.test(
+    s(`${Tt}Property`).toString()
   );
   return {
     type: u,
     timeout: f,
-    propCount: h,
-    hasTransform: x
+    propCount: m,
+    hasTransform: k
   };
 }
-function Ro(e, t) {
+function Oo(e, t) {
   for (; e.length < t.length; )
     e = e.concat(e);
-  return Math.max(...t.map((n, s) => Lo(n) + Lo(e[s])));
+  return Math.max(...t.map((n, s) => Fo(n) + Fo(e[s])));
 }
-function Lo(e) {
+function Fo(e) {
   return e === "auto" ? 0 : Number(e.slice(0, -1).replace(",", ".")) * 1e3;
 }
-function Do(e) {
+function jo(e) {
   return (e ? e.ownerDocument : document).body.offsetHeight;
 }
-function lA(e, t, n) {
-  const s = e[ts];
+function cA(e, t, n) {
+  const s = e[is];
   s && (t = (t ? [t, ...s] : [...s]).join(" ")), t == null ? e.removeAttribute("class") : n ? e.setAttribute("class", t) : e.className = t;
 }
-const Fo = /* @__PURE__ */ Symbol("_vod"), aA = /* @__PURE__ */ Symbol("_vsh"), cA = /* @__PURE__ */ Symbol(""), uA = /(?:^|;)\s*display\s*:/;
-function dA(e, t, n) {
+const Bo = /* @__PURE__ */ Symbol("_vod"), uA = /* @__PURE__ */ Symbol("_vsh"), dA = /* @__PURE__ */ Symbol(""), AA = /(?:^|;)\s*display\s*:/;
+function fA(e, t, n) {
   const s = e.style, r = ye(n);
   let i = !1;
   if (n && !r) {
@@ -3853,73 +3853,73 @@ function dA(e, t, n) {
       if (ye(t))
         for (const o of t.split(";")) {
           const l = o.slice(0, o.indexOf(":")).trim();
-          n[l] == null && Ln(s, l, "");
+          n[l] == null && jn(s, l, "");
         }
       else
         for (const o in t)
-          n[o] == null && Ln(s, o, "");
+          n[o] == null && jn(s, o, "");
     for (const o in n) {
       o === "display" && (i = !0);
       const l = n[o];
-      l != null ? fA(
+      l != null ? hA(
         e,
         o,
         !ye(t) && t ? t[o] : void 0,
         l
-      ) || Ln(s, o, l) : Ln(s, o, "");
+      ) || jn(s, o, l) : jn(s, o, "");
     }
   } else if (r) {
     if (t !== n) {
-      const o = s[cA];
-      o && (n += ";" + o), s.cssText = n, i = uA.test(n);
+      const o = s[dA];
+      o && (n += ";" + o), s.cssText = n, i = AA.test(n);
     }
   } else t && e.removeAttribute("style");
-  Fo in e && (e[Fo] = i ? s.display : "", e[aA] && (s.display = "none"));
+  Bo in e && (e[Bo] = i ? s.display : "", e[uA] && (s.display = "none"));
 }
-const ks = /\s*!important$/;
-function Ln(e, t, n) {
+const $s = /\s*!important$/;
+function jn(e, t, n) {
   if (se(n))
-    n.forEach((s) => Ln(e, t, s));
+    n.forEach((s) => jn(e, t, s));
   else if (n == null && (n = ""), t.startsWith("--"))
-    ks.test(n) ? e.setProperty(t, n.replace(ks, ""), "important") : e.setProperty(t, n);
+    $s.test(n) ? e.setProperty(t, n.replace($s, ""), "important") : e.setProperty(t, n);
   else {
-    const s = AA(e, t);
-    ks.test(n) ? e.setProperty(
-      An(s),
-      n.replace(ks, ""),
+    const s = pA(e, t);
+    $s.test(n) ? e.setProperty(
+      fn(s),
+      n.replace($s, ""),
       "important"
     ) : e[s] = n;
   }
 }
-const jo = ["Webkit", "Moz", "ms"], Fr = {};
-function AA(e, t) {
-  const n = Fr[t];
+const Vo = ["Webkit", "Moz", "ms"], jr = {};
+function pA(e, t) {
+  const n = jr[t];
   if (n)
     return n;
-  let s = Qe(t);
+  let s = et(t);
   if (s !== "filter" && s in e)
-    return Fr[t] = s;
-  s = Bl(s);
-  for (let r = 0; r < jo.length; r++) {
-    const i = jo[r] + s;
+    return jr[t] = s;
+  s = Hl(s);
+  for (let r = 0; r < Vo.length; r++) {
+    const i = Vo[r] + s;
     if (i in e)
-      return Fr[t] = i;
+      return jr[t] = i;
   }
   return t;
 }
-function fA(e, t, n, s) {
+function hA(e, t, n, s) {
   return e.tagName === "TEXTAREA" && (t === "width" || t === "height") && ye(s) && n === s;
 }
-const Oo = "http://www.w3.org/1999/xlink";
-function Bo(e, t, n, s, r, i = _u(t)) {
-  s && t.startsWith("xlink:") ? n == null ? e.removeAttributeNS(Oo, t.slice(6, t.length)) : e.setAttributeNS(Oo, t, n) : n == null || i && !Ul(n) ? e.removeAttribute(t) : e.setAttribute(
+const Uo = "http://www.w3.org/1999/xlink";
+function Ho(e, t, n, s, r, i = Su(t)) {
+  s && t.startsWith("xlink:") ? n == null ? e.removeAttributeNS(Uo, t.slice(6, t.length)) : e.setAttributeNS(Uo, t, n) : n == null || i && !Gl(n) ? e.removeAttribute(t) : e.setAttribute(
     t,
-    i ? "" : ht(n) ? String(n) : n
+    i ? "" : gt(n) ? String(n) : n
   );
 }
-function Vo(e, t, n, s, r) {
+function Wo(e, t, n, s, r) {
   if (t === "innerHTML" || t === "textContent") {
-    n != null && (e[t] = t === "innerHTML" ? Oa(n) : n);
+    n != null && (e[t] = t === "innerHTML" ? Ua(n) : n);
     return;
   }
   const i = e.tagName;
@@ -3936,7 +3936,7 @@ function Vo(e, t, n, s, r) {
   let o = !1;
   if (n === "" || n == null) {
     const l = typeof e[t];
-    l === "boolean" ? n = Ul(n) : n == null && l === "string" ? (n = "", o = !0) : l === "number" && (n = 0, o = !0);
+    l === "boolean" ? n = Gl(n) : n == null && l === "string" ? (n = "", o = !0) : l === "number" && (n = 0, o = !0);
   }
   try {
     e[t] = n;
@@ -3944,38 +3944,38 @@ function Vo(e, t, n, s, r) {
   }
   o && e.removeAttribute(r || t);
 }
-function Qt(e, t, n, s) {
+function Xt(e, t, n, s) {
   e.addEventListener(t, n, s);
 }
-function pA(e, t, n, s) {
+function mA(e, t, n, s) {
   e.removeEventListener(t, n, s);
 }
-const Uo = /* @__PURE__ */ Symbol("_vei");
-function hA(e, t, n, s, r = null) {
-  const i = e[Uo] || (e[Uo] = {}), o = i[t];
+const Go = /* @__PURE__ */ Symbol("_vei");
+function gA(e, t, n, s, r = null) {
+  const i = e[Go] || (e[Go] = {}), o = i[t];
   if (s && o)
     o.value = s;
   else {
-    const [l, c] = xA(t);
+    const [l, c] = yA(t);
     if (s) {
-      const a = i[t] = bA(
+      const a = i[t] = wA(
         s,
         r
       );
-      Qt(e, l, a, c);
-    } else o && (pA(e, l, o, c), i[t] = void 0);
+      Xt(e, l, a, c);
+    } else o && (mA(e, l, o, c), i[t] = void 0);
   }
 }
-const mA = /(Once|Passive|Capture)$/, gA = /^on:?(?:Once|Passive|Capture)$/;
-function xA(e) {
+const xA = /(Once|Passive|Capture)$/, vA = /^on:?(?:Once|Passive|Capture)$/;
+function yA(e) {
   let t, n;
-  for (; (n = e.match(mA)) && !gA.test(e); )
+  for (; (n = e.match(xA)) && !vA.test(e); )
     t || (t = {}), e = e.slice(0, e.length - n[1].length), t[n[1].toLowerCase()] = !0;
-  return [e[2] === ":" ? e.slice(3) : An(e.slice(2)), t];
+  return [e[2] === ":" ? e.slice(3) : fn(e.slice(2)), t];
 }
-let jr = 0;
-const vA = /* @__PURE__ */ Promise.resolve(), yA = () => jr || (vA.then(() => jr = 0), jr = Date.now());
-function bA(e, t) {
+let Br = 0;
+const bA = /* @__PURE__ */ Promise.resolve(), kA = () => Br || (bA.then(() => Br = 0), Br = Date.now());
+function wA(e, t) {
   const n = (s) => {
     if (!s._vts)
       s._vts = Date.now();
@@ -3990,7 +3990,7 @@ function bA(e, t) {
       const o = r.slice(), l = [s];
       for (let c = 0; c < o.length && !s._stopped; c++) {
         const a = o[c];
-        a && tt(
+        a && st(
           a,
           t,
           5,
@@ -3998,25 +3998,25 @@ function bA(e, t) {
         );
       }
     } else
-      tt(
+      st(
         r,
         t,
         5,
         [s]
       );
   };
-  return n.value = e, n.attached = yA(), n;
+  return n.value = e, n.attached = kA(), n;
 }
-const Ho = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // lowercase letter
-e.charCodeAt(2) > 96 && e.charCodeAt(2) < 123, kA = (e, t, n, s, r, i) => {
+const Ko = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // lowercase letter
+e.charCodeAt(2) > 96 && e.charCodeAt(2) < 123, zA = (e, t, n, s, r, i) => {
   const o = r === "svg";
-  t === "class" ? lA(e, s, o) : t === "style" ? dA(e, n, s) : sr(t) ? rr(t) || hA(e, t, n, s, i) : (t[0] === "." ? (t = t.slice(1), !0) : t[0] === "^" ? (t = t.slice(1), !1) : wA(e, t, s, o)) ? (Vo(e, t, s), !e.tagName.includes("-") && (t === "value" || t === "checked" || t === "selected") && Bo(e, t, s, o, i, t !== "value")) : /* #11081 force set props for possible async custom element */ e._isVueCE && // #12408 check if it's declared prop or it's async custom element
-  (zA(e, t) || // @ts-expect-error _def is private
-  e._def.__asyncLoader && (/[A-Z]/.test(t) || !ye(s))) ? Vo(e, Qe(t), s, i, t) : (t === "true-value" ? e._trueValue = s : t === "false-value" && (e._falseValue = s), Bo(e, t, s, o));
+  t === "class" ? cA(e, s, o) : t === "style" ? fA(e, n, s) : or(t) ? lr(t) || gA(e, t, n, s, i) : (t[0] === "." ? (t = t.slice(1), !0) : t[0] === "^" ? (t = t.slice(1), !1) : _A(e, t, s, o)) ? (Wo(e, t, s), !e.tagName.includes("-") && (t === "value" || t === "checked" || t === "selected") && Ho(e, t, s, o, i, t !== "value")) : /* #11081 force set props for possible async custom element */ e._isVueCE && // #12408 check if it's declared prop or it's async custom element
+  ($A(e, t) || // @ts-expect-error _def is private
+  e._def.__asyncLoader && (/[A-Z]/.test(t) || !ye(s))) ? Wo(e, et(t), s, i, t) : (t === "true-value" ? e._trueValue = s : t === "false-value" && (e._falseValue = s), Ho(e, t, s, o));
 };
-function wA(e, t, n, s) {
+function _A(e, t, n, s) {
   if (s)
-    return !!(t === "innerHTML" || t === "textContent" || t in e && Ho(t) && de(n));
+    return !!(t === "innerHTML" || t === "textContent" || t in e && Ko(t) && de(n));
   if (t === "spellcheck" || t === "draggable" || t === "translate" || t === "autocorrect" || t === "sandbox" && e.tagName === "IFRAME" || t === "form" || t === "list" && e.tagName === "INPUT" || t === "type" && e.tagName === "TEXTAREA")
     return !1;
   if (t === "width" || t === "height") {
@@ -4024,64 +4024,64 @@ function wA(e, t, n, s) {
     if (r === "IMG" || r === "VIDEO" || r === "CANVAS" || r === "SOURCE")
       return !1;
   }
-  return Ho(t) && ye(n) ? !1 : t in e;
+  return Ko(t) && ye(n) ? !1 : t in e;
 }
-function zA(e, t) {
+function $A(e, t) {
   const n = (
     // @ts-expect-error _def is private
     e._def.props
   );
   if (!n)
     return !1;
-  const s = Qe(t);
-  return Array.isArray(n) ? n.some((r) => Qe(r) === s) : Object.keys(n).some((r) => Qe(r) === s);
+  const s = et(t);
+  return Array.isArray(n) ? n.some((r) => et(r) === s) : Object.keys(n).some((r) => et(r) === s);
 }
-const Ws = (e) => {
+const Ys = (e) => {
   const t = e.props["onUpdate:modelValue"] || !1;
-  return se(t) ? (n) => Cs(t, n) : t;
+  return se(t) ? (n) => Is(t, n) : t;
 };
-function _A(e) {
+function SA(e) {
   e.target.composing = !0;
 }
-function Wo(e) {
+function qo(e) {
   const t = e.target;
   t.composing && (t.composing = !1, t.dispatchEvent(new Event("input")));
 }
-const tn = /* @__PURE__ */ Symbol("_assign"), ws = /* @__PURE__ */ Symbol("_initialValue");
-function Or(e, t, n) {
-  return t && (e = e.trim()), n && (e = or(e)), e;
+const tn = /* @__PURE__ */ Symbol("_assign"), Ss = /* @__PURE__ */ Symbol("_initialValue");
+function Vr(e, t, n) {
+  return t && (e = e.trim()), n && (e = cr(e)), e;
 }
-const Nt = {
+const Pt = {
   created(e, { modifiers: { lazy: t, trim: n, number: s } }, r) {
-    e.parentNode && (e.type === "text" ? e[ws] = e.defaultValue.replace(/[\r\n]/g, "") : e.type === "textarea" && (e[ws] = e.defaultValue.replace(/\r\n?/g, `
-`))), e[tn] = Ws(r);
+    e.parentNode && (e.type === "text" ? e[Ss] = e.defaultValue.replace(/[\r\n]/g, "") : e.type === "textarea" && (e[Ss] = e.defaultValue.replace(/\r\n?/g, `
+`))), e[tn] = Ys(r);
     const i = s || r.props && r.props.type === "number";
-    Qt(e, t ? "change" : "input", (o) => {
-      o.target.composing || e[tn](Or(e.value, n, i));
-    }), (n || i) && Qt(e, "change", () => {
-      e.value = Or(e.value, n, i);
-    }), t || (Qt(e, "compositionstart", _A), Qt(e, "compositionend", Wo), Qt(e, "change", Wo));
+    Xt(e, t ? "change" : "input", (o) => {
+      o.target.composing || e[tn](Vr(e.value, n, i));
+    }), (n || i) && Xt(e, "change", () => {
+      e.value = Vr(e.value, n, i);
+    }), t || (Xt(e, "compositionstart", SA), Xt(e, "compositionend", qo), Xt(e, "change", qo));
   },
   // set value on mounted so it's after min/max for type="range"
   mounted(e, { value: t, modifiers: { trim: n, number: s } }) {
-    const r = t ?? "", i = e[ws];
-    delete e[ws], i !== void 0 && (e.type === "text" || e.type === "textarea") && e.value !== i ? e[tn](Or(e.value, n, s)) : e.value = r;
+    const r = t ?? "", i = e[Ss];
+    delete e[Ss], i !== void 0 && (e.type === "text" || e.type === "textarea") && e.value !== i ? e[tn](Vr(e.value, n, s)) : e.value = r;
   },
   beforeUpdate(e, { value: t, oldValue: n, modifiers: { lazy: s, trim: r, number: i } }, o) {
-    if (e[tn] = Ws(o), e.composing) return;
-    const l = (i || e.type === "number") && !/^0\d/.test(e.value) ? or(e.value) : e.value, c = t ?? "";
+    if (e[tn] = Ys(o), e.composing) return;
+    const l = (i || e.type === "number") && !/^0\d/.test(e.value) ? cr(e.value) : e.value, c = t ?? "";
     if (l === c)
       return;
     const a = e.getRootNode();
     (a instanceof Document || a instanceof ShadowRoot) && a.activeElement === e && e.type !== "range" && (s && t === n || r && e.value.trim() === c) || (e.value = c);
   }
-}, Va = {
+}, Wa = {
   // <select multiple> value need to be deep traversed
   deep: !0,
   created(e, { value: t, modifiers: { number: n } }, s) {
-    e._modelValue = t, Qt(e, "change", () => {
+    e._modelValue = t, Xt(e, "change", () => {
       const r = Array.prototype.filter.call(e.options, (c) => c.selected).map(
-        (c) => n ? or(Gs(c)) : Gs(c)
+        (c) => n ? cr(Js(c)) : Js(c)
       ), i = e.multiple, o = i ? ln(e._modelValue) ? new Set(r) : r : r[0], l = e._pendingValue = [
         i,
         i ? se(o) ? r.slice() : r : o
@@ -4089,27 +4089,27 @@ const Nt = {
       try {
         e[tn](o);
       } finally {
-        aa(() => {
+        da(() => {
           e._pendingValue === l && (e._pendingValue = void 0);
         });
       }
-    }), e[tn] = Ws(s);
+    }), e[tn] = Ys(s);
   },
   // set value in mounted & updated because <select> relies on its children
   // <option>s.
   mounted(e, { value: t }) {
-    Go(e, t);
+    Yo(e, t);
   },
   beforeUpdate(e, { value: t }, n) {
-    e._modelValue = t, e[tn] = Ws(n);
+    e._modelValue = t, e[tn] = Ys(n);
   },
   updated(e, { value: t }) {
     const n = e._pendingValue;
-    e._pendingValue = void 0, (!n || n[0] !== e.multiple || !$A(t, n[1], n[0])) && Go(e, t);
+    e._pendingValue = void 0, (!n || n[0] !== e.multiple || !CA(t, n[1], n[0])) && Yo(e, t);
   }
 };
-function $A(e, t, n) {
-  if (!n || se(e)) return Dt(e, t);
+function CA(e, t, n) {
+  if (!n || se(e)) return Rt(e, t);
   if (ln(e)) {
     if (e.size !== t.length) return !1;
     for (const s of t)
@@ -4118,18 +4118,18 @@ function $A(e, t, n) {
   }
   return !1;
 }
-function Go(e, t) {
+function Yo(e, t) {
   const n = e.multiple, s = se(t);
   if (!(n && !s && !ln(t))) {
     for (let r = 0, i = e.options.length; r < i; r++) {
-      const o = e.options[r], l = Gs(o);
+      const o = e.options[r], l = Js(o);
       if (n)
         if (s) {
           const c = typeof l;
-          c === "string" || c === "number" ? o.selected = t.some((a) => String(a) === String(l)) : o.selected = Cu(t, l) > -1;
+          c === "string" || c === "number" ? o.selected = t.some((a) => String(a) === String(l)) : o.selected = Mu(t, l) > -1;
         } else
           o.selected = t.has(l);
-      else if (Dt(Gs(o), t)) {
+      else if (Rt(Js(o), t)) {
         e.selectedIndex !== r && (e.selectedIndex = r);
         return;
       }
@@ -4137,10 +4137,10 @@ function Go(e, t) {
     !n && e.selectedIndex !== -1 && (e.selectedIndex = -1);
   }
 }
-function Gs(e) {
+function Js(e) {
   return "_value" in e ? e._value : e.value;
 }
-const SA = ["ctrl", "shift", "alt", "meta"], CA = {
+const EA = ["ctrl", "shift", "alt", "meta"], MA = {
   stop: (e) => e.stopPropagation(),
   prevent: (e) => e.preventDefault(),
   self: (e) => e.target !== e.currentTarget,
@@ -4151,43 +4151,43 @@ const SA = ["ctrl", "shift", "alt", "meta"], CA = {
   left: (e) => "button" in e && e.button !== 0,
   middle: (e) => "button" in e && e.button !== 1,
   right: (e) => "button" in e && e.button !== 2,
-  exact: (e, t) => SA.some((n) => e[`${n}Key`] && !t.includes(n))
-}, EA = (e, t) => {
+  exact: (e, t) => EA.some((n) => e[`${n}Key`] && !t.includes(n))
+}, TA = (e, t) => {
   if (!e) return e;
   const n = e._withMods || (e._withMods = {}), s = t.join(".");
   return n[s] || (n[s] = ((r, ...i) => {
     for (let o = 0; o < t.length; o++) {
-      const l = CA[t[o]];
+      const l = MA[t[o]];
       if (l && l(r, t)) return;
     }
     return e(r, ...i);
   }));
-}, MA = /* @__PURE__ */ Oe({ patchProp: kA }, Qd);
-let Ko;
-function TA() {
-  return Ko || (Ko = Nd(MA));
+}, IA = /* @__PURE__ */ je({ patchProp: zA }, tA);
+let Jo;
+function NA() {
+  return Jo || (Jo = Dd(IA));
 }
-const IA = ((...e) => {
-  const t = TA().createApp(...e), { mount: n } = t;
+const PA = ((...e) => {
+  const t = NA().createApp(...e), { mount: n } = t;
   return t.mount = (s) => {
-    const r = PA(s);
+    const r = LA(s);
     if (!r) return;
     const i = t._component;
     !de(i) && !i.render && !i.template && (i.template = r.innerHTML), r.nodeType === 1 && (r.textContent = "");
-    const o = n(r, !1, NA(r));
+    const o = n(r, !1, DA(r));
     return r instanceof Element && (r.removeAttribute("v-cloak"), r.setAttribute("data-v-app", "")), o;
   }, t;
 });
-function NA(e) {
+function DA(e) {
   if (e instanceof SVGElement)
     return "svg";
   if (typeof MathMLElement == "function" && e instanceof MathMLElement)
     return "mathml";
 }
-function PA(e) {
+function LA(e) {
   return ye(e) ? document.querySelector(e) : e;
 }
-const RA = "zhonglou", LA = "钟楼", DA = "1.6.0", FA = "S", jA = 10, OA = "【副本进行中：钟楼】", BA = [], VA = { briefingName: "钟楼" }, UA = { type: "clock", dayStart: "12:00", minutesPerRound: 5 }, HA = { type: "nights", template: "剩余{n}夜" }, WA = "至第四日日出", GA = ["死者", "布局者", "原值班者", "摇钟者", "窃读者", "异见者", "首夜目击", "大厅目击", "零点目击"], KA = "死者永远不是{{user}}或其同伴。其余角色位默认由NPC担任；{{user}}或同伴通过自己的行动进入某个位置时，以实际行动为准。", qA = [{ key: "crank", label: "曲柄当前在谁手里", hint: "4F机房曲柄现在由谁掌握；没人拿着就写「挂在机房」" }, { key: "watcher", label: "当夜值班者", hint: "当夜抽签或托付后的值班者；白天写上一夜的值班者，尚未抽签写「未定」" }, { key: "positions", label: "各角色所在位置", hint: "简写，如「死者：5F西侧；布局者：1F大厅」；只写正文能推断出的" }, { key: "victim", label: "死者目前状态", hint: "如「正常活动」「5F西侧昏睡」「已坠入竖井」「尸体已被发现」" }, { key: "clues", label: "已被发现的关键线索", hint: "列表；只记{{user}}或同伴已经发现的" }, { key: "theories", label: "已公开讨论过的推理", hint: "列表；众人公开说出过的推理或怀疑" }], YA = [{ id: "d1", name: "第一日·白天", cap: 72, next: "n1", clock: !0 }, { id: "n1", name: "第一夜", cap: 28, next: "d2", night: !0 }, { id: "d2", name: "第二日·白天", cap: 72, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 28, next: "d3", night: !0 }, { id: "d3", name: "第三日·白天", cap: 72, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 28, next: null, night: !0 }, { id: "inv", name: "调查", cap: 50, next: "trial", byTag: !0, frozen: !0, deadline: "至审判结束" }, { id: "trial", name: "审判", cap: 50, next: null, byTag: !0, frozen: !0 }], JA = [{ id: "E01", phase: "d1", text: "十人落在塔外岩岸，系统展开简报与入场提示，发放楼层图。", kind: "event", from: 1, to: 1 }, { id: "E02", phase: "d1", text: "{布局者}独自读完《操作手册》及夹页，多次上5F，在东半侧外壁墙根画下粉笔短线与数字1到6。", kind: "event", from: 2, to: 60 }, { id: "E03", phase: "d1", text: "本日须自然呈现至少两条公平破绽（见世界书F4），不得特写或点破。", kind: "directive", from: 2, to: 72 }, { id: "E04", phase: "d1", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{首夜目击}。", kind: "event", from: 72, to: 72 }, { id: "E05", phase: "n1", text: "{首夜目击}经4F铁门、旋转梯登钟室检查大钟，铁门吱呀响两次。", kind: "event", from: 1, to: 10 }, { id: "E06", phase: "n1", text: "{首夜目击}回机房摇钟，曲柄全程很轻，第20轮前鸣钟十二下。", kind: "event", from: 10, to: 20 }, { id: "E07", phase: "d2", text: "{布局者}从1F药箱取走两片安眠药（剩十片），溶进保温杯的热茶，之后拿着保温杯在塔内走动。", kind: "event", from: 5, to: 15 }, { id: "E08", phase: "d2", text: "{布局者}在1F大厅角落告诉{死者}铭文的位置与“只有钟面三点前能过去”，递出保温杯。{大厅目击}看见两人交谈。", kind: "event", from: 19, to: 19, if: "{死者}与{布局者}仍按原计划行动" }, { id: "E09", phase: "d2", text: "{死者}从文具柜拿走较粗的那支铅笔和几张纸。", kind: "event", from: 20, to: 28, if: "{死者}仍按原计划行动" }, { id: "E10", phase: "d2", text: "{死者}拿着保温杯独自上楼。{大厅目击}看见。", kind: "event", from: 29, to: 29, if: "{死者}仍按原计划行动" }, { id: "E11", phase: "d2", text: "{死者}在5F西侧外壁抄下铭文，在页边写下日期与{布局者}的名字，喝了茶，靠墙睡着。", kind: "event", from: 31, to: 31, if: "{死者}已到达5F西侧且未被阻止" }, { id: "E12", phase: "d2", text: "{窃读者}跟着上楼。{大厅目击}看见。", kind: "event", from: 32, to: 32 }, { id: "E13", phase: "d2", text: "{窃读者}在5F看见{死者}睡着，没有叫醒，用掉在地上的铅笔抄下铭文，顺手把铅笔揣走。", kind: "event", from: 33, to: 33, if: "{死者}正在5F西侧昏睡" }, { id: "E14", phase: "d2", text: "{窃读者}匆匆下楼。{大厅目击}看见。", kind: "event", from: 34, to: 34 }, { id: "E15", phase: "d2", text: "时针之墙压住东口，推不开；第39轮起{死者}所在区域与东口隔开。", kind: "event", from: 35, to: 39 }, { id: "E16", phase: "d2", text: "共同进食，{死者}缺席。{窃读者}没有说出他看见的事。", kind: "event", from: 55, to: 65, if: "{死者}仍被封在西侧" }, { id: "E17", phase: "d2", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{原值班者}。", kind: "event", from: 72, to: 72 }, { id: "E18", phase: "n2", text: "{窃读者}经铁门登钟室，路过格栅没有停下，匆匆看过即下来。铁门响两次，间隔短。", kind: "event", from: 1, to: 4 }, { id: "E19", phase: "n2", text: "{布局者}取下插销，上5F东半圆摸索一圈，确认一面直墙贯穿圆心，下来挂回插销。", kind: "event", from: 5, to: 8 }, { id: "E20", phase: "n2", text: "{原值班者}经铁门上行，在格栅前停下贴近静听，听见西半圆里熟睡的呼吸声，登钟室检查后下来。铁门响两次，间隔长。", kind: "event", from: 9, to: 14, if: "{死者}仍在西半圆昏睡" }, { id: "E21", phase: "n2", text: "{摇钟者}来到机房帮忙，{原值班者}笑着把曲柄托付给对方。若此时{{user}}在机房并愿意摇钟，改为托付给{{user}}。", kind: "event", from: 15, to: 17 }, { id: "E22", phase: "n2", text: "摇钟：第18轮起曲柄变沉；第20轮{死者}与保温杯被时针之墙推进竖井，曲柄突然一轻，{原值班者}说“老钟都这样”；{大厅目击}在1F听见闷响；第22轮鸣钟十二下。", kind: "event", from: 18, to: 22, if: "{死者}仍在西半圆，且无人中止或逆摇" }, { id: "E23", phase: "n2", text: "{零点目击}从摇钟者手中接过插销，上5F摸索一圈：只有一面墙，完整的圆，没有人。下来挂回插销。", kind: "event", from: 23, to: 25 }, { id: "E24", phase: "d3", text: "日出点名。若{死者}缺席：众人搜索，打开1F竖井检修门发现尸体，系统宣布有人死于他人之手、钟楼停摆，并在正文末尾输出<阶段切换>调查</阶段切换>。若无人死亡：点名全员到齐，钟楼照常走动。", kind: "event", from: 1, to: 1 }, { id: "E25", phase: "d3", text: "日落：钟停在6点，东口上锁，1F在所有存活者中抽签（包括{{user}}与同伴）选出第三夜值班者。所有人都知道这支签意味着什么。", kind: "event", from: 72, to: 72 }, { id: "E26", phase: "n3", text: "第三夜值班者知道自己将被留下，会按其人格设法把曲柄托付给别人（劝说、交换条件、欺骗、以情相求），也可能认命；{{user}}与同伴同样可能被托付。最后实际摇动曲柄、让大钟鸣响十二下的人，就是第三夜的值班者，第20轮前鸣钟。", kind: "event", from: 1, to: 20 }, { id: "E27", phase: "n3", text: "第四日日出：点名。第三夜最后摇动曲柄的人没有出现，他站在钟室大钟旁，被钟楼留下成为钟守，石壁上多了他的名字。其余人通关。按世界书F5评价，在正文末尾输出<副本结算>。", kind: "event", from: 28, to: 28 }, { id: "E28", phase: "inv", text: "调查开始：钟楼停在12点，5F为完整的圆，东口因停摆上锁，插销挂在机房。", kind: "event", from: 1, to: 1 }, { id: "E29", phase: "inv", text: "调查时间结束：系统宣布审判开启，并在正文末尾输出<阶段切换>审判</阶段切换>。", kind: "event", from: 50, to: 50 }, { id: "E30", phase: "trial", text: "审判时间结束：强制投票，按守则第10条执行；投中时凶手成为钟守，其余人通关。在正文末尾输出<副本结算>。", kind: "event", from: 50, to: 50 }], ZA = [{ id: "M1", q: "第一夜的值班签会抽中主播吗", yes: "会", no: "不会", p: 0.1, by: "d1", judge: "第一日日落的抽签结果是{{user}}本人当夜值班" }, { id: "M2", q: "塔里会出人命吗", yes: "会", no: "不会", p: 0.5, judge: "有人死于他人之手，系统宣布钟楼停摆、开启审判" }, { id: "M3", q: "主播会亲手摇响大钟吗", yes: "会", no: "不会", p: 0.35, judge: "{{user}}本人在4F机房摇动曲柄，让大钟鸣响" }], XA = [{ title: "游玩说明", md: `## 副本概况
+const RA = "zhonglou", OA = "钟楼", FA = "1.6.0", jA = "S", BA = 10, VA = "【副本进行中：钟楼】", UA = [], HA = { briefingName: "钟楼" }, WA = { type: "clock", dayStart: "12:00", minutesPerRound: 5 }, GA = { type: "nights", template: "剩余{n}夜" }, KA = "至第四日日出", qA = ["死者", "布局者", "原值班者", "摇钟者", "窃读者", "异见者", "首夜目击", "大厅目击", "零点目击"], YA = "死者永远不是{{user}}或其同伴。其余角色位默认由NPC担任；{{user}}或同伴通过自己的行动进入某个位置时，以实际行动为准。", JA = [{ key: "crank", label: "曲柄当前在谁手里", hint: "4F机房曲柄现在由谁掌握；没人拿着就写「挂在机房」" }, { key: "watcher", label: "当夜值班者", hint: "当夜抽签或托付后的值班者；白天写上一夜的值班者，尚未抽签写「未定」" }, { key: "positions", label: "各角色所在位置", hint: "简写，如「死者：5F西侧；布局者：1F大厅」；只写正文能推断出的" }, { key: "victim", label: "死者目前状态", hint: "如「正常活动」「5F西侧昏睡」「已坠入竖井」「尸体已被发现」" }, { key: "clues", label: "已被发现的关键线索", hint: "列表；只记{{user}}或同伴已经发现的" }, { key: "theories", label: "已公开讨论过的推理", hint: "列表；众人公开说出过的推理或怀疑" }], ZA = [{ id: "d1", name: "第一日·白天", cap: 72, next: "n1", clock: !0 }, { id: "n1", name: "第一夜", cap: 28, next: "d2", night: !0 }, { id: "d2", name: "第二日·白天", cap: 72, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 28, next: "d3", night: !0 }, { id: "d3", name: "第三日·白天", cap: 72, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 28, next: null, night: !0 }, { id: "inv", name: "调查", cap: 50, next: "trial", byTag: !0, frozen: !0, deadline: "至审判结束" }, { id: "trial", name: "审判", cap: 50, next: null, byTag: !0, frozen: !0 }], QA = [{ id: "E01", phase: "d1", text: "十人落在塔外岩岸，系统展开简报与入场提示，发放楼层图。", kind: "event", from: 1, to: 1 }, { id: "E02", phase: "d1", text: "{布局者}独自读完《操作手册》及夹页，多次上5F，在东半侧外壁墙根画下粉笔短线与数字1到6。", kind: "event", from: 2, to: 60 }, { id: "E03", phase: "d1", text: "本日须自然呈现至少两条公平破绽（见世界书F4），不得特写或点破。", kind: "directive", from: 2, to: 72 }, { id: "E04", phase: "d1", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{首夜目击}。", kind: "event", from: 72, to: 72 }, { id: "E05", phase: "n1", text: "{首夜目击}经4F铁门、旋转梯登钟室检查大钟，铁门吱呀响两次。", kind: "event", from: 1, to: 10 }, { id: "E06", phase: "n1", text: "{首夜目击}回机房摇钟，曲柄全程很轻，第20轮前鸣钟十二下。", kind: "event", from: 10, to: 20 }, { id: "E07", phase: "d2", text: "{布局者}从1F药箱取走两片安眠药（剩十片），溶进保温杯的热茶，之后拿着保温杯在塔内走动。", kind: "event", from: 5, to: 15 }, { id: "E08", phase: "d2", text: "{布局者}在1F大厅角落告诉{死者}铭文的位置与“只有钟面三点前能过去”，递出保温杯。{大厅目击}看见两人交谈。", kind: "event", from: 19, to: 19, if: "{死者}与{布局者}仍按原计划行动" }, { id: "E09", phase: "d2", text: "{死者}从文具柜拿走较粗的那支铅笔和几张纸。", kind: "event", from: 20, to: 28, if: "{死者}仍按原计划行动" }, { id: "E10", phase: "d2", text: "{死者}拿着保温杯独自上楼。{大厅目击}看见。", kind: "event", from: 29, to: 29, if: "{死者}仍按原计划行动" }, { id: "E11", phase: "d2", text: "{死者}在5F西侧外壁抄下铭文，在页边写下日期与{布局者}的名字，喝了茶，靠墙睡着。", kind: "event", from: 31, to: 31, if: "{死者}已到达5F西侧且未被阻止" }, { id: "E12", phase: "d2", text: "{窃读者}跟着上楼。{大厅目击}看见。", kind: "event", from: 32, to: 32 }, { id: "E13", phase: "d2", text: "{窃读者}在5F看见{死者}睡着，没有叫醒，用掉在地上的铅笔抄下铭文，顺手把铅笔揣走。", kind: "event", from: 33, to: 33, if: "{死者}正在5F西侧昏睡" }, { id: "E14", phase: "d2", text: "{窃读者}匆匆下楼。{大厅目击}看见。", kind: "event", from: 34, to: 34 }, { id: "E15", phase: "d2", text: "时针之墙压住东口，推不开；第39轮起{死者}所在区域与东口隔开。", kind: "event", from: 35, to: 39 }, { id: "E16", phase: "d2", text: "共同进食，{死者}缺席。{窃读者}没有说出他看见的事。", kind: "event", from: 55, to: 65, if: "{死者}仍被封在西侧" }, { id: "E17", phase: "d2", text: "日落：钟停在6点，东口上锁，1F抽签，结果为{原值班者}。", kind: "event", from: 72, to: 72 }, { id: "E18", phase: "n2", text: "{窃读者}经铁门登钟室，路过格栅没有停下，匆匆看过即下来。铁门响两次，间隔短。", kind: "event", from: 1, to: 4 }, { id: "E19", phase: "n2", text: "{布局者}取下插销，上5F东半圆摸索一圈，确认一面直墙贯穿圆心，下来挂回插销。", kind: "event", from: 5, to: 8 }, { id: "E20", phase: "n2", text: "{原值班者}经铁门上行，在格栅前停下贴近静听，听见西半圆里熟睡的呼吸声，登钟室检查后下来。铁门响两次，间隔长。", kind: "event", from: 9, to: 14, if: "{死者}仍在西半圆昏睡" }, { id: "E21", phase: "n2", text: "{摇钟者}来到机房帮忙，{原值班者}笑着把曲柄托付给对方。若此时{{user}}在机房并愿意摇钟，改为托付给{{user}}。", kind: "event", from: 15, to: 17 }, { id: "E22", phase: "n2", text: "摇钟：第18轮起曲柄变沉；第20轮{死者}与保温杯被时针之墙推进竖井，曲柄突然一轻，{原值班者}说“老钟都这样”；{大厅目击}在1F听见闷响；第22轮鸣钟十二下。", kind: "event", from: 18, to: 22, if: "{死者}仍在西半圆，且无人中止或逆摇" }, { id: "E23", phase: "n2", text: "{零点目击}从摇钟者手中接过插销，上5F摸索一圈：只有一面墙，完整的圆，没有人。下来挂回插销。", kind: "event", from: 23, to: 25 }, { id: "E24", phase: "d3", text: "日出点名。若{死者}缺席：众人搜索，打开1F竖井检修门发现尸体，系统宣布有人死于他人之手、钟楼停摆，并在正文末尾输出<阶段切换>调查</阶段切换>。若无人死亡：点名全员到齐，钟楼照常走动。", kind: "event", from: 1, to: 1 }, { id: "E25", phase: "d3", text: "日落：钟停在6点，东口上锁，1F在所有存活者中抽签（包括{{user}}与同伴）选出第三夜值班者。所有人都知道这支签意味着什么。", kind: "event", from: 72, to: 72 }, { id: "E26", phase: "n3", text: "第三夜值班者知道自己将被留下，会按其人格设法把曲柄托付给别人（劝说、交换条件、欺骗、以情相求），也可能认命；{{user}}与同伴同样可能被托付。最后实际摇动曲柄、让大钟鸣响十二下的人，就是第三夜的值班者，第20轮前鸣钟。", kind: "event", from: 1, to: 20 }, { id: "E27", phase: "n3", text: "第四日日出：点名。第三夜最后摇动曲柄的人没有出现，他站在钟室大钟旁，被钟楼留下成为钟守，石壁上多了他的名字。其余人通关。按世界书F5评价，在正文末尾输出<副本结算>。", kind: "event", from: 28, to: 28 }, { id: "E28", phase: "inv", text: "调查开始：钟楼停在12点，5F为完整的圆，东口因停摆上锁，插销挂在机房。", kind: "event", from: 1, to: 1 }, { id: "E29", phase: "inv", text: "调查时间结束：系统宣布审判开启，并在正文末尾输出<阶段切换>审判</阶段切换>。", kind: "event", from: 50, to: 50 }, { id: "E30", phase: "trial", text: "审判时间结束：强制投票，按守则第10条执行；投中时凶手成为钟守，其余人通关。在正文末尾输出<副本结算>。", kind: "event", from: 50, to: 50 }], XA = [{ id: "M1", q: "第一夜的值班签会抽中主播吗", yes: "会", no: "不会", p: 0.1, by: "d1", judge: "第一日日落的抽签结果是{{user}}本人当夜值班" }, { id: "M2", q: "塔里会出人命吗", yes: "会", no: "不会", p: 0.5, judge: "有人死于他人之手，系统宣布钟楼停摆、开启审判" }, { id: "M3", q: "主播会亲手摇响大钟吗", yes: "会", no: "不会", p: 0.35, judge: "{{user}}本人在4F机房摇动曲柄，让大钟鸣响" }], ef = [{ title: "游玩说明", md: `## 副本概况
 
 - 名称：钟楼
 - 等级：S
@@ -4268,27 +4268,27 @@ const RA = "zhonglou", LA = "钟楼", DA = "1.6.0", FA = "S", jA = 10, OA = "【
 - 每人在2F或3F分到一间卧室，房门可以从内侧闩上。
 - 1F有食物与清水，足够十人三日所需。
 - 1F药箱：绷带、止痛片，以及一瓶安眠药，瓶身标签写着"十二片"。
-- 1F文具柜：一沓纸、两支铅笔，是塔内仅有的书写工具。` }, { title: "楼层图", image: "zhonglou-map.svg" }], QA = [{ type: "discuss", text: "S级本还封异能，这谁顶得住", when: "open" }, { type: "discuss", text: "异能封了，道具也冻了，全靠脑子" }, { type: "discuss", text: "塔里连个钟都没有，全靠外面那一根时针" }, { type: "discuss", text: "守则我截图了，第十四条越看越不对劲" }, { type: "cold", text: "四面都是海，想跑都没船" }, { type: "discuss", text: "抽签别抽到主播，我看着都怕", phase: ["d1", "d2", "d3"] }, { type: "discuss", text: "今晚谁值班？", phase: ["n1", "n2", "n3"] }, { type: "discuss", text: "钟面层不能有光，那得多黑", phase: ["n1", "n2", "n3"] }, { type: "bless", text: "十二下，一定要数清楚", phase: ["n1", "n2", "n3"] }, { type: "discuss", text: "谁想当钟守，反正我不想" }, { type: "discuss", text: "停摆了……开始查吧", phase: ["inv"] }, { type: "discuss", text: "投票前再想想，投错了只有凶手能出去", phase: ["trial"] }, { type: "discuss", text: "平票也算没找出来，别分票", phase: ["trial"] }], ef = {
+- 1F文具柜：一沓纸、两支铅笔，是塔内仅有的书写工具。` }, { title: "楼层图", image: "zhonglou-map.svg" }], tf = [{ type: "discuss", text: "S级本还封异能，这谁顶得住", when: "open" }, { type: "discuss", text: "异能封了，道具也冻了，全靠脑子" }, { type: "discuss", text: "塔里连个钟都没有，全靠外面那一根时针" }, { type: "discuss", text: "守则我截图了，第十四条越看越不对劲" }, { type: "cold", text: "四面都是海，想跑都没船" }, { type: "discuss", text: "抽签别抽到主播，我看着都怕", phase: ["d1", "d2", "d3"] }, { type: "discuss", text: "今晚谁值班？", phase: ["n1", "n2", "n3"] }, { type: "discuss", text: "钟面层不能有光，那得多黑", phase: ["n1", "n2", "n3"] }, { type: "bless", text: "十二下，一定要数清楚", phase: ["n1", "n2", "n3"] }, { type: "discuss", text: "谁想当钟守，反正我不想" }, { type: "discuss", text: "停摆了……开始查吧", phase: ["inv"] }, { type: "discuss", text: "投票前再想想，投错了只有凶手能出去", phase: ["trial"] }, { type: "discuss", text: "平票也算没找出来，别分票", phase: ["trial"] }], nf = {
   id: RA,
-  name: LA,
-  version: DA,
-  level: FA,
-  players: jA,
-  token: OA,
-  legacyKeys: BA,
-  detect: VA,
-  time: UA,
-  remaining: HA,
-  deadline: WA,
-  roles: GA,
-  rolesNote: KA,
-  stateFields: qA,
-  phases: YA,
-  events: JA,
-  markets: ZA,
-  docs: XA,
-  danmaku: QA
-}, tf = "jingjie", nf = "境界游乐园", sf = "1.2.0", rf = "A", of = "【副本进行中：境界游乐园】", lf = [], af = { briefingName: "境界游乐园" }, cf = { type: "none" }, uf = { type: "fromPanel" }, df = [], Af = [], ff = [{ id: "M1", q: "15:30演出时主播会回头吗", yes: "会", no: "不会", p: 0.3, judge: "15:30表演区演出期间，{{user}}本人回头了" }, { id: "M2", q: "主播会坐上摩天轮吗", yes: "会", no: "不会", p: 0.55, judge: "{{user}}本人乘坐了摩天轮" }, { id: "M3", q: "主播会走进镜宫吗", yes: "会", no: "不会", p: 0.45, judge: "{{user}}本人进入了镜宫" }], pf = [{ title: "游客须知", md: `## 《境界游乐园》游客须知（修订版）
+  name: OA,
+  version: FA,
+  level: jA,
+  players: BA,
+  token: VA,
+  legacyKeys: UA,
+  detect: HA,
+  time: WA,
+  remaining: GA,
+  deadline: KA,
+  roles: qA,
+  rolesNote: YA,
+  stateFields: JA,
+  phases: ZA,
+  events: QA,
+  markets: XA,
+  docs: ef,
+  danmaku: tf
+}, sf = "jingjie", rf = "境界游乐园", of = "1.2.0", lf = "A", af = "【副本进行中：境界游乐园】", cf = [], uf = { briefingName: "境界游乐园" }, df = { type: "none" }, Af = { type: "fromPanel" }, ff = [], pf = [], hf = [{ id: "M1", q: "15:30演出时主播会回头吗", yes: "会", no: "不会", p: 0.3, judge: "15:30表演区演出期间，{{user}}本人回头了" }, { id: "M2", q: "主播会坐上摩天轮吗", yes: "会", no: "不会", p: 0.55, judge: "{{user}}本人乘坐了摩天轮" }, { id: "M3", q: "主播会走进镜宫吗", yes: "会", no: "不会", p: 0.45, judge: "{{user}}本人进入了镜宫" }], mf = [{ title: "游客须知", md: `## 《境界游乐园》游客须知（修订版）
 
 本须知由园区统一印制。
 请在入园后完整阅读一次，并将本页交还给入口工作人员。
@@ -4461,83 +4461,83 @@ const RA = "zhonglou", LA = "钟楼", DA = "1.6.0", FA = "S", jA = 10, OA = "【
 离园前，请确认自己从入园开始一直以游客身份进入这里。
 如果你无法确认，请不要离园。
 如果你确认自己是游客，请不要回头。
-如果你确认自己不是游客，请把手环交给离你最近的人。` }], hf = {
-  id: tf,
-  name: nf,
-  version: sf,
-  level: rf,
-  token: of,
-  legacyKeys: lf,
-  detect: af,
-  time: cf,
-  remaining: uf,
-  phases: df,
-  events: Af,
-  markets: ff,
-  docs: pf
-}, mf = "kaoshi", gf = "考试", xf = "1.1.0", vf = "A", yf = "【副本进行中：考试】", bf = [], kf = { briefingName: "考试" }, wf = { type: "countdown", minutesPerRound: 3 }, zf = { type: "fromPanel" }, _f = "至考试结束", $f = [{ id: "main", name: "考试", cap: 100, next: null }], Sf = [], Cf = [], Ef = {
-  id: mf,
-  name: gf,
-  version: xf,
-  level: vf,
-  token: yf,
-  legacyKeys: bf,
-  detect: kf,
-  time: wf,
-  remaining: zf,
-  deadline: _f,
-  phases: $f,
-  events: Sf,
-  docs: Cf
-}, Mf = "xiyan", Tf = "喜宴", If = "1.2.0", Nf = "D", Pf = "【副本进行中：喜宴】", Rf = [], Lf = { briefingName: "喜宴", patterns: ["6=5\\+1"] }, Df = { type: "countdown", minutesPerRound: 3 }, Ff = { type: "fromPanel" }, jf = "至天亮", Of = [{ id: "main", name: "喜宴", cap: 160, next: null }], Bf = [], Vf = [{ id: "M1", q: "主播会穿上喜服吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人穿上了喜服" }, { id: "M2", q: "这场婚礼的新人会是主播吗", yes: "是", no: "不是", p: 0.17, judge: "{{user}}被认定为这场婚礼的新郎或新娘", judgeNo: "{{user}}以外的某个人被认定为这场婚礼的新郎或新娘" }, { id: "M3", q: "天亮前会有人死吗", yes: "会", no: "不会", p: 0.4, judge: "有人死亡" }], Uf = [], Hf = [{ type: "praise", text: "D级本就是好，还管饭", when: "open" }, { type: "discuss", text: "村民也太热情了吧，热情得我发毛" }, { type: "discuss", text: "新人在你们之中？谁结婚啊" }, { type: "discuss", text: "那身喜服别穿！别穿！" }, { type: "discuss", text: "唢呐一响，我鸡皮疙瘩起来了" }, { type: "bless", text: "撑到天亮就行吧？应该吧？" }, { type: "discuss", text: "六个人，谁心里有鬼" }, { type: "discuss", text: "吃席吃出一身冷汗" }, { type: "discuss", text: "红纸贴满墙，看久了眼花" }, { type: "cold", text: "D级而已，大佬们别笑" }, { type: "discuss", text: "喜事别变丧事啊……", when: "hurt" }], Wf = {
-  id: Mf,
-  name: Tf,
-  version: If,
-  level: Nf,
-  token: Pf,
+如果你确认自己不是游客，请把手环交给离你最近的人。` }], gf = {
+  id: sf,
+  name: rf,
+  version: of,
+  level: lf,
+  token: af,
+  legacyKeys: cf,
+  detect: uf,
+  time: df,
+  remaining: Af,
+  phases: ff,
+  events: pf,
+  markets: hf,
+  docs: mf
+}, xf = "kaoshi", vf = "考试", yf = "1.1.0", bf = "A", kf = "【副本进行中：考试】", wf = [], zf = { briefingName: "考试" }, _f = { type: "countdown", minutesPerRound: 3 }, $f = { type: "fromPanel" }, Sf = "至考试结束", Cf = [{ id: "main", name: "考试", cap: 100, next: null }], Ef = [], Mf = [], Tf = {
+  id: xf,
+  name: vf,
+  version: yf,
+  level: bf,
+  token: kf,
+  legacyKeys: wf,
+  detect: zf,
+  time: _f,
+  remaining: $f,
+  deadline: Sf,
+  phases: Cf,
+  events: Ef,
+  docs: Mf
+}, If = "xiyan", Nf = "喜宴", Pf = "1.2.0", Df = "D", Lf = "【副本进行中：喜宴】", Rf = [], Of = { briefingName: "喜宴", patterns: ["6=5\\+1"] }, Ff = { type: "countdown", minutesPerRound: 3 }, jf = { type: "fromPanel" }, Bf = "至天亮", Vf = [{ id: "main", name: "喜宴", cap: 160, next: null }], Uf = [], Hf = [{ id: "M1", q: "主播会穿上喜服吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人穿上了喜服" }, { id: "M2", q: "这场婚礼的新人会是主播吗", yes: "是", no: "不是", p: 0.17, judge: "{{user}}被认定为这场婚礼的新郎或新娘", judgeNo: "{{user}}以外的某个人被认定为这场婚礼的新郎或新娘" }, { id: "M3", q: "天亮前会有人死吗", yes: "会", no: "不会", p: 0.4, judge: "有人死亡" }], Wf = [], Gf = [{ type: "praise", text: "D级本就是好，还管饭", when: "open" }, { type: "discuss", text: "村民也太热情了吧，热情得我发毛" }, { type: "discuss", text: "新人在你们之中？谁结婚啊" }, { type: "discuss", text: "那身喜服别穿！别穿！" }, { type: "discuss", text: "唢呐一响，我鸡皮疙瘩起来了" }, { type: "bless", text: "撑到天亮就行吧？应该吧？" }, { type: "discuss", text: "六个人，谁心里有鬼" }, { type: "discuss", text: "吃席吃出一身冷汗" }, { type: "discuss", text: "红纸贴满墙，看久了眼花" }, { type: "cold", text: "D级而已，大佬们别笑" }, { type: "discuss", text: "喜事别变丧事啊……", when: "hurt" }], Kf = {
+  id: If,
+  name: Nf,
+  version: Pf,
+  level: Df,
+  token: Lf,
   legacyKeys: Rf,
-  detect: Lf,
-  time: Df,
-  remaining: Ff,
-  deadline: jf,
-  phases: Of,
-  events: Bf,
-  markets: Vf,
-  docs: Uf,
-  danmaku: Hf
-}, Gf = "youxi", Kf = "游戏", qf = "1.2.0", Yf = "C", Jf = "【副本进行中：游戏】", Zf = [], Xf = { briefingName: "游戏", patterns: ["(本次|此次)副本《游戏》"] }, Qf = { type: "countdown", minutesPerRound: 8 }, ep = { type: "fromPanel" }, tp = "至结算", np = [{ id: "main", name: "游戏", cap: 90, next: null }], sp = [], rp = [{ id: "M1", q: "第一个出局的会是主播吗", yes: "是", no: "不是", p: 0.08, judge: "第一个被淘汰出局的人是{{user}}", judgeNo: "{{user}}以外的某个人成为第一个被淘汰出局的人" }, { id: "M2", q: "三场游戏能全部玩完吗", yes: "能", no: "不能", p: 0.55, judge: "第三场游戏结束" }, { id: "M3", q: "喊数抱团时主播会拉陌生人吗", yes: "会", no: "不会", p: 0.5, judge: "喊数抱团时，{{user}}主动拉了自己同伴以外的人一起抱团" }], ip = [], op = [{ type: "discuss", text: "小时候玩的游戏，现在要拿命玩", when: "open" }, { type: "discuss", text: "喊数抱团，手快有手慢无" }, { type: "bless", text: "数清人数啊！" }, { type: "discuss", text: "那群小孩一直在看这边" }, { type: "discuss", text: "十二个人，最后能剩几个" }, { type: "discuss", text: "三场游戏，现在第几场了" }, { type: "cold", text: "C级本，老观众都说别小看" }, { type: "discuss", text: "村子里太安静了，就小孩在笑" }, { type: "bless", text: "别掉队，跟紧人" }, { type: "smear", text: "拉人凑数的时候，真看出人品了" }, { type: "discuss", text: "又少了一个……", when: "hurt" }], lp = {
-  id: Gf,
-  name: Kf,
-  version: qf,
-  level: Yf,
-  token: Jf,
-  legacyKeys: Zf,
-  detect: Xf,
-  time: Qf,
-  remaining: ep,
-  deadline: tp,
-  phases: np,
-  events: sp,
-  markets: rp,
-  docs: ip,
-  danmaku: op
-}, ap = "wuming", cp = "污名", up = "1.1.0", dp = "B", Ap = "4-8", fp = "【副本进行中：污名】", pp = ["污名"], hp = { briefingName: "污名" }, mp = { type: "countdown", minutesPerRound: 3 }, gp = { type: "countdown", template: "剩余{m}分钟" }, xp = "至收播", vp = [{ id: "normal", name: "常规", cap: 60, next: "final" }, { id: "final", name: "定稿", cap: 20, next: null }], yp = [{ id: "E01", phase: "normal", from: 1, to: 1, kind: "event", text: "玩家在正在直播的卧室里醒来，系统展开简报。直播已经开始，她正在被围攻。" }, { id: "E02", phase: "final", from: 1, to: 1, kind: "directive", text: "定稿阶段开始：弹幕不再产生全新指控，而是从此前出现过的叙事中挑选一版，逐渐写进现实。" }, { id: "E03", phase: "final", from: 20, to: 20, kind: "event", text: "收播：直播结束。按世界书F1第九节判定失败或评价，在正文末尾输出<副本结算>。" }], bp = [], kp = !0, wp = {
-  id: ap,
-  name: cp,
-  version: up,
-  level: dp,
-  players: Ap,
-  token: fp,
-  legacyKeys: pp,
-  detect: hp,
-  time: mp,
-  remaining: gp,
-  deadline: xp,
-  phases: vp,
-  events: yp,
-  docs: bp,
-  disableLive: kp
-}, zp = "dusongshu", _p = "杜松树", $p = "1.3.0", Sp = "A", Cp = 6, Ep = "【副本进行中：杜松树】", Mp = [], Tp = { briefingName: "杜松树" }, Ip = { type: "countdown", minutesPerRound: 30 }, Np = { type: "fromPanel" }, Pp = "至第四日日出", Rp = ["父亲", "继母", "玛琳", "男孩", "其余"], Lp = "登记开局发到的牌面。「继母」「男孩」必定发出；金匠、鞋匠、磨坊工写进「其余」，多人用顿号分隔。之后牌面改写不重新登记。", Dp = [{ id: "n1", name: "第一夜", cap: 24, next: "d2", night: !0 }, { id: "d2", name: "第二日", cap: 24, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 24, next: "d3", night: !0 }, { id: "d3", name: "第三日", cap: 24, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 24, next: null, night: !0 }], Fp = [{ id: "E01", phase: "n1", from: 1, to: 1, kind: "event", text: "日落。六人在与自己牌面一致的房间醒来，口袋里各有一块木牌；系统展开简报。杜松树上的鸟一声不吭。" }, { id: "E02", phase: "n1", from: 10, to: 14, kind: "event", text: "{继母}耳边有人说「去叫他拿个苹果吧」；看向{男孩}时，有一瞬间说不清来由的厌恶。只写{继母}能感知到的，不替其行动。", if: "{继母}仍活着" }, { id: "E03", phase: "n1", from: 19, to: 19, kind: "event", text: "苹果箱的盖子掀开一条缝，箱底传来轻轻的敲击声，醒着或浅睡的人能听见楼下有动静。一个NPC下楼去看，弯腰，箱盖落下，只有很重的一声闷响，然后安静。{{user}}或同伴若自己下楼，按其实际行动结算。", if: "今夜还没有人死在苹果箱里" }, { id: "E04", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。死者的床空着，鞋还在床边；灶火是旺的，锅里炖着肉。所有人的牌面按实际发生的事改写，画像上男孩的脸变成死者的脸。鸟第一次开口，用死者的声音唱「母亲杀了我」。", if: "第一夜有人死在苹果箱里" }, { id: "E05", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。所有人的牌面变成空白，鸟仍然不叫，灶膛是冷的。", if: "第一夜没有人死在苹果箱里" }, { id: "E06", phase: "n2", from: 1, to: 1, kind: "directive", text: "日落：鸟按顺序只唱已成真的歌词，不多唱一个字；还没有歌词成真就不唱。" }, { id: "E07", phase: "n2", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，轻轻的敲击声比上一夜更多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E08", phase: "d3", from: 1, to: 1, kind: "directive", text: "日出：牌面按实际发生的事改写；鸟只唱已成真的歌词；吃过炖肉的人木化推进一步。" }, { id: "E09", phase: "n3", from: 1, to: 1, kind: "directive", text: "日落：若故事尚未进入断局，从现在起进入断局（见世界书F3阶段三）；鸟只唱已成真的歌词。" }, { id: "E10", phase: "n3", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，敲击声比前两夜都多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E11", phase: "n3", from: 24, to: 24, kind: "directive", text: "本轮结尾是第四日日出，时限到达：按世界书F2第5节与F3第3节判定结局，在正文末尾输出<副本结算>。" }], jp = [{ key: "cards", label: "各人当前牌面", hint: "每人牌上现在刻的字；只在日出改写" }, { key: "boy", label: "死者", hint: "死在苹果箱里的人；还没有写「无」" }, { key: "eaters", label: "吃过炖肉的人", hint: "名字、第一次吃在第几日、木化到哪一步" }, { key: "bones", label: "骨头在哪里", hint: "锅里、桌下、丝巾里、已埋，各还剩多少；谁拾的" }, { key: "scarf", label: "丝巾", hint: "还在「玛琳」房抽屉里，还是在谁手里" }, { key: "lastPage", label: "最后一页", hint: "还在鸟巢里，还是谁拿到了、谁读过" }, { key: "lines", label: "已成真的歌词", hint: "四句里已成真的几句" }, { key: "millstone", label: "磨盘", hint: "现在的位置，指向谁" }, { key: "evidence", label: "{{user}}已发现的异常", hint: "撑杆啄痕、爪痕、羽毛、没有指纹、撕口啄痕、最后一页中，{{user}}亲自发现的" }, { key: "stage", label: "故事阶段", hint: "迷雾、暗黑或断局，按世界书F3的条件" }, { key: "named", label: "埋骨后说出的名字", hint: "埋骨的人盖上土后第一次说出的名字；还没有写「无」" }], Op = [{ id: "M1", q: "第一夜会有人死在苹果箱里吗", yes: "会", no: "不会", p: 0.5, by: "n1", judge: "有人在苹果箱里被箱盖压死或死在箱中" }, { id: "M2", q: "主播会吃下锅里的炖肉吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人吃了灶上铁锅里炖的肉" }, { id: "M3", q: "杜松树上的鸟会开口吗", yes: "会", no: "不会", p: 0.6, judge: "杜松树上那只红绿羽毛的鸟开口说话或唱歌" }], Bp = [{ title: "游玩说明", md: `## 副本概况
+  detect: Of,
+  time: Ff,
+  remaining: jf,
+  deadline: Bf,
+  phases: Vf,
+  events: Uf,
+  markets: Hf,
+  docs: Wf,
+  danmaku: Gf
+}, qf = "youxi", Yf = "游戏", Jf = "1.2.0", Zf = "C", Qf = "【副本进行中：游戏】", Xf = [], ep = { briefingName: "游戏", patterns: ["(本次|此次)副本《游戏》"] }, tp = { type: "countdown", minutesPerRound: 8 }, np = { type: "fromPanel" }, sp = "至结算", rp = [{ id: "main", name: "游戏", cap: 90, next: null }], ip = [], op = [{ id: "M1", q: "第一个出局的会是主播吗", yes: "是", no: "不是", p: 0.08, judge: "第一个被淘汰出局的人是{{user}}", judgeNo: "{{user}}以外的某个人成为第一个被淘汰出局的人" }, { id: "M2", q: "三场游戏能全部玩完吗", yes: "能", no: "不能", p: 0.55, judge: "第三场游戏结束" }, { id: "M3", q: "喊数抱团时主播会拉陌生人吗", yes: "会", no: "不会", p: 0.5, judge: "喊数抱团时，{{user}}主动拉了自己同伴以外的人一起抱团" }], lp = [], ap = [{ type: "discuss", text: "小时候玩的游戏，现在要拿命玩", when: "open" }, { type: "discuss", text: "喊数抱团，手快有手慢无" }, { type: "bless", text: "数清人数啊！" }, { type: "discuss", text: "那群小孩一直在看这边" }, { type: "discuss", text: "十二个人，最后能剩几个" }, { type: "discuss", text: "三场游戏，现在第几场了" }, { type: "cold", text: "C级本，老观众都说别小看" }, { type: "discuss", text: "村子里太安静了，就小孩在笑" }, { type: "bless", text: "别掉队，跟紧人" }, { type: "smear", text: "拉人凑数的时候，真看出人品了" }, { type: "discuss", text: "又少了一个……", when: "hurt" }], cp = {
+  id: qf,
+  name: Yf,
+  version: Jf,
+  level: Zf,
+  token: Qf,
+  legacyKeys: Xf,
+  detect: ep,
+  time: tp,
+  remaining: np,
+  deadline: sp,
+  phases: rp,
+  events: ip,
+  markets: op,
+  docs: lp,
+  danmaku: ap
+}, up = "wuming", dp = "污名", Ap = "1.1.0", fp = "B", pp = "4-8", hp = "【副本进行中：污名】", mp = ["污名"], gp = { briefingName: "污名" }, xp = { type: "countdown", minutesPerRound: 3 }, vp = { type: "countdown", template: "剩余{m}分钟" }, yp = "至收播", bp = [{ id: "normal", name: "常规", cap: 60, next: "final" }, { id: "final", name: "定稿", cap: 20, next: null }], kp = [{ id: "E01", phase: "normal", from: 1, to: 1, kind: "event", text: "玩家在正在直播的卧室里醒来，系统展开简报。直播已经开始，她正在被围攻。" }, { id: "E02", phase: "final", from: 1, to: 1, kind: "directive", text: "定稿阶段开始：弹幕不再产生全新指控，而是从此前出现过的叙事中挑选一版，逐渐写进现实。" }, { id: "E03", phase: "final", from: 20, to: 20, kind: "event", text: "收播：直播结束。按世界书F1第九节判定失败或评价，在正文末尾输出<副本结算>。" }], wp = [], zp = !0, _p = {
+  id: up,
+  name: dp,
+  version: Ap,
+  level: fp,
+  players: pp,
+  token: hp,
+  legacyKeys: mp,
+  detect: gp,
+  time: xp,
+  remaining: vp,
+  deadline: yp,
+  phases: bp,
+  events: kp,
+  docs: wp,
+  disableLive: zp
+}, $p = "dusongshu", Sp = "杜松树", Cp = "1.3.0", Ep = "A", Mp = 6, Tp = "【副本进行中：杜松树】", Ip = [], Np = { briefingName: "杜松树" }, Pp = { type: "countdown", minutesPerRound: 30 }, Dp = { type: "fromPanel" }, Lp = "至第四日日出", Rp = ["父亲", "继母", "玛琳", "男孩", "其余"], Op = "登记开局发到的牌面。「继母」「男孩」必定发出；金匠、鞋匠、磨坊工写进「其余」，多人用顿号分隔。之后牌面改写不重新登记。", Fp = [{ id: "n1", name: "第一夜", cap: 24, next: "d2", night: !0 }, { id: "d2", name: "第二日", cap: 24, next: "n2", clock: !0 }, { id: "n2", name: "第二夜", cap: 24, next: "d3", night: !0 }, { id: "d3", name: "第三日", cap: 24, next: "n3", clock: !0 }, { id: "n3", name: "第三夜", cap: 24, next: null, night: !0 }], jp = [{ id: "E01", phase: "n1", from: 1, to: 1, kind: "event", text: "日落。六人在与自己牌面一致的房间醒来，口袋里各有一块木牌；系统展开简报。杜松树上的鸟一声不吭。" }, { id: "E02", phase: "n1", from: 10, to: 14, kind: "event", text: "{继母}耳边有人说「去叫他拿个苹果吧」；看向{男孩}时，有一瞬间说不清来由的厌恶。只写{继母}能感知到的，不替其行动。", if: "{继母}仍活着" }, { id: "E03", phase: "n1", from: 19, to: 19, kind: "event", text: "苹果箱的盖子掀开一条缝，箱底传来轻轻的敲击声，醒着或浅睡的人能听见楼下有动静。一个NPC下楼去看，弯腰，箱盖落下，只有很重的一声闷响，然后安静。{{user}}或同伴若自己下楼，按其实际行动结算。", if: "今夜还没有人死在苹果箱里" }, { id: "E04", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。死者的床空着，鞋还在床边；灶火是旺的，锅里炖着肉。所有人的牌面按实际发生的事改写，画像上男孩的脸变成死者的脸。鸟第一次开口，用死者的声音唱「母亲杀了我」。", if: "第一夜有人死在苹果箱里" }, { id: "E05", phase: "d2", from: 1, to: 1, kind: "event", text: "日出。所有人的牌面变成空白，鸟仍然不叫，灶膛是冷的。", if: "第一夜没有人死在苹果箱里" }, { id: "E06", phase: "n2", from: 1, to: 1, kind: "directive", text: "日落：鸟按顺序只唱已成真的歌词，不多唱一个字；还没有歌词成真就不唱。" }, { id: "E07", phase: "n2", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，轻轻的敲击声比上一夜更多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E08", phase: "d3", from: 1, to: 1, kind: "directive", text: "日出：牌面按实际发生的事改写；鸟只唱已成真的歌词；吃过炖肉的人木化推进一步。" }, { id: "E09", phase: "n3", from: 1, to: 1, kind: "directive", text: "日落：若故事尚未进入断局，从现在起进入断局（见世界书F3阶段三）；鸟只唱已成真的歌词。" }, { id: "E10", phase: "n3", from: 19, to: 19, kind: "event", text: "苹果箱、衣柜、抽屉、地窖门都掀开一条缝，敲击声比前两夜都多。谁下楼、谁弯腰去看，盖子就落下。", if: "至今还没有人死在苹果箱里" }, { id: "E11", phase: "n3", from: 24, to: 24, kind: "directive", text: "本轮结尾是第四日日出，时限到达：按世界书F2第5节与F3第3节判定结局，在正文末尾输出<副本结算>。" }], Bp = [{ key: "cards", label: "各人当前牌面", hint: "每人牌上现在刻的字；只在日出改写" }, { key: "boy", label: "死者", hint: "死在苹果箱里的人；还没有写「无」" }, { key: "eaters", label: "吃过炖肉的人", hint: "名字、第一次吃在第几日、木化到哪一步" }, { key: "bones", label: "骨头在哪里", hint: "锅里、桌下、丝巾里、已埋，各还剩多少；谁拾的" }, { key: "scarf", label: "丝巾", hint: "还在「玛琳」房抽屉里，还是在谁手里" }, { key: "lastPage", label: "最后一页", hint: "还在鸟巢里，还是谁拿到了、谁读过" }, { key: "lines", label: "已成真的歌词", hint: "四句里已成真的几句" }, { key: "millstone", label: "磨盘", hint: "现在的位置，指向谁" }, { key: "evidence", label: "{{user}}已发现的异常", hint: "撑杆啄痕、爪痕、羽毛、没有指纹、撕口啄痕、最后一页中，{{user}}亲自发现的" }, { key: "stage", label: "故事阶段", hint: "迷雾、暗黑或断局，按世界书F3的条件" }, { key: "named", label: "埋骨后说出的名字", hint: "埋骨的人盖上土后第一次说出的名字；还没有写「无」" }], Vp = [{ id: "M1", q: "第一夜会有人死在苹果箱里吗", yes: "会", no: "不会", p: 0.5, by: "n1", judge: "有人在苹果箱里被箱盖压死或死在箱中" }, { id: "M2", q: "主播会吃下锅里的炖肉吗", yes: "会", no: "不会", p: 0.3, judge: "{{user}}本人吃了灶上铁锅里炖的肉" }, { id: "M3", q: "杜松树上的鸟会开口吗", yes: "会", no: "不会", p: 0.6, judge: "杜松树上那只红绿羽毛的鸟开口说话或唱歌" }], Up = [{ title: "游玩说明", md: `## 副本概况
 
 - 名称：杜松树
 - 等级：A
@@ -4582,27 +4582,27 @@ const RA = "zhonglou", LA = "钟楼", DA = "1.6.0", FA = "S", jA = 10, OA = "【
 妹妹玛琳拾起了我所有的骨头，
 用丝巾包好，放在杜松树下。
 叽微，叽微，我是多么漂亮的鸟！」
-鸟飞到金匠那里唱歌，金匠送给它一条金链子；飞到鞋匠那里唱歌，鞋匠送给它一双红鞋子；飞到磨坊那里唱歌，磨坊工送给它一块磨盘。` }], Vp = [{ type: "discuss", text: "醒来口袋里就一块木牌，这是什么身份", when: "open" }, { type: "discuss", text: "屋里暖和得不像A级本" }, { type: "discuss", text: "故事书偏偏少了最后一页" }, { type: "bless", text: "别碰那个苹果箱啊" }, { type: "discuss", text: "拿到继母牌的，压力也太大了" }, { type: "discuss", text: "那只鸟一直不叫" }, { type: "discuss", text: "画像上的脸全是糊的" }, { type: "cold", text: "四面都是林子，别想跑了" }, { type: "discuss", text: "今晚有人下楼吗……别下", phase: ["n1"] }, { type: "bless", text: "男孩牌的今晚别落单", phase: ["n1"] }, { type: "discuss", text: "少了一个人……", when: "hurt" }, { type: "discuss", text: "牌上的字……变了？", phase: ["d2", "n2", "d3", "n3"] }, { type: "bless", text: "别吃那锅！", phase: ["d2", "n2", "d3", "n3"] }, { type: "discuss", text: "鸟开口了", phase: ["d2", "n2", "d3", "n3"] }, { type: "smear", text: "吃了的人还装没事", phase: ["d2", "n2", "d3", "n3"] }], Up = {
-  id: zp,
-  name: _p,
-  version: $p,
-  level: Sp,
-  players: Cp,
-  token: Ep,
-  legacyKeys: Mp,
-  detect: Tp,
-  time: Ip,
-  remaining: Np,
-  deadline: Pp,
+鸟飞到金匠那里唱歌，金匠送给它一条金链子；飞到鞋匠那里唱歌，鞋匠送给它一双红鞋子；飞到磨坊那里唱歌，磨坊工送给它一块磨盘。` }], Hp = [{ type: "discuss", text: "醒来口袋里就一块木牌，这是什么身份", when: "open" }, { type: "discuss", text: "屋里暖和得不像A级本" }, { type: "discuss", text: "故事书偏偏少了最后一页" }, { type: "bless", text: "别碰那个苹果箱啊" }, { type: "discuss", text: "拿到继母牌的，压力也太大了" }, { type: "discuss", text: "那只鸟一直不叫" }, { type: "discuss", text: "画像上的脸全是糊的" }, { type: "cold", text: "四面都是林子，别想跑了" }, { type: "discuss", text: "今晚有人下楼吗……别下", phase: ["n1"] }, { type: "bless", text: "男孩牌的今晚别落单", phase: ["n1"] }, { type: "discuss", text: "少了一个人……", when: "hurt" }, { type: "discuss", text: "牌上的字……变了？", phase: ["d2", "n2", "d3", "n3"] }, { type: "bless", text: "别吃那锅！", phase: ["d2", "n2", "d3", "n3"] }, { type: "discuss", text: "鸟开口了", phase: ["d2", "n2", "d3", "n3"] }, { type: "smear", text: "吃了的人还装没事", phase: ["d2", "n2", "d3", "n3"] }], Wp = {
+  id: $p,
+  name: Sp,
+  version: Cp,
+  level: Ep,
+  players: Mp,
+  token: Tp,
+  legacyKeys: Ip,
+  detect: Np,
+  time: Pp,
+  remaining: Dp,
+  deadline: Lp,
   roles: Rp,
-  rolesNote: Lp,
-  phases: Dp,
-  events: Fp,
-  stateFields: jp,
-  markets: Op,
-  docs: Bp,
-  danmaku: Vp
-}, Hp = "nongxian", Wp = "农闲", Gp = "1.2.0", Kp = "D", qp = !0, Yp = "不限", Jp = "【副本进行中：农闲】", Zp = [], Xp = { briefingName: "农闲" }, Qp = { type: "none" }, eh = { type: "fromPanel" }, th = [], nh = [], sh = [{ title: "游玩说明", md: `## 系统简报
+  rolesNote: Op,
+  phases: Fp,
+  events: jp,
+  stateFields: Bp,
+  markets: Vp,
+  docs: Up,
+  danmaku: Hp
+}, Gp = "nongxian", Kp = "农闲", qp = "1.2.0", Yp = "D", Jp = !0, Zp = "不限", Qp = "【副本进行中：农闲】", Xp = [], eh = { briefingName: "农闲" }, th = { type: "none" }, nh = { type: "fromPanel" }, sh = [], rh = [], ih = [{ title: "游玩说明", md: `## 系统简报
 
 「副本简报 - 农闲」
 「人数：不限人数」
@@ -4697,104 +4697,104 @@ const RA = "zhonglou", LA = "钟楼", DA = "1.6.0", FA = "S", jA = 10, OA = "【
 - 南瓜×1 + 鸡蛋×1 + 小麦×1 → 南瓜饼
 - 苹果×2 + 蜂蜜×1 → 苹果酱
 - 发光方块 → 一盏不会灭的小灯
-  梅姨教新菜，会添在配方板上。` }], rh = [{ type: "discuss", text: "这是副本？这是度假吧", when: "open" }, { type: "discuss", text: "休整本也开播，我爱看" }, { type: "praise", text: "这田种得真齐整" }, { type: "praise", text: "方块房子盖得好好看" }, { type: "discuss", text: "梅姨做的饭看着好香" }, { type: "discuss", text: "蜂叔又在给鸡起名字了" }, { type: "discuss", text: "水花是方的，笑死" }, { type: "discuss", text: "今天拿什么去换了？" }, { type: "discuss", text: "月亮也是方的" }, { type: "discuss", text: "桃花瓣落了一头" }, { type: "bless", text: "好好歇着，外面的事先别想" }, { type: "envy", text: "凭什么别人能抽到休整本" }, { type: "cold", text: "种地有什么好看的……好吧我看了一小时" }], ih = {
-  id: Hp,
-  name: Wp,
-  version: Gp,
-  level: Kp,
-  rest: qp,
-  players: Yp,
-  token: Jp,
-  legacyKeys: Zp,
-  detect: Xp,
-  time: Qp,
-  remaining: eh,
-  phases: th,
-  events: nh,
-  docs: sh,
-  danmaku: rh
-}, oh = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 707" width="400" height="707" font-family="'Noto Serif CJK SC','Songti SC','Noto Serif SC','SimSun',serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTphNmE3YjgwOC1iZWE1LTRjOWEtYWY3My00YTFiYTAwNDVjZDgAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaA7lHgmd1lrfgR2Ba5Av6LcAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpjZGQwMzcxNC1jOWI3LTQ3YWUtODUzMC0wNDAzNWZiYTIyZDJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoi2PRahh5wcGGeW3Ga5NSPQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg0PaDqGneMavLaCcae5iL8OYLmd2yClwfwZExuVptlCGkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaDguTGafdJMhAn9tUVvsVu0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCCXT1hZpVBRyKX/1bZWw7nZ+KF4h2sKtGHgmIQtWRewbGRuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBjjZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmE2YTdiODA4LWJlYTUtNGM5YS1hZjczLTRhMWJhMDA0NWNkOC9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmIyZTU1MDFkLTQ0YjUtNGI0NS1iODM3LWU4MThkMDg1MmNiZnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDQ9oOoad4xq8toJxp7mIvw5guZ3bIKXB/BkTG5Wm2UIaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggkgyEL0oyKP7JKq95iWpfJj6evOzwZtXkIDhKkVi2NgqiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggMCM1nvcBcGO3X47TZ8o8ZKesJONwv/U3Kbc1YRNYXht0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQPSgw7maSzLdQ1Sg4R7jSQlmE0J56Jp4mnYXgOq8RktEhwHifgfUzS9frn6I3+bgW8LKMGX3ru/OePvAdodGgvA=</c2pa:manifest></metadata><rect x="0" y="0" width="400" height="707" fill="#efe6d2"/><text x="200.0" y="24.0" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟楼 · 楼层图</text><text x="372.0" y="24.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">北↑</text><rect x="18.0" y="18.0" width="10" height="10" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="34.0" y="24.0" font-size="10" text-anchor="start" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井</text><text x="100.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟室</text><circle cx="100.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><path d="M84 178 Q84 150 100 148 Q116 150 116 178 Z" fill="none" stroke="#3b3326" stroke-width="1.4"/><line x1="80.0" y1="178.0" x2="120.0" y2="178.0" stroke="#3b3326" stroke-width="1.4"/><circle cx="100.0" cy="182.0" r="3" fill="#3b3326" stroke="#3b3326" stroke-width="1"/><text x="100.0" y="202.0" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">大钟</text><text x="300.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">5F 钟面层</text><circle cx="300.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><line x1="300.0" y1="98.0" x2="300.0" y2="238.0" stroke="#3b3326" stroke-width="1.6"/><text x="335.0" y="142.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">东室</text><text x="265.0" y="142.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">西室·无入口</text><rect x="342.0" y="162.0" width="12" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="342.0" y1="168.0" x2="354.0" y2="168.0" stroke="#3b3326" stroke-width="0.8"/><text x="336.0" y="190.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">东口（梯）</text><circle cx="244.0" cy="168.0" r="6" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="266.0" y="186.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">西口</text><text x="266.0" y="199.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井·危险</text><text x="100.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">4F 机房</text><circle cx="100.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><rect x="88.0" y="375.0" width="24" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="112.0" y1="383.0" x2="120.0" y2="383.0" stroke="#3b3326" stroke-width="1.6"/><line x1="120.0" y1="378.0" x2="120.0" y2="388.0" stroke="#3b3326" stroke-width="1.6"/><text x="100.0" y="403.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">齿轮箱·曲柄</text><rect x="146.0" y="375.0" width="10" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="146.0" y1="379.0" x2="156.0" y2="379.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="383.0" x2="156.0" y2="383.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="387.0" x2="156.0" y2="387.0" stroke="#3b3326" stroke-width="0.8"/><text x="140.0" y="361.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯·通东口</text><rect x="34.0" y="374.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="36.0" y1="372.0" x2="48.0" y2="372.0" stroke="#3b3326" stroke-width="2.6"/><text x="70.0" y="347.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">铁门·旋转梯</text><text x="70.0" y="359.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">通钟室</text><rect x="124.1" y="414.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="128.1" y1="414.3" x2="128.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="132.1" y1="414.3" x2="132.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="136.1" y1="414.3" x2="136.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><text x="102.0" y="433.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">楼梯·通3F</text><text x="300.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">3F</text><circle cx="300.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="300.0" cy="383.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="319.1" y1="394.0" x2="360.6" y2="418.0" stroke="#3b3326" stroke-width="1.1"/><line x1="307.5" y1="403.7" x2="323.9" y2="448.8" stroke="#3b3326" stroke-width="1.1"/><line x1="290.0" y1="402.6" x2="268.2" y2="445.4" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="388.7" x2="232.4" y2="401.1" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="377.3" x2="232.4" y2="364.9" stroke="#3b3326" stroke-width="1.1"/><line x1="296.2" y1="361.3" x2="287.8" y2="314.1" stroke="#3b3326" stroke-width="1.1"/><line x1="318.0" y1="370.4" x2="357.3" y2="342.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="232.4,401.1 231.1,395.2 230.3,389.1 230.0,383.0 230.3,376.9 231.1,370.8 232.4,364.9 278.7,377.3 278.3,379.2 278.1,381.1 278.0,383.0 278.1,384.9 278.3,386.8 278.7,388.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="297.1" y="429.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="263.5" y="412.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="268.2" y="348.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="318.0" y="339.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="347.0" y="380.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="329.6" y="418.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="300.0" y="467.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="100.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">2F</text><circle cx="100.0" cy="598.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="100.0" cy="598.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="119.1" y1="609.0" x2="160.6" y2="633.0" stroke="#3b3326" stroke-width="1.1"/><line x1="107.5" y1="618.7" x2="123.9" y2="663.8" stroke="#3b3326" stroke-width="1.1"/><line x1="90.0" y1="617.6" x2="68.2" y2="660.4" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="603.7" x2="32.4" y2="616.1" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="592.3" x2="32.4" y2="579.9" stroke="#3b3326" stroke-width="1.1"/><line x1="96.2" y1="576.3" x2="87.8" y2="529.1" stroke="#3b3326" stroke-width="1.1"/><line x1="118.0" y1="585.4" x2="157.3" y2="557.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="32.4,616.1 31.1,610.2 30.3,604.1 30.0,598.0 30.3,591.9 31.1,585.8 32.4,579.9 78.7,592.3 78.3,594.2 78.1,596.1 78.0,598.0 78.1,599.9 78.3,601.8 78.7,603.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="97.1" y="644.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="63.5" y="627.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="68.2" y="563.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="118.0" y="554.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="147.0" y="595.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="129.6" y="633.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="100.0" y="682.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="300.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">1F 大厅</text><path d="M287.8 666.9 A70 70 0 1 1 312.2 666.9" fill="none" stroke="#3b3326" stroke-width="1.6"/><text x="300.0" y="678.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">塔门</text><path d="M267.0 540.8 A66 66 0 0 1 333.0 540.8" fill="none" stroke="#3b3326" stroke-width="4"/><text x="300.0" y="546.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">守则石壁</text><rect x="286.0" y="592.0" width="28" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="300.0" y="614.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">抽签桌</text><rect x="234.0" y="589.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="250.0" y1="593.0" x2="250.0" y2="603.0" stroke="#3b3326" stroke-width="2.6"/><text x="266.0" y="626.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井检修门</text><rect x="338.0" y="564.0" width="12" height="9" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="344.0" y="554.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">药箱</text><rect x="350.0" y="592.0" width="9" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="334.0" y="599.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">文具柜</text><rect x="324.1" y="629.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="328.1" y1="629.3" x2="328.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="332.1" y1="629.3" x2="332.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="336.1" y1="629.3" x2="336.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><text x="334.0" y="652.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text></svg>`;
-function vn(e) {
+  梅姨教新菜，会添在配方板上。` }], oh = [{ type: "discuss", text: "这是副本？这是度假吧", when: "open" }, { type: "discuss", text: "休整本也开播，我爱看" }, { type: "praise", text: "这田种得真齐整" }, { type: "praise", text: "方块房子盖得好好看" }, { type: "discuss", text: "梅姨做的饭看着好香" }, { type: "discuss", text: "蜂叔又在给鸡起名字了" }, { type: "discuss", text: "水花是方的，笑死" }, { type: "discuss", text: "今天拿什么去换了？" }, { type: "discuss", text: "月亮也是方的" }, { type: "discuss", text: "桃花瓣落了一头" }, { type: "bless", text: "好好歇着，外面的事先别想" }, { type: "envy", text: "凭什么别人能抽到休整本" }, { type: "cold", text: "种地有什么好看的……好吧我看了一小时" }], lh = {
+  id: Gp,
+  name: Kp,
+  version: qp,
+  level: Yp,
+  rest: Jp,
+  players: Zp,
+  token: Qp,
+  legacyKeys: Xp,
+  detect: eh,
+  time: th,
+  remaining: nh,
+  phases: sh,
+  events: rh,
+  docs: ih,
+  danmaku: oh
+}, ah = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 707" width="400" height="707" font-family="'Noto Serif CJK SC','Songti SC','Noto Serif SC','SimSun',serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTphNmE3YjgwOC1iZWE1LTRjOWEtYWY3My00YTFiYTAwNDVjZDgAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaA7lHgmd1lrfgR2Ba5Av6LcAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpjZGQwMzcxNC1jOWI3LTQ3YWUtODUzMC0wNDAzNWZiYTIyZDJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoi2PRahh5wcGGeW3Ga5NSPQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg0PaDqGneMavLaCcae5iL8OYLmd2yClwfwZExuVptlCGkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaDguTGafdJMhAn9tUVvsVu0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCCXT1hZpVBRyKX/1bZWw7nZ+KF4h2sKtGHgmIQtWRewbGRuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBjjZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmE2YTdiODA4LWJlYTUtNGM5YS1hZjczLTRhMWJhMDA0NWNkOC9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmIyZTU1MDFkLTQ0YjUtNGI0NS1iODM3LWU4MThkMDg1MmNiZnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDQ9oOoad4xq8toJxp7mIvw5guZ3bIKXB/BkTG5Wm2UIaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggkgyEL0oyKP7JKq95iWpfJj6evOzwZtXkIDhKkVi2NgqiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggMCM1nvcBcGO3X47TZ8o8ZKesJONwv/U3Kbc1YRNYXht0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQPSgw7maSzLdQ1Sg4R7jSQlmE0J56Jp4mnYXgOq8RktEhwHifgfUzS9frn6I3+bgW8LKMGX3ru/OePvAdodGgvA=</c2pa:manifest></metadata><rect x="0" y="0" width="400" height="707" fill="#efe6d2"/><text x="200.0" y="24.0" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟楼 · 楼层图</text><text x="372.0" y="24.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">北↑</text><rect x="18.0" y="18.0" width="10" height="10" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="34.0" y="24.0" font-size="10" text-anchor="start" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井</text><text x="100.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">钟室</text><circle cx="100.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><path d="M84 178 Q84 150 100 148 Q116 150 116 178 Z" fill="none" stroke="#3b3326" stroke-width="1.4"/><line x1="80.0" y1="178.0" x2="120.0" y2="178.0" stroke="#3b3326" stroke-width="1.4"/><circle cx="100.0" cy="182.0" r="3" fill="#3b3326" stroke="#3b3326" stroke-width="1"/><text x="100.0" y="202.0" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">大钟</text><text x="300.0" y="70.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">5F 钟面层</text><circle cx="300.0" cy="168.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><line x1="300.0" y1="98.0" x2="300.0" y2="238.0" stroke="#3b3326" stroke-width="1.6"/><text x="335.0" y="142.0" font-size="11" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">东室</text><text x="265.0" y="142.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">西室·无入口</text><rect x="342.0" y="162.0" width="12" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="342.0" y1="168.0" x2="354.0" y2="168.0" stroke="#3b3326" stroke-width="0.8"/><text x="336.0" y="190.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">东口（梯）</text><circle cx="244.0" cy="168.0" r="6" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="266.0" y="186.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">西口</text><text x="266.0" y="199.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井·危险</text><text x="100.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">4F 机房</text><circle cx="100.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><rect x="88.0" y="375.0" width="24" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="112.0" y1="383.0" x2="120.0" y2="383.0" stroke="#3b3326" stroke-width="1.6"/><line x1="120.0" y1="378.0" x2="120.0" y2="388.0" stroke="#3b3326" stroke-width="1.6"/><text x="100.0" y="403.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">齿轮箱·曲柄</text><rect x="146.0" y="375.0" width="10" height="16" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="146.0" y1="379.0" x2="156.0" y2="379.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="383.0" x2="156.0" y2="383.0" stroke="#3b3326" stroke-width="0.8"/><line x1="146.0" y1="387.0" x2="156.0" y2="387.0" stroke="#3b3326" stroke-width="0.8"/><text x="140.0" y="361.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯·通东口</text><rect x="34.0" y="374.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="36.0" y1="372.0" x2="48.0" y2="372.0" stroke="#3b3326" stroke-width="2.6"/><text x="70.0" y="347.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">铁门·旋转梯</text><text x="70.0" y="359.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">通钟室</text><rect x="124.1" y="414.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="128.1" y1="414.3" x2="128.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="132.1" y1="414.3" x2="132.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><line x1="136.1" y1="414.3" x2="136.1" y2="428.3" stroke="#3b3326" stroke-width="0.8"/><text x="102.0" y="433.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">楼梯·通3F</text><text x="300.0" y="285.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">3F</text><circle cx="300.0" cy="383.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="300.0" cy="383.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="319.1" y1="394.0" x2="360.6" y2="418.0" stroke="#3b3326" stroke-width="1.1"/><line x1="307.5" y1="403.7" x2="323.9" y2="448.8" stroke="#3b3326" stroke-width="1.1"/><line x1="290.0" y1="402.6" x2="268.2" y2="445.4" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="388.7" x2="232.4" y2="401.1" stroke="#3b3326" stroke-width="1.1"/><line x1="278.7" y1="377.3" x2="232.4" y2="364.9" stroke="#3b3326" stroke-width="1.1"/><line x1="296.2" y1="361.3" x2="287.8" y2="314.1" stroke="#3b3326" stroke-width="1.1"/><line x1="318.0" y1="370.4" x2="357.3" y2="342.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="232.4,401.1 231.1,395.2 230.3,389.1 230.0,383.0 230.3,376.9 231.1,370.8 232.4,364.9 278.7,377.3 278.3,379.2 278.1,381.1 278.0,383.0 278.1,384.9 278.3,386.8 278.7,388.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="297.1" y="429.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="263.5" y="412.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="268.2" y="348.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="318.0" y="339.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="347.0" y="380.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="329.6" y="418.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="300.0" y="467.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="100.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">2F</text><circle cx="100.0" cy="598.0" r="70" fill="none" stroke="#3b3326" stroke-width="1.6"/><circle cx="100.0" cy="598.0" r="22" fill="none" stroke="#3b3326" stroke-width="1"/><line x1="119.1" y1="609.0" x2="160.6" y2="633.0" stroke="#3b3326" stroke-width="1.1"/><line x1="107.5" y1="618.7" x2="123.9" y2="663.8" stroke="#3b3326" stroke-width="1.1"/><line x1="90.0" y1="617.6" x2="68.2" y2="660.4" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="603.7" x2="32.4" y2="616.1" stroke="#3b3326" stroke-width="1.1"/><line x1="78.7" y1="592.3" x2="32.4" y2="579.9" stroke="#3b3326" stroke-width="1.1"/><line x1="96.2" y1="576.3" x2="87.8" y2="529.1" stroke="#3b3326" stroke-width="1.1"/><line x1="118.0" y1="585.4" x2="157.3" y2="557.8" stroke="#3b3326" stroke-width="1.1"/><polygon points="32.4,616.1 31.1,610.2 30.3,604.1 30.0,598.0 30.3,591.9 31.1,585.8 32.4,579.9 78.7,592.3 78.3,594.2 78.1,596.1 78.0,598.0 78.1,599.9 78.3,601.8 78.7,603.7" fill="#4a4133" stroke="#3b3326" stroke-width="1"/><text x="97.1" y="644.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="63.5" y="627.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="68.2" y="563.3" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="118.0" y="554.6" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="147.0" y="595.9" font-size="10" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧</text><text x="129.6" y="633.2" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text><text x="100.0" y="682.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">卧室五间</text><text x="300.0" y="500.0" font-size="12" text-anchor="middle" dominant-baseline="central" font-weight="bold" fill="#3b3326">1F 大厅</text><path d="M287.8 666.9 A70 70 0 1 1 312.2 666.9" fill="none" stroke="#3b3326" stroke-width="1.6"/><text x="300.0" y="678.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">塔门</text><path d="M267.0 540.8 A66 66 0 0 1 333.0 540.8" fill="none" stroke="#3b3326" stroke-width="4"/><text x="300.0" y="546.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">守则石壁</text><rect x="286.0" y="592.0" width="28" height="12" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="300.0" y="614.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">抽签桌</text><rect x="234.0" y="589.0" width="16" height="18" fill="#4a4133" stroke="#3b3326" stroke-width="1.2"/><line x1="250.0" y1="593.0" x2="250.0" y2="603.0" stroke="#3b3326" stroke-width="2.6"/><text x="266.0" y="626.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">竖井检修门</text><rect x="338.0" y="564.0" width="12" height="9" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="344.0" y="554.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">药箱</text><rect x="350.0" y="592.0" width="9" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><text x="334.0" y="599.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">文具柜</text><rect x="324.1" y="629.3" width="16" height="14" fill="none" stroke="#3b3326" stroke-width="1.2"/><line x1="328.1" y1="629.3" x2="328.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="332.1" y1="629.3" x2="332.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><line x1="336.1" y1="629.3" x2="336.1" y2="643.3" stroke="#3b3326" stroke-width="0.8"/><text x="334.0" y="652.0" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-weight="normal" fill="#3b3326">梯</text></svg>`;
+function yn(e) {
   const t = Math.max(0, Math.round(e));
   if (t < 60) return `${t}分钟`;
   const n = Math.floor(t / 60), s = t % 60;
   return s ? `${n}小时${s}分` : `${n}小时`;
 }
-const lh = /(\d+(?:\.\d+)?)\s*(天|个小时|小时|h|H|分钟|分|min)/g;
-function qo(e) {
+const ch = /(\d+(?:\.\d+)?)\s*(天|个小时|小时|h|H|分钟|分|min)/g;
+function Zo(e) {
   if (!e) return null;
   let t = 0, n = !1;
-  for (const s of e.matchAll(lh)) {
+  for (const s of e.matchAll(ch)) {
     const r = Number(s[1]), i = s[2];
     n = !0, i === "天" ? t += r * 1440 : i === "小时" || i === "个小时" || i === "h" || i === "H" ? t += r * 60 : t += r;
   }
   return n ? Math.round(t) : null;
 }
-function Ua(e) {
+function Ga(e) {
   if (!e) return { remaining: null, total: null };
   const [t, n] = e.split(/[/／]/);
-  return { remaining: qo(t), total: n === void 0 ? null : qo(n) };
+  return { remaining: Zo(t), total: n === void 0 ? null : Zo(n) };
 }
-function ah(e, t) {
+function uh(e, t) {
   return e.phases.find((n) => n.id === t);
 }
-function ns(e, t) {
+function os(e, t) {
   const n = [], s = /* @__PURE__ */ new Set();
   let r = t;
   for (; r && !s.has(r.id); )
-    n.push(r), s.add(r.id), r = ah(e, r.next);
+    n.push(r), s.add(r.id), r = uh(e, r.next);
   return n;
 }
-function Ha(e, t) {
-  return ns(e, t).filter((n) => n.night).length;
+function Ka(e, t) {
+  return os(e, t).filter((n) => n.night).length;
 }
-function ch(e, t, n) {
-  if (ns(e, t).some((r) => r.id === n.id)) return t;
+function dh(e, t, n) {
+  if (os(e, t).some((r) => r.id === n.id)) return t;
   const s = e.phases[0];
-  return s && ns(e, s).some((r) => r.id === n.id) ? s : n;
+  return s && os(e, s).some((r) => r.id === n.id) ? s : n;
 }
-function Br(e, t, n, s, r) {
+function Ur(e, t, n, s, r) {
   if (!e.phases.length || !e.phases.some((f) => f.id === t.id)) return;
-  let i = ns(e, n), o = i.findIndex((f) => f.id === t.id);
-  o < 0 && (i = ns(e, t), o = 0);
-  const l = i.reduce((f, h) => f + Math.max(0, h.cap), 0), c = Math.max(0, t.cap - s) + i.slice(o + 1).reduce((f, h) => f + Math.max(0, h.cap), 0), a = t.deadline ?? i[0].deadline ?? e.deadline, u = { x: c, y: l, deadline: a };
+  let i = os(e, n), o = i.findIndex((f) => f.id === t.id);
+  o < 0 && (i = os(e, t), o = 0);
+  const l = i.reduce((f, m) => f + Math.max(0, m.cap), 0), c = Math.max(0, t.cap - s) + i.slice(o + 1).reduce((f, m) => f + Math.max(0, m.cap), 0), a = t.deadline ?? i[0].deadline ?? e.deadline, u = { x: c, y: l, deadline: a };
   if (e.time.type === "countdown") {
-    const f = e.time.minutesPerRound, h = e.time.totalMinutes, x = h && h > 0 ? h : l * f;
-    let z = h && h > 0 && l > 0 ? Math.round(x * c / l) : c * f;
-    const k = Ua(r).remaining;
-    k !== null && (z = Math.min(z, k - f)), z = Math.max(0, z), Object.assign(u, { minutes: z, total: x, text: `约剩${vn(z)}/${vn(x)}` });
+    const f = e.time.minutesPerRound, m = e.time.totalMinutes, k = m && m > 0 ? m : l * f;
+    let z = m && m > 0 && l > 0 ? Math.round(k * c / l) : c * f;
+    const x = Ga(r).remaining;
+    x !== null && (z = Math.min(z, x - f)), z = Math.max(0, z), Object.assign(u, { minutes: z, total: k, text: `约剩${yn(z)}/${yn(k)}` });
   } else if (e.time.type === "clock")
     if (t.frozen) u.text = `${e.name}停摆·${t.name}中`;
     else if (e.remaining.type === "nights") {
-      const f = e.remaining.template.replace("{n}", String(Ha(e, t)));
+      const f = e.remaining.template.replace("{n}", String(Ka(e, t)));
       u.text = a ? `${a}·${f}` : f;
     } else a && (u.text = a);
   return u;
 }
-const ss = { D: 70, C: 90, B: 110, A: 135, S: 200 };
-function Pi(e, t, n = ss) {
-  const s = e ?? "", r = /[（(]\s*最多\s*(\d+)\s*轮\s*[）)]/.exec(s), i = r ? Math.max(1, Number(r[1])) : Math.max(1, Math.round(n[t] ?? ss[t])), o = /(\d+(?:\.\d+)?)\s*(天|个小时|小时|分钟|分)/.exec(s.replace(/[（(][^）)]*[）)]/g, ""));
+const ls = { D: 70, C: 90, B: 110, A: 135, S: 200 };
+function Di(e, t, n = ls) {
+  const s = e ?? "", r = /[（(]\s*最多\s*(\d+)\s*轮\s*[）)]/.exec(s), i = r ? Math.max(1, Number(r[1])) : Math.max(1, Math.round(n[t] ?? ls[t])), o = /(\d+(?:\.\d+)?)\s*(天|个小时|小时|分钟|分)/.exec(s.replace(/[（(][^）)]*[）)]/g, ""));
   if (!o) return { rounds: i };
   const l = Number(o[1]), c = Math.round(o[2] === "天" ? l * 1440 : o[2].includes("小时") ? l * 60 : l);
   return c <= 0 ? { rounds: i } : { rounds: i, totalMinutes: c, minutesPerRound: Math.max(1, Math.round(c / i)) };
 }
-const Ks = "generic", ci = [ef, hf, Ef, Wf, lp, wp, Up, ih], uh = {
+const Zs = "generic", di = [nf, gf, Tf, Kf, cp, _p, Wp, lh], Ah = {
   zhonglou: {
-    "zhonglou-map.svg": "data:image/svg+xml;charset=utf-8," + encodeURIComponent(oh)
+    "zhonglou-map.svg": "data:image/svg+xml;charset=utf-8," + encodeURIComponent(ah)
   }
 };
-function dh(e, t) {
-  const n = uh[e.id]?.[t];
+function fh(e, t) {
+  const n = Ah[e.id]?.[t];
   return n || (/^https?:\/\//i.test(t) || /^data:image\//i.test(t) ? t : null);
 }
-const Wa = ["D", "C", "B", "A", "S"];
-function Ga(e) {
+const qa = ["D", "C", "B", "A", "S"];
+function Ya(e) {
   const t = [], n = e;
   if (!n || typeof n != "object" || Array.isArray(n)) return ["副本包必须是 JSON 对象"];
   const s = (a) => {
     (typeof n[a] != "string" || !n[a].trim()) && t.push(`缺少字段或不是文本：${a}`);
   };
-  s("id"), s("name"), s("version"), s("token"), typeof n.id == "string" && !/^[A-Za-z0-9_-]+$/.test(n.id) && t.push("id 只能包含字母、数字、下划线和短横线"), n.id === Ks && t.push(`id 不能是保留字 ${Ks}`), Wa.includes(n.level) || t.push("level 必须是 D/C/B/A/S 之一"), n.players !== void 0 && typeof n.players != "number" && typeof n.players != "string" && t.push("players 必须是数字或文本"), (!Array.isArray(n.legacyKeys) || n.legacyKeys.some((a) => typeof a != "string")) && t.push("legacyKeys 必须是文本数组"), !n.detect || typeof n.detect.briefingName != "string" || !n.detect.briefingName ? t.push("缺少 detect.briefingName") : n.detect.patterns !== void 0 && (!Array.isArray(n.detect.patterns) || n.detect.patterns.some((a) => typeof a != "string")) && t.push("detect.patterns 必须是文本数组");
+  s("id"), s("name"), s("version"), s("token"), typeof n.id == "string" && !/^[A-Za-z0-9_-]+$/.test(n.id) && t.push("id 只能包含字母、数字、下划线和短横线"), n.id === Zs && t.push(`id 不能是保留字 ${Zs}`), qa.includes(n.level) || t.push("level 必须是 D/C/B/A/S 之一"), n.players !== void 0 && typeof n.players != "number" && typeof n.players != "string" && t.push("players 必须是数字或文本"), (!Array.isArray(n.legacyKeys) || n.legacyKeys.some((a) => typeof a != "string")) && t.push("legacyKeys 必须是文本数组"), !n.detect || typeof n.detect.briefingName != "string" || !n.detect.briefingName ? t.push("缺少 detect.briefingName") : n.detect.patterns !== void 0 && (!Array.isArray(n.detect.patterns) || n.detect.patterns.some((a) => typeof a != "string")) && t.push("detect.patterns 必须是文本数组");
   const r = n.time;
   !r || !["none", "clock", "countdown"].includes(r.type) ? t.push("time.type 必须是 clock、countdown 或 none") : (r.type === "clock" && (typeof r.dayStart != "string" || !/^\d{1,2}:\d{2}$/.test(r.dayStart)) && t.push("time.dayStart 格式应为 HH:MM"), r.type !== "none" && (typeof r.minutesPerRound != "number" || r.minutesPerRound <= 0) && t.push("time.minutesPerRound 必须是正数"), r.type === "countdown" && r.totalMinutes !== void 0 && (typeof r.totalMinutes != "number" || r.totalMinutes <= 0) && t.push("time.totalMinutes 必须是正数"));
   const i = n.remaining;
@@ -4837,24 +4837,24 @@ function Ga(e) {
           t.push(`markets[${f}] 必须是对象`);
           return;
         }
-        for (const h of ["id", "q", "yes", "no", "judge"])
-          (typeof u[h] != "string" || !u[h].trim()) && t.push(`markets[${f}] 缺少文本字段 ${h}`);
+        for (const m of ["id", "q", "yes", "no", "judge"])
+          (typeof u[m] != "string" || !u[m].trim()) && t.push(`markets[${f}] 缺少文本字段 ${m}`);
         (typeof u.p != "number" || !(u.p >= 0.01 && u.p <= 0.99)) && t.push(`markets[${f}].p 必须是 0.01–0.99 的数`), u.judgeNo !== void 0 && (typeof u.judgeNo != "string" || !u.judgeNo.trim()) && t.push(`markets[${f}].judgeNo 必须是文本`), u.by !== void 0 && typeof u.by != "string" && t.push(`markets[${f}].by 必须是阶段 id`), typeof u.id == "string" && (a.has(u.id) && t.push(`事件盘 id 重复：${u.id}`), a.add(u.id));
       });
     }
   return t;
 }
-function Ah(e) {
+function ph(e) {
   const t = new Set(e.phases.map((n) => n.id));
   return (e.markets ?? []).filter((n) => n.by !== void 0 && !t.has(n.by) ? (console.warn(`[rlzc] 副本包 ${e.id} 的事件盘 ${n.id}：by「${n.by}」不是本包的阶段 id，已跳过`), !1) : !0);
 }
-function ds(e) {
-  return Wa.includes(e.level ?? "") ? e.level : "D";
+function hs(e) {
+  return qa.includes(e.level ?? "") ? e.level : "D";
 }
-function Ri(e, t = ss) {
-  const n = ds(e), s = Pi(e.limit, n, t), r = e.rounds && e.rounds > 0 ? e.rounds : s.rounds, i = s.totalMinutes ? Math.max(1, Math.round(s.totalMinutes / r)) : void 0;
+function Li(e, t = ls) {
+  const n = hs(e), s = Di(e.limit, n, t), r = e.rounds && e.rounds > 0 ? e.rounds : s.rounds, i = s.totalMinutes ? Math.max(1, Math.round(s.totalMinutes / r)) : void 0;
   return {
-    id: Ks,
+    id: Zs,
     name: e.name,
     version: "1.0.0",
     level: n,
@@ -4869,24 +4869,24 @@ function Ri(e, t = ss) {
     docs: []
   };
 }
-function Li(e) {
-  const t = new Set(ci.map((n) => n.id));
-  return [...ci, ...e.filter((n) => !t.has(n.id))];
+function Ri(e) {
+  const t = new Set(di.map((n) => n.id));
+  return [...di, ...e.filter((n) => !t.has(n.id))];
 }
-const fh = /副本简报[^\S\n]*(?:——|[-－—：:·・])[^\S\n]*([^\n」』]*)/, ph = /<阶段切换>([\s\S]*?)<\/阶段切换>/, hh = /<副本结算>([\s\S]*?)<\/副本结算>/, Ka = /<副本>([\s\S]*?)<\/副本>/, mh = /<角色登记>([\s\S]*?)<\/角色登记>/, gh = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|日出|晚饭|夜里|明天)/, xh = /<积分变动>([\s\S]*?)<\/积分变动>/g, vh = "《「『【", yh = "》」』】";
-function bh(e) {
+const hh = /副本简报[^\S\n]*(?:——|[-－—：:·・])[^\S\n]*([^\n」』]*)/, mh = /<阶段切换>([\s\S]*?)<\/阶段切换>/, gh = /<副本结算>([\s\S]*?)<\/副本结算>/, Ja = /<副本>([\s\S]*?)<\/副本>/, xh = /<角色登记>([\s\S]*?)<\/角色登记>/, vh = /(跳到|快进到|睡到|等到)(日落|天黑|天亮|日出|晚饭|夜里|明天)/, yh = /<积分变动>([\s\S]*?)<\/积分变动>/g, bh = "《「『【", kh = "》」』】";
+function wh(e) {
   let t = e.trim();
   for (; ; ) {
     const n = t;
-    if (vh.includes(t[0] ?? "\0") && (t = t.slice(1).trim()), yh.includes(t[t.length - 1] ?? "\0") && (t = t.slice(0, -1).trim()), t === n) return t;
+    if (bh.includes(t[0] ?? "\0") && (t = t.slice(1).trim()), kh.includes(t[t.length - 1] ?? "\0") && (t = t.slice(0, -1).trim()), t === n) return t;
   }
 }
-function kh(e) {
+function zh(e) {
   const t = e.charCodeAt(0);
   return t >= 65281 && t <= 65374 ? String.fromCharCode(t - 65248) : e;
 }
-function Di(e) {
-  const t = fh.exec(e ?? ""), n = t ? bh(t[1]) : "";
+function Oi(e) {
+  const t = hh.exec(e ?? ""), n = t ? wh(t[1]) : "";
   if (!t || !n) return null;
   const s = { name: n }, r = e.slice(t.index + t[0].length).split(`
 `).slice(0, 12).join(`
@@ -4894,13 +4894,13 @@ function Di(e) {
     const a = new RegExp(`${c}\\s*[：:]\\s*([^」』\\n]+)`).exec(r);
     return a ? a[1].trim() : void 0;
   }, o = i("等级"), l = o && /[DCBASｄｃｂａｓＤＣＢＡＳ]/i.exec(o);
-  return l && (s.level = kh(l[0]).toUpperCase()), s.goal = i("目标"), s.limit = i("时限"), s.players = i("人数"), s;
+  return l && (s.level = zh(l[0]).toUpperCase()), s.goal = i("目标"), s.limit = i("时限"), s.players = i("人数"), s;
 }
-function wh(e) {
-  const t = ph.exec(e ?? "");
+function _h(e) {
+  const t = mh.exec(e ?? "");
   return t ? t[1].trim() : null;
 }
-function qa(e) {
+function Za(e) {
   const t = {};
   for (const n of e.split(/[｜|\n]/)) {
     const s = n.search(/[=＝]/);
@@ -4910,23 +4910,23 @@ function qa(e) {
   }
   return t;
 }
-function gr(e) {
-  const t = hh.exec(e ?? "");
+function yr(e) {
+  const t = gh.exec(e ?? "");
   if (!t) return null;
-  const n = qa(t[1]);
+  const n = Za(t[1]);
   return { raw: t[1].trim(), result: n.结果, rating: n.评价, fields: n };
 }
-function Ya(e) {
-  const t = mh.exec(e ?? "");
+function Qa(e) {
+  const t = xh.exec(e ?? "");
   if (!t) return null;
-  const n = qa(t[1]);
+  const n = Za(t[1]);
   return Object.keys(n).length ? n : null;
 }
-function zs(e) {
+function Cs(e) {
   return e.replace(/^[-*•·]\s*/, "").trim();
 }
-function Ja(e) {
-  const t = Ka.exec(e ?? "");
+function Xa(e) {
+  const t = Ja.exec(e ?? "");
   if (!t) return null;
   const n = { tasks: [] };
   let s = null;
@@ -4937,23 +4937,23 @@ function Ja(e) {
     const o = /^(时限|进度条|任务|ps|PS|Ps)\s*[：:]\s*(.*)$/.exec(i);
     if (o) {
       const l = o[1].toLowerCase(), c = o[2].trim();
-      l === "时限" ? (n.limit = c, s = null) : l === "进度条" ? (n.progressBar = c, s = null) : l === "任务" ? (zs(c) && n.tasks.push(zs(c)), s = "tasks") : (n.ps = c, s = "ps");
+      l === "时限" ? (n.limit = c, s = null) : l === "进度条" ? (n.progressBar = c, s = null) : l === "任务" ? (Cs(c) && n.tasks.push(Cs(c)), s = "tasks") : (n.ps = c, s = "ps");
       continue;
     }
     if (/^[^：:\s]{1,6}\s*[：:]/.test(i)) {
       s = null;
       continue;
     }
-    s === "tasks" ? zs(i) && n.tasks.push(zs(i)) : s === "ps" && (n.ps = n.ps ? `${n.ps}
+    s === "tasks" ? Cs(i) && n.tasks.push(Cs(i)) : s === "ps" && (n.ps = n.ps ? `${n.ps}
 ${i}` : i);
   }
   return n;
 }
-function zh(e) {
-  const t = gh.exec(e ?? "");
+function $h(e) {
+  const t = vh.exec(e ?? "");
   return t ? t[2] : null;
 }
-function Vr(e, t, n) {
+function Hr(e, t, n) {
   const s = /* @__PURE__ */ new Set();
   let r = t;
   for (; r && !s.has(r.id); ) {
@@ -4962,7 +4962,7 @@ function Vr(e, t, n) {
   }
   return null;
 }
-function _h(e, t, n, s) {
+function Sh(e, t, n, s) {
   if (!e.phases.length || !e.phases.some((l) => l.id === t.id)) return null;
   const r = (l) => !!l.clock && !l.night;
   let i = null, o = 0;
@@ -4970,51 +4970,51 @@ function _h(e, t, n, s) {
     case "日落":
     case "天黑":
     case "夜里":
-      i = Vr(e, t, r), o = i?.cap ?? 0;
+      i = Hr(e, t, r), o = i?.cap ?? 0;
       break;
     case "晚饭":
-      i = Vr(e, t, r), i && (o = Math.ceil(i.cap * 0.75), i.id === t.id && o <= n && (o = i.cap));
+      i = Hr(e, t, r), i && (o = Math.ceil(i.cap * 0.75), i.id === t.id && o <= n && (o = i.cap));
       break;
     case "天亮":
     case "日出":
     case "明天":
-      i = Vr(e, t, (l) => !!l.night), o = i?.cap ?? 0;
+      i = Hr(e, t, (l) => !!l.night), o = i?.cap ?? 0;
       break;
   }
   return !i || i.id === t.id && o <= n + 1 ? null : { phase: i.id, round: o, label: `${i.name}第${o}轮` };
 }
-const $h = /<状态栏>([\s\S]*?)<\/状态栏>/;
-function ui(e) {
+const Ch = /<状态栏>([\s\S]*?)<\/状态栏>/;
+function Ai(e) {
   return e.replace(/[《》「」『』【】"'“”]/g, "").trim();
 }
-function Sh(e, t) {
-  const n = ui(t);
+function Eh(e, t) {
+  const n = Ai(t);
   return n ? e.find((s) => s.name === n || s.detect.briefingName === n) : void 0;
 }
-const Ur = /* @__PURE__ */ new Map();
-function Ch(e, t) {
+const Wr = /* @__PURE__ */ new Map();
+function Mh(e, t) {
   const n = `${e}\0${t}`;
-  if (!Ur.has(n)) {
+  if (!Wr.has(n)) {
     let s = null;
     try {
       s = new RegExp(t);
     } catch (r) {
       console.warn(`[rlzc] 副本包 ${e} 的 detect.patterns 正则无效，已跳过：${t}`, r);
     }
-    Ur.set(n, s);
+    Wr.set(n, s);
   }
-  return Ur.get(n);
+  return Wr.get(n);
 }
-function Eh(e, t, n = []) {
+function Th(e, t, n = []) {
   const s = String(e ?? ""), r = (a, u) => a ? { signal: u, pack: a, info: { name: a.name, level: a.level } } : null, i = (a, u) => {
-    const f = r(Sh(t, a), u);
+    const f = r(Eh(t, a), u);
     if (f) return f;
-    const h = ui(a), x = h ? [...n].reverse().find((z) => ui(z.name) === h) : void 0;
-    return x ? { signal: u, info: { ...x } } : null;
-  }, o = Di(s);
+    const m = Ai(a), k = m ? [...n].reverse().find((z) => Ai(z.name) === m) : void 0;
+    return k ? { signal: u, info: { ...k } } : null;
+  }, o = Oi(s);
   if (o)
     return { signal: 1, pack: t.find((u) => u.detect.briefingName === o.name), info: o };
-  const l = Ka.exec(s);
+  const l = Ja.exec(s);
   if (l) {
     const a = /副本名\s*[：:]\s*([^\n｜|]+)/.exec(l[1]), u = a && i(a[1], 2);
     if (u) return u;
@@ -5023,7 +5023,7 @@ function Eh(e, t, n = []) {
     const u = i(a[1], 3);
     if (u) return u;
   }
-  const c = $h.exec(s);
+  const c = Ch.exec(s);
   if (c) {
     for (const a of c[1].split(`
 `))
@@ -5035,158 +5035,158 @@ function Eh(e, t, n = []) {
   }
   for (const a of t)
     for (const u of a.detect.patterns ?? []) {
-      const f = Ch(a.id, u);
+      const f = Mh(a.id, u);
       if (f && f.test(s)) return r(a, 5);
     }
   return null;
 }
-const Yo = 5, Mh = { id: "_open", name: "进行中", cap: 0, next: null };
-function $e(e) {
+const Qo = 5, Ih = { id: "_open", name: "进行中", cap: 0, next: null };
+function Ee(e) {
   return !e || e.is_user ? !1 : !(e.is_system && e.extra?.type);
 }
-function Th(e) {
+function Nh(e) {
   const [t, n] = e.split(":").map((s) => parseInt(s, 10));
   return (t || 0) * 60 + (n || 0);
 }
-function Za(e, t, n) {
-  const s = Th(e) + Math.max(0, n - 1) * t, r = Math.floor(s / 60) % 24, i = (s % 60 + 60) % 60;
+function ec(e, t, n) {
+  const s = Nh(e) + Math.max(0, n - 1) * t, r = Math.floor(s / 60) % 24, i = (s % 60 + 60) % 60;
   return `${r % 12 === 0 ? 12 : r % 12}:${String(i).padStart(2, "0")}`;
 }
-function Jo(e, t, n) {
+function Xo(e, t, n) {
   if (!(e.time.type !== "clock" || !t.clock || t.night || t.frozen || n < 1))
-    return Za(e.time.dayStart, e.time.minutesPerRound, n);
+    return ec(e.time.dayStart, e.time.minutesPerRound, n);
 }
-function Xa(e) {
-  return e.phases.length ? e.phases : [Mh];
+function tc(e) {
+  return e.phases.length ? e.phases : [Ih];
 }
-function Ms(e, t) {
-  return Xa(e).find((n) => n.id === t);
+function Ps(e, t) {
+  return tc(e).find((n) => n.id === t);
 }
-function Zo(e, t, n) {
+function el(e, t, n) {
   const s = /* @__PURE__ */ new Set();
   let r = t;
   for (; r && !s.has(r.id); ) {
     if (r.id === n) return !0;
-    s.add(r.id), r = Ms(e, r.next);
+    s.add(r.id), r = Ps(e, r.next);
   }
   return !1;
 }
-function Xo(e, t, n, s) {
+function tl(e, t, n, s) {
   const r = n + 1, i = e.events.filter((o) => o.phase === t.id);
   if (s) {
     const o = t.id === s.phase ? s.round : t.cap;
     if (o > r) {
       let l = i.map((a, u) => ({ e: a, i: u })).filter(({ e: a }) => a.from >= r && a.from <= o).sort((a, u) => a.e.from - u.e.from || a.i - u.i).map(({ e: a }) => a), c = o;
-      return l.length > Yo && (c = l[Yo - 1].from, l = l.filter((a) => a.from <= c)), { phase: t, round: c, events: l, skipFrom: r };
+      return l.length > Qo && (c = l[Qo - 1].from, l = l.filter((a) => a.from <= c)), { phase: t, round: c, events: l, skipFrom: r };
     }
   }
   return { phase: t, round: r, events: i.filter((o) => o.from === r) };
 }
-function Qa(e, t, n) {
+function nc(e, t, n) {
   const s = t.entryIndex;
-  if (!$e(e[s])) return null;
-  const r = Xa(n);
-  let i = r[0], o = r[0], l = 0, c, a = !1, u, f, h = null, x, z, k;
-  const R = /* @__PURE__ */ new Set(), U = {}, D = {}, E = /* @__PURE__ */ new Map();
-  for (const N of t.manual ?? [])
-    E.has(N.atIndex) || E.set(N.atIndex, []), E.get(N.atIndex).push(N);
-  const M = (N, ie) => {
-    D[i.id] === void 0 && N.id !== i.id && (D[i.id] = ie), n.phases.length && (o = ch(n, o, N)), i = N, l = 0, h && !Zo(n, i, h.phase) && (h = null);
+  if (!Ee(e[s])) return null;
+  const r = tc(n);
+  let i = r[0], o = r[0], l = 0, c, a = !1, u, f, m = null, k, z, x;
+  const $ = /* @__PURE__ */ new Set(), j = {}, O = {}, M = /* @__PURE__ */ new Map();
+  for (const P of t.manual ?? [])
+    M.has(P.atIndex) || M.set(P.atIndex, []), M.get(P.atIndex).push(P);
+  const T = (P, ie) => {
+    O[i.id] === void 0 && P.id !== i.id && (O[i.id] = ie), n.phases.length && (o = dh(n, o, P)), i = P, l = 0, m && !el(n, i, m.phase) && (m = null);
   };
-  for (let N = s; N < e.length; N++) {
-    const ie = e[N];
-    if (!a && $e(ie)) {
-      const le = Xo(n, i, l, h);
+  for (let P = s; P < e.length; P++) {
+    const ie = e[P];
+    if (!a && Ee(ie)) {
+      const le = tl(n, i, l, m);
       l = le.round;
-      const Pe = new Set((ie.extra?.rlzc?.skippedEvents ?? []).map((j) => j.id));
-      le.events.forEach((j) => {
-        Pe.has(j.id) || R.add(j.id);
-      }), U[N] = {
+      const De = new Set((ie.extra?.rlzc?.skippedEvents ?? []).map((F) => F.id));
+      le.events.forEach((F) => {
+        De.has(F.id) || $.add(F.id);
+      }), j[P] = {
         phase: i.id,
         round: l,
-        events: le.events.map((j) => j.id),
+        events: le.events.map((F) => F.id),
         skipFrom: le.skipFrom,
-        limit: Br(n, i, o, l, c)
-      }, h && i.id === h.phase && l >= h.round && (h = null);
-      const rt = String(ie.mes ?? ""), Xe = Ja(rt);
+        limit: Ur(n, i, o, l, c)
+      }, m && i.id === m.phase && l >= m.round && (m = null);
+      const ot = String(ie.mes ?? ""), Xe = Xa(ot);
       Xe && (z = Xe), c = Xe?.limit;
-      const hn = Ya(rt);
-      hn && (k = hn);
-      const Gt = gr(rt);
+      const mn = Qa(ot);
+      mn && (x = mn);
+      const Gt = yr(ot);
       if (Gt)
-        a = !0, u = "tag", f = N, x = Gt;
+        a = !0, u = "tag", f = P, k = Gt;
       else {
-        const j = wh(rt), K = j ? r.find((G) => G.name === j) : void 0;
+        const F = _h(ot), K = F ? r.find((G) => G.name === F) : void 0;
         if (K && n.phases.length)
-          M(K, N);
+          T(K, P);
         else if (i.cap > 0 && l >= i.cap && i.next) {
-          const G = Ms(n, i.next);
-          G && M(G, N);
+          const G = Ps(n, i.next);
+          G && T(G, P);
         }
       }
     }
-    for (const le of E.get(N) ?? []) {
+    for (const le of M.get(P) ?? []) {
       if (a) break;
       switch (le.kind) {
         case "skip": {
-          h = Ms(n, le.targetPhase) && Zo(n, i, le.targetPhase) ? { phase: le.targetPhase, round: le.targetRound } : null;
+          m = Ps(n, le.targetPhase) && el(n, i, le.targetPhase) ? { phase: le.targetPhase, round: le.targetRound } : null;
           break;
         }
         case "setPhase": {
-          const Pe = Ms(n, le.phase);
-          Pe && (h = null, M(Pe, N));
+          const De = Ps(n, le.phase);
+          De && (m = null, T(De, P));
           break;
         }
         case "setRound":
-          l = Math.max(0, Math.floor(le.round)), h = null;
+          l = Math.max(0, Math.floor(le.round)), m = null;
           break;
         case "end":
-          a = !0, u = "manual", f = N;
+          a = !0, u = "manual", f = P;
           break;
       }
     }
   }
-  const ee = a ? null : Xo(n, i, l, h), te = ee ? ee.round : l + 1, X = i.cap > 0, re = n.events.filter((N) => R.has(N.id)).map((N) => N.id), C = a ? void 0 : Br(n, i, o, te, c), p = a ? void 0 : Br(n, i, o, l);
-  let m;
+  const ee = a ? null : tl(n, i, l, m), te = ee ? ee.round : l + 1, Q = i.cap > 0, re = n.events.filter((P) => $.has(P.id)).map((P) => P.id), E = a ? void 0 : Ur(n, i, o, te, c), p = a ? void 0 : Ur(n, i, o, l);
+  let h;
   const v = n.remaining;
-  return !a && v.type === "nights" && n.phases.length && !i.byTag && !i.frozen ? m = v.template.replace("{n}", String(Ha(n, i))) : !a && v.type === "countdown" && C?.minutes !== void 0 && (m = v.template.replace("{m}", String(C.minutes))), {
+  return !a && v.type === "nights" && n.phases.length && !i.byTag && !i.frozen ? h = v.template.replace("{n}", String(Ka(n, i))) : !a && v.type === "countdown" && E?.minutes !== void 0 && (h = v.template.replace("{m}", String(E.minutes))), {
     phase: i,
     round: l,
     nextRound: te,
-    clock: a ? void 0 : Jo(n, i, te),
-    currentClock: Jo(n, i, l),
-    remainingText: m,
-    limit: C,
+    clock: a ? void 0 : Xo(n, i, te),
+    currentClock: Xo(n, i, l),
+    remainingText: h,
+    limit: E,
     roundsLeft: p ? { x: p.x, y: p.y } : void 0,
     chainStart: n.phases.length ? o.id : void 0,
     ended: a,
     endedBy: u,
     endIndex: f,
     firedEvents: re,
-    warn: !a && X && te >= i.cap - 2,
-    isLastRound: !a && X && te === i.cap,
-    overdue: !a && X && !i.next && te > i.cap,
+    warn: !a && Q && te >= i.cap - 2,
+    isLastRound: !a && Q && te === i.cap,
+    overdue: !a && Q && !i.next && te > i.cap,
     next: ee,
-    skipGoal: h,
-    settlement: x,
+    skipGoal: m,
+    settlement: k,
     panel: z,
-    rolesFromChat: k,
-    perMessage: U,
-    phaseEnds: D,
+    rolesFromChat: x,
+    perMessage: j,
+    phaseEnds: O,
     entryIndex: s
   };
 }
-const ec = "rlzc_token", tc = "rlzc_progress", nc = "rlzc_turn", sc = "rlzc_state", rc = "rlzc_ledger", ic = "rlzc_live", oc = "rlzc_format", Ih = [ec, tc, nc, sc, rc, ic, oc], rs = { token: "", progress: "", turn: "", injected: [] };
-function Nh(e) {
+const sc = "rlzc_token", rc = "rlzc_progress", ic = "rlzc_turn", oc = "rlzc_state", lc = "rlzc_ledger", ac = "rlzc_live", cc = "rlzc_format", Ph = [sc, rc, ic, oc, lc, ac, cc], as = { token: "", progress: "", turn: "", injected: [] };
+function Dh(e) {
   return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
-function qs(e, t, n) {
+function Qs(e, t, n) {
   const s = t.roles ?? [];
   if (!s.length) return e;
-  const r = new RegExp(`(?<!\\{)\\{(${s.map(Nh).join("|")})\\}(?!\\})`, "g");
+  const r = new RegExp(`(?<!\\{)\\{(${s.map(Dh).join("|")})\\}(?!\\})`, "g");
   return e.replace(r, (i, o) => n?.[o]?.trim() || o);
 }
-function Ph(e, t) {
+function Lh(e, t) {
   if (!t.length) return "";
   const n = e.events.map((c) => c.id), s = t.map((c) => n.indexOf(c)).filter((c) => c >= 0).sort((c, a) => c - a), r = [];
   let i = s[0], o = s[0];
@@ -5200,79 +5200,79 @@ function Ph(e, t) {
   }
   return l(), r.join("、");
 }
-function Qo(e, t, n, s = !1) {
-  let r = qs(e.text, t, n);
-  return e.to > e.from && (r = `在本阶段第${e.from}到${e.to}轮之间发生：${r}`), e.if && !s && (r += `（条件：${qs(e.if, t, n)}。若条件已不成立，此事件不发生，也不补写替代事件）`), `- ${e.id}：${r}`;
+function nl(e, t, n, s = !1) {
+  let r = Qs(e.text, t, n);
+  return e.to > e.from && (r = `在本阶段第${e.from}到${e.to}轮之间发生：${r}`), e.if && !s && (r += `（条件：${Qs(e.if, t, n)}。若条件已不成立，此事件不发生，也不补写替代事件）`), `- ${e.id}：${r}`;
 }
 function Rh(e) {
   const t = e.phase;
   return t.clock && !t.night ? "本阶段在本轮结束：请在本轮结尾自然写出日落。" : t.night ? "本阶段在本轮结束：请在本轮结尾自然写出日出。" : `本阶段在本轮结束：请在本轮结尾自然收束「${t.name}」。`;
 }
-function Lh(e, t, n, s = {}) {
+function Oh(e, t, n, s = {}) {
   if (e.rest && n?.status === "active")
-    return { ...rs, token: e.token };
-  if (!t || !n || t.ended || n.status !== "active") return rs;
+    return { ...as, token: e.token };
+  if (!t || !n || t.ended || n.status !== "active") return as;
   const r = s.roles, i = e.phases.length > 0, o = t.next, l = [`副本：${e.name}（${e.level}级）`], c = t.limit;
   if (i)
     l.push(`阶段：${t.phase.name}`), l.push(`本轮：第${t.nextRound}/${t.phase.cap}轮`), c && l.push(`剩余${c.x}/${c.y}轮`), t.clock && l.push(`钟时：${t.clock}`), c?.text && l.push(`时限：${c.text}`), e.remaining.type === "countdown" && t.remainingText && l.push(t.remainingText), c?.deadline && !c.text?.includes(c.deadline) && l.push(`截止：${c.deadline}`);
   else {
     l.push(`本轮：第${t.nextRound}轮`), t.clock && l.push(`钟时：${t.clock}`);
-    const E = s.panelLimit || s.briefing?.limit;
-    E && l.push(`时限：${E}`);
+    const M = s.panelLimit || s.briefing?.limit;
+    M && l.push(`时限：${M}`);
   }
   const a = ["［副本进度·仅供AI］", l.join("　")];
   if (s.briefing?.goal && (!i || e.id === "generic") && a.push(`目标：${s.briefing.goal}`), e.roles?.length) {
-    const E = e.roles.filter((M) => r?.[M]);
+    const M = e.roles.filter((T) => r?.[T]);
     a.push(
-      E.length ? `角色登记：${e.roles.map((M) => `${M}=${r?.[M] || "未登记"}`).join("｜")}` : "角色登记：尚未登记"
+      M.length ? `角色登记：${e.roles.map((T) => `${T}=${r?.[T] || "未登记"}`).join("｜")}` : "角色登记：尚未登记"
     );
   }
-  const u = Ph(e, t.firedEvents);
+  const u = Lh(e, t.firedEvents);
   u && a.push(`已发生事件：${u}`);
   const f = [];
   o.skipFrom !== void 0 && f.push(`玩家选择快进：本轮从「${t.phase.name}」第${o.skipFrom}轮快进到第${o.round}轮。请用简短的过渡叙述带过这段时间；若途中出现必须由{{user}}亲自决定的事，就停在那里交给{{user}}。`);
-  const h = new Map((s.subNext ?? []).map((E) => [E.id, E])), x = o.events.filter((E) => E.if && h.get(E.id)?.ok === !1).map((E) => ({ id: E.id, reason: h.get(E.id).reason })), z = o.events.filter((E) => !x.some((M) => M.id === E.id)), k = (E) => !!E.if && h.get(E.id)?.ok === !0, R = z.filter((E) => E.kind === "event"), U = z.filter((E) => E.kind === "directive");
-  if (R.length && (f.push("本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）："), R.forEach((E) => f.push(Qo(E, e, r, k(E))))), U.length && (f.push("本轮写作要求："), U.forEach((E) => f.push(Qo(E, e, r, k(E))))), t.isLastRound ? f.push(Rh(t)) : t.overdue && f.push(`「${t.phase.name}」已到时限，请按副本规则在本轮完成结算。`), s.audit?.missingLast && f.push("上一轮缺少<副本>面板，本轮必须完整输出。"), s.audit && !s.audit.hasPanel && f.push("本轮<副本>的进度条写0。"), e.roles?.length && !e.roles.some((E) => r?.[E])) {
-    let E = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${e.roles.map((M) => `${M}=姓名`).join("｜")}</角色登记>。按世界书规定生成NPC。`;
-    e.roles.includes("死者") && (E += "死者不得是{{user}}或其同伴。"), f.push(E);
+  const m = new Map((s.subNext ?? []).map((M) => [M.id, M])), k = o.events.filter((M) => M.if && m.get(M.id)?.ok === !1).map((M) => ({ id: M.id, reason: m.get(M.id).reason })), z = o.events.filter((M) => !k.some((T) => T.id === M.id)), x = (M) => !!M.if && m.get(M.id)?.ok === !0, $ = z.filter((M) => M.kind === "event"), j = z.filter((M) => M.kind === "directive");
+  if ($.length && (f.push("本轮后台事件（既定事实，必须发生；只有{{user}}或其同伴能感知时才写进正文，否则只作为已发生的事实）："), $.forEach((M) => f.push(nl(M, e, r, x(M))))), j.length && (f.push("本轮写作要求："), j.forEach((M) => f.push(nl(M, e, r, x(M))))), t.isLastRound ? f.push(Rh(t)) : t.overdue && f.push(`「${t.phase.name}」已到时限，请按副本规则在本轮完成结算。`), s.audit?.missingLast && f.push("上一轮缺少<副本>面板，本轮必须完整输出。"), s.audit && !s.audit.hasPanel && f.push("本轮<副本>的进度条写0。"), e.roles?.length && !e.roles.some((M) => r?.[M])) {
+    let M = `请在本轮正文末尾输出一次角色登记（玩家看不到）：<角色登记>${e.roles.map((T) => `${T}=姓名`).join("｜")}</角色登记>。按世界书规定生成NPC。`;
+    e.roles.includes("死者") && (M += "死者不得是{{user}}或其同伴。"), f.push(M);
   }
-  let D;
+  let O;
   return c?.text && (c.minutes !== void 0 ? (f.push(
     `本轮<副本>的时限一栏写：${c.text}。正文里提到的时间也以此为准。本轮剧情若跳过了时间，约剩时间可以写得更少，不能更多；总时长照抄。`
-  ), D = { text: c.text, minutes: c.minutes, total: c.total }) : (f.push(`本轮<副本>的时限一栏写：${c.text}（照抄）。`), D = { text: c.text })), {
+  ), O = { text: c.text, minutes: c.minutes, total: c.total }) : (f.push(`本轮<副本>的时限一栏写：${c.text}（照抄）。`), O = { text: c.text })), {
     token: e.token,
     progress: a.join(`
 `),
     turn: f.length ? ["［本轮指令·仅供AI］", ...f].join(`
 `) : "",
-    injected: z.map((E) => E.id),
-    limit: D,
-    skipped: x.length ? x : void 0,
+    injected: z.map((M) => M.id),
+    limit: O,
+    skipped: k.length ? k : void 0,
     state: s.stateText || void 0
   };
 }
-const At = "<状态栏>", yn = "</状态栏>", Dh = {
+const pt = "<状态栏>", bn = "</状态栏>", Fh = {
   missing: "缺失",
   misnamed: "标签名写错",
   unpaired: "不成对",
   duplicate: "多于一对"
-}, Fi = /* @__PURE__ */ new Set(["副本", "阶段切换", "副本结算", "角色登记", "积分变动", "直播"]), Fh = /* @__PURE__ */ new Set(["系统面板", "状态面板", "状态", "面板", "系统状态", "状态信息", "人物状态", "角色状态", "状态条", "状态框", "系统任务状态栏", "任务状态栏", "状态栏位", "status", "statusbar", "status_bar", "status-bar"]), jh = ["等级", "积分", "位格", "道具", "待清算", "在场"];
-function Oh(e) {
-  return jh.filter((t) => new RegExp(`${t}\\s*[：:]`).test(e)).length;
+}, Fi = /* @__PURE__ */ new Set(["副本", "阶段切换", "副本结算", "角色登记", "积分变动", "直播"]), jh = /* @__PURE__ */ new Set(["系统面板", "状态面板", "状态", "面板", "系统状态", "状态信息", "人物状态", "角色状态", "状态条", "状态框", "系统任务状态栏", "任务状态栏", "状态栏位", "status", "statusbar", "status_bar", "status-bar"]), Bh = ["等级", "积分", "位格", "道具", "待清算", "在场"];
+function Vh(e) {
+  return Bh.filter((t) => new RegExp(`${t}\\s*[：:]`).test(e)).length;
 }
 function ji(e) {
   const t = e.trim().toLowerCase();
-  return Fh.has(t) || /状态|面板/.test(t);
+  return jh.has(t) || /状态|面板/.test(t);
 }
-function el(e, t) {
+function sl(e, t) {
   if (Fi.has(e)) return !1;
-  const n = Oh(t);
+  const n = Vh(t);
   return ji(e) ? n >= 1 : /[^\x00-\x7f]/.test(e) && n >= 2;
 }
-function tl(e, t) {
+function rl(e, t) {
   return e.split(t).length - 1;
 }
-function lc(e) {
+function uc(e) {
   const t = /<([^<>\/\s][^<>\/]{0,11})>|【([^【】\/]{1,12})】|\[([^\[\]\/]{1,12})\]/g;
   let n;
   for (; (n = t.exec(e)) !== null; ) {
@@ -5280,21 +5280,21 @@ function lc(e) {
     if (Fi.has(s)) continue;
     const r = n.index + n[0].length, i = n[1] !== void 0 ? `</${n[1]}>` : n[2] !== void 0 ? `【/${n[2]}】` : `[/${n[3]}]`, o = e.indexOf(i, r);
     if (o >= 0) {
-      if (el(s, e.slice(r, o))) return { open: n[0], start: n.index, close: i, closeAt: o };
+      if (sl(s, e.slice(r, o))) return { open: n[0], start: n.index, close: i, closeAt: o };
       continue;
     }
-    if (ji(s) && el(s, e.slice(r, Ys(e, r)))) return { open: n[0], start: n.index };
+    if (ji(s) && sl(s, e.slice(r, Xs(e, r)))) return { open: n[0], start: n.index };
   }
   return null;
 }
-function Ys(e, t) {
+function Xs(e, t) {
   const n = e.indexOf("<副本>", t);
   let s = n >= 0 ? n : e.length;
   for (; s > t && /\s/.test(e[s - 1]); ) s--;
   return s;
 }
-function ac(e, t) {
-  const n = Ys(e, t), s = /<\/([^<>\s]{1,12})>|【\/([^【】]{1,12})】|\[\/([^\[\]]{1,12})\]/g;
+function dc(e, t) {
+  const n = Xs(e, t), s = /<\/([^<>\s]{1,12})>|【\/([^【】]{1,12})】|\[\/([^\[\]]{1,12})\]/g;
   s.lastIndex = t;
   let r;
   for (; (r = s.exec(e)) !== null && r.index < n; ) {
@@ -5304,83 +5304,83 @@ function ac(e, t) {
   }
   return null;
 }
-function Oi(e) {
-  const t = String(e ?? ""), n = tl(t, At), s = tl(t, yn);
+function Bi(e) {
+  const t = String(e ?? ""), n = rl(t, pt), s = rl(t, bn);
   if (n === 1 && s === 1)
-    return t.indexOf(At) < t.indexOf(yn) ? { kind: "ok" } : { kind: "unpaired", detail: "结尾在开头之前", fixable: !1 };
+    return t.indexOf(pt) < t.indexOf(bn) ? { kind: "ok" } : { kind: "unpaired", detail: "结尾在开头之前", fixable: !1 };
   if (n === 0 && s === 0) {
-    const r = lc(t);
+    const r = uc(t);
     return r ? { kind: "misnamed", detail: r.close ? `${r.open}…${r.close}` : `${r.open}（没有结尾）`, fixable: !0 } : { kind: "missing" };
   }
   if (n === s) return { kind: "duplicate", detail: `${n}对`, fixable: !1 };
   if (n === 1 && s === 0) {
-    const r = ac(t, t.indexOf(At) + At.length);
+    const r = dc(t, t.indexOf(pt) + pt.length);
     return { kind: "unpaired", detail: r ? `结尾写成了${r.tok}` : "只有开头", fixable: !0 };
   }
   return n === 0 ? { kind: "unpaired", detail: "只有结尾", fixable: !1 } : { kind: "unpaired", detail: `开头${n}个、结尾${s}个`, fixable: !1 };
 }
-function Bh(e) {
-  const t = String(e ?? ""), n = Oi(t);
+function Uh(e) {
+  const t = String(e ?? ""), n = Bi(t);
   if (!n.fixable) return null;
   if (n.kind === "misnamed") {
-    const o = lc(t), l = o.start + o.open.length;
+    const o = uc(t), l = o.start + o.open.length;
     if (o.close !== void 0 && o.closeAt !== void 0)
-      return { text: t.slice(0, o.start) + At + t.slice(l, o.closeAt) + yn + t.slice(o.closeAt + o.close.length), from: `${o.open}…${o.close}` };
-    const c = Ys(t, l);
-    return { text: t.slice(0, o.start) + At + t.slice(l, c) + `
-` + yn + t.slice(c), from: o.open };
+      return { text: t.slice(0, o.start) + pt + t.slice(l, o.closeAt) + bn + t.slice(o.closeAt + o.close.length), from: `${o.open}…${o.close}` };
+    const c = Xs(t, l);
+    return { text: t.slice(0, o.start) + pt + t.slice(l, c) + `
+` + bn + t.slice(c), from: o.open };
   }
-  const s = t.indexOf(At) + At.length, r = ac(t, s);
-  if (r) return { text: t.slice(0, r.at) + yn + t.slice(r.at + r.tok.length), from: `${At}…${r.tok}` };
-  const i = Ys(t, s);
+  const s = t.indexOf(pt) + pt.length, r = dc(t, s);
+  if (r) return { text: t.slice(0, r.at) + bn + t.slice(r.at + r.tok.length), from: `${pt}…${r.tok}` };
+  const i = Xs(t, s);
   return { text: t.slice(0, i) + `
-` + yn + t.slice(i), from: At };
+` + bn + t.slice(i), from: pt };
 }
-function cc(e, t) {
+function Ac(e, t) {
   for (let n = 0; n < t; n++) if (e[n]?.is_user) return !1;
   return !0;
 }
-function uc(e, t) {
+function fc(e, t) {
   const n = e[t];
-  if (!$e(n) || cc(e, t)) return null;
-  const s = Oi(n.mes);
+  if (!Ee(n) || Ac(e, t)) return null;
+  const s = Bi(n.mes);
   return s.kind === "ok" ? null : s;
 }
-const Vh = "［格式·仅供AI］上一轮的状态栏格式不对。本轮必须在正文末尾完整输出一次<状态栏>……</状态栏>，开头结尾的标签名一字不改，不得写成其他名字。";
-function Uh(e) {
+const Hh = "［格式·仅供AI］上一轮的状态栏格式不对。本轮必须在正文末尾完整输出一次<状态栏>……</状态栏>，开头结尾的标签名一字不改，不得写成其他名字。";
+function Wh(e) {
   for (let t = e.length - 1; t >= 0; t--)
-    if ($e(e[t]))
-      return uc(e, t) !== null;
+    if (Ee(e[t]))
+      return fc(e, t) !== null;
   return !1;
 }
-function Hh(e, t = 60) {
+function Gh(e, t = 60) {
   const n = [];
   for (let s = e.length - 1; s >= 0 && n.length < t; s--) {
-    const r = e[s]?.extra?.rlzc?.format, i = uc(e, s);
-    i ? n.push({ index: s, kind: i.kind, detail: i.detail, fixed: !1 }) : r?.fixed && $e(e[s]) && n.push({ index: s, kind: r.kind, detail: r.detail, fixed: !0, from: r.from });
+    const r = e[s]?.extra?.rlzc?.format, i = fc(e, s);
+    i ? n.push({ index: s, kind: i.kind, detail: i.detail, fixed: !1 }) : r?.fixed && Ee(e[s]) && n.push({ index: s, kind: r.kind, detail: r.detail, fixed: !0, from: r.from });
   }
   return n;
 }
-const Wh = 1, Gh = 0;
+const Kh = 1, qh = 0;
 function me() {
   const e = window.SillyTavern;
   if (!e?.getContext) throw new Error("[rlzc] 找不到 SillyTavern.getContext()");
   return e.getContext();
 }
-function dc() {
+function pc() {
   const e = me();
   return e.eventTypes ?? e.event_types ?? {};
 }
-function gn(e, t) {
-  const n = dc()[e];
+function xn(e, t) {
+  const n = pc()[e];
   if (!n) {
     console.warn(`[rlzc] 当前 ST 没有事件 ${e}，已跳过`);
     return;
   }
   me().eventSource.on(n, t);
 }
-function Nn(e, t) {
-  const n = dc()[e];
+function Rn(e, t) {
+  const n = pc()[e];
   if (!n) {
     console.warn(`[rlzc] 当前 ST 没有事件 ${e}，已跳过`);
     return;
@@ -5395,25 +5395,25 @@ function Ut() {
   const e = me();
   return String(e.getCurrentChatId?.() ?? e.chatId ?? "");
 }
-function gt() {
+function Ze() {
   return me().chatMetadata ?? {};
 }
-function Je() {
+function Ve() {
   const e = me();
   e.saveMetadataDebounced ? e.saveMetadataDebounced() : e.saveMetadata?.();
 }
-function Tt(e, t, n, s) {
-  me().setExtensionPrompt(e, t, Wh, n, s, Gh);
+function It(e, t, n, s) {
+  me().setExtensionPrompt(e, t, Kh, n, s, qh);
 }
-function Kh() {
+function Yh() {
   const e = me();
   typeof e.saveChat == "function" ? e.saveChat() : e.saveChatDebounced?.();
 }
-function qh(e) {
+function Jh(e) {
   const t = me(), n = q()[e];
   !n || !document.querySelector(`#chat .mes[mesid="${e}"]`) || typeof t.updateMessageBlock == "function" && t.updateMessageBlock(e, n);
 }
-function Se(e, t) {
+function we(e, t) {
   const n = window.toastr;
   n ? n[e](t, "回廊种菜系统") : console.log(`[rlzc] ${t}`);
 }
@@ -5425,7 +5425,7 @@ async function Ht(e) {
   }
   return window.confirm(e);
 }
-function nl(e, t, n, s = "回廊种菜系统") {
+function il(e, t, n, s = "回廊种菜系统") {
   const r = window.toastr, i = window.jQuery;
   if (!r || typeof i != "function") return;
   const o = document.createElement("div");
@@ -5437,7 +5437,7 @@ function nl(e, t, n, s = "回廊种菜系统") {
     a.preventDefault(), a.stopPropagation(), r.clear(c), n();
   });
 }
-async function sl(e, t = "") {
+async function ol(e, t = "") {
   const n = me();
   if (n.callGenericPopup && n.POPUP_TYPE) {
     const s = document.createElement("div");
@@ -5447,7 +5447,7 @@ async function sl(e, t = "") {
   }
   return window.prompt(e, t);
 }
-async function Yh(e, t) {
+async function Zh(e, t) {
   const n = me(), s = document.createElement("div"), r = document.createElement("div");
   r.textContent = e, s.append(r);
   let i = null;
@@ -5463,73 +5463,73 @@ async function Yh(e, t) {
   return { ok: o, checked: o && !!t?.checked };
 }
 const an = ["阶段切换", "副本结算", "副本", "角色登记", "积分变动"];
-function Ac(e, t) {
+function hc(e, t) {
   return new RegExp(`<(${e.join("|")})>[\\s\\S]*?<\\/\\1>`, t);
 }
-function Jh(e, t = an) {
-  return t.length ? e.replace(Ac(t, "g"), "").replace(/\n{3,}/g, `
+function Qh(e, t = an) {
+  return t.length ? e.replace(hc(t, "g"), "").replace(/\n{3,}/g, `
 
 `).trim() : e;
 }
-const di = "rlzc-hide:";
-function Zh(e) {
+const fi = "rlzc-hide:";
+function Xh(e) {
   let t = 5381;
   for (let n = 0; n < e.length; n++) t = (t << 5) + t + e.charCodeAt(n) | 0;
   return (t >>> 0).toString(36);
 }
-function Xh(e) {
+function em(e) {
   const t = e.firstChild;
-  return t && t.nodeType === Node.COMMENT_NODE && t.data.startsWith(di) ? t.data.slice(di.length) : null;
+  return t && t.nodeType === Node.COMMENT_NODE && t.data.startsWith(fi) ? t.data.slice(fi.length) : null;
 }
-function Qh(e) {
+function tm(e) {
   return e.querySelector(".TH-render, iframe") ? !0 : !!e.parentElement && Array.from(e.parentElement.children).some((t) => t.classList.contains("TH-streaming"));
 }
-function em() {
+function nm() {
   const e = globalThis.TavernHelper?.refreshOneMessage;
   return typeof e == "function" ? e : null;
 }
-const Hr = /* @__PURE__ */ new Set();
-function fc(e, t = an, n = !1, s = !1) {
+const Gr = /* @__PURE__ */ new Set();
+function mc(e, t = an, n = !1, s = !1) {
   const r = q()[e];
   if (!r || r.is_user) return;
   const i = String(r.extra?.display_text ?? r.mes ?? "");
-  if (!Ac(n ? an : t, "").test(i)) return;
+  if (!hc(n ? an : t, "").test(i)) return;
   const o = document.querySelector(`#chat .mes[mesid="${e}"] .mes_text`);
   if (!o) return;
   const l = me().messageFormatting;
   if (typeof l != "function") return;
-  const c = Jh(i, t), a = Zh(`${t.join("|")}
-${c}`), u = Xh(o);
+  const c = Qh(i, t), a = Xh(`${t.join("|")}
+${c}`), u = em(o);
   if (u === a) return;
   const f = l(c, r.name ?? "", !!r.is_system, !1, e);
-  if (!s && Qh(o)) {
+  if (!s && tm(o)) {
     if (u === null && l(i, r.name ?? "", !!r.is_system, !1, e) === f) return;
-    const h = em();
-    if (h && !Hr.has(e)) {
-      Hr.add(e), Promise.resolve().then(() => h(e)).catch((x) => console.warn("[rlzc] 请酒馆助手重渲染消息失败", e, x)).finally(() => Hr.delete(e));
+    const m = nm();
+    if (m && !Gr.has(e)) {
+      Gr.add(e), Promise.resolve().then(() => m(e)).catch((k) => console.warn("[rlzc] 请酒馆助手重渲染消息失败", e, k)).finally(() => Gr.delete(e));
       return;
     }
   }
-  o.innerHTML = `<!--${di}${a}-->${f}`;
+  o.innerHTML = `<!--${fi}${a}-->${f}`;
 }
-function tm(e = an, t = !1, n = !1) {
+function sm(e = an, t = !1, n = !1) {
   document.querySelectorAll("#chat .mes[mesid]").forEach((s) => {
     const r = Number(s.getAttribute("mesid"));
-    Number.isFinite(r) && fc(r, e, t, n);
+    Number.isFinite(r) && mc(r, e, t, n);
   });
 }
-const nm = { key: "summary", label: "概况", hint: "本副本目前的整体情况，不超过150字" };
-function pc(e) {
-  return e.stateFields?.length ? e.stateFields : [nm];
+const rm = { key: "summary", label: "概况", hint: "本副本目前的整体情况，不超过150字" };
+function gc(e) {
+  return e.stateFields?.length ? e.stateFields : [rm];
 }
-const sm = [...an, "状态栏"], rm = new RegExp(`<(${sm.join("|")})>[\\s\\S]*?<\\/\\1>`, "g");
-function Bi(e) {
-  return String(e ?? "").replace(rm, "").replace(/\n{3,}/g, `
+const im = [...an, "状态栏"], om = new RegExp(`<(${im.join("|")})>[\\s\\S]*?<\\/\\1>`, "g");
+function Vi(e) {
+  return String(e ?? "").replace(om, "").replace(/\n{3,}/g, `
 
 `).trim();
 }
-function im(e) {
-  const t = pc(e.pack), n = e.markets ?? [], s = [
+function lm(e) {
+  const t = gc(e.pack), n = e.markets ?? [], s = [
     "你是角色扮演副本的记录员，不写剧情，只整理事实。",
     "根据本轮正文完成三件事：",
     "1. 事件核对：逐条判断「本轮后台事件」在正文里是 done（已发生）、missed（该发生但没写出来）还是 void（条件已不成立，不该发生），各附一句理由。后台事件即使{{user}}看不到，只要正文与之不矛盾、且没有写出相反的事实，就算 done。标明「第X到Y轮之间」的事件不一定在本轮写出：本轮没写到、也没写出相反的事实，同样算 done。",
@@ -5555,112 +5555,112 @@ ${o}`,
 ${n.map((c) => `- ${c.id}：${c.judge}`).join(`
 `)}`] : [],
     `【本轮正文】
-${Bi(e.text)}`
+${Vi(e.text)}`
   ].join(`
 
 `);
   return { system: s, user: l };
 }
-function om(e, t) {
+function am(e, t) {
   const n = new Set(t);
   return e.events.filter((s) => n.has(s.id) && s.kind !== "directive");
 }
-class je extends Error {
+class Fe extends Error {
 }
-function lm(e) {
+function cm(e) {
   let t = String(e ?? "").trim();
   const n = /```(?:json)?\s*([\s\S]*?)```/i.exec(t);
   n && (t = n[1].trim());
   const s = t.indexOf("{"), r = t.lastIndexOf("}");
-  if (s < 0 || r <= s) throw new je("返回里没有 JSON");
+  if (s < 0 || r <= s) throw new Fe("返回里没有 JSON");
   let i;
   try {
     i = JSON.parse(t.slice(s, r + 1));
   } catch {
-    throw new je("返回的 JSON 无法解析");
+    throw new Fe("返回的 JSON 无法解析");
   }
-  if (!i || typeof i != "object" || Array.isArray(i)) throw new je("返回的不是 JSON 对象");
-  if (!i.state || typeof i.state != "object" || Array.isArray(i.state)) throw new je("缺少 state");
+  if (!i || typeof i != "object" || Array.isArray(i)) throw new Fe("返回的不是 JSON 对象");
+  if (!i.state || typeof i.state != "object" || Array.isArray(i.state)) throw new Fe("缺少 state");
   const o = ["done", "missed", "void"], l = (Array.isArray(i.events) ? i.events : []).filter((f) => f && typeof f.id == "string" && o.includes(f.status)).map((f) => ({ id: f.id, status: f.status, reason: String(f.reason ?? "") })), c = (Array.isArray(i.next) ? i.next : []).filter((f) => f && typeof f.id == "string" && typeof f.ok == "boolean").map((f) => ({ id: f.id, ok: f.ok, reason: String(f.reason ?? "") })), a = { events: l, state: i.state, next: c }, u = typeof i.hype == "number" ? i.hype : typeof i.hype == "string" && i.hype.trim() !== "" ? Number(i.hype) : NaN;
   if (Number.isFinite(u) && (a.hype = Math.max(0, Math.min(100, Math.round(u)))), typeof i.hurt == "boolean" ? a.hurt = i.hurt : (i.hurt === "true" || i.hurt === "false") && (a.hurt = i.hurt === "true"), i.markets && typeof i.markets == "object" && !Array.isArray(i.markets)) {
     const f = {};
-    for (const [h, x] of Object.entries(i.markets))
-      typeof x == "boolean" ? f[h] = x : (x === "true" || x === "false") && (f[h] = x === "true");
+    for (const [m, k] of Object.entries(i.markets))
+      typeof k == "boolean" ? f[m] = k : (k === "true" || k === "false") && (f[m] = k === "true");
     a.markets = f;
   }
   return a;
 }
-function am(e) {
+function um(e) {
   let t = 0;
   for (let n = 0; n < e.length; n++) t = t * 31 + e.charCodeAt(n) | 0;
   return `${e.length}.${t}`;
 }
-function cm(e, t, n) {
+function dm(e, t, n) {
   const s = [n?.send_date, n?.gen_started, n?.gen_finished].map((r) => String(r ?? "")).join("|");
-  return `${e}:${t}:${s}:${am(String(n?.mes ?? ""))}`;
+  return `${e}:${t}:${s}:${um(String(n?.mes ?? ""))}`;
 }
-function um(e) {
+function Am(e) {
   return !(!e.enabled || !e.active || e.type === "continue" || e.type === "first_message" || e.saveMode && !e.hasEvents && !e.hasNextConditional);
 }
-async function dm(e, t, n = 2) {
+async function fm(e, t, n = 2) {
   let s;
   for (let r = 0; r <= n; r++)
     try {
-      return lm(await e(t));
+      return cm(await e(t));
     } catch (i) {
       s = i;
     }
   throw s;
 }
-class hc extends Error {
+class xc extends Error {
 }
-function xr(e) {
-  if (e instanceof hc) return "超时";
-  if (e instanceof je) return "返回格式不对";
+function br(e) {
+  if (e instanceof xc) return "超时";
+  if (e instanceof Fe) return "返回格式不对";
   const t = `${e?.message ?? ""} ${e?.cause?.message ?? ""} ${String(e?.status ?? "")}`.toLowerCase();
   return /abort|timeout|timed out|超时/.test(t) ? "超时" : /quota|insufficient|balance|429|too many|额度|余额/.test(t) ? "额度不足" : /401|403|unauthori[sz]ed|forbidden|invalid[ _-]?api[ _-]?key|incorrect api key|authentication|密钥/.test(t) ? "密钥无效" : "其他";
 }
-function mc(e) {
+function vc(e) {
   return e?.extra?.rlzc;
 }
-function vr(e, t) {
+function kr(e, t) {
   for (let n = e.length - 1; n >= t && n >= 0; n--) {
     const s = e[n];
-    if (!$e(s)) continue;
-    const r = mc(s)?.sub;
+    if (!Ee(s)) continue;
+    const r = vc(s)?.sub;
     if (r?.state && !r.skipped) return { index: n, state: r.state };
   }
   return null;
 }
-function Am(e, t) {
+function pm(e, t) {
   for (let n = e.length - 1; n >= t && n >= 0; n--) {
     const s = e[n];
-    if (!$e(s)) continue;
-    const r = mc(s)?.sub;
+    if (!Ee(s)) continue;
+    const r = vc(s)?.sub;
     return r && !r.skipped && Array.isArray(r.next) ? r.next : void 0;
   }
 }
-function Js(e) {
-  return Array.isArray(e) ? e.length ? e.map((t) => Js(t)).join("、") : "无" : e && typeof e == "object" ? Object.entries(e).map(([t, n]) => `${t}：${Js(n)}`).join("；") : e == null || e === "" ? "未知" : String(e);
+function er(e) {
+  return Array.isArray(e) ? e.length ? e.map((t) => er(t)).join("、") : "无" : e && typeof e == "object" ? Object.entries(e).map(([t, n]) => `${t}：${er(n)}`).join("；") : e == null || e === "" ? "未知" : String(e);
 }
-function gc(e, t) {
-  const n = pc(e), s = new Set(n.map((i) => i.key)), r = n.filter((i) => t[i.key] !== void 0).map((i) => `${i.label}：${Js(t[i.key])}`);
-  for (const [i, o] of Object.entries(t)) s.has(i) || r.push(`${i}：${Js(o)}`);
+function yc(e, t) {
+  const n = gc(e), s = new Set(n.map((i) => i.key)), r = n.filter((i) => t[i.key] !== void 0).map((i) => `${i.label}：${er(t[i.key])}`);
+  for (const [i, o] of Object.entries(t)) s.has(i) || r.push(`${i}：${er(o)}`);
   return r.length ? ["［副本状态·仅供AI］", ...r].join(`
 `) : "";
 }
-const fm = "你在写回廊直播间的观众弹幕。观众是回廊里的其他玩家，只看得到直播画面。什么人都有：夸赞、祝福、讨论、泼冷水、嫉妒、抹黑、造谣，正面的稍多。每条30字以内，口语，称{{user}}为主播，不用性别代词。只能根据画面里已经发生的事说话，不猜测、不透露画面外的信息。", pm = ["praise", "bless", "discuss", "cold", "envy", "smear", "rumor"];
-function hm(e) {
+const hm = "你在写回廊直播间的观众弹幕。观众是回廊里的其他玩家，只看得到直播画面。什么人都有：夸赞、祝福、讨论、泼冷水、嫉妒、抹黑、造谣，正面的稍多。每条30字以内，口语，称{{user}}为主播，不用性别代词。只能根据画面里已经发生的事说话，不猜测、不透露画面外的信息。", mm = ["praise", "bless", "discuss", "cold", "envy", "smear", "rumor"];
+function gm(e) {
   if (!e.aiSource || !e.subOn) return !1;
   const t = Math.max(1, Math.min(10, Math.floor(e.freq) || 3));
   return e.roundInShow > 0 && e.roundInShow % t === 0 ? !0 : e.phaseSwitch || e.hurt || e.eventDone;
 }
-function xc(e) {
+function bc(e) {
   return String(e ?? "").replace(/<(副本|状态栏|阶段切换|副本结算|角色登记|积分变动|直播|thinking|think)>[\s\S]*?<\/\1>/g, "").replace(/<\/?[A-Za-z一-龥][^<>]*>/g, "").replace(/\n{3,}/g, `
 
 `).trim();
 }
-function mm(e, t, n) {
+function xm(e, t, n) {
   const s = e.map((o) => o.text), r = [], i = /* @__PURE__ */ new Set();
   for (let o = 0; o < t * 10 && r.length < Math.min(t, s.length); o++) {
     const l = Math.floor(n() * s.length);
@@ -5668,9 +5668,9 @@ function mm(e, t, n) {
   }
   return r;
 }
-function gm(e) {
+function vm(e) {
   const t = [
-    fm,
+    hm,
     "只输出一个 JSON 数组，8–12条，不要任何解释，格式：",
     '[{"type":"praise|bless|discuss|cold|envy|smear|rumor","name":"观众昵称","text":"…"}]'
   ].join(`
@@ -5678,7 +5678,7 @@ function gm(e) {
     `【直播间】${e.scene}`,
     `【在场角色】${e.cast.length ? e.cast.join("、") : "（无）"}`,
     `【最近两轮画面】
-${e.texts.map((s) => xc(s)).filter(Boolean).join(`
+${e.texts.map((s) => bc(s)).filter(Boolean).join(`
 
 `) || "（无）"}`,
     `【语气示例】
@@ -5689,59 +5689,59 @@ ${e.samples.map((s) => `- ${s}`).join(`
 `);
   return { system: t, user: n };
 }
-function xm(e) {
+function ym(e) {
   let t = String(e ?? "").trim();
   const n = /```(?:json)?\s*([\s\S]*?)```/i.exec(t);
   n && (t = n[1].trim());
   const s = t.indexOf("["), r = t.lastIndexOf("]");
-  if (s < 0 || r <= s) throw new je("返回里没有 JSON 数组");
+  if (s < 0 || r <= s) throw new Fe("返回里没有 JSON 数组");
   let i;
   try {
     i = JSON.parse(t.slice(s, r + 1));
   } catch {
-    throw new je("返回的 JSON 无法解析");
+    throw new Fe("返回的 JSON 无法解析");
   }
-  if (!Array.isArray(i)) throw new je("返回的不是 JSON 数组");
+  if (!Array.isArray(i)) throw new Fe("返回的不是 JSON 数组");
   const o = i.filter((l) => l && typeof l.text == "string" && l.text.trim()).map((l) => ({
-    type: pm.includes(l.type) ? l.type : "discuss",
+    type: mm.includes(l.type) ? l.type : "discuss",
     name: typeof l.name == "string" && l.name.trim() ? l.name.trim().slice(0, 16) : "匿名",
     text: l.text.trim()
   })).slice(0, 13);
-  if (!o.length) throw new je("返回的弹幕为空");
+  if (!o.length) throw new Fe("返回的弹幕为空");
   return o;
 }
-async function vm(e, t, n = 1) {
+async function bm(e, t, n = 1) {
   let s;
   for (let r = 0; r <= n; r++)
     try {
-      return xm(await e(t));
+      return ym(await e(t));
     } catch (i) {
       s = i;
     }
   throw s;
 }
-function ym(e) {
+function km(e) {
   return e.t === "tip" ? `${e.name} 打赏${e.amount}` : `${e.name}：${e.text}`;
 }
-function bm(e, t = 5) {
+function wm(e, t = 5) {
   if (!e.on) return "";
   const n = e.feed.filter((r) => r.t === "msg" || r.t === "tip").slice(-t), s = `［直播·仅供AI］{{user}}正在直播，约${e.viewers}人在看。`;
-  return n.length ? `${s}最近弹幕：${n.map(ym).join("／")}` : s;
+  return n.length ? `${s}最近弹幕：${n.map(km).join("／")}` : s;
 }
-const vc = 1500;
-function yc() {
+const kc = 1500;
+function wc() {
   return me().getRequestHeaders?.() ?? { "Content-Type": "application/json" };
 }
-function bc(e) {
+function zc(e) {
   const t = { chat_completion_source: "custom", custom_url: e.url.trim().replace(/\/+$/, "") };
   return e.key.trim() && (t.custom_include_headers = JSON.stringify({ Authorization: `Bearer ${e.key.trim()}` })), t;
 }
-async function Vi(e, t) {
+async function Ui(e, t) {
   const n = new AbortController();
   let s;
   const r = new Promise((i, o) => {
     s = setTimeout(() => {
-      n.abort(), o(new hc(`超过 ${Math.round(e / 1e3)} 秒没有返回`));
+      n.abort(), o(new xc(`超过 ${Math.round(e / 1e3)} 秒没有返回`));
     }, e);
   });
   try {
@@ -5750,11 +5750,11 @@ async function Vi(e, t) {
     clearTimeout(s);
   }
 }
-function kc(e, t) {
+function _c(e, t) {
   const n = typeof t?.error == "string" ? t.error : t?.error?.message ?? t?.message ?? (typeof t == "string" ? t : ""), s = String(n ?? "").trim(), r = new Error(`${e || ""} ${s}${t?.quota_error ? " insufficient_quota" : ""}`.trim());
   return r.status = e, r.detail = s, r;
 }
-async function wc(e) {
+async function $c(e) {
   const t = await e.text().catch(() => "");
   try {
     return JSON.parse(t);
@@ -5762,13 +5762,13 @@ async function wc(e) {
     return t;
   }
 }
-async function zc(e, t, n, s = vc, r = 0.2, i = !1) {
+async function Sc(e, t, n, s = kc, r = 0.2, i = !1) {
   const o = await fetch("/api/backends/chat-completions/generate", {
     method: "POST",
-    headers: yc(),
+    headers: wc(),
     signal: n,
     body: JSON.stringify({
-      ...bc(e),
+      ...zc(e),
       model: e.model,
       messages: [
         { role: "system", content: t.system },
@@ -5778,8 +5778,8 @@ async function zc(e, t, n, s = vc, r = 0.2, i = !1) {
       temperature: r,
       stream: !1
     })
-  }), l = await wc(o);
-  if (!o.ok || l?.error) throw kc(o.status === 200 ? 0 : o.status, l);
+  }), l = await $c(o);
+  if (!o.ok || l?.error) throw _c(o.status === 200 ? 0 : o.status, l);
   const c = l?.choices?.[0]?.message?.content ?? l?.choices?.[0]?.text ?? l?.content;
   if (typeof c != "string") {
     if (i) return "";
@@ -5787,46 +5787,46 @@ async function zc(e, t, n, s = vc, r = 0.2, i = !1) {
   }
   return c;
 }
-async function km(e) {
+async function zm(e) {
   const t = me();
   if (typeof t.generateRaw != "function") throw new Error("当前酒馆版本没有 generateRaw");
   return String(await t.generateRaw({ prompt: e.user, systemPrompt: e.system }));
 }
-function Ui(e, t, n = {}) {
-  return Vi(e.timeoutMs, (s) => {
-    if (e.source === "main") return km(t);
+function Hi(e, t, n = {}) {
+  return Ui(e.timeoutMs, (s) => {
+    if (e.source === "main") return zm(t);
     if (!e.preset) throw new Error("没有选择接口预设");
-    return zc(e.preset, t, s, vc, n.temperature ?? 0.2);
+    return Sc(e.preset, t, s, kc, n.temperature ?? 0.2);
   });
 }
-async function wm(e, t) {
+async function _m(e, t) {
   const n = await fetch("/api/backends/chat-completions/status", {
     method: "POST",
-    headers: yc(),
+    headers: wc(),
     signal: t,
-    body: JSON.stringify(bc(e))
-  }), s = await wc(n);
-  if (!n.ok || s?.error) throw kc(n.status === 200 ? 0 : n.status, s);
+    body: JSON.stringify(zc(e))
+  }), s = await $c(n);
+  if (!n.ok || s?.error) throw _c(n.status === 200 ? 0 : n.status, s);
   const i = (Array.isArray(s) ? s : Array.isArray(s?.data) ? s.data : Array.isArray(s?.models) ? s.models : []).map((o) => typeof o == "string" ? o : o?.id ?? o?.name).filter(Boolean);
   return [...new Set(i)].sort();
 }
-function zm(e, t) {
-  return Vi(t, (n) => wm(e, n));
+function $m(e, t) {
+  return Ui(t, (n) => _m(e, n));
 }
-const _m = 64;
-async function $m(e, t) {
+const Sm = 64;
+async function Cm(e, t) {
   if (!e.model.trim()) throw new Error("还没有选模型");
-  return Vi(
+  return Ui(
     t,
-    (n) => zc(e, { system: "只回复 OK。", user: "ping" }, n, _m, 0.2, !0)
+    (n) => Sc(e, { system: "只回复 OK。", user: "ping" }, n, Sm, 0.2, !0)
   );
 }
-function rl(e) {
+function ll(e) {
   if (!e || typeof e != "object" || typeof e.ok != "boolean") return;
   const t = Number(e.at);
   return { ok: e.ok, reason: String(e.reason ?? ""), at: Number.isFinite(t) ? t : 0 };
 }
-function Sm(e) {
+function Em(e) {
   const t = {
     id: String(e?.id ?? ""),
     name: String(e?.name ?? ""),
@@ -5835,55 +5835,55 @@ function Sm(e) {
     model: String(e?.model ?? "")
   };
   Array.isArray(e?.models) && (t.models = e.models.filter((r) => typeof r == "string" && r));
-  const n = rl(e?.fetchResult);
+  const n = ll(e?.fetchResult);
   n && (t.fetchResult = n);
-  const s = rl(e?.testResult);
+  const s = ll(e?.testResult);
   return s && (t.testResult = s), t;
 }
-function il(e) {
+function al(e) {
   return !!e && !!e.url.trim();
 }
-function ol(e) {
+function cl(e) {
   return !!e && !!e.url.trim() && !!e.model.trim();
 }
-function Cm(e, t, n) {
+function Mm(e, t, n) {
   const s = String(n ?? "").trim();
   return e[t] === s ? !1 : (e[t] = s, t === "model" || (delete e.models, delete e.fetchResult), delete e.testResult, !0);
 }
-function ll(e, t, n = Date.now()) {
+function ul(e, t, n = Date.now()) {
   t.ok ? (e.models = [...t.models], e.fetchResult = { ok: !0, reason: "", at: n }) : e.fetchResult = { ok: !1, reason: t.reason, at: n };
 }
-function al(e, t, n = Date.now()) {
+function dl(e, t, n = Date.now()) {
   e.testResult = { ok: t.ok, reason: t.ok ? "" : t.reason, at: n };
 }
-function Em(e) {
+function Tm(e) {
   const t = new Date(e);
   return `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
 }
-function Mm(e) {
+function Im(e) {
   const t = e.fetchResult;
   return t ? t.ok ? `✓ 读到${e.models?.length ?? 0}个模型` : `✗ ${t.reason}` : "";
 }
-function Tm(e) {
+function Nm(e) {
   const t = e.testResult;
   return t ? t.ok ? "✓ 可以回复" : `✗ ${t.reason}` : "";
 }
-function Im(e) {
+function Pm(e) {
   const t = e?.testResult;
   return t?.ok ? { kind: "on", text: "已连接" } : t ? { kind: "warn", text: "连接失败" } : { kind: "warn", text: "未测试" };
 }
-const Nm = 80;
-function Ai(e) {
-  const t = xr(e), n = Number(e?.status) || 0, s = String(e?.detail ?? "").replace(/\s+/g, " ").trim(), r = Array.from(s).slice(0, Nm).join("");
+const Dm = 80;
+function pi(e) {
+  const t = br(e), n = Number(e?.status) || 0, s = String(e?.detail ?? "").replace(/\s+/g, " ").trim(), r = Array.from(s).slice(0, Dm).join("");
   return n && r ? `${t}（${n}：${r}）` : n ? `${t}（${n}）` : r ? `${t}（${r}）` : t;
 }
-const _c = "rlzc_ledger", $t = {
+const Cc = "rlzc_ledger", St = {
   D: 300,
   C: 1e3,
   B: 3e3,
   A: 1e4,
   S: 3e4
-}, Pm = {
+}, Lm = {
   D: { D: 150, C: 300, B: 600, A: 1e3, S: 1800 },
   C: { D: 800, C: 1400, B: 2200, A: 3e3, S: 4200 },
   B: { D: 3e3, C: 4800, B: 6800, A: 9e3, S: 12500 },
@@ -5901,25 +5901,25 @@ function Rm(e) {
   const r = parseInt(s[1], 10);
   return Number.isFinite(r) ? { delta: r, source: s[2]?.trim() ?? "" } : null;
 }
-function Ze(e) {
+function Qe(e) {
   let t;
   e instanceof Date ? t = e : typeof e == "number" ? t = new Date(e) : typeof e == "string" ? t = new Date(e) : t = /* @__PURE__ */ new Date(), isNaN(t.getTime()) && (t = /* @__PURE__ */ new Date());
   const n = t.getMonth() + 1, s = t.getDate(), r = String(t.getHours()).padStart(2, "0"), i = String(t.getMinutes()).padStart(2, "0");
   return `${n}/${s} ${r}:${i}`;
 }
-const Lm = /^(地点|时间|日期|等级|位格|积分|待清算|任务|道具|在场|状态|态度|os)\s*[：:]\s*([\s\S]*)$/i, Dm = /<状态栏>([\s\S]*?)<\/状态栏>/;
-function Fm(e) {
+const Om = /^(地点|时间|日期|等级|位格|积分|待清算|任务|道具|在场|状态|态度|os)\s*[：:]\s*([\s\S]*)$/i, Fm = /<状态栏>([\s\S]*?)<\/状态栏>/;
+function jm(e) {
   const t = String(e ?? "").replace(/[Ａ-Ｚａ-ｚ]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 65248)), n = /[SABCD]/i.exec(t);
   return n ? n[0].toUpperCase() : null;
 }
-function jm(e) {
+function Bm(e) {
   const t = {}, n = [];
   let s = null;
   for (const l of String(e ?? "").split(`
 `)) {
     const c = l.replace(/\*\*/g, "").trim();
     if (!c || /^[━─—=\-]{3,}$/.test(c)) continue;
-    const a = Lm.exec(c);
+    const a = Om.exec(c);
     if (a) {
       const f = /^os$/i.test(a[1]) ? "os" : a[1];
       s && !["地点", "时间", "日期"].includes(f) ? s[f] = a[2].trim() : t[f] = a[2].trim();
@@ -5931,31 +5931,31 @@ function jm(e) {
       continue;
     }
     if (c.includes("｜")) {
-      const f = c.split("｜").map((h) => h.trim());
+      const f = c.split("｜").map((m) => m.trim());
       n.push({ 名: f[0], 等级: f[1] ?? "" }), s = null;
     }
   }
   const r = n[0], o = !!r && ["积分", "位格", "道具", "在场"].some((l) => l in r) ? r.等级 : t.等级;
-  return o ? Fm(o) : null;
+  return o ? jm(o) : null;
 }
-function $c(e, t = e.length) {
+function Ec(e, t = e.length) {
   for (let n = Math.min(t, e.length) - 1; n >= 0; n--) {
     const s = e[n];
     if (!s || s.is_user || !s.mes) continue;
-    const r = Dm.exec(s.mes);
+    const r = Fm.exec(s.mes);
     if (!r) continue;
-    const i = jm(r[1]);
+    const i = Bm(r[1]);
     if (i) return i;
   }
   return null;
 }
-function Sc(e) {
+function Mc(e) {
   const t = /积分[：:]\s*([+-]?\d+)/.exec(e);
   if (!t) return null;
   const n = parseInt(t[1], 10);
   return Number.isFinite(n) ? n : null;
 }
-function Om(e, t, n, s, r, i = "") {
+function Vm(e, t, n, s, r, i = "") {
   const o = n.结果 ?? "", l = (n.评价 ?? "").toUpperCase().trim(), c = ["D", "C", "B", "A", "S"].includes(l) ? l : null, a = o === "通关" || o === "成功" || o === "胜利", u = o === "失败", f = o === "死亡" || o === "阵亡";
   if (!a && !u && !f)
     return { delta: 0, source: "" };
@@ -5964,23 +5964,23 @@ function Om(e, t, n, s, r, i = "") {
   if (u)
     return r ? { delta: 0, source: "清算未通关" } : { delta: -Math.floor(s * 0.3), source: "副本失败·扣除30%" };
   if (r) {
-    const D = $t[t] + 500;
-    return { delta: Math.max(0, D - s), source: "清算通关·续存至斩杀线+500", clearWin: !0 };
+    const O = St[t] + 500;
+    return { delta: Math.max(0, O - s), source: "清算通关·续存至斩杀线+500", clearWin: !0 };
   }
   if (!c)
     return { delta: 0, source: "", warn: "评价缺失或无法识别，不发奖励" };
-  let h = Pm[e][c];
-  const x = i || e, z = n.抽查 === "是" || n.抽查 === "true" || n.抽查 === "1", k = n.越级 === "是" || n.越级 === "true" || n.越级 === "1", R = e !== t;
-  let U = `副本奖励·${x} ${c}评`;
-  return z ? (h = Math.floor(h * 0.5), U += "（×50%）") : (k || R) && (h = Math.floor(h * 0.6), U += "（×60%）"), { delta: h, source: U };
+  let m = Lm[e][c];
+  const k = i || e, z = n.抽查 === "是" || n.抽查 === "true" || n.抽查 === "1", x = n.越级 === "是" || n.越级 === "true" || n.越级 === "1", $ = e !== t;
+  let j = `副本奖励·${k} ${c}评`;
+  return z ? (m = Math.floor(m * 0.5), j += "（×50%）") : (x || $) && (m = Math.floor(m * 0.6), j += "（×60%）"), { delta: m, source: j };
 }
-function cl(e, t = (/* @__PURE__ */ new Date()).getFullYear()) {
+function Al(e, t = (/* @__PURE__ */ new Date()).getFullYear()) {
   const n = /^(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):(\d{2})$/.exec(String(e ?? "").trim());
   if (!n) return;
   const s = new Date(t, Number(n[1]) - 1, Number(n[2]), Number(n[3]), Number(n[4])).getTime();
   return Number.isFinite(s) ? s : void 0;
 }
-function Bm(e, t) {
+function Um(e, t) {
   const n = [...e], s = t.map((i, o) => ({ m: i, k: o })).sort((i, o) => (i.m.ts ?? 1 / 0) - (o.m.ts ?? 1 / 0) || i.k - o.k).map((i) => i.m);
   let r = 0;
   for (const i of s) {
@@ -5997,40 +5997,40 @@ function Bm(e, t) {
   }
   return n;
 }
-function Vm(e) {
+function Hm(e) {
   let t = -1 / 0;
   return e.map((n, s) => (n.ts !== void 0 && Number.isFinite(n.ts) && (t = Math.floor(n.ts / 6e4)), { e: n, k: s, key: t })).sort((n, s) => n.key - s.key || n.k - s.k).map((n) => n.e);
 }
-function Um(e, t) {
+function Wm(e, t) {
   let n = e;
   return t.map((s) => n += s.delta);
 }
-function fn(e, t) {
+function pn(e, t) {
   return t.reduce((n, s) => n + s.delta, e);
 }
-function As(e, t, n) {
+function ms(e, t, n) {
   let s = e, r = !1;
   for (const i of t)
     s += i.delta, s < n && (r = !0), i.clear && (r = !1);
   return r;
 }
-function Hm(e) {
+function Gm(e) {
   const t = [];
   return e.level && t.push(`等级写${e.level}`), e.rank && t.push(`位格写${e.rank}`), t.length ? `本轮状态栏里{{user}}的${t.join("、")}，之后按剧情照常。` : "";
 }
-function Wm(e, t, n = "D", s) {
+function Km(e, t, n = "D", s) {
   if (!t)
     return `［账户·仅供AI］积分：${e}　待清算：无`;
-  const r = s ?? $t[n], i = Math.max(0, r - e);
+  const r = s ?? St[n], i = Math.max(0, r - e);
   return `［账户·仅供AI］积分：${e}　待清算：已标记，距斩杀线${i}分（${n}级斩杀线${r}）。商城价格上浮30%，下一场副本为清算副本。`;
 }
-const Lt = "rlzc";
-function Gm() {
+const nt = "rlzc";
+function qm() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
-function Km(e, t, n) {
+function Ym(e, t, n) {
   return {
-    id: Gm(),
+    id: qm(),
     packId: e.id,
     packVersion: e.version,
     entryIndex: t,
@@ -6039,66 +6039,79 @@ function Km(e, t, n) {
     briefing: n
   };
 }
-function qm(e) {
+function Jm(e) {
   const t = e;
   return !t || typeof t != "object" || typeof t.packId != "string" || typeof t.entryIndex != "number" ? null : (Array.isArray(t.manual) || (t.manual = []), t.status !== "ended" && (t.status = "active"), typeof t.id != "string" && (t.id = ""), t);
 }
-function Cc(e, t) {
-  return e.packId === Ks ? e.briefing ? Ri(e.briefing) : null : t.find((n) => n.id === e.packId) ?? null;
+function Tc(e, t) {
+  return e.packId === Zs ? e.briefing ? Li(e.briefing) : null : t.find((n) => n.id === e.packId) ?? null;
 }
-function Ym(e, t) {
+function Zm(e, t) {
   const n = (s) => !!s && !s.is_user && s.extra?.rlzc?.entry === t.id;
   if (!t.id)
-    return $e(e[t.entryIndex]) ? t.entryIndex : -1;
+    return Ee(e[t.entryIndex]) ? t.entryIndex : -1;
   if (n(e[t.entryIndex])) return t.entryIndex;
   for (let s = e.length - 1; s >= 0; s--) if (n(e[s])) return s;
   return -1;
 }
-function Jm(e, t) {
-  const n = Ym(e, t);
+function Qm(e, t) {
+  const n = Zm(e, t);
   if (n < 0) return !1;
   const s = n - t.entryIndex;
   return s !== 0 && (t.entryIndex = n, t.manual = t.manual.map((r) => ({ ...r, atIndex: r.atIndex + s }))), t.manual = t.manual.filter((r) => r.atIndex < e.length && r.atIndex >= t.entryIndex), !0;
 }
-function Ec(e, t) {
+function Ic(e, t) {
   const n = e.roles && Object.keys(e.roles).length ? e.roles : void 0;
   if (!(!n && !t))
     return { ...t ?? {}, ...n ?? {} };
 }
-const ul = "rlzc_declined";
-function Hi(e, t) {
+const fl = "rlzc_declined";
+function cn(e, t) {
   return `${e}:${t}`;
 }
-const Wi = $e;
-function Mc(e, t, n) {
-  const s = [];
-  for (let r = Math.max(0, t); r < Math.min(n, e.length); r++) {
-    if (!Wi(e[r])) continue;
-    const i = Di(String(e[r].mes ?? ""));
-    if (!i) continue;
-    const o = s.findIndex((l) => l.name === i.name);
-    o >= 0 && s.splice(o, 1), s.push(i);
+const Wi = Ee;
+function Nc(e, t, n, s = []) {
+  const r = [];
+  for (let i = Math.max(0, t); i < Math.min(n, e.length); i++) {
+    if (!Wi(e[i])) continue;
+    const o = Oi(String(e[i].mes ?? ""));
+    if (!o || s.includes(cn(i, o.name))) continue;
+    const l = r.findIndex((c) => c.name === o.name);
+    l >= 0 && r.splice(l, 1), r.push(o);
   }
-  return s;
+  return r;
 }
-function fs(e, t, n, s = []) {
+function _n(e, t, n, s = []) {
   if (!Wi(e[t])) return null;
-  const r = Eh(String(e[t].mes ?? ""), n, s);
+  const r = Th(String(e[t].mes ?? ""), n, s);
   return r ? { ...r, index: t } : null;
 }
-function Zm(e, t, n, s, r = []) {
-  const i = [];
-  for (let o = Math.max(0, n); o <= Math.min(s, e.length - 1); o++) {
-    const l = fs(e, o, t, i);
-    if (l && !r.includes(Hi(o, l.info.name))) return l;
-    if (l?.signal === 1) {
-      const c = i.findIndex((a) => a.name === l.info.name);
-      c >= 0 && i.splice(c, 1), i.push(l.info);
+function Xm(e, t, n, s, r = [], i = []) {
+  const o = [];
+  for (let l = Math.max(0, n); l <= Math.min(s, e.length - 1); l++) {
+    const c = _n(e, l, t, o);
+    if (c && !r.includes(cn(l, c.info.name))) return c;
+    if (c?.signal === 1 && !i.includes(cn(l, c.info.name))) {
+      const a = o.findIndex((u) => u.name === c.info.name);
+      a >= 0 && o.splice(a, 1), o.push(c.info);
     }
   }
   return null;
 }
-function Xm(e, t, n = [], s = ci, r = 0) {
+function eg(e, t, n, s = [], r = []) {
+  const i = /* @__PURE__ */ new Map();
+  for (const o of s) {
+    if (r.includes(o)) continue;
+    const l = o.indexOf(":"), c = Number(o.slice(0, l)), a = o.slice(l + 1);
+    if (!Number.isInteger(c) || c < n || c >= e.length) continue;
+    const u = _n(e, c, t, Nc(e, n, c, r));
+    if (!u || u.info.name !== a) continue;
+    const f = i.get(a);
+    (!f || f.index < c) && i.set(a, u);
+  }
+  return [...i.values()].sort((o, l) => l.index - o.index);
+}
+function tg(e, t, n = [], s = di, r = 0) {
   if (t?.status === "active") return null;
   let i = -1;
   for (let l = Math.max(0, r); l < e.length; l++) if (Wi(e[l])) {
@@ -6106,11 +6119,11 @@ function Xm(e, t, n = [], s = ci, r = 0) {
     break;
   }
   if (i < 0 || t && t.entryIndex === i) return null;
-  const o = fs(e, i, s);
-  return !o || n.includes(Hi(i, o.info.name)) ? null : o;
+  const o = _n(e, i, s);
+  return !o || n.includes(cn(i, o.info.name)) ? null : o;
 }
-const Qm = /[■█▰●◆★▮▓]/g, eg = /[□░▱○◇☆▯▒]/g;
-function tg(e) {
+const ng = /[■█▰●◆★▮▓]/g, sg = /[□░▱○◇☆▯▒]/g;
+function rg(e) {
   if (!e) return null;
   const t = e.trim();
   let n = /(-?\d+(?:\.\d+)?)\s*[%％]/.exec(t);
@@ -6120,48 +6133,48 @@ function tg(e) {
     return i === 100 ? Number(n[1]) : i > 0 ? Math.round(Number(n[1]) / i * 100) : null;
   }
   if (n = /-?\d+(?:\.\d+)?/.exec(t), n) return Number(n[0]);
-  const s = (t.match(Qm) ?? []).length, r = (t.match(eg) ?? []).length;
+  const s = (t.match(ng) ?? []).length, r = (t.match(sg) ?? []).length;
   return s + r > 0 ? Math.round(s / (s + r) * 100) : null;
 }
-function dl(e) {
+function pl(e) {
   return e.replace(/[\s，。,.:：;；、（）()【】「」『』\-－—~～]/g, "");
 }
-function ng(e, t) {
-  return dl(e).includes(dl(t));
+function ig(e, t) {
+  return pl(e).includes(pl(t));
 }
-function sg(e, t, n) {
+function og(e, t, n) {
   const s = [], r = Object.keys(n.perMessage).map(Number).sort((c, a) => c - a);
   let i = !1, o = null, l = !1;
   for (const c of r) {
-    const a = n.perMessage[c], f = t.phases.find((E) => E.id === a.phase)?.name ?? "进行中", h = (E, M) => s.push({ index: c, phase: f, round: a.round, kind: E, text: M }), x = e[c]?.extra?.rlzc;
-    for (const E of x?.sub?.events ?? []) E.status === "missed" && h("eventMissed", `${E.id} 未写出来：${E.reason}`);
-    for (const E of x?.skippedEvents ?? []) h("eventSkipped", `${E.id} 条件不成立，已跳过：${E.reason}`);
-    const z = Ja(String(e[c]?.mes ?? "")), k = c === n.entryIndex;
+    const a = n.perMessage[c], f = t.phases.find((M) => M.id === a.phase)?.name ?? "进行中", m = (M, T) => s.push({ index: c, phase: f, round: a.round, kind: M, text: T }), k = e[c]?.extra?.rlzc;
+    for (const M of k?.sub?.events ?? []) M.status === "missed" && m("eventMissed", `${M.id} 未写出来：${M.reason}`);
+    for (const M of k?.skippedEvents ?? []) m("eventSkipped", `${M.id} 条件不成立，已跳过：${M.reason}`);
+    const z = Xa(String(e[c]?.mes ?? "")), x = c === n.entryIndex;
     if (!z) {
-      k || h("missing", "本轮回复缺少 <副本> 面板"), l = !k;
+      x || m("missing", "本轮回复缺少 <副本> 面板"), l = !x;
       continue;
     }
     l = !1;
-    const R = tg(z.progressBar);
-    z.progressBar === void 0 ? h("progressUnreadable", "<副本> 中没有进度条一栏") : R === null ? h("progressUnreadable", `进度条无法读出数值：「${z.progressBar}」`) : (!i && R !== 0 && h("progressStart", `入场后第一轮的进度条应为0，实际为 ${R}`), (R < 0 || R > 100) && h("progressRange", `进度条数值 ${R} 超出 0–100`), o !== null && R < o && h("progressDrop", `进度条比上一轮低：${o} → ${R}`), o = R), i = !0;
-    const U = e[c]?.extra?.rlzc?.limit, D = U?.text ? U : a.limit?.text ? { text: a.limit.text, minutes: a.limit.minutes, total: a.limit.total } : void 0;
-    if (D) {
-      const E = z.limit;
-      if (D.minutes !== void 0) {
-        const M = Ua(E);
-        !E || M.remaining === null || M.total === null ? h("limit", `时限读不到「剩余时间/总时长」：写的是「${E ?? "（没有时限一栏）"}」，注入的是「${D.text}」`) : (M.remaining > D.minutes && h("limit", `剩余时间比注入值多：写的是${vn(M.remaining)}，注入的是${vn(D.minutes)}`), D.total !== void 0 && M.total !== D.total && h("limit", `总时长与注入值不一致：写的是${vn(M.total)}，注入的是${vn(D.total)}`));
-      } else (!E || !ng(E, D.text)) && h("limit", `时限与注入文字不一致：写的是「${E ?? "（没有时限一栏）"}」，注入的是「${D.text}」`);
+    const $ = rg(z.progressBar);
+    z.progressBar === void 0 ? m("progressUnreadable", "<副本> 中没有进度条一栏") : $ === null ? m("progressUnreadable", `进度条无法读出数值：「${z.progressBar}」`) : (!i && $ !== 0 && m("progressStart", `入场后第一轮的进度条应为0，实际为 ${$}`), ($ < 0 || $ > 100) && m("progressRange", `进度条数值 ${$} 超出 0–100`), o !== null && $ < o && m("progressDrop", `进度条比上一轮低：${o} → ${$}`), o = $), i = !0;
+    const j = e[c]?.extra?.rlzc?.limit, O = j?.text ? j : a.limit?.text ? { text: a.limit.text, minutes: a.limit.minutes, total: a.limit.total } : void 0;
+    if (O) {
+      const M = z.limit;
+      if (O.minutes !== void 0) {
+        const T = Ga(M);
+        !M || T.remaining === null || T.total === null ? m("limit", `时限读不到「剩余时间/总时长」：写的是「${M ?? "（没有时限一栏）"}」，注入的是「${O.text}」`) : (T.remaining > O.minutes && m("limit", `剩余时间比注入值多：写的是${yn(T.remaining)}，注入的是${yn(O.minutes)}`), O.total !== void 0 && T.total !== O.total && m("limit", `总时长与注入值不一致：写的是${yn(T.total)}，注入的是${yn(O.total)}`));
+      } else (!M || !ig(M, O.text)) && m("limit", `时限与注入文字不一致：写的是「${M ?? "（没有时限一栏）"}」，注入的是「${O.text}」`);
     }
   }
   return { warnings: s, missingLast: l, hasPanel: i };
 }
-const rg = {
+const lg = {
   D: 2e3,
   C: 8e3,
   B: 3e4,
   A: 1e5,
   S: 3e5
-}, ig = [
+}, ag = [
   "受伤",
   "受伤了",
   "流血",
@@ -6182,53 +6195,53 @@ const rg = {
   "丧命",
   "伤亡"
 ];
-function Tc(e) {
-  return ig.some((t) => e.includes(t));
+function Pc(e) {
+  return ag.some((t) => e.includes(t));
 }
-function og(e) {
+function cg(e) {
   if (e.subHype !== void 0)
     return Math.max(0, Math.min(100, Math.round(e.subHype)));
-  const t = e.subHurt !== void 0 ? e.subHurt : e.bodyText ? Tc(e.bodyText) : !1;
+  const t = e.subHurt !== void 0 ? e.subHurt : e.bodyText ? Pc(e.bodyText) : !1;
   let n = 20;
   return e.hasEvents && (n += 20), e.hasPhaseSwitch && (n += 20), t && (n += 30), Math.min(100, n);
 }
-function lg(e, t) {
+function ug(e, t) {
   return Math.round(e * 0.6 + t * 0.4);
 }
 function Gi(e) {
-  const t = !e.packLevel || e.isRest ? e.playerLevel : e.packLevel, n = rg[t], s = !e.packLevel || e.isRest ? 0.3 : 1;
+  const t = !e.packLevel || e.isRest ? e.playerLevel : e.packLevel, n = lg[t], s = !e.packLevel || e.isRest ? 0.3 : 1;
   return Math.round(n * s * (0.5 + e.heat / 100) * e.rand);
 }
-const ag = [10, 20, 50, 100, 200, 500, 1e3], cg = [20, 25, 15, 20, 10, 8, 2], ug = [15, 20, 15, 20, 10, 16, 4];
-function dg(e, t, n) {
+const dg = [10, 20, 50, 100, 200, 500, 1e3], Ag = [20, 25, 15, 20, 10, 8, 2], fg = [15, 20, 15, 20, 10, 16, 4];
+function pg(e, t, n) {
   const s = t.reduce((i, o) => i + o, 0);
   let r = n * s;
   for (let i = 0; i < e.length; i++)
     if (r -= t[i], r <= 0) return e[i];
   return e[e.length - 1];
 }
-function Ag(e) {
-  const { hype: t, isCorr: n, rand: s, names: r } = e, i = t / 40, o = [], l = [], c = t >= 70 ? ug : cg;
-  for (let h = 1; h <= 3; h++) {
-    const x = Math.min(1, Math.max(0, i - (h - 1)));
-    if (s() < x) {
-      let z = dg(ag, c, s());
+function hg(e) {
+  const { hype: t, isCorr: n, rand: s, names: r } = e, i = t / 40, o = [], l = [], c = t >= 70 ? fg : Ag;
+  for (let m = 1; m <= 3; m++) {
+    const k = Math.min(1, Math.max(0, i - (m - 1)));
+    if (s() < k) {
+      let z = pg(dg, c, s());
       n && (z = Math.max(10, Math.round(z * 0.3 / 10) * 10)), o.push(z), l.push(r[Math.floor(s() * r.length)] ?? "匿名");
     }
   }
-  const a = o.reduce((h, x) => h + x, 0), u = Math.floor(a * 0.6);
+  const a = o.reduce((m, k) => m + k, 0), u = Math.floor(a * 0.6);
   let f = "";
   return o.length === 1 ? f = `直播打赏${o[0]}×60%` : o.length > 1 && (f = `直播打赏${o.length}笔·共${a}×60%`), { count: o.length, totalFace: a, faces: o, netTotal: u, source: f, names: l };
 }
-const Zs = 10, Xs = 13;
-function Ic(e) {
-  return Zs + Math.floor(e() * (Xs - Zs + 1));
+const tr = 10, nr = 13;
+function Dc(e) {
+  return tr + Math.floor(e() * (nr - tr + 1));
 }
-function Wr(e, t, n, s, r, i, o) {
+function Kr(e, t, n, s, r, i, o) {
   const l = t && !n;
   return !(e.scope === "inst" && !l || e.scope === "corr" && l || e.when === "hurt" && !s || e.when === "calm" && r >= 30 || e.when === "open" && !i || e.when === "end" && !o);
 }
-function fg(e) {
+function mg(e) {
   const {
     pool: t,
     templates: n,
@@ -6241,36 +6254,36 @@ function fg(e) {
     isOpen: a,
     isEnd: u,
     recentTexts: f,
-    names: h,
-    whoNames: x,
+    names: m,
+    whoNames: k,
     rand: z
-  } = e, k = e.count ?? Ic(z), R = [], U = new Set(f), D = t.filter(
-    (p) => Wr(p, i, o, l, c, a, u)
-  ), M = x.length > 0 ? n.filter(
-    (p) => Wr(p, i, o, l, c, a, u)
-  ) : [], ee = s.filter((p) => Wr(p, i, o, l, c, a, u) ? p.phase && p.phase.length > 0 && r ? p.phase.includes(r) : !0 : !1), te = () => h[Math.floor(z() * h.length)] ?? "匿名", X = () => x[Math.floor(z() * x.length)] ?? "";
-  for (let p = 0; p < k * 5 && R.length < k; p++) {
-    let m = "", v = "discuss";
+  } = e, x = e.count ?? Dc(z), $ = [], j = new Set(f), O = t.filter(
+    (p) => Kr(p, i, o, l, c, a, u)
+  ), T = k.length > 0 ? n.filter(
+    (p) => Kr(p, i, o, l, c, a, u)
+  ) : [], ee = s.filter((p) => Kr(p, i, o, l, c, a, u) ? p.phase && p.phase.length > 0 && r ? p.phase.includes(r) : !0 : !1), te = () => m[Math.floor(z() * m.length)] ?? "匿名", Q = () => k[Math.floor(z() * k.length)] ?? "";
+  for (let p = 0; p < x * 5 && $.length < x; p++) {
+    let h = "", v = "discuss";
     if (ee.length > 0 && z() < 0.3) {
       const ie = ee[Math.floor(z() * ee.length)];
-      m = ie.text, v = ie.type;
-    } else if (M.length > 0 && z() < 0.5) {
-      const le = M[Math.floor(z() * M.length)];
-      m = le.text.replace("{who}", X()), v = le.type;
-    } else if (D.length > 0) {
-      const le = D[Math.floor(z() * D.length)];
-      m = le.text, v = le.type;
+      h = ie.text, v = ie.type;
+    } else if (T.length > 0 && z() < 0.5) {
+      const le = T[Math.floor(z() * T.length)];
+      h = le.text.replace("{who}", Q()), v = le.type;
+    } else if (O.length > 0) {
+      const le = O[Math.floor(z() * O.length)];
+      h = le.text, v = le.type;
     }
-    !m || U.has(m) || (U.add(m), R.push({ name: te(), text: m, type: v }));
+    !h || j.has(h) || (j.add(h), $.push({ name: te(), text: h, type: v }));
   }
-  const re = [...ee, ...D], C = re.length ? Math.floor(z() * re.length) : 0;
-  for (let p = 0; p < re.length && R.length < k; p++) {
-    const m = re[(C + p) % re.length];
-    U.has(m.text) || (U.add(m.text), R.push({ name: te(), text: m.text, type: m.type }));
+  const re = [...ee, ...O], E = re.length ? Math.floor(z() * re.length) : 0;
+  for (let p = 0; p < re.length && $.length < x; p++) {
+    const h = re[(E + p) % re.length];
+    j.has(h.text) || (j.add(h.text), $.push({ name: te(), text: h.text, type: h.type }));
   }
-  return R;
+  return $;
 }
-const Nc = "rlzc_live", pg = "本局直播打赏撤回", Pc = 20, cn = {
+const Lc = "rlzc_live", gg = "本局直播打赏撤回", Rc = 20, un = {
   corridorOn: "回廊直播开始。",
   corridorOff: "已下播。",
   enterOff: "进入副本，回廊直播已结束。",
@@ -6278,7 +6291,7 @@ const Nc = "rlzc_live", pg = "本局直播打赏撤回", Pc = 20, cn = {
   instanceOff: "副本结束，直播已下播。",
   revoke: "主播在副本中死亡，本局打赏已全部撤回。"
 };
-function hg(e) {
+function xg(e) {
   const t = e && typeof e == "object" ? e : {}, n = t.corridor ?? {};
   return {
     seq: Number.isFinite(t.seq) ? Number(t.seq) : 0,
@@ -6286,7 +6299,7 @@ function hg(e) {
     sys: Array.isArray(t.sys) ? t.sys.filter((s) => s && typeof s.id == "number") : []
   };
 }
-function Rc(e, t) {
+function wr(e, t) {
   return e.disableLive ? { show: !1, checked: !1 } : { show: !0, checked: !!t };
 }
 function Wt(e) {
@@ -6306,13 +6319,13 @@ function Ki(e, t, n = e.length) {
 function qi(e, t) {
   return Ki(e, t).reduce((n, { rec: s }) => n + (s.tipNet || 0) - (s.revoke || 0), 0);
 }
-function yr(e, t) {
+function zr(e, t) {
   let n = t.seq;
   for (const s of t.sys) n = Math.max(n, s.id);
   for (const s of e) for (const r of Wt(s)?.feed ?? []) n = Math.max(n, r.id);
   return n;
 }
-function mg(e, t = 30) {
+function vg(e, t = 30) {
   const n = [];
   for (let s = e.length - 1; s >= 0 && n.length < t; s--) {
     const r = Wt(e[s])?.feed ?? [];
@@ -6320,20 +6333,20 @@ function mg(e, t = 30) {
   }
   return n;
 }
-const gg = /<状态栏>([\s\S]*?)<\/状态栏>/, xg = /^(积分|位格|道具|在场)$/, vg = /^(地点|时间|日期|等级|位格|积分|待清算|任务|道具|在场|状态|态度|os)\s*[：:]/i;
-function Lc(e, t = e.length) {
+const yg = /<状态栏>([\s\S]*?)<\/状态栏>/, bg = /^(积分|位格|道具|在场)$/, kg = /^(地点|时间|日期|等级|位格|积分|待清算|任务|道具|在场|状态|态度|os)\s*[：:]/i;
+function Oc(e, t = e.length) {
   for (let n = Math.min(t, e.length) - 1; n >= 0; n--) {
     const s = e[n];
     if (!s || s.is_user || !s.mes) continue;
-    const r = gg.exec(s.mes);
+    const r = yg.exec(s.mes);
     if (r) return r[1];
   }
   return null;
 }
 function Yi(e, t = e.length) {
-  return $c(e, t) ?? "D";
+  return Ec(e, t) ?? "D";
 }
-function Dc(e, t = "") {
+function Fc(e, t = "") {
   if (!e) return [];
   const n = [];
   let s = null;
@@ -6341,7 +6354,7 @@ function Dc(e, t = "") {
 `)) {
     const o = i.trim();
     if (!o || /^[━─—=\-]{3,}$/.test(o)) continue;
-    const l = vg.exec(o);
+    const l = kg.exec(o);
     if (l) {
       s?.keys.add(l[1]);
       continue;
@@ -6355,22 +6368,22 @@ function Dc(e, t = "") {
   }
   const r = [];
   return n.forEach((i, o) => {
-    if (o === 0 && [...i.keys].some((c) => xg.test(c))) return;
+    if (o === 0 && [...i.keys].some((c) => bg.test(c))) return;
     const l = i.name.replace(/[（(][\s\S]*$/, "").trim();
     !l || /^(陌生|路人)/.test(l) || l === "{{user}}" || t && l === t || r.includes(l) || r.push(l);
   }), r;
 }
-function Fc(e, t) {
-  return t?.hurt !== void 0 ? t.hurt : Tc(Bi(e));
+function jc(e, t) {
+  return t?.hurt !== void 0 ? t.hurt : Pc(Vi(e));
 }
-function yg(e) {
-  const { rand: t } = e, n = Bi(e.text), s = Fc(e.text, e.sub), r = og({ subHype: e.sub?.hype, subHurt: s, hasEvents: e.hasEvents, hasPhaseSwitch: e.hasPhaseSwitch, bodyText: n }), i = lg(e.prevHeat ?? Pc, r), o = e.scope === "corridor" || e.isRest, l = Gi({
+function wg(e) {
+  const { rand: t } = e, n = Vi(e.text), s = jc(e.text, e.sub), r = cg({ subHype: e.sub?.hype, subHurt: s, hasEvents: e.hasEvents, hasPhaseSwitch: e.hasPhaseSwitch, bodyText: n }), i = ug(e.prevHeat ?? Rc, r), o = e.scope === "corridor" || e.isRest, l = Gi({
     packLevel: e.scope === "instance" ? e.packLevel : null,
     playerLevel: e.playerLevel,
     isRest: e.isRest,
     heat: i,
     rand: 0.9 + t() * 0.2
-  }), c = Ic(t), a = fg({
+  }), c = Dc(t), a = mg({
     pool: e.pool,
     templates: e.templates,
     packDanmaku: e.packDanmaku,
@@ -6385,10 +6398,10 @@ function yg(e) {
     names: e.names,
     whoNames: e.whoNames,
     rand: t,
-    count: e.awaitAi ? Xs : c
-  }), u = Ag({ hype: r, isCorr: o, rand: t, names: e.names }), f = u.faces.map((k, R) => ({ t: "tip", name: u.names[R], text: "", amount: k, net: Math.floor(k * 0.6) })), h = [];
-  let x;
-  e.settle && (e.settle.died && (x = e.settle.tipsBefore + u.netTotal, x > 0 ? h.push({ t: "sys", name: "", text: cn.revoke, amount: 0, net: -x }) : x = void 0), h.push({ t: "sys", name: "", text: cn.instanceOff, amount: 0, net: 0 }));
+    count: e.awaitAi ? nr : c
+  }), u = hg({ hype: r, isCorr: o, rand: t, names: e.names }), f = u.faces.map((x, $) => ({ t: "tip", name: u.names[$], text: "", amount: x, net: Math.floor(x * 0.6) })), m = [];
+  let k;
+  e.settle && (e.settle.died && (k = e.settle.tipsBefore + u.netTotal, k > 0 ? m.push({ t: "sys", name: "", text: un.revoke, amount: 0, net: -k }) : k = void 0), m.push({ t: "sys", name: "", text: un.instanceOff, amount: 0, net: 0 }));
   const z = {
     show: e.show,
     scope: e.scope,
@@ -6401,13 +6414,13 @@ function yg(e) {
     tipFace: u.totalFace,
     tipSource: u.source
   };
-  return x && (z.revoke = x), e.awaitAi ? z.pending = { local: a, tips: f, sys: h, target: c } : z.feed = jc(a.slice(0, c), f, h, e.firstId, t), z;
+  return k && (z.revoke = k), e.awaitAi ? z.pending = { local: a, tips: f, sys: m, target: c } : z.feed = Bc(a.slice(0, c), f, m, e.firstId, t), z;
 }
-function bg(e, t, n) {
-  const s = Math.max(Zs, Math.min(Xs, n));
+function zg(e, t, n) {
+  const s = Math.max(tr, Math.min(nr, n));
   if (!e?.length) return t.slice(0, s);
-  const r = e.slice(0, Xs);
-  if (r.length >= Zs) return r;
+  const r = e.slice(0, nr);
+  if (r.length >= tr) return r;
   const i = new Set(r.map((o) => o.text));
   for (const o of t) {
     if (r.length >= s) break;
@@ -6415,7 +6428,7 @@ function bg(e, t, n) {
   }
   return r;
 }
-function jc(e, t, n, s, r) {
+function Bc(e, t, n, s, r) {
   const i = e.map((o) => ({ t: "msg", name: o.name, text: o.text, amount: 0, net: 0 }));
   for (let o = i.length - 1; o > 0; o--) {
     const l = Math.floor(r() * (o + 1));
@@ -6427,29 +6440,29 @@ function jc(e, t, n, s, r) {
   }
   return i.push(...n), i.map((o, l) => ({ id: s + l, ...o }));
 }
-function Oc(e, t, n, s) {
+function Vc(e, t, n, s) {
   if (!e.pending) return e;
-  const { pending: r, ...i } = e, o = bg(t, r.local, r.target);
-  return { ...i, feed: jc(o, r.tips, r.sys, n, s) };
+  const { pending: r, ...i } = e, o = zg(t, r.local, r.target);
+  return { ...i, feed: Bc(o, r.tips, r.sys, n, s) };
 }
-function kg(e, t) {
+function _g(e, t) {
   if (!e) return [];
   const n = [];
-  return e.tipNet > 0 && n.push({ delta: e.tipNet, source: e.tipSource, type: "tip", at: t }), e.revoke && e.revoke > 0 && n.push({ delta: -e.revoke, source: pg, type: "tip", at: t }), n;
+  return e.tipNet > 0 && n.push({ delta: e.tipNet, source: e.tipSource, type: "tip", at: t }), e.revoke && e.revoke > 0 && n.push({ delta: -e.revoke, source: gg, type: "tip", at: t }), n;
 }
-function wg(e) {
+function $g(e) {
   return `其中本局直播打赏${e}分，副本内不可使用，离开副本后可用。`;
 }
-function zg(e, t) {
-  return e && `${e}${e.endsWith("。") ? "" : "。"}${wg(t)}`;
+function Sg(e, t) {
+  return e && `${e}${e.endsWith("。") ? "" : "。"}${$g(t)}`;
 }
-function _g(e, t, n) {
+function Cg(e, t, n) {
   const s = Ki(e, n), r = [];
   for (const { rec: i } of s) r.push(...i.feed);
   for (const i of t.sys) i.show === n && r.push({ id: i.id, t: i.t, name: i.name, text: i.text, amount: i.amount, net: i.net });
   return r.sort((i, o) => i.id - o.id), { items: r, last: s[s.length - 1]?.rec };
 }
-function $g(e, t) {
+function Eg(e, t) {
   let n = "", s = -1;
   for (const r of t.sys) r.id > s && (s = r.id, n = r.show);
   for (const r of e) {
@@ -6459,71 +6472,71 @@ function $g(e, t) {
   }
   return n;
 }
-function Sg(e, t, n, s = /* @__PURE__ */ new Set()) {
-  const r = n.inInstance ? "instance" : "corridor", i = n.inInstance ? n.instanceLive : t.corridor.on, o = n.inInstance ? n.instanceLive ? n.instanceShow ?? "" : "" : i ? t.corridor.show : $g(e, t), l = { on: i, canToggle: !n.inInstance, scope: r, viewers: 0, heat: 0, tipTotal: 0, injectToAI: n.injectToAI, feed: [], lastTip: null };
+function Mg(e, t, n, s = /* @__PURE__ */ new Set()) {
+  const r = n.inInstance ? "instance" : "corridor", i = n.inInstance ? n.instanceLive : t.corridor.on, o = n.inInstance ? n.instanceLive ? n.instanceShow ?? "" : "" : i ? t.corridor.show : Eg(e, t), l = { on: i, canToggle: !n.inInstance, scope: r, viewers: 0, heat: 0, tipTotal: 0, injectToAI: n.injectToAI, feed: [], lastTip: null };
   if (!o) return l;
-  const { items: c, last: a } = _g(e, t, o), u = c.filter((x) => !s.has(x.id));
-  let f = 0, h = null;
-  for (const x of u)
-    f += x.net, x.t === "tip" && (h = { id: x.id, net: x.net });
+  const { items: c, last: a } = Cg(e, t, o), u = c.filter((k) => !s.has(k.id));
+  let f = 0, m = null;
+  for (const k of u)
+    f += k.net, k.t === "tip" && (m = { id: k.id, net: k.net });
   return {
     ...l,
     viewers: i ? a?.viewers ?? n.startViewers ?? 0 : 0,
-    heat: i ? a?.heat ?? Pc : 0,
+    heat: i ? a?.heat ?? Rc : 0,
     tipTotal: f,
     feed: u.slice(-60),
-    lastTip: h
+    lastTip: m
   };
 }
-const Cg = ["小满", "好运来", "路过的D级", "一个路过的A级", "数据党", "理性讨论", "吃瓜", "夜班保安", "柠檬汁", "阿柒", "东区卖菜的", "西区摆摊的", "情报社小号", "失眠第三天", "房租交不起", "今天也在种土豆", "匿名", "光幕前的咸鱼", "刚通关的C级", "排行榜第九十九", "不想进本", "炸鱼被抓过", "黑市常客", "训练场打卡人", "药剂站熬夜班", "公会跑腿的", "一个路人", "今日份幸运", "积分快见底", "刚升B级", "看录像长大的", "老观众", "新来的", "别叫我大佬", "蹲一个结算", "白开水", "半夜不睡", "又是我", "打工人", "瓜田里的猹", "慢热", "晴天", "阿九", "十一", "小绿", "老周", "木子", "苏苏", "七七", "一颗橘子", "等天亮", "北风", "不吃香菜", "没抢到号", "退役S级", "D级万岁", "靠运气活着", "只看不说", "路过打个卡", "最后一排"], Eg = [{ type: "praise", text: "这反应速度，不愧是主播" }, { type: "praise", text: "冷静得不像第一次进这个级别的本", scope: "inst" }, { type: "praise", text: "刚才那个判断绝了" }, { type: "praise", text: "主播脑子转得是真快" }, { type: "praise", text: "这波我服" }, { type: "praise", text: "稳，太稳了" }, { type: "praise", text: "讲道理，换我早慌了" }, { type: "praise", text: "这就是高手吗" }, { type: "praise", text: "看得我手心出汗，主播还面不改色" }, { type: "praise", text: "刚才那句话说得漂亮" }, { type: "praise", text: "细节拉满，这都注意到了", scope: "inst" }, { type: "praise", text: "主播说话好有条理" }, { type: "praise", text: "这才叫会玩" }, { type: "praise", text: "就冲这个判断，关注了" }, { type: "praise", text: "有勇有谋" }, { type: "praise", text: "比上一个主播强多了" }, { type: "praise", text: "队友拖后腿，主播一个人在带", scope: "inst" }, { type: "praise", text: "这个位置站得好", scope: "inst" }, { type: "praise", text: "我宣布这是本周最佳直播" }, { type: "praise", text: "主播镇定得让我也镇定了" }, { type: "praise", text: "那个眼神，太帅了" }, { type: "praise", text: "心态真好，要是我早骂人了" }, { type: "praise", text: "这个节奏把握得好", scope: "inst" }, { type: "praise", text: "看出来是做过功课的" }, { type: "praise", text: "夸一句，主播是真的会说话" }, { type: "praise", text: "一句话就把场面稳住了", scope: "inst" }, { type: "praise", text: "这份胆量我是没有" }, { type: "praise", text: "学到了，下次我也这么干" }, { type: "praise", text: "主播好好看" }, { type: "praise", text: "声音也好听，别下播" }, { type: "praise", text: "越看越顺眼" }, { type: "praise", text: "这气质，放在哪个本都是主角" }, { type: "praise", text: "能屈能伸，佩服" }, { type: "praise", text: "刚才那一下我起立鼓掌" }, { type: "praise", text: "不慌不忙，高手风范" }, { type: "praise", text: "回廊里也过得这么讲究，爱了", scope: "corr" }, { type: "praise", text: "主播种的菜看着真水灵", scope: "corr" }, { type: "praise", text: "这手艺可以去西区摆摊了", scope: "corr" }, { type: "praise", text: "休整都不忘练，怪不得排名涨", scope: "corr" }, { type: "praise", text: "房间收拾得真干净", scope: "corr" }, { type: "bless", text: "祝平安出来！！", scope: "inst" }, { type: "bless", text: "主播一定要活着回来", scope: "inst" }, { type: "bless", text: "保佑保佑" }, { type: "bless", text: "冲啊主播！" }, { type: "bless", text: "这把一定能过", scope: "inst" }, { type: "bless", text: "结算见！", scope: "inst", when: "end" }, { type: "bless", text: "平安就好，评级无所谓", scope: "inst" }, { type: "bless", text: "等你出来请你吃饭", scope: "inst" }, { type: "bless", text: "好运加满，霉运退散" }, { type: "bless", text: "希望别再有人出事了", scope: "inst", when: "hurt" }, { type: "bless", text: "主播加油，我在东区超市门口看着呢" }, { type: "bless", text: "撑住，天总会亮的", scope: "inst" }, { type: "bless", text: "别怕，我们都在" }, { type: "bless", text: "好人一生平安" }, { type: "bless", text: "这波过了就能歇歇了", scope: "inst" }, { type: "bless", text: "下个副本抽个简单的吧", scope: "corr" }, { type: "bless", text: "注意安全，别逞强", scope: "inst" }, { type: "bless", text: "保重身体啊", when: "hurt" }, { type: "bless", text: "受伤了先处理伤口", scope: "inst", when: "hurt" }, { type: "bless", text: "一路绿灯，一路绿灯" }, { type: "bless", text: "今天也要好好活着" }, { type: "bless", text: "愿系统对你手下留情" }, { type: "bless", text: "别哭，我们陪你", when: "hurt" }, { type: "bless", text: "等着看你升级" }, { type: "bless", text: "最后一口气了，撑住", scope: "inst", when: "end" }, { type: "bless", text: "最后几轮，稳住！", scope: "inst", when: "end" }, { type: "bless", text: "主播今天早点睡", scope: "corr" }, { type: "bless", text: "休息好了再进本", scope: "corr" }, { type: "bless", text: "希望房租别涨", scope: "corr" }, { type: "bless", text: "回廊安稳一天是一天", scope: "corr" }, { type: "discuss", text: "现在什么情况，我刚进来" }, { type: "discuss", text: "来了来了，这把什么本", scope: "inst", when: "open" }, { type: "discuss", text: "开播了开播了", when: "open" }, { type: "discuss", text: "新主播？没见过", when: "open" }, { type: "discuss", text: "先别吵，看局势" }, { type: "discuss", text: "我觉得还有线索没找到", scope: "inst" }, { type: "discuss", text: "按往届，这本不好打", scope: "inst" }, { type: "discuss", text: "有没有人看过这本的录像", scope: "inst" }, { type: "discuss", text: "黑市那种录像别全信" }, { type: "discuss", text: "这队人各怀心思吧", scope: "inst" }, { type: "discuss", text: "现在还剩几个人？", scope: "inst" }, { type: "discuss", text: "前面说的那个我也注意到了" }, { type: "discuss", text: "理性讨论，别带节奏" }, { type: "discuss", text: "我赌主播能过" }, { type: "discuss", text: "有人算过这把能拿什么评吗", scope: "inst" }, { type: "discuss", text: "主播刚才是不是话里有话" }, { type: "discuss", text: "这个人说话一直留半句", scope: "inst" }, { type: "discuss", text: "注意细节，刚才那句不对劲", scope: "inst" }, { type: "discuss", text: "我在光幕前面站了一个小时了" }, { type: "discuss", text: "回放能看吗，刚才没看清" }, { type: "discuss", text: "有没有懂的解释一下" }, { type: "discuss", text: "你们看出来了吗，我看不出来" }, { type: "discuss", text: "这一段要是剪进录像会卖爆" }, { type: "discuss", text: "楼上别剧透……虽然我也不知道" }, { type: "discuss", text: "好无聊，快进", when: "calm" }, { type: "discuss", text: "主播在发呆吗", when: "calm" }, { type: "discuss", text: "挂着当背景音了", when: "calm" }, { type: "discuss", text: "去泡了碗面回来还是这样", when: "calm" }, { type: "discuss", text: "这么安静，要出事了吧", scope: "inst", when: "calm" }, { type: "discuss", text: "暴风雨前的宁静", scope: "inst", when: "calm" }, { type: "discuss", text: "啊啊啊有人倒了", scope: "inst", when: "hurt" }, { type: "discuss", text: "刚才那一下我没敢看", when: "hurt" }, { type: "discuss", text: "又走一个……", scope: "inst", when: "hurt" }, { type: "discuss", text: "手在抖吧，换我也抖", when: "hurt" }, { type: "discuss", text: "快结束了吧", scope: "inst", when: "end" }, { type: "discuss", text: "结算前最后几轮最容易出事", scope: "inst", when: "end" }, { type: "discuss", text: "今天种什么？", scope: "corr" }, { type: "discuss", text: "回廊直播也有人看，我服了我自己", scope: "corr" }, { type: "discuss", text: "排行榜又变了，你们看了吗", scope: "corr" }, { type: "discuss", text: "下个本打算报哪个？", scope: "corr" }, { type: "cold", text: "别高兴太早" }, { type: "cold", text: "我看悬" }, { type: "cold", text: "这把凉了吧" }, { type: "cold", text: "就这？" }, { type: "cold", text: "也就一般" }, { type: "cold", text: "运气好而已" }, { type: "cold", text: "换个人也能做到" }, { type: "cold", text: "等着翻车吧" }, { type: "cold", text: "这种判断，迟早出事" }, { type: "cold", text: "看了半天也没看出哪里厉害" }, { type: "cold", text: "太磨叽了" }, { type: "cold", text: "说了这么多，一点用没有" }, { type: "cold", text: "我押失败", scope: "inst" }, { type: "cold", text: "评级能拿个C就不错了", scope: "inst" }, { type: "cold", text: "队友再强也带不动", scope: "inst" }, { type: "cold", text: "太自信了，这本专治自信", scope: "inst" }, { type: "cold", text: "往届比这厉害的都栽在这", scope: "inst" }, { type: "cold", text: "真以为能全身而退？", scope: "inst" }, { type: "cold", text: "没意思，我换台了" }, { type: "cold", text: "这操作也就D级水平" }, { type: "cold", text: "这不是冷静，是反应慢" }, { type: "cold", text: "别吹了，看结算", scope: "inst" }, { type: "cold", text: "种菜有什么好看的", scope: "corr" }, { type: "cold", text: "回廊里直播，缺积分缺疯了吧", scope: "corr" }, { type: "cold", text: "天天摆烂，等着被清算吧", scope: "corr" }, { type: "envy", text: "凭什么这种人能上热门" }, { type: "envy", text: "我直播三天没人看，这也行？" }, { type: "envy", text: "长得好就是占便宜" }, { type: "envy", text: "又是这种运气好的" }, { type: "envy", text: "打赏的是托吧" }, { type: "envy", text: "我也想有人给我刷" }, { type: "envy", text: "这点本事也能拿打赏" }, { type: "envy", text: "同样是D级进来的，差距怎么这么大" }, { type: "envy", text: "分到这么好的队友，换我我也行", scope: "inst" }, { type: "envy", text: "酸了，真的酸了" }, { type: "envy", text: "一进来就有大佬带，羡慕不来", scope: "inst" }, { type: "envy", text: "这热度买的吧" }, { type: "envy", text: "凭什么打赏都往这边跑" }, { type: "envy", text: "我通关都没人看" }, { type: "envy", text: "排行榜上那些名字，一半靠运气" }, { type: "envy", text: "有人天生就是被偏爱的" }, { type: "envy", text: "我要是有这配置，比这还稳", scope: "inst" }, { type: "envy", text: "住的地方比我好十倍", scope: "corr" }, { type: "envy", text: "在回廊都能开播赚积分，羡慕哭了", scope: "corr" }, { type: "envy", text: "这菜种得，比我吃的还好", scope: "corr" }, { type: "smear", text: "装什么装" }, { type: "smear", text: "演的吧，这反应太假了" }, { type: "smear", text: "人设立得挺好" }, { type: "smear", text: "会说话而已，真打起来就露馅" }, { type: "smear", text: "这种人最会卖队友" }, { type: "smear", text: "表面客气，背地里肯定算计着" }, { type: "smear", text: "我不信真这么淡定" }, { type: "smear", text: "刚才那个眼神，心虚了吧" }, { type: "smear", text: "故意卖惨要打赏" }, { type: "smear", text: "刚才明明可以救，没救", scope: "inst", when: "hurt" }, { type: "smear", text: "自私，只顾自己", scope: "inst" }, { type: "smear", text: "队友出事了还这么冷静，冷血吧", scope: "inst", when: "hurt" }, { type: "smear", text: "这是在拿别人探路", scope: "inst" }, { type: "smear", text: "满嘴好话，一件实事没干" }, { type: "smear", text: "装新人的吧" }, { type: "smear", text: "就是冲着打赏来的" }, { type: "smear", text: "看着就不是好人" }, { type: "smear", text: "别被骗了，都是算计好的" }, { type: "smear", text: "下了本也要直播，吃相难看", scope: "corr" }, { type: "smear", text: "种田人设，炒给谁看", scope: "corr" }, { type: "rumor", text: "听说积分是借的，真的假的" }, { type: "rumor", text: "肯定是抱大腿进来的" }, { type: "rumor", text: "我朋友说在黑市见过这人" }, { type: "rumor", text: "据说上一个本是被人带飞的" }, { type: "rumor", text: "听说欠了一屁股积分" }, { type: "rumor", text: "有人说是买了攻略才敢进的", scope: "inst" }, { type: "rumor", text: "听说被公会踢出来过" }, { type: "rumor", text: "情报社的人说，这人被抽查过" }, { type: "rumor", text: "有人在西区看到这人跟黑市贩子说话" }, { type: "rumor", text: "据说是走后门才越级的" }, { type: "rumor", text: "听说上个本的队友都没出来" }, { type: "rumor", text: "有人说这人其实早就待清算了" }, { type: "rumor", text: "我听说排名是刷的" }, { type: "rumor", text: "传闻进本前偷偷买了防抽查道具" }, { type: "rumor", text: "听说有人专门花钱买这人的录像" }], Mg = [{ type: "praise", text: "{who}刚才那下好帅" }, { type: "praise", text: "{who}挺靠谱的" }, { type: "bless", text: "{who}别出事啊" }, { type: "bless", text: "心疼{who}" }, { type: "bless", text: "{who}还好吗", when: "hurt" }, { type: "discuss", text: "{who}靠谱吗，我看不透" }, { type: "discuss", text: "{who}又不说话了" }, { type: "discuss", text: "{who}刚才那句什么意思" }, { type: "discuss", text: "盯紧{who}" }, { type: "discuss", text: "{who}和主播配合挺默契" }, { type: "discuss", text: "{who}好像知道点什么" }, { type: "cold", text: "{who}也就那样" }, { type: "cold", text: "指望{who}？算了吧" }, { type: "envy", text: "凭什么{who}也有人喜欢" }, { type: "smear", text: "我就说{who}有问题" }, { type: "smear", text: "{who}在演" }, { type: "smear", text: "{who}那个表情不对劲" }, { type: "rumor", text: "听说{who}在排行榜上挂过名" }, { type: "rumor", text: "我听说{who}以前出过事" }, { type: "rumor", text: "{who}跟主播是不是早就认识" }], Tg = {
-  names: Cg,
-  pool: Eg,
-  templates: Mg
-}, is = /* @__PURE__ */ new Set(), nn = [];
-let _t = null, Ts = [], Gr = null;
-function ps() {
-  for (const e of Ts.slice())
+const Tg = ["小满", "好运来", "路过的D级", "一个路过的A级", "数据党", "理性讨论", "吃瓜", "夜班保安", "柠檬汁", "阿柒", "东区卖菜的", "西区摆摊的", "情报社小号", "失眠第三天", "房租交不起", "今天也在种土豆", "匿名", "光幕前的咸鱼", "刚通关的C级", "排行榜第九十九", "不想进本", "炸鱼被抓过", "黑市常客", "训练场打卡人", "药剂站熬夜班", "公会跑腿的", "一个路人", "今日份幸运", "积分快见底", "刚升B级", "看录像长大的", "老观众", "新来的", "别叫我大佬", "蹲一个结算", "白开水", "半夜不睡", "又是我", "打工人", "瓜田里的猹", "慢热", "晴天", "阿九", "十一", "小绿", "老周", "木子", "苏苏", "七七", "一颗橘子", "等天亮", "北风", "不吃香菜", "没抢到号", "退役S级", "D级万岁", "靠运气活着", "只看不说", "路过打个卡", "最后一排"], Ig = [{ type: "praise", text: "这反应速度，不愧是主播" }, { type: "praise", text: "冷静得不像第一次进这个级别的本", scope: "inst" }, { type: "praise", text: "刚才那个判断绝了" }, { type: "praise", text: "主播脑子转得是真快" }, { type: "praise", text: "这波我服" }, { type: "praise", text: "稳，太稳了" }, { type: "praise", text: "讲道理，换我早慌了" }, { type: "praise", text: "这就是高手吗" }, { type: "praise", text: "看得我手心出汗，主播还面不改色" }, { type: "praise", text: "刚才那句话说得漂亮" }, { type: "praise", text: "细节拉满，这都注意到了", scope: "inst" }, { type: "praise", text: "主播说话好有条理" }, { type: "praise", text: "这才叫会玩" }, { type: "praise", text: "就冲这个判断，关注了" }, { type: "praise", text: "有勇有谋" }, { type: "praise", text: "比上一个主播强多了" }, { type: "praise", text: "队友拖后腿，主播一个人在带", scope: "inst" }, { type: "praise", text: "这个位置站得好", scope: "inst" }, { type: "praise", text: "我宣布这是本周最佳直播" }, { type: "praise", text: "主播镇定得让我也镇定了" }, { type: "praise", text: "那个眼神，太帅了" }, { type: "praise", text: "心态真好，要是我早骂人了" }, { type: "praise", text: "这个节奏把握得好", scope: "inst" }, { type: "praise", text: "看出来是做过功课的" }, { type: "praise", text: "夸一句，主播是真的会说话" }, { type: "praise", text: "一句话就把场面稳住了", scope: "inst" }, { type: "praise", text: "这份胆量我是没有" }, { type: "praise", text: "学到了，下次我也这么干" }, { type: "praise", text: "主播好好看" }, { type: "praise", text: "声音也好听，别下播" }, { type: "praise", text: "越看越顺眼" }, { type: "praise", text: "这气质，放在哪个本都是主角" }, { type: "praise", text: "能屈能伸，佩服" }, { type: "praise", text: "刚才那一下我起立鼓掌" }, { type: "praise", text: "不慌不忙，高手风范" }, { type: "praise", text: "回廊里也过得这么讲究，爱了", scope: "corr" }, { type: "praise", text: "主播种的菜看着真水灵", scope: "corr" }, { type: "praise", text: "这手艺可以去西区摆摊了", scope: "corr" }, { type: "praise", text: "休整都不忘练，怪不得排名涨", scope: "corr" }, { type: "praise", text: "房间收拾得真干净", scope: "corr" }, { type: "bless", text: "祝平安出来！！", scope: "inst" }, { type: "bless", text: "主播一定要活着回来", scope: "inst" }, { type: "bless", text: "保佑保佑" }, { type: "bless", text: "冲啊主播！" }, { type: "bless", text: "这把一定能过", scope: "inst" }, { type: "bless", text: "结算见！", scope: "inst", when: "end" }, { type: "bless", text: "平安就好，评级无所谓", scope: "inst" }, { type: "bless", text: "等你出来请你吃饭", scope: "inst" }, { type: "bless", text: "好运加满，霉运退散" }, { type: "bless", text: "希望别再有人出事了", scope: "inst", when: "hurt" }, { type: "bless", text: "主播加油，我在东区超市门口看着呢" }, { type: "bless", text: "撑住，天总会亮的", scope: "inst" }, { type: "bless", text: "别怕，我们都在" }, { type: "bless", text: "好人一生平安" }, { type: "bless", text: "这波过了就能歇歇了", scope: "inst" }, { type: "bless", text: "下个副本抽个简单的吧", scope: "corr" }, { type: "bless", text: "注意安全，别逞强", scope: "inst" }, { type: "bless", text: "保重身体啊", when: "hurt" }, { type: "bless", text: "受伤了先处理伤口", scope: "inst", when: "hurt" }, { type: "bless", text: "一路绿灯，一路绿灯" }, { type: "bless", text: "今天也要好好活着" }, { type: "bless", text: "愿系统对你手下留情" }, { type: "bless", text: "别哭，我们陪你", when: "hurt" }, { type: "bless", text: "等着看你升级" }, { type: "bless", text: "最后一口气了，撑住", scope: "inst", when: "end" }, { type: "bless", text: "最后几轮，稳住！", scope: "inst", when: "end" }, { type: "bless", text: "主播今天早点睡", scope: "corr" }, { type: "bless", text: "休息好了再进本", scope: "corr" }, { type: "bless", text: "希望房租别涨", scope: "corr" }, { type: "bless", text: "回廊安稳一天是一天", scope: "corr" }, { type: "discuss", text: "现在什么情况，我刚进来" }, { type: "discuss", text: "来了来了，这把什么本", scope: "inst", when: "open" }, { type: "discuss", text: "开播了开播了", when: "open" }, { type: "discuss", text: "新主播？没见过", when: "open" }, { type: "discuss", text: "先别吵，看局势" }, { type: "discuss", text: "我觉得还有线索没找到", scope: "inst" }, { type: "discuss", text: "按往届，这本不好打", scope: "inst" }, { type: "discuss", text: "有没有人看过这本的录像", scope: "inst" }, { type: "discuss", text: "黑市那种录像别全信" }, { type: "discuss", text: "这队人各怀心思吧", scope: "inst" }, { type: "discuss", text: "现在还剩几个人？", scope: "inst" }, { type: "discuss", text: "前面说的那个我也注意到了" }, { type: "discuss", text: "理性讨论，别带节奏" }, { type: "discuss", text: "我赌主播能过" }, { type: "discuss", text: "有人算过这把能拿什么评吗", scope: "inst" }, { type: "discuss", text: "主播刚才是不是话里有话" }, { type: "discuss", text: "这个人说话一直留半句", scope: "inst" }, { type: "discuss", text: "注意细节，刚才那句不对劲", scope: "inst" }, { type: "discuss", text: "我在光幕前面站了一个小时了" }, { type: "discuss", text: "回放能看吗，刚才没看清" }, { type: "discuss", text: "有没有懂的解释一下" }, { type: "discuss", text: "你们看出来了吗，我看不出来" }, { type: "discuss", text: "这一段要是剪进录像会卖爆" }, { type: "discuss", text: "楼上别剧透……虽然我也不知道" }, { type: "discuss", text: "好无聊，快进", when: "calm" }, { type: "discuss", text: "主播在发呆吗", when: "calm" }, { type: "discuss", text: "挂着当背景音了", when: "calm" }, { type: "discuss", text: "去泡了碗面回来还是这样", when: "calm" }, { type: "discuss", text: "这么安静，要出事了吧", scope: "inst", when: "calm" }, { type: "discuss", text: "暴风雨前的宁静", scope: "inst", when: "calm" }, { type: "discuss", text: "啊啊啊有人倒了", scope: "inst", when: "hurt" }, { type: "discuss", text: "刚才那一下我没敢看", when: "hurt" }, { type: "discuss", text: "又走一个……", scope: "inst", when: "hurt" }, { type: "discuss", text: "手在抖吧，换我也抖", when: "hurt" }, { type: "discuss", text: "快结束了吧", scope: "inst", when: "end" }, { type: "discuss", text: "结算前最后几轮最容易出事", scope: "inst", when: "end" }, { type: "discuss", text: "今天种什么？", scope: "corr" }, { type: "discuss", text: "回廊直播也有人看，我服了我自己", scope: "corr" }, { type: "discuss", text: "排行榜又变了，你们看了吗", scope: "corr" }, { type: "discuss", text: "下个本打算报哪个？", scope: "corr" }, { type: "cold", text: "别高兴太早" }, { type: "cold", text: "我看悬" }, { type: "cold", text: "这把凉了吧" }, { type: "cold", text: "就这？" }, { type: "cold", text: "也就一般" }, { type: "cold", text: "运气好而已" }, { type: "cold", text: "换个人也能做到" }, { type: "cold", text: "等着翻车吧" }, { type: "cold", text: "这种判断，迟早出事" }, { type: "cold", text: "看了半天也没看出哪里厉害" }, { type: "cold", text: "太磨叽了" }, { type: "cold", text: "说了这么多，一点用没有" }, { type: "cold", text: "我押失败", scope: "inst" }, { type: "cold", text: "评级能拿个C就不错了", scope: "inst" }, { type: "cold", text: "队友再强也带不动", scope: "inst" }, { type: "cold", text: "太自信了，这本专治自信", scope: "inst" }, { type: "cold", text: "往届比这厉害的都栽在这", scope: "inst" }, { type: "cold", text: "真以为能全身而退？", scope: "inst" }, { type: "cold", text: "没意思，我换台了" }, { type: "cold", text: "这操作也就D级水平" }, { type: "cold", text: "这不是冷静，是反应慢" }, { type: "cold", text: "别吹了，看结算", scope: "inst" }, { type: "cold", text: "种菜有什么好看的", scope: "corr" }, { type: "cold", text: "回廊里直播，缺积分缺疯了吧", scope: "corr" }, { type: "cold", text: "天天摆烂，等着被清算吧", scope: "corr" }, { type: "envy", text: "凭什么这种人能上热门" }, { type: "envy", text: "我直播三天没人看，这也行？" }, { type: "envy", text: "长得好就是占便宜" }, { type: "envy", text: "又是这种运气好的" }, { type: "envy", text: "打赏的是托吧" }, { type: "envy", text: "我也想有人给我刷" }, { type: "envy", text: "这点本事也能拿打赏" }, { type: "envy", text: "同样是D级进来的，差距怎么这么大" }, { type: "envy", text: "分到这么好的队友，换我我也行", scope: "inst" }, { type: "envy", text: "酸了，真的酸了" }, { type: "envy", text: "一进来就有大佬带，羡慕不来", scope: "inst" }, { type: "envy", text: "这热度买的吧" }, { type: "envy", text: "凭什么打赏都往这边跑" }, { type: "envy", text: "我通关都没人看" }, { type: "envy", text: "排行榜上那些名字，一半靠运气" }, { type: "envy", text: "有人天生就是被偏爱的" }, { type: "envy", text: "我要是有这配置，比这还稳", scope: "inst" }, { type: "envy", text: "住的地方比我好十倍", scope: "corr" }, { type: "envy", text: "在回廊都能开播赚积分，羡慕哭了", scope: "corr" }, { type: "envy", text: "这菜种得，比我吃的还好", scope: "corr" }, { type: "smear", text: "装什么装" }, { type: "smear", text: "演的吧，这反应太假了" }, { type: "smear", text: "人设立得挺好" }, { type: "smear", text: "会说话而已，真打起来就露馅" }, { type: "smear", text: "这种人最会卖队友" }, { type: "smear", text: "表面客气，背地里肯定算计着" }, { type: "smear", text: "我不信真这么淡定" }, { type: "smear", text: "刚才那个眼神，心虚了吧" }, { type: "smear", text: "故意卖惨要打赏" }, { type: "smear", text: "刚才明明可以救，没救", scope: "inst", when: "hurt" }, { type: "smear", text: "自私，只顾自己", scope: "inst" }, { type: "smear", text: "队友出事了还这么冷静，冷血吧", scope: "inst", when: "hurt" }, { type: "smear", text: "这是在拿别人探路", scope: "inst" }, { type: "smear", text: "满嘴好话，一件实事没干" }, { type: "smear", text: "装新人的吧" }, { type: "smear", text: "就是冲着打赏来的" }, { type: "smear", text: "看着就不是好人" }, { type: "smear", text: "别被骗了，都是算计好的" }, { type: "smear", text: "下了本也要直播，吃相难看", scope: "corr" }, { type: "smear", text: "种田人设，炒给谁看", scope: "corr" }, { type: "rumor", text: "听说积分是借的，真的假的" }, { type: "rumor", text: "肯定是抱大腿进来的" }, { type: "rumor", text: "我朋友说在黑市见过这人" }, { type: "rumor", text: "据说上一个本是被人带飞的" }, { type: "rumor", text: "听说欠了一屁股积分" }, { type: "rumor", text: "有人说是买了攻略才敢进的", scope: "inst" }, { type: "rumor", text: "听说被公会踢出来过" }, { type: "rumor", text: "情报社的人说，这人被抽查过" }, { type: "rumor", text: "有人在西区看到这人跟黑市贩子说话" }, { type: "rumor", text: "据说是走后门才越级的" }, { type: "rumor", text: "听说上个本的队友都没出来" }, { type: "rumor", text: "有人说这人其实早就待清算了" }, { type: "rumor", text: "我听说排名是刷的" }, { type: "rumor", text: "传闻进本前偷偷买了防抽查道具" }, { type: "rumor", text: "听说有人专门花钱买这人的录像" }], Ng = [{ type: "praise", text: "{who}刚才那下好帅" }, { type: "praise", text: "{who}挺靠谱的" }, { type: "bless", text: "{who}别出事啊" }, { type: "bless", text: "心疼{who}" }, { type: "bless", text: "{who}还好吗", when: "hurt" }, { type: "discuss", text: "{who}靠谱吗，我看不透" }, { type: "discuss", text: "{who}又不说话了" }, { type: "discuss", text: "{who}刚才那句什么意思" }, { type: "discuss", text: "盯紧{who}" }, { type: "discuss", text: "{who}和主播配合挺默契" }, { type: "discuss", text: "{who}好像知道点什么" }, { type: "cold", text: "{who}也就那样" }, { type: "cold", text: "指望{who}？算了吧" }, { type: "envy", text: "凭什么{who}也有人喜欢" }, { type: "smear", text: "我就说{who}有问题" }, { type: "smear", text: "{who}在演" }, { type: "smear", text: "{who}那个表情不对劲" }, { type: "rumor", text: "听说{who}在排行榜上挂过名" }, { type: "rumor", text: "我听说{who}以前出过事" }, { type: "rumor", text: "{who}跟主播是不是早就认识" }], Pg = {
+  names: Tg,
+  pool: Ig,
+  templates: Ng
+}, cs = /* @__PURE__ */ new Set(), nn = [];
+let $t = null, Ds = [], qr = null;
+function gs() {
+  for (const e of Ds.slice())
     try {
       e();
     } catch (t) {
       console.warn("[rlzc] RLZC_LIVE 订阅回调出错", t);
     }
 }
-function Ig() {
+function Dg() {
   return 1500 + Math.random() * 1500;
 }
-function Bc() {
-  _t = null;
+function Uc() {
+  $t = null;
   const e = nn.shift();
-  e !== void 0 && (is.delete(e), ps()), nn.length && (_t = setTimeout(Bc, Ig()));
+  e !== void 0 && (cs.delete(e), gs()), nn.length && ($t = setTimeout(Uc, Dg()));
 }
 function Ji(e, t = !1) {
   if (t && nn.length) {
-    for (const n of nn) is.delete(n);
-    nn.length = 0, _t && clearTimeout(_t), _t = null;
+    for (const n of nn) cs.delete(n);
+    nn.length = 0, $t && clearTimeout($t), $t = null;
   }
   if (e.length) {
     for (const n of e)
-      is.add(n.id), nn.push(n.id);
-    _t ? ps() : Bc();
+      cs.add(n.id), nn.push(n.id);
+    $t ? gs() : Uc();
   }
 }
-function Ng() {
-  _t && clearTimeout(_t), _t = null, nn.length = 0, is.clear();
+function Lg() {
+  $t && clearTimeout($t), $t = null, nn.length = 0, cs.clear();
 }
-function Pg(e) {
-  Gr = e, window.RLZC_LIVE = {
-    get: () => Gr.view(is),
+function Rg(e) {
+  qr = e, window.RLZC_LIVE = {
+    get: () => qr.view(cs),
     subscribe(t) {
       return typeof t != "function" ? () => {
-      } : (Ts.push(t), () => {
-        Ts = Ts.filter((n) => n !== t);
+      } : (Ds.push(t), () => {
+        Ds = Ds.filter((n) => n !== t);
       });
     },
-    toggle: () => Gr.toggle()
+    toggle: () => qr.toggle()
   };
 }
-function Rg(e, t = 100) {
+function Og(e, t = 100) {
   let n = null, s = null;
   const r = () => {
     s = null, e();
@@ -6544,110 +6557,110 @@ function Rg(e, t = 100) {
     }
   };
 }
-function Lg() {
+function Fg() {
   const e = document.getElementById("mes_stop");
   return !!e && getComputedStyle(e).display !== "none";
 }
-const Vc = "rlzc_market", Al = { D: 0, C: 1, B: 2, A: 3, S: 4 }, Uc = { D: 1e3, C: 5e3, B: 2e4, A: 8e4, S: 3e5 }, fl = 10, Dg = 0.8, Fg = "ending", jg = "rating", Hc = ["S", "A", "B", "C", "D"];
-function Og(e, t) {
-  return Al[e] - Al[t];
+const Hc = "rlzc_market", hl = { D: 0, C: 1, B: 2, A: 3, S: 4 }, Wc = { D: 1e3, C: 5e3, B: 2e4, A: 8e4, S: 3e5 }, ml = 10, jg = 0.8, Bg = "ending", Vg = "rating", Gc = ["S", "A", "B", "C", "D"];
+function Ug(e, t) {
+  return hl[e] - hl[t];
 }
-function Bg(e) {
+function Hg(e) {
   return e <= -2 ? 0.85 : e === -1 ? 0.75 : e === 0 ? 0.6 : e === 1 ? 0.4 : e === 2 ? 0.25 : 0.15;
 }
-const _s = {
+const Es = {
   "le-1": { S: 0.15, A: 0.3, B: 0.3, C: 0.17, D: 0.08 },
   0: { S: 0.08, A: 0.2, B: 0.35, C: 0.25, D: 0.12 },
   1: { S: 0.04, A: 0.12, B: 0.3, C: 0.32, D: 0.22 },
   ge2: { S: 0.02, A: 0.08, B: 0.25, C: 0.35, D: 0.3 }
 };
-function Vg(e) {
-  return e <= -1 ? _s["le-1"] : e === 0 ? _s[0] : e === 1 ? _s[1] : _s.ge2;
+function Wg(e) {
+  return e <= -1 ? Es["le-1"] : e === 0 ? Es[0] : e === 1 ? Es[1] : Es.ge2;
 }
-function br(e) {
+function _r(e) {
   return Math.round(e * 100) / 100;
 }
-function Ug(e, t) {
+function Gg(e, t) {
   const n = 0.93 + t() * 0.14;
-  return Math.max(1.01, br(1 / e * Dg * n));
+  return Math.max(1.01, _r(1 / e * jg * n));
 }
-function Wc(e, t) {
+function Kc(e, t) {
   return Math.floor(e * Math.round(t * 100) / 100);
 }
-function Hn(e, t, n, s) {
-  return { id: e, label: t, p: n, odds: Ug(n, s) };
+function qn(e, t, n, s) {
+  return { id: e, label: t, p: n, odds: Gg(n, s) };
 }
-function Gc(e, t, n) {
+function qc(e, t, n) {
   const s = {
     id: t.id,
     kind: e,
     q: t.q,
-    options: [Hn("yes", t.yes, t.p, n), Hn("no", t.no, br(1 - t.p), n)],
+    options: [qn("yes", t.yes, t.p, n), qn("no", t.no, _r(1 - t.p), n)],
     judge: t.judge
   };
   return t.judgeNo && (s.judgeNo = t.judgeNo), t.by && (s.by = t.by), s;
 }
-function Hg(e) {
+function Kg(e) {
   const { pack: t, rand: n } = e;
   if (t.rest) return [];
-  const s = Og(t.level, e.playerLevel), r = Bg(s), i = [
-    { id: Fg, kind: "ending", q: "本局结果", options: [Hn("win", "通关", r, n), Hn("lose", "失败", br(1 - r), n)] }
-  ], o = Vg(s);
-  if (i.push({ id: jg, kind: "rating", q: "本局评价", options: Hc.map((l) => Hn(l, l, o[l], n)) }), e.withEvents) for (const l of Ah(t)) i.push(Gc("event", l, n));
+  const s = Ug(t.level, e.playerLevel), r = Hg(s), i = [
+    { id: Bg, kind: "ending", q: "本局结果", options: [qn("win", "通关", r, n), qn("lose", "失败", _r(1 - r), n)] }
+  ], o = Wg(s);
+  if (i.push({ id: Vg, kind: "rating", q: "本局评价", options: Gc.map((l) => qn(l, l, o[l], n)) }), e.withEvents) for (const l of ph(t)) i.push(qc("event", l, n));
   return i;
 }
-const pl = 2, Wg = 5;
-function fi(e, t, n) {
+const gl = 2, qg = 5;
+function hi(e, t, n) {
   const s = e.map((i, o) => o), r = [];
   for (; r.length < t && s.length; ) r.push(s.splice(Math.floor(n() * s.length), 1)[0]);
   return r.sort((i, o) => i - o).map((i) => e[i]);
 }
-function Gg(e, t, n) {
+function Yg(e, t, n) {
   if (!t) return { markets: e.filter((o) => o.kind === "ending" || o.kind === "rating") };
-  const s = pl + Math.floor(n() * (Wg - pl + 1)), r = 1 + Math.floor(n() * 2), i = fi(e, s - r, n);
+  const s = gl + Math.floor(n() * (qg - gl + 1)), r = 1 + Math.floor(n() * 2), i = hi(e, s - r, n);
   return { markets: i, plan: { total: s, freak: r, order: e.map((o) => o.id) }, reserve: e.filter((o) => !i.includes(o)) };
 }
-function Kg(e, t, n) {
+function Jg(e, t, n) {
   const s = e.markets.filter((a) => a.kind !== "freak"), r = e.reserve ?? [];
-  if (!e.plan) return { markets: [...s, ...t ? hl(t, n) : []], reserve: r };
-  const i = hl(fi(t ?? [], e.plan.freak, n), n), o = fi(r, e.plan.freak - i.length, n), l = (a) => e.plan.order.indexOf(a.id);
+  if (!e.plan) return { markets: [...s, ...t ? xl(t, n) : []], reserve: r };
+  const i = xl(hi(t ?? [], e.plan.freak, n), n), o = hi(r, e.plan.freak - i.length, n), l = (a) => e.plan.order.indexOf(a.id);
   return { markets: [...[...s, ...o].sort((a, u) => l(a) - l(u)), ...i], reserve: r.filter((a) => !o.includes(a)) };
 }
-function qg(e, t) {
+function Zg(e, t) {
   return e - Math.max(0, t);
 }
-function Kc(e) {
-  const t = Uc[e.playerLevel], n = qg(e.balance, e.lockedTips), s = Math.max(0, Math.min(t - e.already, n)), r = e.stake, i = Number.isFinite(r) && r > 0 && e.balance - r < $t[e.playerLevel];
+function Yc(e) {
+  const t = Wc[e.playerLevel], n = Zg(e.balance, e.lockedTips), s = Math.max(0, Math.min(t - e.already, n)), r = e.stake, i = Number.isFinite(r) && r > 0 && e.balance - r < St[e.playerLevel];
   let o;
-  return !Number.isInteger(r) || r < fl ? o = `最少押${fl}` : e.already + r > t ? o = "超过单注上限" : r > n && (o = "可用余额不足"), { ok: !o, reason: o, cap: t, max: s, belowKill: i };
+  return !Number.isInteger(r) || r < ml ? o = `最少押${ml}` : e.already + r > t ? o = "超过单注上限" : r > n && (o = "可用余额不足"), { ok: !o, reason: o, cap: t, max: s, belowKill: i };
 }
-function Yg(e, t) {
+function Qg(e, t) {
   return e.tickets.filter((n) => n.market === t).reduce((n, s) => n + s.stake, 0);
 }
-function Jg(e, t) {
+function Xg(e, t) {
   return Object.keys(e).map(Number).filter((n) => n >= t).length >= 2;
 }
-const qc = ["通关", "成功", "胜利"], Zi = ["死亡", "阵亡"];
-function Zg(e) {
+const Jc = ["通关", "成功", "胜利"], Zi = ["死亡", "阵亡"];
+function ex(e) {
   return Zi.includes(String(e ?? "").trim());
 }
-function Xg(e) {
+function tx(e) {
   if (!e.ended) return null;
   const t = e.endIndex ?? -1;
   if (e.endedBy !== "tag") return { kind: "refund", index: t };
   const n = String(e.result ?? "").trim();
-  return Zi.includes(n) ? { kind: "lost", index: t } : qc.includes(n) ? { kind: "option", option: "win", index: t } : n === "失败" ? { kind: "option", option: "lose", index: t } : { kind: "refund", index: t };
+  return Zi.includes(n) ? { kind: "lost", index: t } : Jc.includes(n) ? { kind: "option", option: "win", index: t } : n === "失败" ? { kind: "option", option: "lose", index: t } : { kind: "refund", index: t };
 }
-function Qg(e) {
+function nx(e) {
   if (!e.ended) return null;
   const t = e.endIndex ?? -1;
   if (e.endedBy !== "tag") return { kind: "refund", index: t };
   const n = String(e.result ?? "").trim();
   if (Zi.includes(n)) return { kind: "lost", index: t };
   const s = String(e.rating ?? "").trim().toUpperCase();
-  return qc.includes(n) && Hc.includes(s) ? { kind: "option", option: s, index: t } : { kind: "refund", index: t };
+  return Jc.includes(n) && Gc.includes(s) ? { kind: "option", option: s, index: t } : { kind: "refund", index: t };
 }
-function ex(e, t) {
+function sx(e, t) {
   const n = t.outcome, s = e.by !== void 0 ? t.phaseEnds[e.by] : void 0;
   let r;
   s !== void 0 && (!n.ended || n.endIndex === void 0 || s < n.endIndex) ? r = s : n.ended && (r = n.endIndex ?? -1);
@@ -6663,15 +6676,15 @@ function ex(e, t) {
   }
   if (r === void 0) return null;
   const c = n.ended && r === (n.endIndex ?? -1);
-  return c && n.endedBy === "tag" && Zg(n.result) ? { kind: "lost", index: r } : c && n.endedBy !== "tag" ? { kind: "refund", index: r } : o ? null : i && l > 0 ? { kind: "option", option: "no", index: r } : { kind: "refund", index: r };
+  return c && n.endedBy === "tag" && ex(n.result) ? { kind: "lost", index: r } : c && n.endedBy !== "tag" ? { kind: "refund", index: r } : o ? null : i && l > 0 ? { kind: "option", option: "no", index: r } : { kind: "refund", index: r };
 }
-function tx(e) {
+function rx(e) {
   const t = {};
   for (const n of e.markets)
-    e.outcome.voided ? t[n.id] = { kind: "refund", index: -1 } : n.kind === "ending" ? t[n.id] = Xg(e.outcome) : n.kind === "rating" ? t[n.id] = Qg(e.outcome) : t[n.id] = ex(n, e);
+    e.outcome.voided ? t[n.id] = { kind: "refund", index: -1 } : n.kind === "ending" ? t[n.id] = tx(e.outcome) : n.kind === "rating" ? t[n.id] = nx(e.outcome) : t[n.id] = sx(n, e);
   return t;
 }
-function pi(e, t) {
+function mi(e, t) {
   const n = {};
   for (const s of e.tickets) {
     if (e.frozen) {
@@ -6683,58 +6696,58 @@ function pi(e, t) {
   }
   return n;
 }
-function nx(e, t) {
-  const n = {}, s = pi({ ...e, frozen: void 0 }, t);
+function ix(e, t) {
+  const n = {}, s = mi({ ...e, frozen: void 0 }, t);
   for (const r of e.tickets) n[r.id] = s[r.id] ?? { stamp: "refund", index: -1 };
   return n;
 }
-function sx(e, t, n, s = []) {
+function ox(e, t, n, s = []) {
   const r = new Set(Array.isArray(s) ? s : [s]);
-  return Object.keys(t).map(Number).filter((i) => i > n && $e(e[i])).sort((i, o) => i - o).map((i) => {
+  return Object.keys(t).map(Number).filter((i) => i > n && Ee(e[i])).sort((i, o) => i - o).map((i) => {
     const o = e[i]?.extra?.rlzc?.sub;
     return o && !o.skipped && o.markets && typeof o.markets == "object" ? { index: i, state: "ok", hits: o.markets } : !o && r.has(i) ? { index: i, state: "pending", hits: {} } : { index: i, state: "miss", hits: {} };
   });
 }
-function rx(e, t) {
+function lx(e, t) {
   const n = [];
   if (e.frozen) return n;
   for (const s of e.markets)
     s.kind !== "event" && s.kind !== "freak" || t[s.id] || !s.judge || (n.push({ id: s.id, judge: s.judge }), s.judgeNo && n.push({ id: `${s.id}:no`, judge: s.judgeNo }));
   return n;
 }
-function Yc(e, t) {
+function Zc(e, t) {
   return e.markets.find((n) => n.id === t);
 }
-function ix(e, t) {
+function ax(e, t) {
   return e?.options.find((n) => n.id === t)?.label ?? t;
 }
-function ox(e, t) {
-  const n = Yc(e, t.market);
-  return `下注·${e.packName}·${n?.q ?? t.market}·${ix(n, t.option)}`;
+function cx(e, t) {
+  const n = Zc(e, t.market);
+  return `下注·${e.packName}·${n?.q ?? t.market}·${ax(n, t.option)}`;
 }
-function lx(e, t, n) {
+function ux(e, t, n) {
   const s = [];
   for (const r of e.tickets) {
-    s.push({ delta: -r.stake, source: ox(e, r), type: "bet", at: r.at, pos: r.after, seq: r.seq ?? 0 });
+    s.push({ delta: -r.stake, source: cx(e, r), type: "bet", at: r.at, pos: r.after, seq: r.seq ?? 0 });
     const i = t[r.id];
     if (!i || i.stamp === "lose") continue;
-    const o = Yc(e, r.market)?.q ?? r.market, l = (i.index >= 0 ? n(i.index) : void 0) ?? r.at;
-    i.stamp === "win" ? s.push({ delta: Wc(r.stake, r.odds), source: `赌票兑付·${e.packName}·${o}`, type: "bet", at: l, pos: i.index }) : s.push({ delta: r.stake, source: `赌票退还·${e.packName}·${o}`, type: "bet", at: l, pos: i.index });
+    const o = Zc(e, r.market)?.q ?? r.market, l = (i.index >= 0 ? n(i.index) : void 0) ?? r.at;
+    i.stamp === "win" ? s.push({ delta: Kc(r.stake, r.odds), source: `赌票兑付·${e.packName}·${o}`, type: "bet", at: l, pos: i.index }) : s.push({ delta: r.stake, source: `赌票退还·${e.packName}·${o}`, type: "bet", at: l, pos: i.index });
   }
   return s;
 }
-const ax = '你是回廊黑市的庄家，要为主播即将进入的副本开几个离谱但有趣的盘口。你只知道下面这些公开信息，不知道剧情会怎么走。出2到3道是非题：题目20字以内，称{{user}}为主播，不用性别代词；必须能从之后的正文里直接看出是或否；不要问结局、评价和生死，那些已经有盘了；不要涉及公开信息以外的设定。每题给一个你估计「是」的概率p（0.05到0.95）。只输出JSON：[{"q":"题目","judge":"用来判断是否发生的一句陈述","p":0.3}]', cx = 4e3;
-function ux(e) {
-  const n = xc(e).split(`
+const dx = '你是回廊黑市的庄家，要为主播即将进入的副本开几个离谱但有趣的盘口。你只知道下面这些公开信息，不知道剧情会怎么走。出2到3道是非题：题目20字以内，称{{user}}为主播，不用性别代词；必须能从之后的正文里直接看出是或否；不要问结局、评价和生死，那些已经有盘了；不要涉及公开信息以外的设定。每题给一个你估计「是」的概率p（0.05到0.95）。只输出JSON：[{"q":"题目","judge":"用来判断是否发生的一句陈述","p":0.3}]', Ax = 4e3;
+function fx(e) {
+  const n = bc(e).split(`
 `), s = n.findIndex((i) => /副本简报/.test(i));
   return (s >= 0 ? n.slice(s, s + 6) : n).join(`
 `).trim().slice(0, 1e3);
 }
-function dx(e) {
+function px(e) {
   const t = e.docs.filter((s) => s.md && s.md.trim()).map((s) => `## ${s.title}
 ${s.md.trim()}`).join(`
 
-`).slice(0, cx), n = [
+`).slice(0, Ax), n = [
     `【副本】${e.name}　等级：${e.level}`,
     `【简报】
 ${e.briefing || "（无）"}`,
@@ -6743,67 +6756,67 @@ ${t || "（无）"}`
   ].join(`
 
 `);
-  return { system: ax, user: n };
+  return { system: dx, user: n };
 }
-function Ax(e) {
+function hx(e) {
   let t = String(e ?? "").trim();
   const n = /```(?:json)?\s*([\s\S]*?)```/i.exec(t);
   n && (t = n[1].trim());
   const s = t.indexOf("["), r = t.lastIndexOf("]");
-  if (s < 0 || r <= s) throw new je("返回里没有 JSON 数组");
+  if (s < 0 || r <= s) throw new Fe("返回里没有 JSON 数组");
   let i;
   try {
     i = JSON.parse(t.slice(s, r + 1));
   } catch {
-    throw new je("返回的 JSON 无法解析");
+    throw new Fe("返回的 JSON 无法解析");
   }
-  if (!Array.isArray(i)) throw new je("返回的不是 JSON 数组");
+  if (!Array.isArray(i)) throw new Fe("返回的不是 JSON 数组");
   const o = [];
   for (const l of i) {
     if (!l || typeof l.q != "string" || typeof l.judge != "string") continue;
     const c = l.q.trim(), a = l.judge.trim(), u = typeof l.p == "number" ? l.p : Number(l.p);
-    if (!(!c || c.length > 20 || !a || !Number.isFinite(u) || u < 0.05 || u > 0.95) && (o.push({ q: c, judge: a, p: br(u) }), o.length >= 3))
+    if (!(!c || c.length > 20 || !a || !Number.isFinite(u) || u < 0.05 || u > 0.95) && (o.push({ q: c, judge: a, p: _r(u) }), o.length >= 3))
       break;
   }
-  if (!o.length) throw new je("没有合格的题");
+  if (!o.length) throw new Fe("没有合格的题");
   return o;
 }
-async function fx(e, t, n = 1) {
+async function mx(e, t, n = 1) {
   let s;
   for (let r = 0; r <= n; r++)
     try {
-      return Ax(await e(t));
+      return hx(await e(t));
     } catch (i) {
       s = i;
     }
   throw s;
 }
-function hl(e, t) {
-  return e.map((n, s) => Gc("freak", { id: `F${s + 1}`, q: n.q, yes: "会", no: "不会", p: n.p, judge: n.judge }, t));
-}
-function px(e) {
-  return `{{user}}在黑市押了自己本局失败，押注${e}分。`;
-}
-function hx(e) {
-  return `{{user}}刚在赌坊输掉${e}分，余额已低于斩杀线。`;
-}
-function mx(e) {
-  return `{{user}}刚在赌坊一局赢了${e}分。`;
+function xl(e, t) {
+  return e.map((n, s) => qc("freak", { id: `F${s + 1}`, q: n.q, yes: "会", no: "不会", p: n.p, judge: n.judge }, t));
 }
 function gx(e) {
-  return e.kind === "betLose" ? px(e.amount) : e.kind === "casinoLoss" ? hx(e.amount) : mx(e.amount);
+  return `{{user}}在黑市押了自己本局失败，押注${e}分。`;
 }
-function hi(e, t) {
+function xx(e) {
+  return `{{user}}刚在赌坊输掉${e}分，余额已低于斩杀线。`;
+}
+function vx(e) {
+  return `{{user}}刚在赌坊一局赢了${e}分。`;
+}
+function yx(e) {
+  return e.kind === "betLose" ? gx(e.amount) : e.kind === "casinoLoss" ? xx(e.amount) : vx(e.amount);
+}
+function gi(e, t) {
   if (t.kind === "betLose") {
     const n = e.find((s) => s.kind === "betLose");
     if (n && !n.sent) return e.map((s) => s === n ? { ...s, amount: s.amount + t.amount, after: t.after } : s);
   }
   return [...e, t];
 }
-function xx(e) {
+function bx(e) {
   return e.filter((t) => !t.sent);
 }
-function vx(e) {
+function kx(e) {
   const t = e && typeof e == "object" ? e : {}, n = t.casino ?? {}, s = {};
   for (const [r, i] of Object.entries(t.books ?? {}))
     i && typeof i == "object" && Array.isArray(i.markets) && (s[r] = { ...i, tickets: Array.isArray(i.tickets) ? i.tickets : [] });
@@ -6818,7 +6831,7 @@ function vx(e) {
     seq: Number.isFinite(t.seq) ? Number(t.seq) : 0
   };
 }
-const Kr = (e) => Array.from({ length: e }, (t, n) => n + 1), Xi = [
+const Yr = (e) => Array.from({ length: e }, (t, n) => n + 1), Qi = [
   {
     id: "bell",
     name: "听钟",
@@ -6828,7 +6841,7 @@ const Kr = (e) => Array.from({ length: e }, (t, n) => n + 1), Xi = [
       { id: "even", label: "双", mult: 1.6 },
       { id: "small", label: "小", mult: 1.6 },
       { id: "big", label: "大", mult: 1.6 },
-      ...Kr(12).map((e) => ({ id: `n${e}`, label: `${e}下`, mult: 9.6 }))
+      ...Yr(12).map((e) => ({ id: `n${e}`, label: `${e}下`, mult: 9.6 }))
     ]
   },
   {
@@ -6840,14 +6853,14 @@ const Kr = (e) => Array.from({ length: e }, (t, n) => n + 1), Xi = [
       { id: "r2", label: "6–10", mult: 3.2 },
       { id: "r3", label: "11–15", mult: 3.2 },
       { id: "r4", label: "16–20", mult: 3.2 },
-      ...Kr(20).map((e) => ({ id: `d${e}`, label: `${e}号`, mult: 16 }))
+      ...Yr(20).map((e) => ({ id: `d${e}`, label: `${e}号`, mult: 16 }))
     ]
   },
   {
     id: "lot",
     name: "抽签",
     desc: "三支签，一支大吉。",
-    bets: Kr(3).map((e) => ({ id: `s${e}`, label: `第${e}支`, mult: 2.4 }))
+    bets: Yr(3).map((e) => ({ id: `s${e}`, label: `第${e}支`, mult: 2.4 }))
   },
   {
     id: "card",
@@ -6856,27 +6869,27 @@ const Kr = (e) => Array.from({ length: e }, (t, n) => n + 1), Xi = [
     bets: [{ id: "high", label: "比大小", mult: 1.73 }]
   }
 ];
-function wn(e) {
-  return Xi.find((t) => t.id === e);
+function zn(e) {
+  return Qi.find((t) => t.id === e);
 }
-function Pn(e, t) {
+function On(e, t) {
   return Math.min(e, 1 + Math.floor(t() * e));
 }
-function yx(e, t) {
+function wx(e, t) {
   return Math.floor(e * Math.round(t * 100) / 100);
 }
-function bx(e, t, n, s) {
-  const r = wn(e), i = r?.bets.find((u) => u.id === t);
+function zx(e, t, n, s) {
+  const r = zn(e), i = r?.bets.find((u) => u.id === t);
   if (!r || !i) return null;
   let o = !1, l = "", c = [];
   switch (r.id) {
     case "bell": {
-      const u = Pn(12, s);
+      const u = On(12, s);
       c = [u], i.id === "odd" || i.id === "even" ? (o = u % 2 === 1 == (i.id === "odd"), l = `${u}下，${u % 2 ? "单" : "双"}`) : i.id === "small" || i.id === "big" ? (o = u <= 6 == (i.id === "small"), l = `${u}下，${u <= 6 ? "小" : "大"}`) : (o = i.id === `n${u}`, l = `${u}下`);
       break;
     }
     case "door": {
-      const u = Pn(20, s);
+      const u = On(20, s);
       if (c = [u], i.id.startsWith("r")) {
         const f = Number(i.id.slice(1));
         o = u > (f - 1) * 5 && u <= f * 5;
@@ -6885,42 +6898,42 @@ function bx(e, t, n, s) {
       break;
     }
     case "lot": {
-      const u = Pn(3, s);
+      const u = On(3, s);
       c = [u], o = i.id === `s${u}`, l = `第${u}支大吉`;
       break;
     }
     case "card": {
-      const u = Pn(13, s), f = Pn(13, s);
+      const u = On(13, s), f = On(13, s);
       c = [u, f], o = u > f, l = `你 ${u}，庄家 ${f}`;
       break;
     }
   }
-  const a = o ? yx(n, i.mult) : 0;
+  const a = o ? wx(n, i.mult) : 0;
   return { win: o, payout: a, net: o ? a - n : -n, result: l, label: `押${i.label}`, faces: c };
 }
-function kx(e, t) {
-  return `赌坊·${wn(e)?.name ?? e}·${t}`;
+function _x(e, t) {
+  return `赌坊·${zn(e)?.name ?? e}·${t}`;
 }
-function ml(e) {
-  const t = Xi.map((i) => i.id), n = Math.min(t.length - 1, Math.floor(e() * t.length)), s = t.filter((i, o) => o !== n), r = Math.min(s.length - 1, Math.floor(e() * s.length));
+function vl(e) {
+  const t = Qi.map((i) => i.id), n = Math.min(t.length - 1, Math.floor(e() * t.length)), s = t.filter((i, o) => o !== n), r = Math.min(s.length - 1, Math.floor(e() * s.length));
   return [t[n], s[r]];
 }
-function wx(e, t, n) {
-  const s = e.tables.length === 2 && e.tables.every((o) => wn(o));
+function $x(e, t, n) {
+  const s = e.tables.length === 2 && e.tables.every((o) => zn(o));
   if (s && e.key === t) return { tables: e.tables, key: t, changed: !1 };
   const r = (o) => s && o.length === 2 && o.every((l) => e.tables.includes(l));
-  let i = ml(n);
-  for (let o = 0; o < 20 && r(i); o++) i = ml(n);
-  return r(i) && (i = Xi.map((o) => o.id).filter((o) => !e.tables.includes(o))), { tables: i, key: t, changed: !0 };
+  let i = vl(n);
+  for (let o = 0; o < 20 && r(i); o++) i = vl(n);
+  return r(i) && (i = Qi.map((o) => o.id).filter((o) => !e.tables.includes(o))), { tables: i, key: t, changed: !0 };
 }
-const mi = "rlzc", Is = { optIn: !1, injectToAI: !1, source: "local", freq: 3 }, Jc = {
+const xi = "rlzc", Ls = { optIn: !1, injectToAI: !1, source: "local", freq: 3 }, Qc = {
   source: "off",
   presets: [],
   presetId: "",
   saveMode: !1,
   wait: !0,
   timeoutSec: 60
-}, Dn = {
+}, Bn = {
   depths: { token: 4, progress: 4, turn: 0, ledger: 4, live: 4, format: 0 },
   ball: { x: null, y: null },
   showBall: !0,
@@ -6928,11 +6941,11 @@ const mi = "rlzc", Is = { optIn: !1, injectToAI: !1, source: "local", freq: 3 },
   customPacks: [],
   panelDisplay: "panel",
   statusBarFix: !0,
-  genericCaps: { ...ss },
-  subApi: structuredClone(Jc),
+  genericCaps: { ...ls },
+  subApi: structuredClone(Qc),
   cardCollapsed: { depths: !0, subApi: !0, genericCaps: !0, accountFix: !0, rolesDebug: !0, live: !0, statusBar: !0, auditDebug: !0, manualDebug: !0, injectionDebug: !0, formatDebug: !0 },
-  live: { ...Is }
-}, A = /* @__PURE__ */ ur({
+  live: { ...Ls }
+}, A = /* @__PURE__ */ fr({
   chatId: "",
   session: null,
   pack: null,
@@ -6942,9 +6955,9 @@ const mi = "rlzc", Is = { optIn: !1, injectToAI: !1, source: "local", freq: 3 },
   subBusy: !1,
   /** 系统页的一行小字：副本记录：已更新（第N轮）/ 第N轮状态未更新 */
   subLine: "",
-  settings: structuredClone(Dn),
+  settings: structuredClone(Bn),
   packs: [],
-  lastInjection: rs,
+  lastInjection: as,
   panelOpen: !1,
   tab: "system",
   debugUnlocked: !1,
@@ -6953,32 +6966,32 @@ const mi = "rlzc", Is = { optIn: !1, injectToAI: !1, source: "local", freq: 3 },
   /** 积分账本流水（重放自聊天快照，CLAUDE.md 第三期） */
   ledger: [],
   /** 黑市（第四期）：本局盘口、赌票、摆桌 */
-  market: av(),
+  market: hv(),
   /** 入场提示小卡片（右上角，不挡操作）；同一时间只有一张 */
   entryCard: null,
-  /** 本段聊天（开头或上一个副本结算之后）里出现过简报、但没收录的副本：「手动选择副本」里也能选 */
-  seenGeneric: []
+  /** 待确认的副本：点过「不是」的入场信号，系统页里二次确认（进入 / 关掉不再提示） */
+  pendingEntries: []
 });
-function Ye(e) {
+function Je(e) {
   return JSON.parse(JSON.stringify(e));
 }
-function hs(...e) {
+function xs(...e) {
   A.settings.debug && console.log("[rlzc]", ...e);
 }
-function zx() {
-  const e = me().extensionSettings, t = e[mi] ?? {}, n = {
-    ...structuredClone(Dn),
+function Sx() {
+  const e = me().extensionSettings, t = e[xi] ?? {}, n = {
+    ...structuredClone(Bn),
     ...t,
-    depths: { ...Dn.depths, ...t.depths ?? {}, ledger: t.depths?.ledger ?? Dn.depths.ledger },
-    ball: { ...Dn.ball, ...t.ball ?? {} },
-    customPacks: Array.isArray(t.customPacks) ? t.customPacks.filter((s) => Ga(s).length === 0) : [],
+    depths: { ...Bn.depths, ...t.depths ?? {}, ledger: t.depths?.ledger ?? Bn.depths.ledger },
+    ball: { ...Bn.ball, ...t.ball ?? {} },
+    customPacks: Array.isArray(t.customPacks) ? t.customPacks.filter((s) => Ya(s).length === 0) : [],
     panelDisplay: t.panelDisplay === "statusbar" ? "statusbar" : "panel",
     statusBarFix: typeof t.statusBarFix == "boolean" ? t.statusBarFix : !0,
-    genericCaps: { ...ss, ...t.genericCaps ?? {} },
+    genericCaps: { ...ls, ...t.genericCaps ?? {} },
     subApi: {
-      ...structuredClone(Jc),
+      ...structuredClone(Qc),
       ...t.subApi ?? {},
-      presets: Array.isArray(t.subApi?.presets) ? t.subApi.presets.map(Sm) : [],
+      presets: Array.isArray(t.subApi?.presets) ? t.subApi.presets.map(Em) : [],
       // 旧版本里的「酒馆连接配置」来源已删除，按关闭处理
       source: ["off", "main", "preset"].includes(t.subApi?.source) ? t.subApi.source : "off"
     },
@@ -6995,49 +7008,49 @@ function zx() {
       injectionDebug: t.cardCollapsed?.injectionDebug ?? !0,
       formatDebug: t.cardCollapsed?.formatDebug ?? !0
     },
-    live: _x(t.live)
+    live: Cx(t.live)
   };
-  e[mi] = n, A.settings = n, A.packs = Li(n.customPacks);
+  e[xi] = n, A.settings = n, A.packs = Ri(n.customPacks);
 }
-function _x(e) {
+function Cx(e) {
   const t = e ?? {}, n = Math.floor(Number(t.freq));
   return {
-    optIn: typeof t.optIn == "boolean" ? t.optIn : Is.optIn,
-    injectToAI: typeof t.injectToAI == "boolean" ? t.injectToAI : Is.injectToAI,
+    optIn: typeof t.optIn == "boolean" ? t.optIn : Ls.optIn,
+    injectToAI: typeof t.injectToAI == "boolean" ? t.injectToAI : Ls.injectToAI,
     source: t.source === "ai" ? "ai" : "local",
-    freq: Number.isFinite(n) ? Math.max(1, Math.min(10, n)) : Is.freq
+    freq: Number.isFinite(n) ? Math.max(1, Math.min(10, n)) : Ls.freq
   };
 }
 function ke() {
-  me().extensionSettings[mi] = /* @__PURE__ */ ae(A.settings), me().saveSettingsDebounced(), A.packs = Li(A.settings.customPacks);
+  me().extensionSettings[xi] = /* @__PURE__ */ ae(A.settings), me().saveSettingsDebounced(), A.packs = Ri(A.settings.customPacks);
 }
-function $x(e, t) {
+function Ex(e, t) {
   const n = A.settings.subApi, s = n.presets.find((r) => r.id === n.presetId);
-  s && Cm(s, e, t) && ke();
+  s && Mm(s, e, t) && ke();
 }
-function Sx(e) {
+function Mx(e) {
   let t;
   try {
     t = JSON.parse(e);
   } catch {
     return ["不是有效的 JSON 文件"];
   }
-  const n = Ga(t);
+  const n = Ya(t);
   if (n.length) return n;
   const s = t;
-  return Li([]).some((r) => r.id === s.id) ? [`id「${s.id}」与内置副本包重复`] : (A.settings.customPacks = [...A.settings.customPacks.filter((r) => r.id !== s.id), s], ke(), []);
+  return Ri([]).some((r) => r.id === s.id) ? [`id「${s.id}」与内置副本包重复`] : (A.settings.customPacks = [...A.settings.customPacks.filter((r) => r.id !== s.id), s], ke(), []);
 }
-function Cx(e) {
+function Tx(e) {
   A.settings.customPacks = A.settings.customPacks.filter((t) => t.id !== e), ke();
 }
-function nt() {
-  const e = gt()[_c];
+function rt() {
+  const e = Ze()[Cc];
   return !e || Array.isArray(e) ? {} : e;
 }
-function zn(e) {
-  gt()[_c] = e, Je();
+function $n(e) {
+  Ze()[Cc] = e, Ve();
 }
-function pn(e) {
+function hn(e) {
   const t = [];
   for (let i = 0; i < e.length; i++) {
     const o = e[i];
@@ -7047,21 +7060,21 @@ function pn(e) {
     const c = [o.send_date, o.gen_finished].map((a) => a instanceof Date ? a.getTime() : Date.parse(String(a ?? ""))).find((a) => Number.isFinite(a));
     for (const a of l) t.push({ e: { ...a, mesIndex: i, ts: c }, pos: i, g: 0, seq: 0 });
   }
-  for (const { pos: i, seq: o, ...l } of uv(e))
-    t.push({ e: { ...l, mesIndex: i, ts: cl(l.at) }, pos: i < 0 ? Number.MAX_SAFE_INTEGER : i, g: o === void 0 ? 1 : 2, seq: o ?? 0 });
+  for (const { pos: i, seq: o, ...l } of gv(e))
+    t.push({ e: { ...l, mesIndex: i, ts: Al(l.at) }, pos: i < 0 ? Number.MAX_SAFE_INTEGER : i, g: o === void 0 ? 1 : 2, seq: o ?? 0 });
   t.sort((i, o) => i.pos - o.pos || i.g - o.g || i.seq - o.seq);
-  const n = t.map((i) => i.e), r = (nt().adjust ?? []).map((i) => ({
+  const n = t.map((i) => i.e), r = (rt().adjust ?? []).map((i) => ({
     delta: i.amount,
     source: `手动：${i.note}`,
     type: "manual",
     at: i.at,
     mesIndex: -1,
-    ts: i.ts ?? cl(i.at)
+    ts: i.ts ?? Al(i.at)
   }));
-  return Vm(Bm(n, r));
+  return Hm(Um(n, r));
 }
-function St(e) {
-  const t = nt();
+function Ct(e) {
+  const t = rt();
   if (t.init != null) return { value: t.init.value, source: t.init.source };
   const n = /<状态栏>([\s\S]*?)<\/状态栏>/;
   for (let s = e.length - 1; s >= 0; s--) {
@@ -7069,360 +7082,397 @@ function St(e) {
     if (r.is_user || !r.mes) continue;
     const i = n.exec(r.mes);
     if (!i) continue;
-    const o = Sc(i[1]);
+    const o = Mc(i[1]);
     if (o !== null) {
-      const l = Ze(r.send_date ?? r.gen_finished ?? void 0);
-      return zn({ ...t, init: { value: o, source: "状态栏读取", at: l } }), { value: o, source: "状态栏读取" };
+      const l = Qe(r.send_date ?? r.gen_finished ?? void 0);
+      return $n({ ...t, init: { value: o, source: "状态栏读取", at: l } }), { value: o, source: "状态栏读取" };
     }
   }
   return { value: 1e3, source: "默认值" };
 }
-function st(e = q(), t = e.length) {
-  const n = nt().fix?.level;
-  return n && ["D", "C", "B", "A", "S"].includes(n) ? n : $c(e, t) ?? "D";
+function it(e = q(), t = e.length) {
+  const n = rt().fix?.level;
+  return n && ["D", "C", "B", "A", "S"].includes(n) ? n : Ec(e, t) ?? "D";
 }
-function Ex(e) {
-  if (!(nt().init != null || A.ledger.length > 0)) return "";
-  const s = St(e), r = fn(s.value, A.ledger), i = st(e), o = $t[i], l = As(s.value, A.ledger, o), c = Wm(r, l, i, o), a = Ce();
-  return a?.status === "active" && a.live ? zg(c, qi(e, a.id)) : c;
+function Ix(e) {
+  if (!(rt().init != null || A.ledger.length > 0)) return "";
+  const s = Ct(e), r = pn(s.value, A.ledger), i = it(e), o = St[i], l = ms(s.value, A.ledger, o), c = Km(r, l, i, o), a = ze();
+  return a?.status === "active" && a.live ? Sg(c, qi(e, a.id)) : c;
 }
-function gl(e, t = !0) {
+function yl(e, t = !0) {
   const n = q(), s = n[e];
   if (!s || s.is_user) return;
-  const r = s.mes ?? "", i = Ze(s.send_date ?? s.gen_finished ?? void 0), o = [], l = new RegExp(xh.source, "g");
+  const r = s.mes ?? "", i = Qe(s.send_date ?? s.gen_finished ?? void 0), o = [], l = new RegExp(yh.source, "g");
   let c;
   for (; (c = l.exec(r)) !== null; ) {
     const u = Rm(c[1]);
     u && o.push({ delta: u.delta, source: u.source, type: "tag", at: i });
   }
-  const a = t ? gr(r) : null;
+  const a = t ? yr(r) : null;
   if (a && A.pack && !A.pack.rest) {
     const u = {
       结果: a.result ?? "",
       评价: a.rating ?? "",
       ...a.fields
-    }, f = st(n, e), h = St(n), x = fn(h.value, A.ledger), z = !!A.session?.clearance, k = Om(A.pack.level, f, u, x, z, A.pack.name);
-    if (k.warn) {
+    }, f = it(n, e), m = Ct(n), k = pn(m.value, A.ledger), z = !!A.session?.clearance, x = Vm(A.pack.level, f, u, k, z, A.pack.name);
+    if (x.warn) {
       s.extra = s.extra ?? {};
-      const R = s.extra.rlzc ?? { phase: "", round: 0, injected: [] };
-      s.extra.rlzc = Ye({ ...R, settleWarn: k.warn });
+      const $ = s.extra.rlzc ?? { phase: "", round: 0, injected: [] };
+      s.extra.rlzc = Je({ ...$, settleWarn: x.warn });
     }
-    if (k.delta !== 0) {
-      const R = { delta: k.delta, source: k.source, type: "settle", at: i };
-      k.clearWin && (R.clear = !0), o.push(R);
+    if (x.delta !== 0) {
+      const $ = { delta: x.delta, source: x.source, type: "settle", at: i };
+      x.clearWin && ($.clear = !0), o.push($);
     }
   }
   if (o.length || s.extra?.rlzc?.ledger?.length) {
     s.extra = s.extra ?? {};
-    const u = s.extra.rlzc ?? { phase: "", round: 0, injected: [] }, f = [...o, ...(u.ledger ?? []).filter((h) => h.type === "tip")];
-    s.extra.rlzc = Ye({ ...u, ledger: f.length ? f : void 0 }), Je();
+    const u = s.extra.rlzc ?? { phase: "", round: 0, injected: [] }, f = [...o, ...(u.ledger ?? []).filter((m) => m.type === "tip")];
+    s.extra.rlzc = Je({ ...u, ledger: f.length ? f : void 0 }), Ve();
   }
-  A.ledger = pn(q());
-}
-function Mx(e, t) {
-  const n = nt(), s = Ze(void 0), r = [...n.adjust ?? [], { amount: e, note: t, at: s, ts: Date.now() }];
-  zn({ ...n, adjust: r }), A.ledger = pn(q());
-}
-function Tx(e, t) {
-  Mx(e, t);
-}
-function Ix(e) {
-  const t = nt(), n = Ze(void 0);
-  zn({ ...t, init: { value: e, source: "手动设置", at: n } }), A.ledger = pn(q());
+  A.ledger = hn(q());
 }
 function Nx(e, t) {
+  const n = rt(), s = Qe(void 0), r = [...n.adjust ?? [], { amount: e, note: t, at: s, ts: Date.now() }];
+  $n({ ...n, adjust: r }), A.ledger = hn(q());
+}
+function Px(e, t) {
+  Nx(e, t);
+}
+function Dx(e) {
+  const t = rt(), n = Qe(void 0);
+  $n({ ...t, init: { value: e, source: "手动设置", at: n } }), A.ledger = hn(q());
+}
+function Lx(e, t) {
   if (!e && !t) return;
-  const n = nt(), s = q(), r = Ze(void 0);
-  zn({ ...n, fix: { level: e, rank: t, at: r, afterIndex: s.length - 1 } });
+  const n = rt(), s = q(), r = Qe(void 0);
+  $n({ ...n, fix: { level: e, rank: t, at: r, afterIndex: s.length - 1 } });
 }
-function Ce() {
-  return qm(gt()[Lt]);
+function ze() {
+  return Jm(Ze()[nt]);
 }
-function kr() {
-  const e = gt(), t = Array.isArray(e[Lt]?.declined) ? e[Lt].declined : [], n = Array.isArray(e[ul]) ? e[ul] : [];
+function Sn() {
+  const e = Ze(), t = Array.isArray(e[nt]?.declined) ? e[nt].declined : [], n = Array.isArray(e[fl]) ? e[fl] : [];
   return [.../* @__PURE__ */ new Set([...n, ...t])];
 }
-function Px(e) {
-  const t = gt(), n = [...kr().filter((s) => s !== e), e];
-  t[Lt] = { ...t[Lt] ?? {}, declined: n }, Je();
+function Rx(e) {
+  const t = Ze(), n = [...Sn().filter((s) => s !== e), e];
+  t[nt] = { ...t[nt] ?? {}, declined: n }, Ve();
 }
-function un(e) {
-  const t = gt(), n = kr(), s = n.length ? { declined: n } : {};
-  e ? t[Lt] = { ...JSON.parse(JSON.stringify(e)), ...s } : n.length ? t[Lt] = s : delete t[Lt], Je();
+function vs() {
+  const e = Ze()[nt]?.dropped;
+  return Array.isArray(e) ? e : [];
 }
-function Qi(e) {
-  const t = Ce();
-  t && (e(t), un(t), Le());
+function Ox(e) {
+  const t = Ze(), n = [.../* @__PURE__ */ new Set([...vs(), ...e])];
+  t[nt] = { ...t[nt] ?? {}, dropped: n }, Ve();
 }
-function Zc(e) {
+function dn(e) {
+  const t = Ze(), n = Sn(), s = vs(), r = { ...n.length ? { declined: n } : {}, ...s.length ? { dropped: s } : {} };
+  e ? t[nt] = { ...JSON.parse(JSON.stringify(e)), ...r } : n.length || s.length ? t[nt] = r : delete t[nt], Ve();
+}
+function Xi(e) {
+  const t = ze();
+  t && (e(t), dn(t), Ce());
+}
+function Xc(e) {
   const t = q();
-  return (e === "swipe" || e === "continue") && $e(t[t.length - 1]) ? t.slice(0, -1) : t;
+  return (e === "swipe" || e === "continue") && Ee(t[t.length - 1]) ? t.slice(0, -1) : t;
 }
-function Qs(e, t) {
+function sr(e, t) {
   if (!t) return { session: null, pack: null, progress: null, audit: null };
-  const n = Cc(t, A.packs);
+  const n = Tc(t, A.packs);
   if (!n) return { session: t, pack: null, progress: null, audit: null };
-  const s = Qa(e, t, n);
-  return { session: t, pack: n, progress: s, audit: s ? sg(e, n, s) : null };
+  const s = nc(e, t, n);
+  return { session: t, pack: n, progress: s, audit: s ? og(e, n, s) : null };
 }
-function Le() {
+function Ce() {
   const e = q();
-  let t = Ce();
+  let t = ze();
   if (t) {
     const s = JSON.stringify(t);
-    if (!Jm(e, t))
-      au(t.id), un(null), Se("info", "入场消息已不存在，副本会话已作废。"), t = null;
+    if (!Qm(e, t))
+      du(t.id), dn(null), we("info", "入场消息已不存在，副本会话已作废。"), t = null;
     else {
-      const r = Qs(e, t);
-      r.progress && (t.status = r.progress.ended ? "ended" : "active"), JSON.stringify(t) !== s && un(t);
+      const r = sr(e, t);
+      r.progress && (t.status = r.progress.ended ? "ended" : "active"), JSON.stringify(t) !== s && dn(t);
     }
   }
-  const n = Qs(e, t);
-  A.session = n.session, A.pack = n.pack, A.progress = n.progress, A.audit = n.audit, A.subLine = nu(e, n.progress), hv(e, n.session), A.ledger = pn(e), A.seenGeneric = Mc(e, ms(), e.length).filter(
-    (s) => !A.packs.some((r) => r.detect.briefingName === s.name)
-  ), A.tick++, ps(), Ox(n.session);
+  const n = sr(e, t);
+  A.session = n.session, A.pack = n.pack, A.progress = n.progress, A.audit = n.audit, A.subLine = iu(e, n.progress), kv(e, n.session), A.ledger = hn(e), A.pendingEntries = n.session?.status === "active" ? [] : Kx(e), A.tick++, gs(), Hx(n.session);
 }
-function Xc() {
+function eu() {
   if (A.session)
-    return Ec(A.session, A.progress?.rolesFromChat);
+    return Ic(A.session, A.progress?.rolesFromChat);
 }
-function er() {
-  for (const e of Ih) Tt(e, "", 0, !1);
+function rr() {
+  for (const e of Ph) It(e, "", 0, !1);
 }
-let Wn = -1;
-function Rx(e) {
-  const t = Zc(e), n = Ce(), { pack: s, progress: r, audit: i } = Qs(t, n), o = n ? Ec(n, r?.rolesFromChat) : void 0, l = $n() && !!r, c = l ? vr(t, r.entryIndex) : null, a = s ? Lh(s, r, n, {
+let Yn = -1;
+function Fx(e) {
+  const t = Xc(e), n = ze(), { pack: s, progress: r, audit: i } = sr(t, n), o = n ? Ic(n, r?.rolesFromChat) : void 0, l = Mn() && !!r, c = l ? kr(t, r.entryIndex) : null, a = s ? Oh(s, r, n, {
     roles: o,
     briefing: n?.briefing,
     panelLimit: r?.panel?.limit,
     audit: i ?? void 0,
-    subNext: l ? Am(t, r.entryIndex) : void 0,
-    stateText: c ? gc(s, c.state) : void 0
-  }) : rs;
-  er();
+    subNext: l ? pm(t, r.entryIndex) : void 0,
+    stateText: c ? yc(s, c.state) : void 0
+  }) : as;
+  rr();
   const u = A.settings.depths;
-  a.token && Tt(ec, a.token, u.token, !0), a.progress && Tt(tc, a.progress, u.progress, !1), a.turn && Tt(nc, a.turn, u.turn, !1), a.state && Tt(sc, a.state, u.progress, !1);
-  const f = nt();
-  let h = Ex(t);
+  a.token && It(sc, a.token, u.token, !0), a.progress && It(rc, a.progress, u.progress, !1), a.turn && It(ic, a.turn, u.turn, !1), a.state && It(oc, a.state, u.progress, !1);
+  const f = rt();
+  let m = Ix(t);
   if (f.fix) {
-    const k = Hm(f.fix);
-    k && (h = h ? `${h}
-${k}` : k);
+    const x = Gm(f.fix);
+    x && (m = m ? `${m}
+${x}` : x);
   }
-  const x = Ve();
-  if (x.hints.length) {
-    const k = x.hints.map(gx).join("");
-    h = h ? `${h}
-${k}` : k, x.hints.some((R) => !R.sent) && (x.hints = x.hints.map((R) => ({ ...R, sent: !0 })), Ct(x));
+  const k = Ue();
+  if (k.hints.length) {
+    const x = k.hints.map(yx).join("");
+    m = m ? `${m}
+${x}` : x, k.hints.some(($) => !$.sent) && (k.hints = k.hints.map(($) => ({ ...$, sent: !0 })), Et(k));
   }
-  if (h && Tt(rc, h, u.ledger, !1), A.settings.live.injectToAI) {
-    const k = bm(ao(/* @__PURE__ */ new Set(), t));
-    k && Tt(ic, k, u.live, !1);
+  if (m && It(lc, m, u.ledger, !1), A.settings.live.injectToAI) {
+    const x = wm(uo(/* @__PURE__ */ new Set(), t));
+    x && It(ac, x, u.live, !1);
   }
-  const z = Uh(t) ? Vh : "";
-  z && Tt(oc, z, u.format, !1), A.lastInjection = z ? { ...a, format: z } : a, Wn = t.length, hs("注入", e, a);
+  const z = Wh(t) ? Hh : "";
+  z && It(cc, z, u.format, !1), A.lastInjection = z ? { ...a, format: z } : a, Yn = t.length, xs("注入", e, a);
 }
-const gi = /* @__PURE__ */ new Set();
-async function Lx() {
+const vi = /* @__PURE__ */ new Set();
+async function jx() {
   const e = q(), t = e.length - 1, n = e[t];
   if (!n?.is_user) return;
-  const s = zh(n.mes);
+  const s = $h(n.mes);
   if (!s) return;
-  const r = Ce();
+  const r = ze();
   if (!r || r.status !== "active" || r.manual.some((a) => a.kind === "skip" && a.atIndex === t)) return;
   const i = `${Ut()}:${t}:${n.mes}`;
-  if (gi.has(i)) return;
-  gi.add(i);
-  const { pack: o, progress: l } = Qs(e, r);
+  if (vi.has(i)) return;
+  vi.add(i);
+  const { pack: o, progress: l } = sr(e, r);
   if (!o || !l || l.ended) return;
-  const c = _h(o, l.phase, l.round, s);
-  c && await Ht(`是否跳到${s}？（${c.label}）`) && (r.manual.push({ kind: "skip", atIndex: t, targetPhase: c.phase, targetRound: c.round }), un(r));
+  const c = Sh(o, l.phase, l.round, s);
+  c && await Ht(`是否跳到${s}？（${c.label}）`) && (r.manual.push({ kind: "skip", atIndex: t, targetPhase: c.phase, targetRound: c.round }), dn(r));
 }
-async function Dx(e, t, n, s) {
+async function Bx(e, t, n, s) {
   try {
     if (s === "quiet" || s === "impersonate") {
-      er();
+      rr();
       return;
     }
-    s !== "continue" && s !== "swipe" && s !== "regenerate" && await Lx(), await Zx(s), Rx(s);
+    s !== "continue" && s !== "swipe" && s !== "regenerate" && await jx(), await rv(s), Fx(s);
   } catch (r) {
-    console.error("[rlzc] 拦截器出错", r), er();
+    console.error("[rlzc] 拦截器出错", r), rr();
   }
 }
-const os = /* @__PURE__ */ new Set();
-function ms() {
-  const e = Ce();
+const us = /* @__PURE__ */ new Set();
+function Cn() {
+  const e = ze();
   if (!e || e.status !== "ended") return 0;
   const t = A.progress?.endIndex;
   return t !== void 0 ? t + 1 : e.entryIndex + 1;
 }
 function eo(e, t) {
-  return Mc(e, ms(), t);
+  return Nc(e, Cn(), t, vs());
 }
-let Fx = 0, _n = null;
-function Qc(e) {
+let Vx = 0, En = null;
+function tu(e) {
   const { index: t, info: n, pack: s } = e, r = Ut(), i = `${r}:${t}:${n.name}`;
-  if (os.has(i) || Ce()?.status === "active") return;
-  os.add(i);
-  const l = Rc(s ?? {}, A.settings.live.optIn);
-  _n = e, A.entryCard = {
-    id: ++Fx,
+  if (us.has(i) || ze()?.status === "active") return;
+  us.add(i);
+  const l = wr(s ?? {}, A.settings.live.optIn);
+  En = e, A.entryCard = {
+    id: ++Vx,
     key: i,
     chatId: r,
     index: t,
     name: s?.name ?? n.name,
-    level: s ? s.rest ? "—" : s.level : ds(n),
+    level: s ? s.rest ? "—" : s.level : hs(n),
     unknown: !s,
     liveShow: l.show,
     live: l.checked
   };
 }
-function wr() {
+function ys() {
   const e = A.entryCard;
-  e && (os.delete(e.key), A.entryCard = null, _n = null);
+  e && (us.delete(e.key), A.entryCard = null, En = null);
 }
-function jx(e) {
+function Ux(e) {
   A.entryCard && (A.entryCard.live = e);
 }
-function ls() {
-  A.entryCard = null, _n = null;
+function ds() {
+  A.entryCard = null, En = null;
 }
-function xl() {
-  const e = A.entryCard, t = _n;
-  ls(), !(!e || !t || Ut() !== e.chatId) && Px(Hi(t.index, t.info.name));
+function bl() {
+  const e = A.entryCard, t = En;
+  ds(), !(!e || !t || Ut() !== e.chatId) && (Rx(cn(t.index, t.info.name)), Ce());
 }
-function vl() {
-  const e = A.entryCard, t = _n;
-  if (ls(), !e || !t) return;
+function kl() {
+  const e = A.entryCard, t = En;
+  if (ds(), !e || !t) return;
   if (Ut() !== e.chatId) {
-    os.delete(e.key);
+    us.delete(e.key);
     return;
   }
   const { index: n, info: s } = t;
-  e.liveShow && eu(e.live);
-  const r = fs(q(), n, A.packs, eo(q(), n));
+  e.liveShow && to(e.live);
+  const r = _n(q(), n, A.packs, eo(q(), n));
   if (!r || r.info.name !== s.name) {
-    Se("warning", "入场消息已变化，未启用。");
+    we("warning", "入场消息已变化，未启用。");
     return;
   }
-  if (Ce()?.status === "active") return;
+  if (ze()?.status === "active") return;
   const i = { ...s };
-  t.pack || (i.rounds = Pi(s.limit, ds(s), A.settings.genericCaps).rounds), xi(t.pack ?? Ri(i, A.settings.genericCaps), n, i, e.liveShow && e.live);
+  t.pack || (i.rounds = Di(s.limit, hs(s), A.settings.genericCaps).rounds), lo(t.pack ?? Li(i, A.settings.genericCaps), n, i, e.liveShow && e.live);
 }
-function eu(e) {
+function to(e) {
   A.settings.live.optIn !== e && (A.settings.live.optIn = e, ke());
 }
-function to(e = q()) {
-  for (let t = ms(); t < e.length; t++) if ($e(e[t])) return t;
+function no(e = q()) {
+  for (let t = Cn(); t < e.length; t++) if (Ee(e[t])) return t;
   return -1;
 }
-function no() {
-  const e = q(), t = to(e);
+function so() {
+  const e = q(), t = no(e);
   return t < 0 ? "" : `${t}${e[t].swipe_id ?? ""}${e[t].mes ?? ""}`;
 }
-let so = "";
-function ro() {
-  so = no();
-  const e = Xm(q(), Ce(), kr(), A.packs, ms());
-  e && Qc(e);
-}
-function tu() {
-  const e = A.entryCard;
-  e && fs(q(), e.index, A.packs, eo(q(), e.index))?.info.name !== _n?.info.name && wr();
-}
+let ro = "";
 function io() {
-  Ce()?.status !== "active" && (tu(), ro());
+  ro = so();
+  const e = tg(q(), ze(), Sn(), A.packs, Cn());
+  e && tu(e);
 }
-const Ns = Rg(() => {
-  !Lg() && no() !== so && io();
+function nu() {
+  const e = A.entryCard;
+  e && _n(q(), e.index, A.packs, eo(q(), e.index))?.info.name !== En?.info.name && ys();
+}
+function oo() {
+  ze()?.status !== "active" && (nu(), io());
+}
+const Rs = Og(() => {
+  !Fg() && so() !== ro && oo();
 });
-function Ox(e) {
-  e?.status === "active" ? Ns.stop() : Ns.running || (so = no(), Ns.start());
+function Hx(e) {
+  e?.status === "active" ? Rs.stop() : Rs.running || (ro = so(), Rs.start());
 }
-function Bx(e) {
-  Le();
-  const t = to();
-  A.entryCard && (e === t || e === A.entryCard.index) && wr(), e === t && ro();
+function Wx(e) {
+  Ce();
+  const t = no();
+  A.entryCard && (e === t || e === A.entryCard.index) && ys(), e === t && io();
 }
-function xi(e, t, n, s = !1) {
-  const r = q(), i = r[t], o = Ce();
-  o && dv(o);
-  const l = Km(e, t, n), c = xt();
-  if (c.corridor.on && (c.corridor.on = !1, as(c, c.corridor.show, cn.enterOff)), s && !e.disableLive && (l.live = !0, as(c, l.id, cn.instanceOn)), Sn(c), !e.rest) {
-    const u = St(r);
-    As(u.value, A.ledger, $t[st(r)]) && (l.clearance = !0);
+function lo(e, t, n, s = !1) {
+  const r = q(), i = r[t], o = ze();
+  o && xv(o);
+  const l = Ym(e, t, n), c = vt();
+  if (c.corridor.on && (c.corridor.on = !1, As(c, c.corridor.show, un.enterOff)), s && !e.disableLive && (l.live = !0, As(c, l.id, un.instanceOn)), Tn(c), !e.rest) {
+    const u = Ct(r);
+    ms(u.value, A.ledger, St[it(r)]) && (l.clearance = !0);
   }
-  ls(), i.extra = i.extra ?? {};
+  ds(), i.extra = i.extra ?? {};
   const a = i.extra.rlzc?.format;
-  i.extra.rlzc = { phase: e.phases[0]?.name ?? "进行中", round: 1, injected: [], entry: l.id, ...a ? { format: a } : {} }, un(l), Av(l, e, t), Le(), A.progress && (i.extra.rlzc.injected = Ye(A.progress.perMessage[t]?.events ?? [])), Je(), Se("success", `已进入副本《${e.name}》。`);
+  i.extra.rlzc = { phase: e.phases[0]?.name ?? "进行中", round: 1, injected: [], entry: l.id, ...a ? { format: a } : {} }, dn(l), vv(l, e, t), Ce(), A.progress && (i.extra.rlzc.injected = Je(A.progress.perMessage[t]?.events ?? [])), Ve(), we("success", `已进入副本《${e.name}》。`);
 }
-const tr = "generic:";
-async function Vx(e) {
-  const t = e.startsWith(tr) ? A.seenGeneric.find((u) => u.name === e.slice(tr.length)) : void 0, n = t ? void 0 : A.packs.find((u) => u.id === e);
-  if (!n && !t) return;
-  const s = n?.name ?? t.name, r = q();
-  let i = r.length - 1;
-  for (; i >= 0 && !$e(r[i]); ) i--;
-  if (i < 0) {
-    Se("warning", "当前聊天还没有AI消息，无法手动进入副本。");
+async function Gx(e) {
+  const t = A.packs.find((o) => o.id === e);
+  if (!t) return;
+  const n = su();
+  if (n < 0) {
+    we("warning", "当前聊天还没有AI消息，无法手动进入副本。");
     return;
   }
-  if (Ce()?.status === "active" && !await Ht("当前已有进行中的副本，确定要替换吗？")) return;
-  const l = Rc(n ?? {}, A.settings.live.optIn), c = await Yh(`以最新一条AI回复作为《${s}》的第1轮，确定进入吗？`, l.show ? { label: "开启直播", checked: l.checked } : null);
-  if (!c.ok) return;
-  if (l.show && eu(c.checked), n) {
-    xi(n, i, Di(r[i].mes) ?? { name: n.name }, l.show && c.checked);
+  if (ze()?.status === "active" && !await Ht("当前已有进行中的副本，确定要替换吗？")) return;
+  const r = wr(t, A.settings.live.optIn), i = await Zh(`以最新一条AI回复作为《${t.name}》的第1轮，确定进入吗？`, r.show ? { label: "开启直播", checked: r.checked } : null);
+  i.ok && (r.show && to(i.checked), lo(t, n, Oi(q()[n].mes) ?? { name: t.name }, r.show && i.checked));
+}
+function su(e = q()) {
+  let t = e.length - 1;
+  for (; t >= 0 && !Ee(e[t]); ) t--;
+  return t;
+}
+function ru(e = q()) {
+  return eg(e, A.packs, Cn(), Sn(), vs());
+}
+function Kx(e) {
+  return ru(e).map(({ index: t, info: n, pack: s }) => {
+    const r = wr(s ?? {}, A.settings.live.optIn);
+    return {
+      key: cn(t, n.name),
+      index: t,
+      name: s?.name ?? n.name,
+      level: s ? s.rest ? "—" : s.level : hs(n),
+      unknown: !s,
+      liveShow: r.show,
+      live: r.checked
+    };
+  });
+}
+function qx(e, t) {
+  const n = ru().find((o) => cn(o.index, o.info.name) === e);
+  if (!n) {
+    we("warning", "这条副本信息已不存在。"), Ce();
     return;
   }
-  const a = { ...t };
-  a.rounds = Pi(a.limit, ds(a), A.settings.genericCaps).rounds, xi(Ri(a, A.settings.genericCaps), i, a, l.show && c.checked);
+  if (ze()?.status === "active") return;
+  const s = su();
+  if (s < 0) return;
+  const r = wr(n.pack ?? {}, A.settings.live.optIn);
+  r.show && to(t);
+  const i = { ...n.info };
+  n.pack || (i.rounds = Di(i.limit, hs(i), A.settings.genericCaps).rounds), ys(), lo(n.pack ?? Li(i, A.settings.genericCaps), s, i, r.show && t);
 }
-function zr(e) {
-  Qi((t) => t.manual.push(e));
+function Yx(e) {
+  const t = e.slice(e.indexOf(":") + 1), n = Cn(), s = Sn().filter((r) => r.slice(r.indexOf(":") + 1) === t && Number(r.slice(0, r.indexOf(":"))) >= n);
+  Ox(s.length ? s : [e]), Ce();
 }
-function _r() {
+function $r(e) {
+  Xi((t) => t.manual.push(e));
+}
+function Sr() {
   return q().length - 1;
 }
-async function yl() {
+async function wl() {
   const e = A.progress;
   if (!(!e || e.ended || !A.pack?.phases.length || e.phase.cap <= 0)) {
     if (e.nextRound >= e.phase.cap) {
-      Se("info", "已经是本阶段最后一轮，无需跳过。");
+      we("info", "已经是本阶段最后一轮，无需跳过。");
       return;
     }
-    await Ht(`是否跳到本阶段结束？（${e.phase.name}第${e.phase.cap}轮）`) && (zr({ kind: "skip", atIndex: _r(), targetPhase: e.phase.id, targetRound: e.phase.cap }), Se("info", "已记录跳过，下一次生成开始快进。"));
+    await Ht(`是否跳到本阶段结束？（${e.phase.name}第${e.phase.cap}轮）`) && ($r({ kind: "skip", atIndex: Sr(), targetPhase: e.phase.id, targetRound: e.phase.cap }), we("info", "已记录跳过，下一次生成开始快进。"));
   }
 }
-async function bl() {
+async function zl() {
   if (!(!A.session || A.progress?.ended) && await Ht("确定要手动结束当前副本吗？")) {
     if (A.session.live) {
-      const e = xt();
-      as(e, A.session.id, cn.instanceOff), Sn(e);
+      const e = vt();
+      As(e, A.session.id, un.instanceOff), Tn(e);
     }
-    zr({ kind: "end", atIndex: _r() });
+    $r({ kind: "end", atIndex: Sr() });
   }
 }
-function Ux(e) {
-  zr({ kind: "setPhase", atIndex: _r(), phase: e });
+function Jx(e) {
+  $r({ kind: "setPhase", atIndex: Sr(), phase: e });
 }
-function Hx(e) {
-  zr({ kind: "setRound", atIndex: _r(), round: e });
+function Zx(e) {
+  $r({ kind: "setRound", atIndex: Sr(), round: e });
 }
-function Wx(e) {
-  Qi((t) => {
+function Qx(e) {
+  Xi((t) => {
     t.roles = Object.fromEntries(Object.entries(e).filter(([, n]) => n.trim()));
   });
 }
-function Gx(e) {
-  Qi((t) => t.manual.splice(e, 1));
+function Xx(e) {
+  Xi((t) => t.manual.splice(e, 1));
 }
-async function kl() {
-  A.session && await Ht("确定要删除当前副本会话吗？（不会改动聊天记录）") && (au(A.session.id), un(null), Le());
+async function _l() {
+  A.session && await Ht("确定要删除当前副本会话吗？（不会改动聊天记录）") && (du(A.session.id), dn(null), Ce());
 }
-function $n() {
+function Mn() {
   return A.settings.subApi.source !== "off";
 }
-function oo() {
+function ao() {
   const e = A.settings.subApi, t = Math.max(5, Number(e.timeoutSec) || 60) * 1e3;
   if (e.source === "main") return { source: "main", timeoutMs: t };
   if (e.source === "preset") {
@@ -7431,26 +7481,26 @@ function oo() {
   }
   return null;
 }
-function Kx(e) {
+function ev(e) {
   return e.source === "main" ? "跟随主API" : `自设API「${e.preset?.name}」`;
 }
-function nu(e, t) {
-  if (!$n() || !t || t.ended) return "";
+function iu(e, t) {
+  if (!Mn() || !t || t.ended) return "";
   if (A.subBusy) return "副本记录：整理中…";
   const n = Object.keys(t.perMessage).map(Number);
   if (!n.length) return "";
   const s = Math.max(...n);
   if (e[s]?.extra?.rlzc?.sub?.skipped) return `第${t.perMessage[s].round}轮状态未更新`;
-  const r = vr(e, t.entryIndex);
+  const r = kr(e, t.entryIndex);
   return r && t.perMessage[r.index] ? `副本记录：已更新（第${t.perMessage[r.index].round}轮）` : "副本记录：尚未整理";
 }
-let Gn = null;
-const lo = /* @__PURE__ */ new Set();
-function dn(e) {
-  return cm(Ut(), e, q()[e]);
+let Jn = null;
+const co = /* @__PURE__ */ new Set();
+function An(e) {
+  return dm(Ut(), e, q()[e]);
 }
-function wl(e) {
-  A.subBusy = e, A.subLine = nu(q(), A.progress);
+function $l(e) {
+  A.subBusy = e, A.subLine = iu(q(), A.progress);
   const t = "rlzc-sub-busy";
   let n = document.getElementById(t);
   if (e && A.settings.subApi.wait) {
@@ -7458,75 +7508,75 @@ function wl(e) {
     !n && s && (n = document.createElement("small"), n.id = t, n.textContent = "整理中…", n.title = "回廊种菜系统：正在检测本轮的副本事件", n.style.cssText = "align-self:center;margin:0 6px;opacity:.75;white-space:nowrap;font-size:calc(var(--mainFontSize, 15px) * 0.8);line-height:1.2;", s.prepend(n));
   } else n?.remove();
 }
-function su(e, t, n) {
-  if (dn(e) !== t) return;
+function ou(e, t, n) {
+  if (An(e) !== t) return;
   const s = q()[e];
-  s?.extra?.rlzc && (s.extra.rlzc = Ye({ ...s.extra.rlzc, sub: n }), Je(), Le());
+  s?.extra?.rlzc && (s.extra.rlzc = Je({ ...s.extra.rlzc, sub: n }), Ve(), Ce());
 }
-function qx(e, t) {
+function tv(e, t) {
   const n = q(), s = A.progress, r = A.pack, i = n[e], o = s?.perMessage[e];
   if (!r || !s || !o || !i) return null;
-  const l = Xc(), c = (M) => ({ ...M, text: qs(M.text, r, l), if: M.if ? qs(M.if, r, l) : void 0 }), a = om(r, i.extra?.rlzc?.injected ?? []).map(c), u = (s.next?.events ?? []).filter((M) => M.if).map(c);
-  if (!um({
-    enabled: $n(),
+  const l = eu(), c = (T) => ({ ...T, text: Qs(T.text, r, l), if: T.if ? Qs(T.if, r, l) : void 0 }), a = am(r, i.extra?.rlzc?.injected ?? []).map(c), u = (s.next?.events ?? []).filter((T) => T.if).map(c);
+  if (!Am({
+    enabled: Mn(),
     active: !s.ended && A.session?.status === "active",
     type: t,
     saveMode: A.settings.subApi.saveMode,
     hasEvents: a.length > 0,
     hasNextConditional: u.length > 0
   })) return null;
-  const h = dn(e);
-  if (lo.has(h)) return null;
-  const x = r.phases.find((M) => M.id === o.phase), z = vr(n.slice(0, e), s.entryIndex), k = A.session ? Ve().books[A.session.id] : void 0, R = im({
+  const m = An(e);
+  if (co.has(m)) return null;
+  const k = r.phases.find((T) => T.id === o.phase), z = kr(n.slice(0, e), s.entryIndex), x = A.session ? Ue().books[A.session.id] : void 0, $ = lm({
     pack: r,
-    phaseName: x?.name ?? o.phase,
+    phaseName: k?.name ?? o.phase,
     round: o.round,
     prevState: z?.state ?? null,
     events: a,
     nextConditional: u,
     text: String(i.mes ?? ""),
-    markets: k ? rx(k, A.market.results) : []
-  }), U = me().substituteParams, D = U ? { system: U(R.system), user: U(R.user) } : R, E = Yx(e, h, o.round, D);
-  return Gn = { key: h, index: e, promise: E }, E.finally(() => {
-    Gn?.key === h && (Gn = null);
-  }), E;
+    markets: x ? lx(x, A.market.results) : []
+  }), j = me().substituteParams, O = j ? { system: j($.system), user: j($.user) } : $, M = nv(e, m, o.round, O);
+  return Jn = { key: m, index: e, promise: M }, M.finally(() => {
+    Jn?.key === m && (Jn = null);
+  }), M;
 }
-async function Yx(e, t, n, s) {
-  wl(!0);
+async function nv(e, t, n, s) {
+  $l(!0);
   try {
     let r = 2;
     for (; ; ) {
-      const i = oo();
+      const i = ao();
       if (!i) throw new Error("副本事件检测没有设置好：选了「自设API」时需要先选一个接口预设");
       const o = Date.now();
       try {
-        const l = await dm((c) => Ui(i, c), s, r);
-        su(e, t, { ...l, ms: Date.now() - o, via: Kx(i), at: (/* @__PURE__ */ new Date()).toISOString() }), lo.add(t);
+        const l = await fm((c) => Hi(i, c), s, r);
+        ou(e, t, { ...l, ms: Date.now() - o, via: ev(i), at: (/* @__PURE__ */ new Date()).toISOString() }), co.add(t);
         return;
       } catch (l) {
-        if (dn(e) !== t) return;
-        const c = xr(l), a = Ai(l), u = a === c ? String(l?.message ?? l).slice(0, 200) : "";
-        if (hs("副本事件检测失败", a, l), !A.settings.subApi.wait) {
-          Se("warning", `第${n}轮事件检测失败：${a}，已沿用上一轮状态。`), qr(e, t, a);
+        if (An(e) !== t) return;
+        const c = br(l), a = pi(l), u = a === c ? String(l?.message ?? l).slice(0, 200) : "";
+        if (xs("副本事件检测失败", a, l), !A.settings.subApi.wait) {
+          we("warning", `第${n}轮事件检测失败：${a}，已沿用上一轮状态。`), Jr(e, t, a);
           return;
         }
-        if (await Jx(n, a, u) === "skip") {
-          qr(e, t, a);
+        if (await sv(n, a, u) === "skip") {
+          Jr(e, t, a);
           return;
         }
         r = 0;
       }
     }
   } catch (r) {
-    Se("error", String(r?.message ?? r)), qr(e, t, "其他");
+    we("error", String(r?.message ?? r)), Jr(e, t, "其他");
   } finally {
-    wl(!1);
+    $l(!1);
   }
 }
-function qr(e, t, n) {
-  lo.add(t), su(e, t, { skipped: !0, error: n, at: (/* @__PURE__ */ new Date()).toISOString() });
+function Jr(e, t, n) {
+  co.add(t), ou(e, t, { skipped: !0, error: n, at: (/* @__PURE__ */ new Date()).toISOString() });
 }
-async function Jx(e, t, n) {
+async function sv(e, t, n) {
   const s = me();
   if (!s.Popup || !s.POPUP_TYPE)
     return window.confirm(`第${e}轮事件检测失败：${t}。重试吗？取消则这轮先跳过。`) ? "retry" : "skip";
@@ -7542,19 +7592,19 @@ async function Jx(e, t, n) {
   u.textContent = "换成：";
   const f = document.createElement("select");
   f.className = "text_pole";
-  const h = [{ value: "", text: "请选择…" }];
-  for (const k of r.presets) r.source === "preset" && k.id === r.presetId || h.push({ value: `preset:${k.id}`, text: `自设API：${k.name}` });
-  r.source !== "main" && h.push({ value: "main", text: "跟随主API" });
-  for (const k of h) {
-    const R = document.createElement("option");
-    R.value = k.value, R.textContent = k.text, f.append(R);
+  const m = [{ value: "", text: "请选择…" }];
+  for (const x of r.presets) r.source === "preset" && x.id === r.presetId || m.push({ value: `preset:${x.id}`, text: `自设API：${x.name}` });
+  r.source !== "main" && m.push({ value: "main", text: "跟随主API" });
+  for (const x of m) {
+    const $ = document.createElement("option");
+    $.value = x.value, $.textContent = x.text, f.append($);
   }
   u.append(f), a.append(u), i.append(o, l, c, a);
-  let x;
+  let k;
   f.addEventListener("change", () => {
-    const k = f.value;
-    k && (k === "main" ? r.source = "main" : (r.source = "preset", r.presetId = k.slice(7)), ke(), x.complete(s.POPUP_RESULT.CUSTOM1));
-  }), x = new s.Popup(i, s.POPUP_TYPE.TEXT, "", {
+    const x = f.value;
+    x && (x === "main" ? r.source = "main" : (r.source = "preset", r.presetId = x.slice(7)), ke(), k.complete(s.POPUP_RESULT.CUSTOM1));
+  }), k = new s.Popup(i, s.POPUP_TYPE.TEXT, "", {
     okButton: "重试",
     cancelButton: "这轮先跳过",
     customButtons: [
@@ -7566,151 +7616,151 @@ async function Jx(e, t, n) {
       }
     ]
   });
-  const z = await x.show();
+  const z = await k.show();
   return z === s.POPUP_RESULT.AFFIRMATIVE || z === s.POPUP_RESULT.CUSTOM1 ? "retry" : "skip";
 }
-async function Zx(e) {
-  const t = Gn;
-  if (!(!t || !A.settings.subApi.wait) && !((e === "swipe" || e === "regenerate" || e === "continue") && t.index >= Zc(e).length))
+async function rv(e) {
+  const t = Jn;
+  if (!(!t || !A.settings.subApi.wait) && !((e === "swipe" || e === "regenerate" || e === "continue") && t.index >= Xc(e).length))
     try {
       await t.promise;
     } catch {
     }
 }
-function Xx(e, t) {
+function iv(e, t) {
   const n = q(), s = n[e];
-  if (!$e(s)) return;
-  Qx(e, t);
-  const r = Ce();
-  if (t !== "first_message" && wr(), !r || r.status === "ended") {
-    if (fs(n, e, A.packs, eo(n, e))) {
-      const a = Zm(n, A.packs, ms(), e, kr());
-      a && Qc(a);
+  if (!Ee(s)) return;
+  ov(e, t);
+  const r = ze();
+  if (t !== "first_message" && ys(), !r || r.status === "ended") {
+    if (_n(n, e, A.packs, eo(n, e))) {
+      const a = Xm(n, A.packs, Cn(), e, Sn(), vs());
+      a && tu(a);
     }
     if (t === "first_message") return;
-    Le(), gl(e, !1), _l(e), Jr(e, t), zl(), Cl();
+    Ce(), yl(e, !1), Cl(e), Qr(e, t), Sl(), Tl();
     return;
   }
   if (t === "first_message") return;
   let i = null;
-  $n() && (Kn = e);
-  const o = Ya(s.mes);
-  o && (r.roles = { ...r.roles ?? {}, ...o }), un(r), Le();
+  Mn() && (Zn = e);
+  const o = Qa(s.mes);
+  o && (r.roles = { ...r.roles ?? {}, ...o }), dn(r), Ce();
   const l = A.progress?.perMessage[e];
   if (l && A.pack) {
-    const a = A.pack.phases.find((k) => k.id === l.phase), u = {
+    const a = A.pack.phases.find((x) => x.id === l.phase), u = {
       phase: a?.name ?? l.phase,
       round: l.round,
-      injected: Wn === e ? A.lastInjection.injected : l.events
+      injected: Yn === e ? A.lastInjection.injected : l.events
     }, f = A.pack.time;
-    f.type === "clock" && a?.clock && !a.night && !a.frozen && (u.clock = Za(f.dayStart, f.minutesPerRound, l.round));
-    const h = Wn === e ? A.lastInjection.limit : l.limit?.text ? { text: l.limit.text, minutes: l.limit.minutes, total: l.limit.total } : void 0;
-    h && (u.limit = h);
-    const x = s.extra?.rlzc?.entry;
-    x && (u.entry = x), s.extra?.rlzc?.format && (u.format = s.extra.rlzc.format), Wn === e && A.lastInjection.skipped?.length && (u.skippedEvents = A.lastInjection.skipped), t === "continue" && s.extra?.rlzc?.sub && (u.sub = s.extra.rlzc.sub), t === "continue" && s.extra?.rlzc?.live && (u.live = s.extra.rlzc.live);
-    const z = (s.extra?.rlzc?.ledger ?? []).filter((k) => k.type === "tip");
-    t === "continue" && z.length && (u.ledger = z), s.extra = s.extra ?? {}, s.extra.rlzc = Ye(u), Je(), Le(), i = qx(e, t);
+    f.type === "clock" && a?.clock && !a.night && !a.frozen && (u.clock = ec(f.dayStart, f.minutesPerRound, l.round));
+    const m = Yn === e ? A.lastInjection.limit : l.limit?.text ? { text: l.limit.text, minutes: l.limit.minutes, total: l.limit.total } : void 0;
+    m && (u.limit = m);
+    const k = s.extra?.rlzc?.entry;
+    k && (u.entry = k), s.extra?.rlzc?.format && (u.format = s.extra.rlzc.format), Yn === e && A.lastInjection.skipped?.length && (u.skippedEvents = A.lastInjection.skipped), t === "continue" && s.extra?.rlzc?.sub && (u.sub = s.extra.rlzc.sub), t === "continue" && s.extra?.rlzc?.live && (u.live = s.extra.rlzc.live);
+    const z = (s.extra?.rlzc?.ledger ?? []).filter((x) => x.type === "tip");
+    t === "continue" && z.length && (u.ledger = z), s.extra = s.extra ?? {}, s.extra.rlzc = Je(u), Ve(), Ce(), i = tv(e, t);
   }
-  Kn >= 0 && (Kn = -1, i || Le());
-  const c = gr(s.mes);
-  if (c && Se("info", `副本结算：${c.result ?? "—"}${c.rating ? `，评价 ${c.rating}` : ""}`), gl(e), _l(e), i) {
-    const a = dn(e);
+  Zn >= 0 && (Zn = -1, i || Ce());
+  const c = yr(s.mes);
+  if (c && we("info", `副本结算：${c.result ?? "—"}${c.rating ? `，评价 ${c.rating}` : ""}`), yl(e), Cl(e), i) {
+    const a = An(e);
     i.then(() => {
-      dn(e) === a && Jr(e, t);
+      An(e) === a && Qr(e, t);
     });
-  } else Jr(e, t);
-  zl(), Cl();
+  } else Qr(e, t);
+  Sl(), Tl();
 }
-function Qx(e, t) {
+function ov(e, t) {
   if (t === "first_message" || t === "quiet" || t === "impersonate") return;
   const n = q(), s = n[e];
-  if (!$e(s) || cc(n, e)) return;
-  const r = Oi(s.mes);
+  if (!Ee(s) || Ac(n, e)) return;
+  const r = Bi(s.mes);
   let i;
   if (r.kind !== "ok") {
     i = { kind: r.kind, detail: r.detail };
-    const c = A.settings.statusBarFix ? Bh(s.mes) : null;
-    c && (s.mes = c.text, Array.isArray(s.swipes) && s.swipe_id !== void 0 && s.swipe_id < s.swipes.length && (s.swipes[s.swipe_id] = c.text), i.fixed = !0, i.from = c.from, Kh(), qh(e), Ps(e), Se("info", "已修正本轮状态栏标签"));
+    const c = A.settings.statusBarFix ? Uh(s.mes) : null;
+    c && (s.mes = c.text, Array.isArray(s.swipes) && s.swipe_id !== void 0 && s.swipe_id < s.swipes.length && (s.swipes[s.swipe_id] = c.text), i.fixed = !0, i.from = c.from, Yh(), Jh(e), Os(e), we("info", "已修正本轮状态栏标签"));
   }
   const o = s.extra?.rlzc;
   if (!i && (t === "continue" || !o?.format)) return;
   s.extra = s.extra ?? {};
   const l = o ?? { phase: "", round: 0, injected: [] };
-  s.extra.rlzc = Ye({ ...l, format: i }), Je();
+  s.extra.rlzc = Je({ ...l, format: i }), Ve();
 }
-function zl() {
-  const e = nt();
-  e.fix && zn({ ...e, fix: void 0 });
+function Sl() {
+  const e = rt();
+  e.fix && $n({ ...e, fix: void 0 });
 }
-function _l(e) {
+function Cl(e) {
   const t = q(), n = t[e];
   if (!n || n.is_user || !n.mes) return;
   const r = /<状态栏>([\s\S]*?)<\/状态栏>/.exec(n.mes);
   if (!r) return;
-  const i = Sc(r[1]);
+  const i = Mc(r[1]);
   if (i === null) return;
-  const o = St(t), l = (a) => a.mesIndex === e && (a.type === "tip" || a.type === "bet" && /^赌票/.test(a.source)), c = fn(o.value, pn(t).filter((a) => !l(a)));
-  i !== c && (hs(`积分核对不符（楼层${e}）：状态栏 ${i}，账本 ${c}`), n.extra?.rlzc && (n.extra.rlzc = Ye({ ...n.extra.rlzc, ledgerMismatch: { status: i, ledger: c } }), Je()));
+  const o = Ct(t), l = (a) => a.mesIndex === e && (a.type === "tip" || a.type === "bet" && /^赌票/.test(a.source)), c = pn(o.value, hn(t).filter((a) => !l(a)));
+  i !== c && (xs(`积分核对不符（楼层${e}）：状态栏 ${i}，账本 ${c}`), n.extra?.rlzc && (n.extra.rlzc = Je({ ...n.extra.rlzc, ledgerMismatch: { status: i, ledger: c } }), Ve()));
 }
-let $s = null;
-function $l() {
-  Ns.stop(), $s && clearTimeout($s), gi.clear(), wr(), os.clear(), Wn = -1, Kn = -1, A.chatId = Ut(), A.debugUnlocked = !1, A.lastInjection = rs, er(), Ng(), rv(), A.ledger = pn(q()), Le(), ro();
+let Ms = null;
+function El() {
+  Rs.stop(), Ms && clearTimeout(Ms), vi.clear(), ys(), us.clear(), Yn = -1, Zn = -1, A.chatId = Ut(), A.debugUnlocked = !1, A.lastInjection = as, rr(), Lg(), dv(), A.ledger = hn(q()), Ce(), io();
   const e = A.chatId;
-  $s = setTimeout(() => {
-    $s = null, Ut() === e && io();
-  }, 300), nr();
+  Ms = setTimeout(() => {
+    Ms = null, Ut() === e && oo();
+  }, 300), ir();
 }
-function Yr(e) {
-  Le(), tu(), e !== void 0 && e === to() && io();
+function Zr(e) {
+  Ce(), nu(), e !== void 0 && e === no() && oo();
 }
-function ru() {
+function lu() {
   return A.settings.panelDisplay === "statusbar" ? an.filter((e) => e !== "副本") : an;
 }
-function Ps(e, t = !1) {
-  fc(e, ru(), !1, t);
+function Os(e, t = !1) {
+  mc(e, lu(), !1, t);
 }
-function nr(e = !1, t = !1) {
-  tm(ru(), e, t);
+function ir(e = !1, t = !1) {
+  sm(lu(), e, t);
 }
-function ev(e) {
-  A.settings.panelDisplay !== e && (A.settings.panelDisplay = e, ke(), nr(!0));
+function lv(e) {
+  A.settings.panelDisplay !== e && (A.settings.panelDisplay = e, ke(), ir(!0));
 }
-const Rs = Tg;
-function xt() {
-  return hg(gt()[Nc]);
+const Fs = Pg;
+function vt() {
+  return xg(Ze()[Lc]);
 }
-function Sn(e) {
-  gt()[Nc] = Ye(e), Je();
+function Tn(e) {
+  Ze()[Lc] = Je(e), Ve();
 }
-function as(e, t, n) {
+function As(e, t, n) {
   if (!t) return;
-  const s = yr(q(), e) + 1, r = { id: s, t: "sys", name: "", text: n, amount: 0, net: 0, show: t };
+  const s = zr(q(), e) + 1, r = { id: s, t: "sys", name: "", text: n, amount: 0, net: 0, show: t };
   e.sys = [...e.sys, r].slice(-100), e.seq = s, Ji([r]);
 }
-function tv() {
+function av() {
   return "c" + Math.random().toString(36).slice(2, 8) + Date.now().toString(36);
 }
-function nv(e) {
+function cv(e) {
   const t = A.session, n = A.progress;
   if (!!t && e > t.entryIndex && (!n?.ended || n.endIndex !== void 0 && e <= n.endIndex)) return t.live && A.pack ? { show: t.id, scope: "instance", pack: A.pack } : null;
-  const r = xt();
+  const r = vt();
   return r.corridor.on && r.corridor.show ? { show: r.corridor.show, scope: "corridor", pack: null } : null;
 }
-function Jr(e, t) {
+function Qr(e, t) {
   if (t === "continue" || t === "first_message") return;
   const n = q(), s = n[e];
-  if (!$e(s) || Wt(s)) return;
-  const r = nv(e);
+  if (!Ee(s) || Wt(s)) return;
+  const r = cv(e);
   if (!r) return;
-  const i = xt(), { show: o, scope: l, pack: c } = r, a = A.progress, u = s.extra?.rlzc ?? { phase: "", round: 0, injected: [] }, f = Ki(n, o, e), h = u.sub && !u.sub.skipped ? { hype: u.sub.hype, hurt: u.sub.hurt } : void 0, x = l === "instance" && a?.endIndex === e && a.endedBy === "tag" ? gr(s.mes) : null, z = !!x && ["死亡", "阵亡"].includes(String(x.result ?? "").trim()), k = a?.roundsLeft, R = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(s.mes ?? "")), U = new Set((c?.events ?? []).filter((X) => X.kind !== "directive").map((X) => X.id)), D = hm({
+  const i = vt(), { show: o, scope: l, pack: c } = r, a = A.progress, u = s.extra?.rlzc ?? { phase: "", round: 0, injected: [] }, f = Ki(n, o, e), m = u.sub && !u.sub.skipped ? { hype: u.sub.hype, hurt: u.sub.hurt } : void 0, k = l === "instance" && a?.endIndex === e && a.endedBy === "tag" ? yr(s.mes) : null, z = !!k && ["死亡", "阵亡"].includes(String(k.result ?? "").trim()), x = a?.roundsLeft, $ = /<阶段切换>[\s\S]*?<\/阶段切换>/.test(String(s.mes ?? "")), j = new Set((c?.events ?? []).filter((Q) => Q.kind !== "directive").map((Q) => Q.id)), O = gm({
     aiSource: A.settings.live.source === "ai",
-    subOn: $n(),
+    subOn: Mn(),
     roundInShow: f.length + 1,
     freq: A.settings.live.freq,
-    phaseSwitch: R,
-    hurt: Fc(String(s.mes ?? ""), h),
-    eventDone: !!u.sub && !u.sub.skipped && (u.sub.events ?? []).some((X) => X.status === "done")
-  }), E = yg({
+    phaseSwitch: $,
+    hurt: jc(String(s.mes ?? ""), m),
+    eventDone: !!u.sub && !u.sub.skipped && (u.sub.events ?? []).some((Q) => Q.status === "done")
+  }), M = wg({
     show: o,
     scope: l,
     packLevel: c?.level ?? null,
@@ -7719,227 +7769,227 @@ function Jr(e, t) {
     prevHeat: f.length ? f[f.length - 1].rec.heat : null,
     roundsInShow: f.length,
     text: String(s.mes ?? ""),
-    hasEvents: (u.injected ?? []).some((X) => U.has(X)),
-    hasPhaseSwitch: R,
-    sub: h,
-    isEnd: l === "instance" && !!k && k.y > 0 && k.x < k.y * 0.1,
+    hasEvents: (u.injected ?? []).some((Q) => j.has(Q)),
+    hasPhaseSwitch: $,
+    sub: m,
+    isEnd: l === "instance" && !!x && x.y > 0 && x.x < x.y * 0.1,
     phaseId: l === "instance" ? a?.perMessage[e]?.phase : void 0,
-    pool: Rs.pool,
-    templates: Rs.templates,
+    pool: Fs.pool,
+    templates: Fs.templates,
     packDanmaku: c?.danmaku,
-    names: Rs.names,
-    whoNames: Dc(Lc(n, e + 1), String(me().name1 ?? "")),
-    recentTexts: mg(n.slice(0, e)),
-    firstId: yr(n, i) + 1,
-    settle: x ? { died: z, tipsBefore: qi(n.slice(0, e), o) } : void 0,
-    awaitAi: D,
+    names: Fs.names,
+    whoNames: Fc(Oc(n, e + 1), String(me().name1 ?? "")),
+    recentTexts: vg(n.slice(0, e)),
+    firstId: zr(n, i) + 1,
+    settle: k ? { died: z, tipsBefore: qi(n.slice(0, e), o) } : void 0,
+    awaitAi: O,
     rand: Math.random
   });
-  D && (E.ai = { ok: !1, pending: !0 });
-  const M = Ze(s.send_date ?? s.gen_finished ?? void 0), te = [...(u.ledger ?? []).filter((X) => X.type !== "tip"), ...kg(E, M)];
-  s.extra = s.extra ?? {}, s.extra.rlzc = Ye({ ...u, live: E, ledger: te.length ? te : void 0 }), i.seq = Math.max(i.seq, ...E.feed.map((X) => X.id)), Sn(i), A.ledger = pn(q()), A.tick++, E.feed.length ? Ji(E.feed, !0) : ps(), D && sv(e, E.scope === "instance" ? c?.name : void 0);
+  O && (M.ai = { ok: !1, pending: !0 });
+  const T = Qe(s.send_date ?? s.gen_finished ?? void 0), te = [...(u.ledger ?? []).filter((Q) => Q.type !== "tip"), ..._g(M, T)];
+  s.extra = s.extra ?? {}, s.extra.rlzc = Je({ ...u, live: M, ledger: te.length ? te : void 0 }), i.seq = Math.max(i.seq, ...M.feed.map((Q) => Q.id)), Tn(i), A.ledger = hn(q()), A.tick++, M.feed.length ? Ji(M.feed, !0) : gs(), O && uv(e, M.scope === "instance" ? c?.name : void 0);
 }
-function sv(e, t) {
-  const n = q(), s = dn(e), r = oo();
+function uv(e, t) {
+  const n = q(), s = An(e), r = ao();
   if (!r) {
-    Zr(e, s, [], "副本事件检测没有设置好", 0);
+    Xr(e, s, [], "副本事件检测没有设置好", 0);
     return;
   }
   const i = [];
-  for (let u = e; u >= 0 && i.length < 2; u--) $e(n[u]) && i.unshift(String(n[u].mes ?? ""));
-  const o = gm({
+  for (let u = e; u >= 0 && i.length < 2; u--) Ee(n[u]) && i.unshift(String(n[u].mes ?? ""));
+  const o = vm({
     scene: t ?? "回廊",
     texts: i,
-    cast: Dc(Lc(n, e + 1), String(me().name1 ?? "")),
-    samples: mm(Rs.pool, 10, Math.random)
+    cast: Fc(Oc(n, e + 1), String(me().name1 ?? "")),
+    samples: xm(Fs.pool, 10, Math.random)
   }), l = me().substituteParams, c = l ? { system: l(o.system), user: l(o.user) } : o, a = Date.now();
-  vm((u) => Ui(r, u, { temperature: 0.9 }), c, 1).then((u) => Zr(e, s, u, null, Date.now() - a)).catch((u) => {
-    hs("AI 弹幕生成失败", u);
+  bm((u) => Hi(r, u, { temperature: 0.9 }), c, 1).then((u) => Xr(e, s, u, null, Date.now() - a)).catch((u) => {
+    xs("AI 弹幕生成失败", u);
     const f = String(u?.message ?? u).slice(0, 120);
-    Zr(e, s, [], `${xr(u)}：${f}`, Date.now() - a);
+    Xr(e, s, [], `${br(u)}：${f}`, Date.now() - a);
   });
 }
-function Zr(e, t, n, s, r) {
-  if (dn(e) !== t) return;
+function Xr(e, t, n, s, r) {
+  if (An(e) !== t) return;
   const i = q(), o = i[e], l = Wt(o);
   if (!l?.pending || !o.extra?.rlzc) return;
-  const c = xt(), a = Oc(l, s ? null : n, yr(i, c) + 1, Math.random), u = s ? 0 : Math.min(n.length, 13), f = { ...a, ai: s ? { ok: !1, error: s, ms: r } : { ok: !0, count: u, ms: r } };
-  o.extra.rlzc = Ye({ ...o.extra.rlzc, live: f }), c.seq = Math.max(c.seq, ...f.feed.map((h) => h.id)), Sn(c), A.tick++, Ji(f.feed, !0);
+  const c = vt(), a = Vc(l, s ? null : n, zr(i, c) + 1, Math.random), u = s ? 0 : Math.min(n.length, 13), f = { ...a, ai: s ? { ok: !1, error: s, ms: r } : { ok: !0, count: u, ms: r } };
+  o.extra.rlzc = Je({ ...o.extra.rlzc, live: f }), c.seq = Math.max(c.seq, ...f.feed.map((m) => m.id)), Tn(c), A.tick++, Ji(f.feed, !0);
 }
-function rv() {
+function dv() {
   const e = q();
   let t = !1;
   for (const n of e) {
     const s = Wt(n);
     if (!s?.pending || !n.extra?.rlzc) continue;
-    const r = xt(), i = Oc(s, null, yr(e, r) + 1, Math.random);
-    n.extra.rlzc = Ye({ ...n.extra.rlzc, live: { ...i, ai: { ok: !1, error: "没有等到结果" } } }), r.seq = Math.max(r.seq, ...i.feed.map((o) => o.id)), Sn(r), t = !0;
+    const r = vt(), i = Vc(s, null, zr(e, r) + 1, Math.random);
+    n.extra.rlzc = Je({ ...n.extra.rlzc, live: { ...i, ai: { ok: !1, error: "没有等到结果" } } }), r.seq = Math.max(r.seq, ...i.feed.map((o) => o.id)), Tn(r), t = !0;
   }
-  t && Je();
+  t && Ve();
 }
-function iv() {
-  const e = xt();
+function Av() {
+  const e = vt();
   return A.session?.status === "active" && A.pack ? Gi({ packLevel: A.pack.level, playerLevel: Yi(q()), isRest: !!A.pack.rest, heat: 20, rand: 1 }) : e.corridor.viewers ?? 0;
 }
-function ov() {
+function fv() {
   const e = A.session;
-  return e?.status === "active" ? !!e.live : xt().corridor.on;
+  return e?.status === "active" ? !!e.live : vt().corridor.on;
 }
-function ao(e, t = q()) {
+function uo(e, t = q()) {
   const n = A.session, s = n?.status === "active";
-  return Sg(
+  return Mg(
     t,
-    xt(),
+    vt(),
     {
       inInstance: s,
       instanceLive: !!(s && n?.live),
       instanceShow: n?.id,
-      startViewers: iv(),
+      startViewers: Av(),
       injectToAI: A.settings.live.injectToAI
     },
     e
   );
 }
-function lv() {
-  const e = A.session, t = ao(/* @__PURE__ */ new Set()), n = t.viewers > 0 ? ` · ${t.viewers.toLocaleString("en-US")}人在看` : "";
+function pv() {
+  const e = A.session, t = uo(/* @__PURE__ */ new Set()), n = t.viewers > 0 ? ` · ${t.viewers.toLocaleString("en-US")}人在看` : "";
   if (e?.status === "active") {
     const s = A.pack?.disableLive ? "本副本自带直播玩法" : t.on ? `副本内锁定${n}` : "副本内锁定，回廊可开播";
     return { on: t.on, locked: !0, scope: "instance", note: s };
   }
   return { on: t.on, locked: !1, scope: "corridor", note: t.on ? `回廊直播${n}` : "回廊中可随时开播" };
 }
-function iu() {
+function au() {
   if (A.session?.status === "active") return !1;
-  const e = xt();
+  const e = vt();
   if (e.corridor.on)
-    e.corridor.on = !1, as(e, e.corridor.show, cn.corridorOff);
+    e.corridor.on = !1, As(e, e.corridor.show, un.corridorOff);
   else {
-    const t = tv();
+    const t = av();
     e.corridor = {
       on: !0,
       show: t,
       viewers: Gi({ packLevel: null, playerLevel: Yi(q()), isRest: !1, heat: 20, rand: 0.9 + Math.random() * 0.2 })
-    }, as(e, t, cn.corridorOn);
+    }, As(e, t, un.corridorOn);
   }
-  return Sn(e), A.tick++, ps(), !0;
+  return Tn(e), A.tick++, gs(), !0;
 }
-function av() {
+function hv() {
   return { book: null, results: {}, tickets: [], pending: 0, tables: [], casinoOpen: !0 };
 }
-function Ve() {
-  return vx(gt()[Vc]);
+function Ue() {
+  return kx(Ze()[Hc]);
 }
-function Ct(e) {
-  gt()[Vc] = Ye(e), Je();
+function Et(e) {
+  Ze()[Hc] = Je(e), Ve();
 }
-let Kn = -1;
-function cv() {
-  return [Kn, Gn?.index ?? -1].filter((e) => e >= 0);
+let Zn = -1;
+function mv() {
+  return [Zn, Jn?.index ?? -1].filter((e) => e >= 0);
 }
-function co(e = q()) {
-  return fn(St(e).value, A.ledger);
+function Ao(e = q()) {
+  return pn(Ct(e).value, A.ledger);
 }
-function ou(e) {
-  if (nt().init) return;
-  const t = St(e), n = nt();
-  n.init || zn({ ...n, init: { value: t.value, source: t.source, at: Ze(void 0) } });
+function cu(e) {
+  if (rt().init) return;
+  const t = Ct(e), n = rt();
+  n.init || $n({ ...n, init: { value: t.value, source: t.source, at: Qe(void 0) } });
 }
-function lu() {
-  const e = Ce();
+function uu() {
+  const e = ze();
   return e?.status === "active" && e.live ? qi(q(), e.id) : 0;
 }
-function $r(e, t, n) {
-  if (t.frozen) return { results: {}, tickets: pi(t, {}), rounds: [] };
+function Cr(e, t, n) {
+  if (t.frozen) return { results: {}, tickets: mi(t, {}), rounds: [] };
   let s = { voided: !0, ended: !1 }, r = [], i = {};
   if (n && n.id === t.session) {
-    const l = Cc(n, A.packs), c = l ? Qa(e, n, l) : null;
+    const l = Tc(n, A.packs), c = l ? nc(e, n, l) : null;
     c && (s = {
       ended: c.ended,
       endedBy: c.endedBy,
       endIndex: c.endIndex,
       result: c.settlement?.result,
       rating: c.settlement?.rating
-    }, r = sx(e, c.perMessage, c.entryIndex, cv()), i = c.phaseEnds);
+    }, r = ox(e, c.perMessage, c.entryIndex, mv()), i = c.phaseEnds);
   }
-  const o = tx({ markets: t.markets, rounds: r, outcome: s, phaseEnds: i });
-  return { results: o, tickets: pi(t, o), rounds: r };
+  const o = rx({ markets: t.markets, rounds: r, outcome: s, phaseEnds: i });
+  return { results: o, tickets: mi(t, o), rounds: r };
 }
-function uv(e) {
-  const t = Ve(), n = Ce(), s = (i) => e[i] ? Ze(e[i].send_date ?? e[i].gen_finished ?? void 0) : void 0, r = [];
-  for (const i of Object.values(t.books)) r.push(...lx(i, $r(e, i, n).tickets, s));
+function gv(e) {
+  const t = Ue(), n = ze(), s = (i) => e[i] ? Qe(e[i].send_date ?? e[i].gen_finished ?? void 0) : void 0, r = [];
+  for (const i of Object.values(t.books)) r.push(...ux(i, Cr(e, i, n).tickets, s));
   for (const i of t.casino.plays)
-    r.push({ delta: i.net, source: kx(i.table, i.label), type: "bet", at: i.at, pos: i.after, seq: i.seq ?? 0 });
+    r.push({ delta: i.net, source: _x(i.table, i.label), type: "bet", at: i.at, pos: i.after, seq: i.seq ?? 0 });
   return r;
 }
-function dv(e) {
-  const t = Ve(), n = t.books[e.id];
+function xv(e) {
+  const t = Ue(), n = t.books[e.id];
   if (!n || n.frozen) return;
-  const s = q(), r = nx(n, $r(s, n, e).results);
+  const s = q(), r = ix(n, Cr(s, n, e).results);
   for (const i of n.tickets) r[i.id].index < 0 && (r[i.id].index = Math.max(s.length, i.after + 1));
-  n.frozen = r, Ct(t);
+  n.frozen = r, Et(t);
 }
-function au(e) {
-  const t = Ve(), n = t.books[e];
+function du(e) {
+  const t = Ue(), n = t.books[e];
   if (!n || n.frozen) return;
   const s = q().length;
-  n.frozen = Object.fromEntries(n.tickets.map((r) => [r.id, { stamp: "refund", index: Math.max(s, r.after + 1) }])), Ct(t);
+  n.frozen = Object.fromEntries(n.tickets.map((r) => [r.id, { stamp: "refund", index: Math.max(s, r.after + 1) }])), Et(t);
 }
-function Av(e, t, n) {
+function vv(e, t, n) {
   if (t.rest) return;
-  const s = q(), r = $n(), i = Hg({ pack: t, playerLevel: st(s), withEvents: r, rand: Math.random });
+  const s = q(), r = Mn(), i = Kg({ pack: t, playerLevel: it(s), withEvents: r, rand: Math.random });
   if (!i.length) return;
-  const o = Gg(i, r, Math.random), l = Ve(), c = { session: e.id, packId: t.id, packName: t.name, openedAt: Ze(void 0), markets: o.markets, tickets: [] };
-  o.plan && (c.plan = o.plan, c.reserve = o.reserve), r && (c.freak = { status: "pending" }), l.books[e.id] = c, Ct(l), r && fv(e.id, t, n);
+  const o = Yg(i, r, Math.random), l = Ue(), c = { session: e.id, packId: t.id, packName: t.name, openedAt: Qe(void 0), markets: o.markets, tickets: [] };
+  o.plan && (c.plan = o.plan, c.reserve = o.reserve), r && (c.freak = { status: "pending" }), l.books[e.id] = c, Et(l), r && yv(e.id, t, n);
 }
-function fv(e, t, n) {
+function yv(e, t, n) {
   const s = (a, u) => {
-    const f = Ve(), h = f.books[e];
-    h && (h.closedAt || h.frozen ? u ? h.freak = { ...a, status: "late" } : h.freak = a : (Object.assign(h, Kg(h, u ?? null, Math.random)), h.freak = a), Ct(f), Le());
-  }, r = oo();
+    const f = Ue(), m = f.books[e];
+    m && (m.closedAt || m.frozen ? u ? m.freak = { ...a, status: "late" } : m.freak = a : (Object.assign(m, Jg(m, u ?? null, Math.random)), m.freak = a), Et(f), Ce());
+  }, r = ao();
   if (!r) {
     s({ status: "failed", error: "副本事件检测没有设置好" });
     return;
   }
-  const i = dx({
+  const i = px({
     name: t.name,
     level: t.level,
-    briefing: ux(String(q()[n]?.mes ?? "")),
+    briefing: fx(String(q()[n]?.mes ?? "")),
     docs: t.docs
   }), o = me().substituteParams, l = o ? { system: o(i.system), user: o(i.user) } : i, c = Date.now();
-  fx((a) => Ui(r, a), l, 1).then((a) => s({ status: "ok", count: a.length, ms: Date.now() - c }, a)).catch((a) => {
-    hs("庄家怪盘出题失败", a);
+  mx((a) => Hi(r, a), l, 1).then((a) => s({ status: "ok", count: a.length, ms: Date.now() - c }, a)).catch((a) => {
+    xs("庄家怪盘出题失败", a);
     const u = String(a?.message ?? a).slice(0, 120);
-    s({ status: "failed", error: `${xr(a)}：${u}`, ms: Date.now() - c });
+    s({ status: "failed", error: `${br(a)}：${u}`, ms: Date.now() - c });
   });
 }
-const Ss = /* @__PURE__ */ new Map();
-let Sl = null;
-function pv(e) {
-  const t = Ut(), n = Sl !== t;
-  n && Ss.clear(), Sl = t;
+const Ts = /* @__PURE__ */ new Map();
+let Ml = null;
+function bv(e) {
+  const t = Ut(), n = Ml !== t;
+  n && Ts.clear(), Ml = t;
   const s = { win: 0, lose: 0, refund: 0 };
   for (const i of e) {
-    const o = i.res?.stamp ?? null, l = Ss.has(i.ticket.id), c = Ss.get(i.ticket.id);
-    Ss.set(i.ticket.id, o), !n && l && o && o !== c && s[o]++;
+    const o = i.res?.stamp ?? null, l = Ts.has(i.ticket.id), c = Ts.get(i.ticket.id);
+    Ts.set(i.ticket.id, o), !n && l && o && o !== c && s[o]++;
   }
   const r = [s.win ? `兑 ${s.win} 张` : "", s.lose ? `废 ${s.lose} 张` : "", s.refund ? `退 ${s.refund} 张` : ""].filter(Boolean);
-  r.length && Se("info", `赌票开奖：${r.join("，")}。`);
+  r.length && we("info", `赌票开奖：${r.join("，")}。`);
 }
-function hv(e, t) {
-  const n = Ve();
+function kv(e, t) {
+  const n = Ue();
   let s = !1;
   const r = t?.status === "active", i = t ? n.books[t.id] : void 0;
-  i && !i.closedAt && !i.frozen && A.progress && Jg(A.progress.perMessage, A.progress.entryIndex) && (i.closedAt = Ze(void 0), s = !0);
-  const o = r ? n.casino.key : t?.status === "ended" ? t.id : "", l = wx(n.casino, o, Math.random);
-  l.changed && (!r || n.casino.tables.length !== 2) && (n.casino.tables = l.tables, n.casino.key = l.key, s = !0), s && Ct(n);
+  i && !i.closedAt && !i.frozen && A.progress && Xg(A.progress.perMessage, A.progress.entryIndex) && (i.closedAt = Qe(void 0), s = !0);
+  const o = r ? n.casino.key : t?.status === "ended" ? t.id : "", l = $x(n.casino, o, Math.random);
+  l.changed && (!r || n.casino.tables.length !== 2) && (n.casino.tables = l.tables, n.casino.key = l.key, s = !0), s && Et(n);
   const c = [];
   let a = {};
   for (const u of Object.values(n.books)) {
-    const f = $r(e, u, t);
+    const f = Cr(e, u, t);
     i && u.session === i.session && (a = f.results);
-    for (const h of u.tickets) c.push({ ticket: h, book: u, market: u.markets.find((x) => x.id === h.market), res: f.tickets[h.id] ?? null });
+    for (const m of u.tickets) c.push({ ticket: m, book: u, market: u.markets.find((k) => k.id === m.market), res: f.tickets[m.id] ?? null });
   }
-  c.sort((u, f) => (f.ticket.seq ?? 0) - (u.ticket.seq ?? 0)), pv(c), A.market = {
+  c.sort((u, f) => (f.ticket.seq ?? 0) - (u.ticket.seq ?? 0)), bv(c), A.market = {
     book: r && i ? i : null,
     results: a,
     tickets: c,
@@ -7948,81 +7998,81 @@ function hv(e, t) {
     casinoOpen: !r || !!A.pack?.casino
   };
 }
-function cu(e, t) {
+function Au(e, t) {
   const n = q(), s = A.market.book;
-  return Kc({
-    playerLevel: st(n),
+  return Yc({
+    playerLevel: it(n),
     stake: t,
-    already: s ? Yg(s, e) : 0,
-    balance: co(n),
-    lockedTips: lu()
+    already: s ? Qg(s, e) : 0,
+    balance: Ao(n),
+    lockedTips: uu()
   });
 }
-function mv(e, t, n) {
-  const s = Ce();
+function wv(e, t, n) {
+  const s = ze();
   if (!s || s.status !== "active") return "没有进行中的副本";
-  const r = Ve(), i = r.books[s.id];
+  const r = Ue(), i = r.books[s.id];
   if (!i || i.frozen) return "本局没有开盘";
   if (i.closedAt) return "已封盘";
   const o = i.markets.find((f) => f.id === e), l = o?.options.find((f) => f.id === t);
   if (!o || !l) return "没有这个盘口";
   if (A.market.results[e]) return "已开奖";
-  const c = cu(e, n);
+  const c = Au(e, n);
   if (!c.ok) return c.reason ?? "不能下注";
   const a = q();
-  ou(a);
+  cu(a);
   const u = r.seq + 1;
-  return r.seq = u, i.tickets.push({ id: `t${u}`, seq: u, market: e, option: t, stake: n, odds: l.odds, at: Ze(void 0), after: a.length - 1 }), o.kind === "ending" && t === "lose" && (r.hints = hi(r.hints, { kind: "betLose", amount: n, after: a.length - 1 })), Ct(r), Le(), null;
+  return r.seq = u, i.tickets.push({ id: `t${u}`, seq: u, market: e, option: t, stake: n, odds: l.odds, at: Qe(void 0), after: a.length - 1 }), o.kind === "ending" && t === "lose" && (r.hints = gi(r.hints, { kind: "betLose", amount: n, after: a.length - 1 })), Et(r), Ce(), null;
 }
-function uu(e) {
+function fu(e) {
   const t = q();
-  return Kc({ playerLevel: st(t), stake: e, already: 0, balance: co(t), lockedTips: lu() });
+  return Yc({ playerLevel: it(t), stake: e, already: 0, balance: Ao(t), lockedTips: uu() });
 }
-function gv(e, t, n) {
+function zv(e, t, n) {
   if (!A.market.casinoOpen) return { error: "赌坊只在回廊营业。" };
-  const s = Ve();
+  const s = Ue();
   if (!s.casino.tables.includes(e)) return { error: "这张桌今晚没开" };
-  const r = uu(n);
+  const r = fu(n);
   if (!r.ok) return { error: r.reason };
-  const i = bx(e, t, n, Math.random);
+  const i = zx(e, t, n, Math.random);
   if (!i) return { error: "没有这种押法" };
   const o = q();
-  ou(o);
-  const l = st(o), c = co(o), a = o.length - 1, u = s.seq + 1;
+  cu(o);
+  const l = it(o), c = Ao(o), a = o.length - 1, u = s.seq + 1;
   return s.seq = u, s.casino.plays = [
     ...s.casino.plays,
-    { id: `g${u}`, seq: u, table: e, bet: t, label: i.label, stake: n, win: i.win, payout: i.payout, net: i.net, result: i.result, at: Ze(void 0), after: a }
-  ], !i.win && c - n < $t[l] && (s.hints = hi(s.hints, { kind: "casinoLoss", amount: n, after: a })), i.win && i.net > Uc[l] * 5 && (s.hints = hi(s.hints, { kind: "casinoWin", amount: i.net, after: a })), Ct(s), Le(), { outcome: i };
+    { id: `g${u}`, seq: u, table: e, bet: t, label: i.label, stake: n, win: i.win, payout: i.payout, net: i.net, result: i.result, at: Qe(void 0), after: a }
+  ], !i.win && c - n < St[l] && (s.hints = gi(s.hints, { kind: "casinoLoss", amount: n, after: a })), i.win && i.net > Wc[l] * 5 && (s.hints = gi(s.hints, { kind: "casinoWin", amount: i.net, after: a })), Et(s), Ce(), { outcome: i };
 }
-function Cl() {
-  const e = Ve();
+function Tl() {
+  const e = Ue();
   if (!e.hints.length) return;
-  const t = xx(e.hints);
-  t.length !== e.hints.length && (e.hints = t, Ct(e));
+  const t = bx(e.hints);
+  t.length !== e.hints.length && (e.hints = t, Et(e));
 }
-function xv() {
-  const e = Ce(), t = e ? Ve().books[e.id] : void 0;
-  return t ? $r(q(), t, e).rounds : [];
+function _v() {
+  const e = ze(), t = e ? Ue().books[e.id] : void 0;
+  return t ? Cr(q(), t, e).rounds : [];
 }
-const du = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2s5-5.2 7.6-5.2a5.2 5.2 0 010 10.4c-2.6 0-5-1.8-7.6-5.2z", vv = { class: "rlzc-entry-kicker" }, yv = {
+const fo = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2s5-5.2 7.6-5.2a5.2 5.2 0 010 10.4c-2.6 0-5-1.8-7.6-5.2z", $v = { class: "rlzc-entry-kicker" }, Sv = {
   class: "rlzc-entry-inf",
   viewBox: "0 0 32 32",
   "aria-hidden": "true"
-}, bv = ["d"], kv = { class: "rlzc-entry-title" }, wv = { class: "rlzc-entry-level" }, zv = { class: "rlzc-entry-name" }, _v = {
+}, Cv = ["d"], Ev = { class: "rlzc-entry-title" }, Mv = { class: "rlzc-entry-level" }, Tv = { class: "rlzc-entry-name" }, Iv = {
   key: 0,
   class: "rlzc-entry-note"
-}, $v = { class: "rlzc-entry-foot" }, Sv = ["aria-checked"], Cv = { key: 1 }, Ev = { class: "rlzc-entry-actions" }, Mv = /* @__PURE__ */ Be({
+}, Nv = { class: "rlzc-entry-foot" }, Pv = ["aria-checked"], Dv = { key: 1 }, Lv = { class: "rlzc-entry-actions" }, Rv = /* @__PURE__ */ Be({
   __name: "EntryCard",
   setup(e) {
     const t = H(() => A.entryCard);
-    return (n, s) => (b(), We(nA, {
+    return (n, s) => (y(), Ge(rA, {
       name: "rlzc-entry-fade",
       mode: "out-in"
     }, {
-      default: fa(() => [
-        t.value ? (b(), w("div", {
+      default: ma(() => [
+        t.value ? (y(), w("div", {
           key: t.value.id,
-          class: Z(["rlzc-entry-card", { "beside-panel": S(A).panelOpen }]),
+          class: Z(["rlzc-entry-card", { "beside-panel": C(A).panelOpen }]),
           role: "dialog",
           "aria-label": "检测到副本"
         }, [
@@ -8032,27 +8082,27 @@ const du = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
             "aria-label": "关闭",
             title: "这次先不处理",
             onClick: s[0] || (s[0] = //@ts-ignore
-            (...r) => S(ls) && S(ls)(...r))
+            (...r) => C(ds) && C(ds)(...r))
           }, "✕"),
-          d("div", vv, [
-            (b(), w("svg", yv, [
-              d("path", { d: S(du) }, null, 8, bv)
+          d("div", $v, [
+            (y(), w("svg", Sv, [
+              d("path", { d: C(fo) }, null, 8, Cv)
             ])),
             s[4] || (s[4] = d("span", null, "检测到副本", -1))
           ]),
-          d("div", kv, [
-            d("span", wv, _(t.value.level), 1),
-            d("span", zv, _(t.value.name), 1)
+          d("div", Ev, [
+            d("span", Mv, _(t.value.level), 1),
+            d("span", Tv, _(t.value.name), 1)
           ]),
-          t.value.unknown ? (b(), w("div", _v, "未收录，将使用通用副本包")) : F("", !0),
-          d("div", $v, [
-            t.value.liveShow ? (b(), w("button", {
+          t.value.unknown ? (y(), w("div", Iv, "未收录，将使用通用副本包")) : R("", !0),
+          d("div", Nv, [
+            t.value.liveShow ? (y(), w("button", {
               key: 0,
               type: "button",
               class: Z(["rlzc-entry-live", { on: t.value.live }]),
               role: "switch",
               "aria-checked": t.value.live,
-              onClick: s[1] || (s[1] = (r) => S(jx)(!t.value.live))
+              onClick: s[1] || (s[1] = (r) => C(Ux)(!t.value.live))
             }, [
               d("span", {
                 class: Z(["rlzc-toggle danger", { on: t.value.live }])
@@ -8060,119 +8110,127 @@ const du = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
                 d("span", null, null, -1)
               ])], 2),
               s[6] || (s[6] = d("span", null, "直播", -1))
-            ], 10, Sv)) : (b(), w("span", Cv)),
-            d("div", Ev, [
+            ], 10, Pv)) : (y(), w("span", Dv)),
+            d("div", Lv, [
               d("button", {
                 type: "button",
                 class: "rlzc-btn ghost",
                 onClick: s[2] || (s[2] = //@ts-ignore
-                (...r) => S(xl) && S(xl)(...r))
+                (...r) => C(bl) && C(bl)(...r))
               }, "不是"),
               d("button", {
                 type: "button",
                 class: "rlzc-btn rlzc-entry-go",
                 onClick: s[3] || (s[3] = //@ts-ignore
-                (...r) => S(vl) && S(vl)(...r))
+                (...r) => C(kl) && C(kl)(...r))
               }, "进入")
             ])
           ])
-        ], 2)) : F("", !0)
+        ], 2)) : R("", !0)
       ]),
       _: 1
     }));
   }
-}), Tv = {
+}), Ov = {
   key: 0,
   class: "rlzc-ball-ring",
   viewBox: "0 0 48 48",
   "aria-hidden": "true"
-}, Iv = ["stroke-dasharray"], Nv = {
+}, Fv = ["stroke-dasharray"], jv = {
   class: "rlzc-ball-inf",
   viewBox: "0 0 32 32",
   "aria-hidden": "true"
-}, Pv = ["d"], Rv = {
+}, Bv = ["d"], Vv = {
   key: 1,
   class: "rlzc-ball-live",
   title: "直播中"
-}, Lv = {
+}, Uv = {
   key: 2,
   class: "rlzc-ball-badge",
   title: "待开奖赌票"
-}, Xr = 48, Dv = /* @__PURE__ */ Be({
+}, ei = 48, Hv = /* @__PURE__ */ Be({
   __name: "FloatBall",
   setup(e) {
     const t = /* @__PURE__ */ xe({ x: 0, y: 0 });
-    let n = null;
-    function s(h, x) {
-      const z = window.innerWidth - Xr - 4, k = window.innerHeight - Xr - 4;
-      return { x: Math.min(Math.max(4, h), z), y: Math.min(Math.max(4, x), k) };
+    let n = null, s = !1;
+    function r(z, x) {
+      const $ = window.innerWidth - ei - 4, j = window.innerHeight - ei - 4;
+      return { x: Math.min(Math.max(4, z), $), y: Math.min(Math.max(4, x), j) };
     }
-    function r() {
-      const h = A.settings.ball;
-      t.value = s(h.x ?? window.innerWidth - Xr - 12, h.y ?? Math.round(window.innerHeight * 0.35));
+    function i() {
+      const z = A.settings.ball;
+      t.value = r(z.x ?? window.innerWidth - ei - 12, z.y ?? Math.round(window.innerHeight * 0.35));
     }
-    function i(h) {
-      h.currentTarget.setPointerCapture(h.pointerId), n = { id: h.pointerId, dx: h.clientX - t.value.x, dy: h.clientY - t.value.y, moved: !1, sx: h.clientX, sy: h.clientY };
+    function o(z) {
+      z.currentTarget.setPointerCapture(z.pointerId), s = !1, n = { id: z.pointerId, dx: z.clientX - t.value.x, dy: z.clientY - t.value.y, moved: !1, sx: z.clientX, sy: z.clientY };
     }
-    function o(h) {
-      !n || n.id !== h.pointerId || (Math.abs(h.clientX - n.sx) + Math.abs(h.clientY - n.sy) > 6 && (n.moved = !0), n.moved && (t.value = s(h.clientX - n.dx, h.clientY - n.dy)));
+    function l(z) {
+      !n || n.id !== z.pointerId || (Math.abs(z.clientX - n.sx) + Math.abs(z.clientY - n.sy) > 6 && (n.moved = !0), n.moved && (t.value = r(z.clientX - n.dx, z.clientY - n.dy)));
     }
-    function l(h) {
-      if (!n || n.id !== h.pointerId) return;
+    function c(z) {
+      if (!n || n.id !== z.pointerId) return;
       const x = n.moved;
-      n = null, x ? (A.settings.ball = { x: Math.round(t.value.x), y: Math.round(t.value.y) }, ke()) : A.panelOpen = !A.panelOpen;
+      n = null, x && (s = !0, A.settings.ball = { x: Math.round(t.value.x), y: Math.round(t.value.y) }, ke());
     }
-    const c = H(() => !!A.session && !!A.progress && !A.progress.ended), a = H(() => c.value && !!A.progress?.warn), u = H(() => {
-      const h = A.progress;
-      return !c.value || !h || !A.pack?.phases.length || !(h.phase.cap > 0) ? null : Math.min(100, Math.max(0, h.round / h.phase.cap * 100));
-    }), f = H(() => (A.tick, A.session, ov()));
-    return Ar(() => A.settings.ball, r, { deep: !0 }), ya(() => {
-      r(), window.addEventListener("resize", r);
-    }), Mi(() => window.removeEventListener("resize", r)), (h, x) => (b(), w("button", {
-      class: Z(["rlzc-ball", { "is-active": c.value, "is-warn": a.value, "has-ring": u.value !== null }]),
-      style: ar({ left: t.value.x + "px", top: t.value.y + "px" }),
+    function a() {
+      if (s) {
+        s = !1;
+        return;
+      }
+      A.panelOpen = !A.panelOpen;
+    }
+    const u = H(() => !!A.session && !!A.progress && !A.progress.ended), f = H(() => u.value && !!A.progress?.warn), m = H(() => {
+      const z = A.progress;
+      return !u.value || !z || !A.pack?.phases.length || !(z.phase.cap > 0) ? null : Math.min(100, Math.max(0, z.round / z.phase.cap * 100));
+    }), k = H(() => (A.tick, A.session, fv()));
+    return hr(() => A.settings.ball, i, { deep: !0 }), wa(() => {
+      i(), window.addEventListener("resize", i);
+    }), Ti(() => window.removeEventListener("resize", i)), (z, x) => (y(), w("button", {
+      class: Z(["rlzc-ball", { "is-active": u.value, "is-warn": f.value, "has-ring": m.value !== null }]),
+      style: dr({ left: t.value.x + "px", top: t.value.y + "px" }),
       title: "回廊种菜系统（可拖动）",
-      onPointerdown: i,
-      onPointermove: o,
-      onPointerup: l,
-      onPointercancel: l
+      onPointerdown: o,
+      onPointermove: l,
+      onPointerup: c,
+      onPointercancel: c,
+      onClick: a
     }, [
-      u.value !== null ? (b(), w("svg", Tv, [
+      m.value !== null ? (y(), w("svg", Ov, [
         x[0] || (x[0] = d("circle", {
           class: "rlzc-ball-ring-base",
           cx: "24",
           cy: "24",
           r: "22.5"
         }, null, -1)),
-        u.value > 0 ? (b(), w("circle", {
+        m.value > 0 ? (y(), w("circle", {
           key: 0,
           class: "rlzc-ball-ring-bar",
           cx: "24",
           cy: "24",
           r: "22.5",
           pathLength: "100",
-          "stroke-dasharray": `${u.value} 100`
-        }, null, 8, Iv)) : F("", !0)
-      ])) : F("", !0),
-      (b(), w("svg", Nv, [
-        d("path", { d: S(du) }, null, 8, Pv)
+          "stroke-dasharray": `${m.value} 100`
+        }, null, 8, Fv)) : R("", !0)
+      ])) : R("", !0),
+      (y(), w("svg", jv, [
+        d("path", { d: C(fo) }, null, 8, Bv)
       ])),
-      f.value ? (b(), w("span", Rv)) : F("", !0),
-      S(A).market.pending > 0 ? (b(), w("span", Lv, _(S(A).market.pending), 1)) : F("", !0)
+      k.value ? (y(), w("span", Vv)) : R("", !0),
+      C(A).market.pending > 0 ? (y(), w("span", Uv, _(C(A).market.pending), 1)) : R("", !0)
     ], 38));
   }
 });
-function Fv(e) {
+function Wv(e) {
   return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
-function Rn(e) {
-  return Fv(e).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+function Fn(e) {
+  return Wv(e).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
 }
-function jv(e) {
+function Gv(e) {
   const t = [];
   let n = null, s = [];
   const r = () => {
-    s.length && t.push(`<p>${s.map(Rn).join("<br>")}</p>`), s = [];
+    s.length && t.push(`<p>${s.map(Fn).join("<br>")}</p>`), s = [];
   }, i = () => {
     n && t.push(`</li></${n}>`), n = null;
   };
@@ -8186,465 +8244,512 @@ function jv(e) {
     const c = /^(#{1,4})\s+(.*)$/.exec(l);
     if (c) {
       r(), i();
-      const h = Math.min(c[1].length + 2, 6);
-      t.push(`<h${h}>${Rn(c[2])}</h${h}>`);
+      const m = Math.min(c[1].length + 2, 6);
+      t.push(`<h${m}>${Fn(c[2])}</h${m}>`);
       continue;
     }
     const a = /^\s*[-*]\s+(.*)$/.exec(l), u = /^\s*(\d+)[.、]\s+(.*)$/.exec(l);
     if (a || u) {
       r();
-      const h = a ? "ul" : "ol", x = a ? a[1] : u[2];
-      n !== h ? (i(), n = h, t.push(h === "ol" ? `<ol start="${u[1]}"><li>` : "<ul><li>")) : t.push("</li><li>"), t.push(Rn(x));
+      const m = a ? "ul" : "ol", k = a ? a[1] : u[2];
+      n !== m ? (i(), n = m, t.push(m === "ol" ? `<ol start="${u[1]}"><li>` : "<ul><li>")) : t.push("</li><li>"), t.push(Fn(k));
       continue;
     }
     if (n && /^\s{2,}/.test(o)) {
-      t.push(`<br>${Rn(l.trim())}`);
+      t.push(`<br>${Fn(l.trim())}`);
       continue;
     }
     const f = /^>\s?(.*)$/.exec(l);
     if (f) {
-      r(), i(), t.push(`<blockquote>${Rn(f[1])}</blockquote>`);
+      r(), i(), t.push(`<blockquote>${Fn(f[1])}</blockquote>`);
       continue;
     }
     i(), s.push(l);
   }
   return r(), i(), t.join("");
 }
-const Ov = {
+const Kv = {
   key: 0,
   class: "rlzc-docs"
-}, Bv = { class: "rlzc-subtabs" }, Vv = ["onClick"], Uv = { class: "rlzc-md" }, Hv = ["innerHTML"], Wv = ["src", "alt"], Gv = {
+}, qv = { class: "rlzc-subtabs" }, Yv = ["onClick"], Jv = { class: "rlzc-md" }, Zv = ["innerHTML"], Qv = ["src", "alt"], Xv = {
   key: 2,
   class: "rlzc-note"
-}, El = /* @__PURE__ */ Be({
+}, Il = /* @__PURE__ */ Be({
   __name: "PackDocs",
   props: {
     pack: {}
   },
   setup(e) {
     const t = e, n = /* @__PURE__ */ xe(0);
-    Ar(
+    hr(
       () => t.pack.id,
       () => n.value = 0
     );
-    const s = H(() => t.pack.docs?.[n.value]), r = H(() => s.value?.md ? jv(s.value.md) : ""), i = H(() => s.value?.image ? dh(t.pack, s.value.image) : null);
-    return (o, l) => e.pack.docs?.length ? (b(), w("section", Ov, [
-      d("div", Bv, [
-        (b(!0), w(J, null, ce(e.pack.docs, (c, a) => (b(), w("button", {
+    const s = H(() => t.pack.docs?.[n.value]), r = H(() => s.value?.md ? Gv(s.value.md) : ""), i = H(() => s.value?.image ? fh(t.pack, s.value.image) : null);
+    return (o, l) => e.pack.docs?.length ? (y(), w("section", Kv, [
+      d("div", qv, [
+        (y(!0), w(J, null, ce(e.pack.docs, (c, a) => (y(), w("button", {
           key: a,
           class: Z({ on: n.value === a }),
           onClick: (u) => n.value = a
-        }, _(c.title), 11, Vv))), 128))
+        }, _(c.title), 11, Yv))), 128))
       ]),
-      d("article", Uv, [
-        r.value ? (b(), w("div", {
+      d("article", Jv, [
+        r.value ? (y(), w("div", {
           key: 0,
           innerHTML: r.value
-        }, null, 8, Hv)) : F("", !0),
-        i.value ? (b(), w("img", {
+        }, null, 8, Zv)) : R("", !0),
+        i.value ? (y(), w("img", {
           key: 1,
           src: i.value,
           alt: s.value?.title,
           class: "rlzc-img"
-        }, null, 8, Wv)) : s.value?.image && !i.value ? (b(), w("p", Gv, "图片无法加载：" + _(s.value.image), 1)) : F("", !0)
+        }, null, 8, Qv)) : s.value?.image && !i.value ? (y(), w("p", Xv, "图片无法加载：" + _(s.value.image), 1)) : R("", !0)
       ])
-    ])) : F("", !0);
+    ])) : R("", !0);
   }
-}), Kv = {
+}), ey = {
   key: 0,
   class: "rlzc-ledger-summary"
-}, qv = {
+}, ty = {
   key: 0,
   class: "rlzc-ledger-sum-pending"
-}, Ml = /* @__PURE__ */ Be({
+}, Nl = /* @__PURE__ */ Be({
   __name: "LedgerSummary",
   setup(e) {
-    const t = H(() => q()), n = H(() => St(t.value)), s = H(() => fn(n.value.value, A.ledger)), r = H(() => (A.tick, st(t.value))), i = H(() => $t[r.value]), o = H(() => As(n.value.value, A.ledger, i.value)), l = H(() => A.ledger.length > 0 || n.value.source !== "默认值");
-    return (c, a) => l.value ? (b(), w("div", Kv, [
+    const t = H(() => q()), n = H(() => Ct(t.value)), s = H(() => pn(n.value.value, A.ledger)), r = H(() => (A.tick, it(t.value))), i = H(() => St[r.value]), o = H(() => ms(n.value.value, A.ledger, i.value)), l = H(() => A.ledger.length > 0 || n.value.source !== "默认值");
+    return (c, a) => l.value ? (y(), w("div", ey, [
       d("span", {
         class: Z(["rlzc-ledger-sum-bal", { negative: s.value < 0 }])
       }, "积分 " + _(s.value >= 0 ? "+" : "") + _(s.value), 3),
-      o.value ? (b(), w("span", qv, "待清算")) : F("", !0)
-    ])) : F("", !0);
+      o.value ? (y(), w("span", ty, "待清算")) : R("", !0)
+    ])) : R("", !0);
   }
-}), Yv = { class: "rlzc-system" }, Jv = { class: "rlzc-card rlzc-hero" }, Zv = { class: "rlzc-hero-top" }, Xv = { class: "rlzc-level" }, Qv = {
+}), ny = { class: "rlzc-system" }, sy = { class: "rlzc-card rlzc-hero" }, ry = { class: "rlzc-hero-top" }, iy = { class: "rlzc-level" }, oy = {
   key: 0,
   class: "rlzc-chip"
-}, e0 = {
+}, ly = {
   key: 0,
   class: "rlzc-goal"
-}, t0 = { class: "rlzc-grid" }, n0 = {
+}, ay = { class: "rlzc-grid" }, cy = {
   key: 0,
   class: "rlzc-stat"
-}, s0 = {
+}, uy = {
   key: 1,
   class: "rlzc-stat"
-}, r0 = {
+}, dy = {
   key: 2,
   class: "rlzc-stat"
-}, i0 = {
+}, Ay = {
   key: 3,
   class: "rlzc-stat"
-}, o0 = {
+}, fy = {
   key: 0,
   class: "rlzc-subline"
-}, l0 = {
+}, py = {
   key: 1,
   class: "rlzc-note"
-}, a0 = {
+}, hy = {
   key: 2,
   class: "rlzc-card"
-}, c0 = { class: "rlzc-kv" }, u0 = { class: "rlzc-kv" }, d0 = {
+}, my = { class: "rlzc-kv" }, gy = { class: "rlzc-kv" }, xy = {
   key: 0,
   class: "rlzc-note rlzc-note-warn"
-}, A0 = {
+}, vy = {
   key: 3,
   class: "rlzc-note"
-}, f0 = {
+}, yy = {
   key: 4,
   class: "rlzc-card"
-}, p0 = {
+}, by = {
   key: 0,
   class: "rlzc-kv"
-}, h0 = { class: "rlzc-mono" }, m0 = {
+}, ky = { class: "rlzc-mono" }, wy = {
   key: 1,
   class: "rlzc-tasks"
-}, g0 = {
+}, zy = {
   key: 2,
   class: "rlzc-ps"
-}, x0 = { class: "rlzc-actions" }, v0 = ["disabled"], y0 = ["disabled"], b0 = {
+}, _y = { class: "rlzc-actions" }, $y = ["disabled"], Sy = ["disabled"], Cy = {
   key: 1,
   class: "rlzc-card rlzc-rest"
-}, k0 = {
-  key: 2,
-  class: "rlzc-card"
-}, w0 = { class: "rlzc-row" }, z0 = ["value"], _0 = ["value"], $0 = ["disabled"], S0 = {
+}, Ey = ["onClick"], My = { class: "rlzc-entry-kicker" }, Ty = {
+  class: "rlzc-entry-inf",
+  viewBox: "0 0 32 32",
+  "aria-hidden": "true"
+}, Iy = ["d"], Ny = { class: "rlzc-entry-title" }, Py = { class: "rlzc-entry-level" }, Dy = { class: "rlzc-entry-name" }, Ly = {
   key: 0,
-  class: "rlzc-hint"
-}, C0 = /* @__PURE__ */ Be({
+  class: "rlzc-entry-note"
+}, Ry = { class: "rlzc-entry-foot" }, Oy = ["aria-checked", "onClick"], Fy = { key: 1 }, jy = { class: "rlzc-entry-actions" }, By = ["onClick"], Vy = {
+  key: 3,
+  class: "rlzc-card"
+}, Uy = { class: "rlzc-row" }, Hy = ["value"], Wy = ["disabled"], Gy = /* @__PURE__ */ Be({
   __name: "SystemTab",
   setup(e) {
-    const t = /* @__PURE__ */ xe(""), n = H(() => !!A.session && !!A.pack), s = H(() => A.progress), r = H(() => n.value && !!s.value && !s.value.ended), i = H(() => A.packs.find((x) => x.id === t.value) ?? null), o = H(() => t.value.startsWith(tr)), l = H(() => !!A.pack?.phases.length), c = H(() => A.settings.panelDisplay !== "statusbar"), a = H(() => {
-      const x = s.value;
-      return x ? l.value ? `${x.warn ? "⚠️ " : ""}${x.round}/${x.phase.cap}` : `第${x.round}轮` : "";
-    }), u = H(() => {
-      const x = s.value;
-      return x ? x.limit?.text ? x.limit.text : x.panel?.limit || A.session?.briefing?.limit || "—" : "";
+    const t = /* @__PURE__ */ xe(""), n = H(() => !!A.session && !!A.pack), s = H(() => A.progress), r = H(() => n.value && !!s.value && !s.value.ended), i = H(() => A.packs.find((z) => z.id === t.value) ?? null), o = /* @__PURE__ */ xe({}), l = (z, x) => o.value[z] ?? x, c = H(() => !!A.pack?.phases.length), a = H(() => A.settings.panelDisplay !== "statusbar"), u = H(() => {
+      const z = s.value;
+      return z ? c.value ? `${z.warn ? "⚠️ " : ""}${z.round}/${z.phase.cap}` : `第${z.round}轮` : "";
     }), f = H(() => {
-      const x = s.value;
-      return !!x && !x.ended && l.value && x.phase.cap > 0 && x.nextRound < x.phase.cap;
+      const z = s.value;
+      return z ? z.limit?.text ? z.limit.text : z.panel?.limit || A.session?.briefing?.limit || "—" : "";
+    }), m = H(() => {
+      const z = s.value;
+      return !!z && !z.ended && c.value && z.phase.cap > 0 && z.nextRound < z.phase.cap;
     });
-    async function h() {
-      t.value && (await Vx(t.value), t.value = "");
+    async function k() {
+      t.value && (await Gx(t.value), t.value = "");
     }
-    return (x, z) => (b(), w("div", Yv, [
-      n.value && s.value ? (b(), w(J, { key: 0 }, [
-        d("div", Jv, [
-          d("div", Zv, [
-            d("span", Xv, _(S(A).pack?.rest ? "—" : S(A).pack.level), 1),
-            d("h3", null, _(S(A).pack.name), 1),
-            s.value.ended ? (b(), w("span", Qv, "已结束")) : F("", !0)
+    return (z, x) => (y(), w("div", ny, [
+      n.value && s.value ? (y(), w(J, { key: 0 }, [
+        d("div", sy, [
+          d("div", ry, [
+            d("span", iy, _(C(A).pack?.rest ? "—" : C(A).pack.level), 1),
+            d("h3", null, _(C(A).pack.name), 1),
+            s.value.ended ? (y(), w("span", oy, "已结束")) : R("", !0)
           ]),
-          S(A).session?.briefing?.goal ? (b(), w("p", e0, "目标：" + _(S(A).session.briefing.goal), 1)) : F("", !0)
+          C(A).session?.briefing?.goal ? (y(), w("p", ly, "目标：" + _(C(A).session.briefing.goal), 1)) : R("", !0)
         ]),
-        d("div", t0, [
-          l.value ? (b(), w("div", n0, [
-            z[3] || (z[3] = d("span", null, "阶段", -1)),
+        d("div", ay, [
+          c.value ? (y(), w("div", cy, [
+            x[3] || (x[3] = d("span", null, "阶段", -1)),
             d("b", null, _(s.value.phase.name), 1)
-          ])) : F("", !0),
+          ])) : R("", !0),
           d("div", {
             class: Z(["rlzc-stat", { warn: s.value.warn }])
           }, [
-            z[4] || (z[4] = d("span", null, "轮次", -1)),
-            d("b", null, _(a.value), 1)
-          ], 2),
-          s.value.currentClock ? (b(), w("div", s0, [
-            z[5] || (z[5] = d("span", null, "钟时", -1)),
-            d("b", null, _(s.value.currentClock), 1)
-          ])) : F("", !0),
-          s.value.roundsLeft ? (b(), w("div", r0, [
-            z[6] || (z[6] = d("span", null, "最多剩余轮次", -1)),
-            d("b", null, _(s.value.roundsLeft.x) + "/" + _(s.value.roundsLeft.y), 1)
-          ])) : F("", !0),
-          c.value ? (b(), w("div", i0, [
-            z[7] || (z[7] = d("span", null, "剩余时间", -1)),
+            x[4] || (x[4] = d("span", null, "轮次", -1)),
             d("b", null, _(u.value), 1)
-          ])) : F("", !0),
-          r.value ? F("", !0) : (b(), We(Ml, { key: 4 }))
+          ], 2),
+          s.value.currentClock ? (y(), w("div", uy, [
+            x[5] || (x[5] = d("span", null, "钟时", -1)),
+            d("b", null, _(s.value.currentClock), 1)
+          ])) : R("", !0),
+          s.value.roundsLeft ? (y(), w("div", dy, [
+            x[6] || (x[6] = d("span", null, "最多剩余轮次", -1)),
+            d("b", null, _(s.value.roundsLeft.x) + "/" + _(s.value.roundsLeft.y), 1)
+          ])) : R("", !0),
+          a.value ? (y(), w("div", Ay, [
+            x[7] || (x[7] = d("span", null, "剩余时间", -1)),
+            d("b", null, _(f.value), 1)
+          ])) : R("", !0),
+          r.value ? R("", !0) : (y(), Ge(Nl, { key: 4 }))
         ]),
-        S(A).subLine ? (b(), w("p", o0, _(S(A).subLine), 1)) : F("", !0),
-        s.value.skipGoal ? (b(), w("div", l0, "快进中：目标 " + _(S(A).pack.phases.find((k) => k.id === s.value.skipGoal.phase)?.name) + " 第" + _(s.value.skipGoal.round) + "轮", 1)) : F("", !0),
-        s.value.ended && s.value.settlement ? (b(), w("div", a0, [
-          d("div", c0, [
-            z[8] || (z[8] = d("span", null, "结果", -1)),
+        C(A).subLine ? (y(), w("p", fy, _(C(A).subLine), 1)) : R("", !0),
+        s.value.skipGoal ? (y(), w("div", py, "快进中：目标 " + _(C(A).pack.phases.find(($) => $.id === s.value.skipGoal.phase)?.name) + " 第" + _(s.value.skipGoal.round) + "轮", 1)) : R("", !0),
+        s.value.ended && s.value.settlement ? (y(), w("div", hy, [
+          d("div", my, [
+            x[8] || (x[8] = d("span", null, "结果", -1)),
             d("b", null, _(s.value.settlement.result ?? "—"), 1)
           ]),
-          d("div", u0, [
-            z[9] || (z[9] = d("span", null, "评价", -1)),
+          d("div", gy, [
+            x[9] || (x[9] = d("span", null, "评价", -1)),
             d("b", null, _(s.value.settlement.rating ?? "—"), 1)
           ]),
-          S(A).session?.clearance && s.value.settlement.result === "失败" ? (b(), w("div", d0, " 清算未通关 ")) : F("", !0)
-        ])) : s.value.ended ? (b(), w("div", A0, "副本已手动结束。")) : F("", !0),
-        c.value && s.value.panel ? (b(), w("div", f0, [
-          s.value.panel.progressBar ? (b(), w("div", p0, [
-            z[10] || (z[10] = d("span", null, "进度", -1)),
-            d("b", h0, _(s.value.panel.progressBar), 1)
-          ])) : F("", !0),
-          s.value.panel.tasks.length ? (b(), w("div", m0, [
-            z[11] || (z[11] = d("span", null, "任务", -1)),
+          C(A).session?.clearance && s.value.settlement.result === "失败" ? (y(), w("div", xy, " 清算未通关 ")) : R("", !0)
+        ])) : s.value.ended ? (y(), w("div", vy, "副本已手动结束。")) : R("", !0),
+        a.value && s.value.panel ? (y(), w("div", yy, [
+          s.value.panel.progressBar ? (y(), w("div", by, [
+            x[10] || (x[10] = d("span", null, "进度", -1)),
+            d("b", ky, _(s.value.panel.progressBar), 1)
+          ])) : R("", !0),
+          s.value.panel.tasks.length ? (y(), w("div", wy, [
+            x[11] || (x[11] = d("span", null, "任务", -1)),
             d("ul", null, [
-              (b(!0), w(J, null, ce(s.value.panel.tasks, (k, R) => (b(), w("li", { key: R }, _(k), 1))), 128))
+              (y(!0), w(J, null, ce(s.value.panel.tasks, ($, j) => (y(), w("li", { key: j }, _($), 1))), 128))
             ])
-          ])) : F("", !0),
-          s.value.panel.ps ? (b(), w("div", g0, "ps：" + _(s.value.panel.ps), 1)) : F("", !0)
-        ])) : F("", !0),
-        d("div", x0, [
+          ])) : R("", !0),
+          s.value.panel.ps ? (y(), w("div", zy, "ps：" + _(s.value.panel.ps), 1)) : R("", !0)
+        ])) : R("", !0),
+        d("div", _y, [
           d("button", {
             class: "rlzc-btn",
-            disabled: !f.value,
-            onClick: z[0] || (z[0] = //@ts-ignore
-            (...k) => S(yl) && S(yl)(...k))
-          }, "跳过（到本阶段结束）", 8, v0),
+            disabled: !m.value,
+            onClick: x[0] || (x[0] = //@ts-ignore
+            (...$) => C(wl) && C(wl)(...$))
+          }, "跳过（到本阶段结束）", 8, $y),
           d("button", {
             class: "rlzc-btn ghost",
             disabled: s.value.ended,
-            onClick: z[1] || (z[1] = //@ts-ignore
-            (...k) => S(bl) && S(bl)(...k))
-          }, "手动结束副本", 8, y0)
+            onClick: x[1] || (x[1] = //@ts-ignore
+            (...$) => C(zl) && C(zl)(...$))
+          }, "手动结束副本", 8, Sy)
         ]),
-        r.value && S(A).pack.docs?.length ? (b(), We(El, {
+        r.value && C(A).pack.docs?.length ? (y(), Ge(Il, {
           key: 5,
-          pack: S(A).pack
-        }, null, 8, ["pack"])) : F("", !0)
-      ], 64)) : (b(), w("div", b0, [
-        z[12] || (z[12] = d("h3", null, "当前在回廊里，没有进行中的副本。", -1)),
-        _e(Ml)
+          pack: C(A).pack
+        }, null, 8, ["pack"])) : R("", !0)
+      ], 64)) : (y(), w("div", Cy, [
+        x[12] || (x[12] = d("h3", null, "当前在回廊里，没有进行中的副本。", -1)),
+        Se(Nl)
       ])),
-      r.value ? F("", !0) : (b(), w("div", k0, [
-        z[14] || (z[14] = d("label", { class: "rlzc-label" }, "手动选择副本", -1)),
-        d("div", w0, [
-          pt(d("select", {
-            "onUpdate:modelValue": z[2] || (z[2] = (k) => t.value = k),
+      r.value ? R("", !0) : (y(!0), w(J, { key: 2 }, ce(C(A).pendingEntries, ($) => (y(), w("div", {
+        key: $.key,
+        class: "rlzc-card rlzc-pending"
+      }, [
+        d("button", {
+          class: "rlzc-entry-close",
+          type: "button",
+          "aria-label": "不再提示",
+          title: "不再提示",
+          onClick: (j) => C(Yx)($.key)
+        }, "✕", 8, Ey),
+        d("div", My, [
+          (y(), w("svg", Ty, [
+            d("path", { d: C(fo) }, null, 8, Iy)
+          ])),
+          x[13] || (x[13] = d("span", null, "待确认的副本", -1))
+        ]),
+        d("div", Ny, [
+          d("span", Py, _($.level), 1),
+          d("span", Dy, _($.name), 1)
+        ]),
+        $.unknown ? (y(), w("div", Ly, "未收录，将使用通用副本包")) : R("", !0),
+        x[16] || (x[16] = d("div", { class: "rlzc-entry-note" }, "进入后以最新一条AI回复为第1轮", -1)),
+        d("div", Ry, [
+          $.liveShow ? (y(), w("button", {
+            key: 0,
+            type: "button",
+            class: Z(["rlzc-entry-live", { on: l($.key, $.live) }]),
+            role: "switch",
+            "aria-checked": l($.key, $.live),
+            onClick: (j) => o.value[$.key] = !l($.key, $.live)
+          }, [
+            d("span", {
+              class: Z(["rlzc-toggle danger", { on: l($.key, $.live) }])
+            }, [...x[14] || (x[14] = [
+              d("span", null, null, -1)
+            ])], 2),
+            x[15] || (x[15] = d("span", null, "直播", -1))
+          ], 10, Oy)) : (y(), w("span", Fy)),
+          d("div", jy, [
+            d("button", {
+              type: "button",
+              class: "rlzc-btn rlzc-entry-go",
+              onClick: (j) => C(qx)($.key, l($.key, $.live))
+            }, "进入", 8, By)
+          ])
+        ])
+      ]))), 128)),
+      r.value ? R("", !0) : (y(), w("div", Vy, [
+        x[18] || (x[18] = d("label", { class: "rlzc-label" }, "手动选择副本", -1)),
+        d("div", Uy, [
+          mt(d("select", {
+            "onUpdate:modelValue": x[2] || (x[2] = ($) => t.value = $),
             class: "rlzc-input"
           }, [
-            z[13] || (z[13] = d("option", { value: "" }, "选择副本…", -1)),
-            (b(!0), w(J, null, ce(S(A).seenGeneric, (k) => (b(), w("option", {
-              key: `g-${k.name}`,
-              value: S(tr) + k.name
-            }, _(S(ds)(k)) + "｜" + _(k.name) + "（未收录）", 9, z0))), 128)),
-            (b(!0), w(J, null, ce(S(A).packs, (k) => (b(), w("option", {
-              key: k.id,
-              value: k.id
-            }, _(k.level) + "｜" + _(k.name), 9, _0))), 128))
+            x[17] || (x[17] = d("option", { value: "" }, "选择副本…", -1)),
+            (y(!0), w(J, null, ce(C(A).packs, ($) => (y(), w("option", {
+              key: $.id,
+              value: $.id
+            }, _($.level) + "｜" + _($.name), 9, Hy))), 128))
           ], 512), [
-            [Va, t.value]
+            [Wa, t.value]
           ]),
           d("button", {
             class: "rlzc-btn",
             disabled: !t.value,
-            onClick: h
-          }, "进入", 8, $0)
-        ]),
-        o.value ? (b(), w("p", S0, "未收录，将使用通用副本包")) : F("", !0)
+            onClick: k
+          }, "进入", 8, Wy)
+        ])
       ])),
-      !r.value && i.value?.docs?.length ? (b(), We(El, {
-        key: 3,
+      !r.value && i.value?.docs?.length ? (y(), Ge(Il, {
+        key: 4,
         pack: i.value
-      }, null, 8, ["pack"])) : F("", !0)
+      }, null, 8, ["pack"])) : R("", !0)
     ]));
   }
-}), E0 = { class: "rlzc-ledger" }, M0 = { class: "rlzc-card rlzc-ledger-hero-card" }, T0 = { class: "rlzc-ledger-hero-cols" }, I0 = { class: "rlzc-ledger-hero-col" }, N0 = { class: "rlzc-ledger-hero-col-val" }, P0 = { class: "rlzc-ledger-hero-col" }, R0 = { class: "rlzc-ledger-hero-col-val" }, L0 = { class: "rlzc-ledger-hero-col" }, D0 = {
+}), Ky = { class: "rlzc-ledger" }, qy = { class: "rlzc-card rlzc-ledger-hero-card" }, Yy = { class: "rlzc-ledger-hero-cols" }, Jy = { class: "rlzc-ledger-hero-col" }, Zy = { class: "rlzc-ledger-hero-col-val" }, Qy = { class: "rlzc-ledger-hero-col" }, Xy = { class: "rlzc-ledger-hero-col-val" }, e0 = { class: "rlzc-ledger-hero-col" }, t0 = {
   key: 0,
   class: "rlzc-ledger-init-hint"
-}, F0 = { class: "rlzc-card" }, j0 = {
+}, n0 = { class: "rlzc-card" }, s0 = {
   key: 0,
   class: "rlzc-ledger-list"
-}, O0 = { class: "rlzc-ledger-item-left" }, B0 = { class: "rlzc-ledger-item-src" }, V0 = { class: "rlzc-ledger-item-time" }, U0 = { class: "rlzc-ledger-item-right" }, H0 = { class: "rlzc-ledger-item-after" }, W0 = {
+}, r0 = { class: "rlzc-ledger-item-left" }, i0 = { class: "rlzc-ledger-item-src" }, o0 = { class: "rlzc-ledger-item-time" }, l0 = { class: "rlzc-ledger-item-right" }, a0 = { class: "rlzc-ledger-item-after" }, c0 = {
   key: 1,
   class: "rlzc-hint"
-}, G0 = /* @__PURE__ */ Be({
+}, u0 = /* @__PURE__ */ Be({
   __name: "LedgerTab",
   setup(e) {
-    const t = H(() => q()), n = H(() => St(t.value)), s = H(() => A.ledger), r = H(() => fn(n.value.value, s.value)), i = H(() => {
-      const z = Um(n.value.value, s.value);
-      return s.value.map((k, R) => ({ e: k, after: z[R] })).reverse();
-    }), o = H(() => (A.tick, st(t.value))), l = H(() => $t[o.value]), c = H(() => As(n.value.value, s.value, l.value)), a = H(() => Math.max(0, l.value - r.value)), u = H(() => n.value.source === "默认值");
+    const t = H(() => q()), n = H(() => Ct(t.value)), s = H(() => A.ledger), r = H(() => pn(n.value.value, s.value)), i = H(() => {
+      const z = Wm(n.value.value, s.value);
+      return s.value.map((x, $) => ({ e: x, after: z[$] })).reverse();
+    }), o = H(() => (A.tick, it(t.value))), l = H(() => St[o.value]), c = H(() => ms(n.value.value, s.value, l.value)), a = H(() => Math.max(0, l.value - r.value)), u = H(() => n.value.source === "默认值");
     function f(z) {
       return new Intl.NumberFormat("zh-CN").format(z);
     }
-    function h(z) {
+    function m(z) {
       return (z >= 0 ? "+" : "") + new Intl.NumberFormat("zh-CN").format(z);
     }
-    function x(z) {
+    function k(z) {
       try {
-        const k = new Date(z), R = String(k.getMonth() + 1).padStart(2, "0"), U = String(k.getDate()).padStart(2, "0"), D = String(k.getHours()).padStart(2, "0"), E = String(k.getMinutes()).padStart(2, "0");
-        return `${R}-${U} ${D}:${E}`;
+        const x = new Date(z), $ = String(x.getMonth() + 1).padStart(2, "0"), j = String(x.getDate()).padStart(2, "0"), O = String(x.getHours()).padStart(2, "0"), M = String(x.getMinutes()).padStart(2, "0");
+        return `${$}-${j} ${O}:${M}`;
       } catch {
         return z;
       }
     }
-    return (z, k) => (b(), w("div", E0, [
-      d("div", M0, [
-        k[3] || (k[3] = d("span", { class: "rlzc-ledger-hero-label" }, "当前积分", -1)),
+    return (z, x) => (y(), w("div", Ky, [
+      d("div", qy, [
+        x[3] || (x[3] = d("span", { class: "rlzc-ledger-hero-label" }, "当前积分", -1)),
         d("b", {
           class: Z(["rlzc-ledger-hero-num", { negative: r.value < 0 }])
         }, _(f(r.value)), 3),
-        k[4] || (k[4] = d("div", { class: "rlzc-ledger-hero-divider" }, null, -1)),
-        d("div", T0, [
-          d("div", I0, [
-            k[0] || (k[0] = d("span", { class: "rlzc-ledger-hero-col-label" }, "等级", -1)),
-            d("span", N0, _(o.value), 1)
+        x[4] || (x[4] = d("div", { class: "rlzc-ledger-hero-divider" }, null, -1)),
+        d("div", Yy, [
+          d("div", Jy, [
+            x[0] || (x[0] = d("span", { class: "rlzc-ledger-hero-col-label" }, "等级", -1)),
+            d("span", Zy, _(o.value), 1)
           ]),
-          d("div", P0, [
-            k[1] || (k[1] = d("span", { class: "rlzc-ledger-hero-col-label" }, "斩杀线", -1)),
-            d("span", R0, _(f(l.value)), 1)
+          d("div", Qy, [
+            x[1] || (x[1] = d("span", { class: "rlzc-ledger-hero-col-label" }, "斩杀线", -1)),
+            d("span", Xy, _(f(l.value)), 1)
           ]),
-          d("div", L0, [
-            k[2] || (k[2] = d("span", { class: "rlzc-ledger-hero-col-label" }, "待清算", -1)),
+          d("div", e0, [
+            x[2] || (x[2] = d("span", { class: "rlzc-ledger-hero-col-label" }, "待清算", -1)),
             d("span", {
               class: Z(["rlzc-ledger-hero-col-val", { "rlzc-ledger-warn": c.value }])
             }, _(c.value ? `距线 ${f(a.value)}` : "无"), 3)
           ])
         ]),
-        u.value ? (b(), w("p", D0, "初始积分按 1000 计，可在设置页修改")) : F("", !0)
+        u.value ? (y(), w("p", t0, "初始积分按 1000 计，可在设置页修改")) : R("", !0)
       ]),
-      d("div", F0, [
-        k[5] || (k[5] = d("h4", null, "流水", -1)),
-        s.value.length ? (b(), w("ul", j0, [
-          (b(!0), w(J, null, ce(i.value, (R, U) => (b(), w("li", {
-            key: `${U}-${R.e.mesIndex}-${R.e.delta}-${R.e.at}`,
+      d("div", n0, [
+        x[5] || (x[5] = d("h4", null, "流水", -1)),
+        s.value.length ? (y(), w("ul", s0, [
+          (y(!0), w(J, null, ce(i.value, ($, j) => (y(), w("li", {
+            key: `${j}-${$.e.mesIndex}-${$.e.delta}-${$.e.at}`,
             class: "rlzc-ledger-item"
           }, [
-            d("div", O0, [
-              d("span", B0, _(R.e.source), 1),
-              d("span", V0, _(x(R.e.at)), 1)
+            d("div", r0, [
+              d("span", i0, _($.e.source), 1),
+              d("span", o0, _(k($.e.at)), 1)
             ]),
-            d("div", U0, [
+            d("div", l0, [
               d("span", {
-                class: Z(["rlzc-ledger-item-delta", R.e.delta >= 0 ? "pos" : "neg"])
-              }, _(h(R.e.delta)), 3),
-              d("span", H0, "余额 " + _(f(R.after)), 1)
+                class: Z(["rlzc-ledger-item-delta", $.e.delta >= 0 ? "pos" : "neg"])
+              }, _(m($.e.delta)), 3),
+              d("span", a0, "余额 " + _(f($.after)), 1)
             ])
           ]))), 128))
-        ])) : (b(), w("p", W0, "还没有收支记录。"))
+        ])) : (y(), w("p", c0, "还没有收支记录。"))
       ])
     ]));
   }
-}), K0 = { class: "rlzc-market" }, q0 = { class: "rlzc-subtabs rlzc-market-tabs" }, Y0 = { class: "rlzc-card rlzc-mk-status" }, J0 = { class: "rlzc-mk-q" }, Z0 = { class: "rlzc-mk-tag" }, X0 = { class: "rlzc-mk-opts" }, Q0 = ["disabled", "onClick"], ey = { class: "rlzc-row rlzc-mk-bet" }, ty = ["onUpdate:modelValue"], ny = ["disabled", "onClick"], sy = { class: "rlzc-hint" }, ry = {
+}), d0 = { class: "rlzc-market" }, A0 = { class: "rlzc-subtabs rlzc-market-tabs" }, f0 = { class: "rlzc-card rlzc-mk-status" }, p0 = { class: "rlzc-mk-q" }, h0 = { class: "rlzc-mk-tag" }, m0 = { class: "rlzc-mk-opts" }, g0 = ["disabled", "onClick"], x0 = { class: "rlzc-row rlzc-mk-bet" }, v0 = ["onUpdate:modelValue"], y0 = ["disabled", "onClick"], b0 = { class: "rlzc-hint" }, k0 = {
   key: 0,
   class: "rlzc-mk-red"
-}, iy = {
+}, w0 = {
   key: 1,
   class: "rlzc-mk-mine"
-}, oy = {
+}, z0 = {
   key: 1,
   class: "rlzc-card"
-}, ly = {
+}, _0 = {
   key: 0,
   class: "rlzc-tk-list"
-}, ay = { class: "rlzc-tk-left" }, cy = { class: "rlzc-tk-title" }, uy = {
+}, $0 = { class: "rlzc-tk-left" }, S0 = { class: "rlzc-tk-title" }, C0 = {
   key: 1,
   class: "rlzc-hint"
-}, dy = {
+}, E0 = {
   key: 0,
   class: "rlzc-card rlzc-mk-status"
-}, Ay = { class: "rlzc-cs-tables" }, fy = ["onClick"], py = {
+}, M0 = { class: "rlzc-cs-tables" }, T0 = ["onClick"], I0 = {
   key: 0,
   class: "rlzc-card rlzc-cs-play"
-}, hy = {
+}, N0 = {
   key: 0,
   class: "rlzc-segsrc rlzc-cs-seg"
-}, my = ["onClick"], gy = ["onClick"], xy = { class: "rlzc-row rlzc-mk-bet" }, vy = ["disabled"], yy = { class: "rlzc-hint" }, by = {
+}, P0 = ["onClick"], D0 = ["onClick"], L0 = { class: "rlzc-row rlzc-mk-bet" }, R0 = ["disabled"], O0 = { class: "rlzc-hint" }, F0 = {
   key: 2,
   class: "rlzc-mk-red"
-}, ky = /* @__PURE__ */ Be({
+}, j0 = /* @__PURE__ */ Be({
   __name: "MarketTab",
   setup(e) {
-    const t = /* @__PURE__ */ xe("book"), n = (j) => new Intl.NumberFormat("en-US").format(j), s = (j) => `×${j.toFixed(2)}`, r = H(() => A.market.pending), i = H(() => (A.tick, st())), o = H(() => A.market.book), l = H(() => !!o.value?.closedAt), c = H(() => {
-      const j = o.value;
-      return j && j.closedAt ? `《${j.packName}》已封盘` : j ? `《${j.packName}》开盘中 · 第1轮结束封盘${j.freak?.status === "pending" ? " · 庄家出题中" : ""}` : A.session?.status === "active" && A.pack?.rest ? "休整副本不开盘。" : "进副本后开盘。";
+    const t = /* @__PURE__ */ xe("book"), n = (F) => new Intl.NumberFormat("en-US").format(F), s = (F) => `×${F.toFixed(2)}`, r = H(() => A.market.pending), i = H(() => (A.tick, it())), o = H(() => A.market.book), l = H(() => !!o.value?.closedAt), c = H(() => {
+      const F = o.value;
+      return F && F.closedAt ? `《${F.packName}》已封盘` : F ? `《${F.packName}》开盘中 · 第1轮结束封盘${F.freak?.status === "pending" ? " · 庄家出题中" : ""}` : A.session?.status === "active" && A.pack?.rest ? "休整副本不开盘。" : "进副本后开盘。";
     }), a = { ending: "结局", rating: "评价", event: "事件", freak: "庄家" }, u = /* @__PURE__ */ xe({}), f = /* @__PURE__ */ xe({});
-    function h(j, K) {
-      l.value || A.market.results[j.id] || (u.value = { ...u.value, [j.id]: u.value[j.id] === K ? "" : K });
+    function m(F, K) {
+      l.value || A.market.results[F.id] || (u.value = { ...u.value, [F.id]: u.value[F.id] === K ? "" : K });
     }
-    function x(j) {
+    function k(F) {
       A.tick;
-      const K = f.value[j.id];
-      return cu(j.id, typeof K == "number" ? K : 0);
+      const K = f.value[F.id];
+      return Au(F.id, typeof K == "number" ? K : 0);
     }
-    function z(j) {
-      const K = u.value[j.id], G = f.value[j.id];
+    function z(F) {
+      const K = u.value[F.id], G = f.value[F.id];
       if (!K || typeof G != "number") return;
-      const ge = mv(j.id, K, G);
+      const ge = wv(F.id, K, G);
       if (ge) {
-        Se("warning", ge);
+        we("warning", ge);
         return;
       }
-      f.value = { ...f.value, [j.id]: null }, u.value = { ...u.value, [j.id]: "" };
+      f.value = { ...f.value, [F.id]: null }, u.value = { ...u.value, [F.id]: "" };
     }
-    function k(j) {
+    function x(F) {
       const K = o.value;
-      return K ? A.market.tickets.filter((G) => G.book.session === K.session && G.ticket.market === j.id) : [];
+      return K ? A.market.tickets.filter((G) => G.book.session === K.session && G.ticket.market === F.id) : [];
     }
-    function R(j) {
-      return j.market?.options.find((K) => K.id === j.ticket.option)?.label ?? j.ticket.option;
+    function $(F) {
+      return F.market?.options.find((K) => K.id === F.ticket.option)?.label ?? F.ticket.option;
     }
-    function U(j) {
-      return `${j.book.packName} · ${j.market?.q ?? j.ticket.market} · ${R(j)}`;
+    function j(F) {
+      return `${F.book.packName} · ${F.market?.q ?? F.ticket.market} · ${$(F)}`;
     }
-    function D(j) {
-      const K = j.ticket, G = j.res?.stamp;
-      return G ? G === "win" ? `押 ${n(K.stake)} · ${s(K.odds)} · 兑 ${n(Wc(K.stake, K.odds))}` : G === "lose" ? `押 ${n(K.stake)} · ${s(K.odds)}` : `押 ${n(K.stake)} · 原数退还` : `押 ${n(K.stake)} · ${s(K.odds)} · 待开奖`;
+    function O(F) {
+      const K = F.ticket, G = F.res?.stamp;
+      return G ? G === "win" ? `押 ${n(K.stake)} · ${s(K.odds)} · 兑 ${n(Kc(K.stake, K.odds))}` : G === "lose" ? `押 ${n(K.stake)} · ${s(K.odds)}` : `押 ${n(K.stake)} · 原数退还` : `押 ${n(K.stake)} · ${s(K.odds)} · 待开奖`;
     }
-    const E = { win: "兑", lose: "废", refund: "退" }, M = H(() => A.market.tables.map((j) => wn(j)).filter((j) => !!j)), ee = /* @__PURE__ */ xe(""), te = H(() => ee.value ? wn(ee.value) : void 0), X = /* @__PURE__ */ xe(""), re = /* @__PURE__ */ xe(null), C = /* @__PURE__ */ xe(!1), p = /* @__PURE__ */ xe(""), m = /* @__PURE__ */ xe(null);
+    const M = { win: "兑", lose: "废", refund: "退" }, T = H(() => A.market.tables.map((F) => zn(F)).filter((F) => !!F)), ee = /* @__PURE__ */ xe(""), te = H(() => ee.value ? zn(ee.value) : void 0), Q = /* @__PURE__ */ xe(""), re = /* @__PURE__ */ xe(null), E = /* @__PURE__ */ xe(!1), p = /* @__PURE__ */ xe(""), h = /* @__PURE__ */ xe(null);
     let v = null;
-    function N(j) {
-      if (ee.value === j) {
+    function P(F) {
+      if (ee.value === F) {
         ee.value = "";
         return;
       }
-      ee.value = j;
-      const K = wn(j);
-      X.value = K && K.bets.length === 1 ? K.bets[0].id : "", m.value = null;
+      ee.value = F;
+      const K = zn(F);
+      Q.value = K && K.bets.length === 1 ? K.bets[0].id : "", h.value = null;
     }
-    const ie = H(() => (te.value?.bets ?? []).filter((j) => !/^[nd]\d+$/.test(j.id))), le = H(() => (te.value?.bets ?? []).filter((j) => /^[nd]\d+$/.test(j.id))), Pe = H(() => (A.tick, uu(typeof re.value == "number" ? re.value : 0)));
-    function rt() {
+    const ie = H(() => (te.value?.bets ?? []).filter((F) => !/^[nd]\d+$/.test(F.id))), le = H(() => (te.value?.bets ?? []).filter((F) => /^[nd]\d+$/.test(F.id))), De = H(() => (A.tick, fu(typeof re.value == "number" ? re.value : 0)));
+    function ot() {
       try {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       } catch {
         return !1;
       }
     }
-    function Xe(j, K) {
-      return j === "bell" ? `${K[0]}下` : j === "door" ? `${K[0]}号门` : j === "lot" ? `第${K[0]}支` : `${K[0]} : ${K[1]}`;
+    function Xe(F, K) {
+      return F === "bell" ? `${K[0]}下` : F === "door" ? `${K[0]}号门` : F === "lot" ? `第${K[0]}支` : `${K[0]} : ${K[1]}`;
     }
-    function hn() {
-      const j = te.value, K = re.value;
-      if (!j || !X.value || typeof K != "number" || C.value) return;
-      const G = gv(j.id, X.value, K);
+    function mn() {
+      const F = te.value, K = re.value;
+      if (!F || !Q.value || typeof K != "number" || E.value) return;
+      const G = zv(F.id, Q.value, K);
       if (G.error || !G.outcome) {
-        Se("warning", G.error ?? "不能下注");
+        we("warning", G.error ?? "不能下注");
         return;
       }
       const ge = { ...G.outcome, stake: K };
-      if (m.value = null, rt()) {
-        p.value = Xe(j.id, ge.faces), m.value = ge;
+      if (h.value = null, ot()) {
+        p.value = Xe(F.id, ge.faces), h.value = ge;
         return;
       }
-      C.value = !0;
-      const gs = j.id === "bell" ? 12 : j.id === "door" ? 20 : j.id === "lot" ? 3 : 13, Et = () => 1 + Math.floor(Math.random() * gs);
-      v = setInterval(() => p.value = Xe(j.id, [Et(), Et()]), 80), setTimeout(() => {
-        v && clearInterval(v), v = null, p.value = Xe(j.id, ge.faces), C.value = !1, m.value = ge;
+      E.value = !0;
+      const bs = F.id === "bell" ? 12 : F.id === "door" ? 20 : F.id === "lot" ? 3 : 13, Mt = () => 1 + Math.floor(Math.random() * bs);
+      v = setInterval(() => p.value = Xe(F.id, [Mt(), Mt()]), 80), setTimeout(() => {
+        v && clearInterval(v), v = null, p.value = Xe(F.id, ge.faces), E.value = !1, h.value = ge;
       }, 1200);
     }
     const Gt = H(() => {
-      const j = m.value;
-      return j ? `结果：${j.result}。${j.win ? `赢 ${n(j.payout)}` : `输 ${n(j.stake)}`}` : "";
+      const F = h.value;
+      return F ? `结果：${F.result}。${F.win ? `赢 ${n(F.payout)}` : `输 ${n(F.stake)}`}` : "";
     });
-    return Mi(() => {
+    return Ti(() => {
       v && clearInterval(v);
-    }), (j, K) => (b(), w("div", K0, [
-      d("nav", q0, [
+    }), (F, K) => (y(), w("div", d0, [
+      d("nav", A0, [
         d("button", {
           class: Z({ on: t.value === "book" }),
           onClick: K[0] || (K[0] = (G) => t.value = "book")
@@ -8658,30 +8763,30 @@ const Ov = {
           onClick: K[2] || (K[2] = (G) => t.value = "casino")
         }, "赌坊", 2)
       ]),
-      t.value === "book" ? (b(), w(J, { key: 0 }, [
-        d("div", Y0, _(c.value), 1),
-        (b(!0), w(J, null, ce(o.value?.markets ?? [], (G) => (b(), w("div", {
+      t.value === "book" ? (y(), w(J, { key: 0 }, [
+        d("div", f0, _(c.value), 1),
+        (y(!0), w(J, null, ce(o.value?.markets ?? [], (G) => (y(), w("div", {
           key: G.id,
           class: "rlzc-card rlzc-mk-card"
         }, [
-          d("div", J0, [
-            d("span", Z0, _(a[G.kind]), 1),
-            Ee(_(G.q), 1)
+          d("div", p0, [
+            d("span", h0, _(a[G.kind]), 1),
+            Me(_(G.q), 1)
           ]),
-          d("div", X0, [
-            (b(!0), w(J, null, ce(G.options, (ge) => (b(), w("button", {
+          d("div", m0, [
+            (y(!0), w(J, null, ce(G.options, (ge) => (y(), w("button", {
               key: ge.id,
               class: Z(["rlzc-mk-opt", { on: u.value[G.id] === ge.id }]),
-              disabled: l.value || !!S(A).market.results[G.id],
-              onClick: (gs) => h(G, ge.id)
+              disabled: l.value || !!C(A).market.results[G.id],
+              onClick: (bs) => m(G, ge.id)
             }, [
               d("span", null, _(ge.label), 1),
               d("b", null, _(s(ge.odds)), 1)
-            ], 10, Q0))), 128))
+            ], 10, g0))), 128))
           ]),
-          u.value[G.id] && !l.value ? (b(), w(J, { key: 0 }, [
-            d("div", ey, [
-              pt(d("input", {
+          u.value[G.id] && !l.value ? (y(), w(J, { key: 0 }, [
+            d("div", x0, [
+              mt(d("input", {
                 "onUpdate:modelValue": (ge) => f.value[G.id] = ge,
                 type: "number",
                 min: "10",
@@ -8689,9 +8794,9 @@ const Ov = {
                 inputmode: "numeric",
                 class: "rlzc-input",
                 placeholder: "押多少"
-              }, null, 8, ty), [
+              }, null, 8, v0), [
                 [
-                  Nt,
+                  Pt,
                   f.value[G.id],
                   void 0,
                   { number: !0 }
@@ -8701,66 +8806,66 @@ const Ov = {
                 class: "rlzc-btn",
                 disabled: typeof f.value[G.id] != "number",
                 onClick: (ge) => z(G)
-              }, "下注", 8, ny)
+              }, "下注", 8, y0)
             ]),
-            d("p", sy, "单注上限 " + _(n(x(G).cap)) + "（" + _(i.value) + "级）", 1),
-            x(G).belowKill ? (b(), w("p", ry, "押完余额低于斩杀线")) : F("", !0)
-          ], 64)) : F("", !0),
-          k(G).length ? (b(), w("ul", iy, [
-            (b(!0), w(J, null, ce(k(G), (ge) => (b(), w("li", {
+            d("p", b0, "单注上限 " + _(n(k(G).cap)) + "（" + _(i.value) + "级）", 1),
+            k(G).belowKill ? (y(), w("p", k0, "押完余额低于斩杀线")) : R("", !0)
+          ], 64)) : R("", !0),
+          x(G).length ? (y(), w("ul", w0, [
+            (y(!0), w(J, null, ce(x(G), (ge) => (y(), w("li", {
               key: ge.ticket.id
-            }, _(R(ge)) + " · " + _(D(ge)), 1))), 128))
-          ])) : F("", !0)
+            }, _($(ge)) + " · " + _(O(ge)), 1))), 128))
+          ])) : R("", !0)
         ]))), 128))
-      ], 64)) : t.value === "tickets" ? (b(), w("div", oy, [
-        S(A).market.tickets.length ? (b(), w("ul", ly, [
-          (b(!0), w(J, null, ce(S(A).market.tickets, (G) => (b(), w("li", {
+      ], 64)) : t.value === "tickets" ? (y(), w("div", z0, [
+        C(A).market.tickets.length ? (y(), w("ul", _0, [
+          (y(!0), w(J, null, ce(C(A).market.tickets, (G) => (y(), w("li", {
             key: G.ticket.id,
             class: "rlzc-tk"
           }, [
-            d("div", ay, [
-              d("span", cy, _(U(G)), 1),
-              d("small", null, _(D(G)), 1)
+            d("div", $0, [
+              d("span", S0, _(j(G)), 1),
+              d("small", null, _(O(G)), 1)
             ]),
             d("span", {
               class: Z(["rlzc-stamp", G.res ? G.res.stamp : "pending"])
-            }, _(G.res ? E[G.res.stamp] : "待"), 3)
+            }, _(G.res ? M[G.res.stamp] : "待"), 3)
           ]))), 128))
-        ])) : (b(), w("p", uy, "还没有赌票。"))
-      ])) : (b(), w(J, { key: 2 }, [
-        S(A).market.casinoOpen ? (b(), w(J, { key: 1 }, [
+        ])) : (y(), w("p", C0, "还没有赌票。"))
+      ])) : (y(), w(J, { key: 2 }, [
+        C(A).market.casinoOpen ? (y(), w(J, { key: 1 }, [
           K[4] || (K[4] = d("p", { class: "rlzc-hint" }, "今晚开两张桌，回到回廊换一批。", -1)),
-          d("div", Ay, [
-            (b(!0), w(J, null, ce(M.value, (G) => (b(), w("button", {
+          d("div", M0, [
+            (y(!0), w(J, null, ce(T.value, (G) => (y(), w("button", {
               key: G.id,
               class: Z(["rlzc-card rlzc-cs-table", { on: ee.value === G.id }]),
-              onClick: (ge) => N(G.id)
+              onClick: (ge) => P(G.id)
             }, [
               d("b", null, _(G.name), 1),
               d("small", null, _(G.desc), 1)
-            ], 10, fy))), 128))
+            ], 10, T0))), 128))
           ]),
-          te.value ? (b(), w("div", py, [
+          te.value ? (y(), w("div", I0, [
             d("h4", null, _(te.value.name), 1),
-            ie.value.length ? (b(), w("div", hy, [
-              (b(!0), w(J, null, ce(ie.value, (G) => (b(), w("button", {
+            ie.value.length ? (y(), w("div", N0, [
+              (y(!0), w(J, null, ce(ie.value, (G) => (y(), w("button", {
                 key: G.id,
-                class: Z({ on: X.value === G.id }),
-                onClick: (ge) => X.value = G.id
-              }, _(G.label), 11, my))), 128))
-            ])) : F("", !0),
-            le.value.length ? (b(), w("div", {
+                class: Z({ on: Q.value === G.id }),
+                onClick: (ge) => Q.value = G.id
+              }, _(G.label), 11, P0))), 128))
+            ])) : R("", !0),
+            le.value.length ? (y(), w("div", {
               key: 1,
               class: Z(["rlzc-cs-grid", te.value.id])
             }, [
-              (b(!0), w(J, null, ce(le.value, (G) => (b(), w("button", {
+              (y(!0), w(J, null, ce(le.value, (G) => (y(), w("button", {
                 key: G.id,
-                class: Z({ on: X.value === G.id }),
-                onClick: (ge) => X.value = G.id
-              }, _(G.label), 11, gy))), 128))
-            ], 2)) : F("", !0),
-            d("div", xy, [
-              pt(d("input", {
+                class: Z({ on: Q.value === G.id }),
+                onClick: (ge) => Q.value = G.id
+              }, _(G.label), 11, D0))), 128))
+            ], 2)) : R("", !0),
+            d("div", L0, [
+              mt(d("input", {
                 "onUpdate:modelValue": K[3] || (K[3] = (G) => re.value = G),
                 type: "number",
                 min: "10",
@@ -8770,7 +8875,7 @@ const Ov = {
                 placeholder: "押多少"
               }, null, 512), [
                 [
-                  Nt,
+                  Pt,
                   re.value,
                   void 0,
                   { number: !0 }
@@ -8778,39 +8883,39 @@ const Ov = {
               ]),
               d("button", {
                 class: "rlzc-btn",
-                disabled: !X.value || typeof re.value != "number" || C.value,
-                onClick: hn
-              }, "开", 8, vy)
+                disabled: !Q.value || typeof re.value != "number" || E.value,
+                onClick: mn
+              }, "开", 8, R0)
             ]),
-            d("p", yy, "单注上限 " + _(n(Pe.value.cap)) + "（" + _(i.value) + "级）", 1),
-            Pe.value.belowKill ? (b(), w("p", by, "押完余额低于斩杀线")) : F("", !0),
-            C.value || m.value ? (b(), w("div", {
+            d("p", O0, "单注上限 " + _(n(De.value.cap)) + "（" + _(i.value) + "级）", 1),
+            De.value.belowKill ? (y(), w("p", F0, "押完余额低于斩杀线")) : R("", !0),
+            E.value || h.value ? (y(), w("div", {
               key: 3,
-              class: Z(["rlzc-cs-face", { rolling: C.value }])
-            }, _(p.value || ""), 3)) : F("", !0),
-            m.value ? (b(), w("p", {
+              class: Z(["rlzc-cs-face", { rolling: E.value }])
+            }, _(p.value || ""), 3)) : R("", !0),
+            h.value ? (y(), w("p", {
               key: 4,
-              class: Z(["rlzc-cs-result", m.value.win ? "win" : "lose"])
-            }, _(Gt.value), 3)) : F("", !0)
-          ])) : F("", !0)
-        ], 64)) : (b(), w("div", dy, "赌坊只在回廊营业。"))
+              class: Z(["rlzc-cs-result", h.value.win ? "win" : "lose"])
+            }, _(Gt.value), 3)) : R("", !0)
+          ])) : R("", !0)
+        ], 64)) : (y(), w("div", E0, "赌坊只在回廊营业。"))
       ], 64))
     ]));
   }
-}), wy = { class: "rlzc-card rlzc-collapsible rlzc-subapi" }, zy = ["aria-expanded"], _y = ["data-kind"], $y = {
+}), B0 = { class: "rlzc-card rlzc-collapsible rlzc-subapi" }, V0 = ["aria-expanded"], U0 = ["data-kind"], H0 = {
   key: 0,
   class: "rlzc-collapse-body"
-}, Sy = {
+}, W0 = {
   class: "rlzc-segsrc",
   role: "group",
   "aria-label": "检测来源"
-}, Cy = {
+}, G0 = {
   key: 0,
   class: "rlzc-preset-area"
-}, Ey = { class: "rlzc-preset-row" }, My = ["value"], Ty = {
+}, K0 = { class: "rlzc-preset-row" }, q0 = ["value"], Y0 = {
   key: 0,
   value: ""
-}, Iy = ["value"], Ny = ["disabled"], Py = ["disabled"], Ry = { class: "rlzc-stacked-field" }, Ly = ["value"], Dy = { class: "rlzc-stacked-field" }, Fy = { class: "rlzc-key-wrap" }, jy = ["type", "value"], Oy = ["aria-label"], By = {
+}, J0 = ["value"], Z0 = ["disabled"], Q0 = ["disabled"], X0 = { class: "rlzc-stacked-field" }, eb = ["value"], tb = { class: "rlzc-stacked-field" }, nb = { class: "rlzc-key-wrap" }, sb = ["type", "value"], rb = ["aria-label"], ib = {
   key: 0,
   width: "16",
   height: "16",
@@ -8819,7 +8924,7 @@ const Ov = {
   stroke: "currentColor",
   "stroke-width": "1.5",
   "aria-hidden": "true"
-}, Vy = {
+}, ob = {
   key: 1,
   width: "16",
   height: "16",
@@ -8828,28 +8933,28 @@ const Ov = {
   stroke: "currentColor",
   "stroke-width": "1.5",
   "aria-hidden": "true"
-}, Uy = { class: "rlzc-stacked-field" }, Hy = {
+}, lb = { class: "rlzc-stacked-field" }, ab = {
   key: 0,
   value: "",
   selected: "",
   disabled: ""
-}, Wy = ["value"], Gy = ["value", "selected"], Ky = ["value"], qy = { class: "rlzc-check-btns" }, Yy = ["disabled"], Jy = ["disabled"], Zy = {
+}, cb = ["value"], ub = ["value", "selected"], db = ["value"], Ab = { class: "rlzc-check-btns" }, fb = ["disabled"], pb = ["disabled"], hb = {
   key: 0,
   class: "rlzc-check-list"
-}, Xy = ["data-kind"], Qy = { class: "rlzc-check-text" }, eb = {
+}, mb = ["data-kind"], gb = { class: "rlzc-check-text" }, xb = {
   key: 0,
   class: "rlzc-check-time"
-}, tb = {
+}, vb = {
   key: 1,
   class: "rlzc-option-list"
-}, nb = { class: "rlzc-option-row" }, sb = ["aria-checked"], rb = { class: "rlzc-option-row" }, ib = ["aria-checked"], ob = { class: "rlzc-option-row rlzc-option-row-timeout" }, lb = { class: "rlzc-timeout-wrap" }, ab = ["value"], cb = /* @__PURE__ */ Be({
+}, yb = { class: "rlzc-option-row" }, bb = ["aria-checked"], kb = { class: "rlzc-option-row" }, wb = ["aria-checked"], zb = { class: "rlzc-option-row rlzc-option-row-timeout" }, _b = { class: "rlzc-timeout-wrap" }, $b = ["value"], Sb = /* @__PURE__ */ Be({
   __name: "SubApiCard",
   setup(e) {
-    const t = H(() => A.settings.subApi), n = H(() => t.value.presets.find((C) => C.id === t.value.presetId) ?? null), s = H(() => n.value?.models ?? []), r = /* @__PURE__ */ xe(!1), i = /* @__PURE__ */ xe(""), o = /* @__PURE__ */ xe(""), l = H(() => t.value.source === "off" ? { kind: "off", text: "未开启" } : t.value.source === "main" ? { kind: "on", text: "跟随主API" } : Im(n.value)), c = H(() => {
-      const C = n.value;
-      if (!C) return [];
-      const p = (m, v, N) => v && N ? [{ id: m, text: v, kind: N.ok ? "on" : "warn", time: N.at ? Em(N.at) : "" }] : [];
-      return [...p("fetch", Mm(C), C.fetchResult), ...p("test", Tm(C), C.testResult)];
+    const t = H(() => A.settings.subApi), n = H(() => t.value.presets.find((E) => E.id === t.value.presetId) ?? null), s = H(() => n.value?.models ?? []), r = /* @__PURE__ */ xe(!1), i = /* @__PURE__ */ xe(""), o = /* @__PURE__ */ xe(""), l = H(() => t.value.source === "off" ? { kind: "off", text: "未开启" } : t.value.source === "main" ? { kind: "on", text: "跟随主API" } : Pm(n.value)), c = H(() => {
+      const E = n.value;
+      if (!E) return [];
+      const p = (h, v, P) => v && P ? [{ id: h, text: v, kind: P.ok ? "on" : "warn", time: P.at ? Tm(P.at) : "" }] : [];
+      return [...p("fetch", Im(E), E.fetchResult), ...p("test", Nm(E), E.testResult)];
     }), a = H(() => A.settings.cardCollapsed.subApi);
     function u() {
       A.settings.cardCollapsed.subApi = !A.settings.cardCollapsed.subApi, f();
@@ -8857,77 +8962,77 @@ const Ov = {
     function f() {
       ke();
     }
-    function h(C) {
-      t.value.source = C, f();
+    function m(E) {
+      t.value.source = E, f();
     }
-    function x() {
+    function k() {
       return Math.random().toString(36).slice(2, 10);
     }
     async function z() {
-      const C = (await sl("给这个API起个名字：", `我的API ${t.value.presets.length + 1}`))?.trim();
-      if (!C) return;
-      const p = { id: x(), name: C, url: "", key: "", model: "" };
+      const E = (await ol("给这个API起个名字：", `我的API ${t.value.presets.length + 1}`))?.trim();
+      if (!E) return;
+      const p = { id: k(), name: E, url: "", key: "", model: "" };
       t.value.presets = [...t.value.presets, p], t.value.presetId = p.id, f();
     }
-    async function k() {
+    async function x() {
       if (!n.value) return;
-      const C = (await sl("改名为：", n.value.name))?.trim();
-      C && (n.value.name = C, f());
+      const E = (await ol("改名为：", n.value.name))?.trim();
+      E && (n.value.name = E, f());
     }
-    async function R() {
-      n.value && await Ht(`确定删除「${n.value.name}」吗？`) && (t.value.presets = t.value.presets.filter((C) => C.id !== t.value.presetId), t.value.presetId = t.value.presets[0]?.id ?? "", f());
+    async function $() {
+      n.value && await Ht(`确定删除「${n.value.name}」吗？`) && (t.value.presets = t.value.presets.filter((E) => E.id !== t.value.presetId), t.value.presetId = t.value.presets[0]?.id ?? "", f());
     }
-    function U(C) {
-      t.value.presetId = C.target.value, f();
+    function j(E) {
+      t.value.presetId = E.target.value, f();
     }
-    function D(C, p) {
-      $x(C, p.target.value);
+    function O(E, p) {
+      Ex(E, p.target.value);
     }
-    function E() {
+    function M() {
       return Math.max(5, Number(t.value.timeoutSec) || 60) * 1e3;
     }
-    function M(C, p, m) {
-      return C.url === p.url && C.key === p.key && (!m || C.model === p.model);
+    function T(E, p, h) {
+      return E.url === p.url && E.key === p.key && (!h || E.model === p.model);
     }
     async function ee() {
-      const C = n.value;
-      if (!C || !il(C) || i.value) return;
-      const p = { ...C };
-      i.value = C.id;
+      const E = n.value;
+      if (!E || !al(E) || i.value) return;
+      const p = { ...E };
+      i.value = E.id;
       try {
-        const m = await zm(p, E());
-        M(C, p, !1) && ll(C, { ok: !0, models: m });
-      } catch (m) {
-        M(C, p, !1) && ll(C, { ok: !1, reason: Ai(m) });
+        const h = await $m(p, M());
+        T(E, p, !1) && ul(E, { ok: !0, models: h });
+      } catch (h) {
+        T(E, p, !1) && ul(E, { ok: !1, reason: pi(h) });
       } finally {
         i.value = "", f();
       }
     }
     async function te() {
-      const C = n.value;
-      if (!C || !ol(C) || o.value) return;
-      const p = { ...C };
-      o.value = C.id;
+      const E = n.value;
+      if (!E || !cl(E) || o.value) return;
+      const p = { ...E };
+      o.value = E.id;
       try {
-        await $m(p, E()), M(C, p, !0) && al(C, { ok: !0 });
-      } catch (m) {
-        M(C, p, !0) && al(C, { ok: !1, reason: Ai(m) });
+        await Cm(p, M()), T(E, p, !0) && dl(E, { ok: !0 });
+      } catch (h) {
+        T(E, p, !0) && dl(E, { ok: !1, reason: pi(h) });
       } finally {
         o.value = "", f();
       }
     }
-    function X(C) {
-      const p = Math.floor(Number(C.target.value));
+    function Q(E) {
+      const p = Math.floor(Number(E.target.value));
       if (!Number.isFinite(p) || p < 5) {
-        Se("warning", "超时时间至少 5 秒。");
+        we("warning", "超时时间至少 5 秒。");
         return;
       }
       t.value.timeoutSec = p, f();
     }
-    function re(C, p) {
-      t.value[C] = p, f();
+    function re(E, p) {
+      t.value[E] = p, f();
     }
-    return (C, p) => (b(), w("div", wy, [
+    return (E, p) => (y(), w("div", B0, [
       d("button", {
         class: "rlzc-collapse-head",
         "aria-expanded": !a.value,
@@ -8937,40 +9042,40 @@ const Ov = {
         d("span", {
           class: "rlzc-dot",
           "data-kind": l.value.kind
-        }, _(l.value.text), 9, _y),
+        }, _(l.value.text), 9, U0),
         d("span", {
           class: Z(["rlzc-collapse-arrow", { open: !a.value }])
         }, "▸", 2)
-      ], 8, zy),
-      a.value ? F("", !0) : (b(), w("div", $y, [
+      ], 8, V0),
+      a.value ? R("", !0) : (y(), w("div", H0, [
         p[24] || (p[24] = d("p", { class: "rlzc-hint" }, "每轮让另一个 AI 核对预设事件有没有写出来，并记下副本状态。开启后每轮多一次调用。", -1)),
-        d("div", Sy, [
+        d("div", W0, [
           d("button", {
             class: Z({ on: t.value.source === "off" }),
-            onClick: p[0] || (p[0] = (m) => h("off"))
+            onClick: p[0] || (p[0] = (h) => m("off"))
           }, "关闭", 2),
           d("button", {
             class: Z({ on: t.value.source === "main" }),
-            onClick: p[1] || (p[1] = (m) => h("main"))
+            onClick: p[1] || (p[1] = (h) => m("main"))
           }, "跟随主API", 2),
           d("button", {
             class: Z({ on: t.value.source === "preset" }),
-            onClick: p[2] || (p[2] = (m) => h("preset"))
+            onClick: p[2] || (p[2] = (h) => m("preset"))
           }, "自设API", 2)
         ]),
-        t.value.source === "preset" ? (b(), w("div", Cy, [
-          d("div", Ey, [
+        t.value.source === "preset" ? (y(), w("div", G0, [
+          d("div", K0, [
             d("select", {
               class: "rlzc-input",
               value: t.value.presetId,
-              onChange: U
+              onChange: j
             }, [
-              t.value.presets.length ? F("", !0) : (b(), w("option", Ty, "还没有保存的接口")),
-              (b(!0), w(J, null, ce(t.value.presets, (m) => (b(), w("option", {
-                key: m.id,
-                value: m.id
-              }, _(m.name), 9, Iy))), 128))
-            ], 40, My),
+              t.value.presets.length ? R("", !0) : (y(), w("option", Y0, "还没有保存的接口")),
+              (y(!0), w(J, null, ce(t.value.presets, (h) => (y(), w("option", {
+                key: h.id,
+                value: h.id
+              }, _(h.name), 9, J0))), 128))
+            ], 40, q0),
             d("button", {
               class: "rlzc-icon-btn",
               "aria-label": "新建接口",
@@ -8994,7 +9099,7 @@ const Ov = {
               "aria-label": "改名",
               type: "button",
               disabled: !n.value,
-              onClick: k
+              onClick: x
             }, [...p[11] || (p[11] = [
               d("svg", {
                 width: "16",
@@ -9007,13 +9112,13 @@ const Ov = {
               }, [
                 d("path", { d: "M11 2L14 5 5 14H2v-3L11 2z" })
               ], -1)
-            ])], 8, Ny),
+            ])], 8, Z0),
             d("button", {
               class: "rlzc-icon-btn rlzc-danger",
               "aria-label": "删除接口",
               type: "button",
               disabled: !n.value,
-              onClick: R
+              onClick: $
             }, [...p[12] || (p[12] = [
               d("svg", {
                 width: "16",
@@ -9026,35 +9131,35 @@ const Ov = {
               }, [
                 d("path", { d: "M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" })
               ], -1)
-            ])], 8, Py)
+            ])], 8, Q0)
           ]),
-          n.value ? (b(), w(J, { key: 0 }, [
-            d("div", Ry, [
+          n.value ? (y(), w(J, { key: 0 }, [
+            d("div", X0, [
               p[13] || (p[13] = d("label", { class: "rlzc-label" }, "地址", -1)),
               d("input", {
                 class: "rlzc-input",
                 value: n.value.url,
                 placeholder: "https://…/v1",
-                onInput: p[3] || (p[3] = (m) => D("url", m))
-              }, null, 40, Ly)
+                onInput: p[3] || (p[3] = (h) => O("url", h))
+              }, null, 40, eb)
             ]),
-            d("div", Dy, [
+            d("div", tb, [
               p[16] || (p[16] = d("label", { class: "rlzc-label" }, "密钥", -1)),
-              d("div", Fy, [
+              d("div", nb, [
                 d("input", {
                   class: "rlzc-input",
                   type: r.value ? "text" : "password",
                   value: n.value.key,
                   autocomplete: "off",
-                  onInput: p[4] || (p[4] = (m) => D("key", m))
-                }, null, 40, jy),
+                  onInput: p[4] || (p[4] = (h) => O("key", h))
+                }, null, 40, sb),
                 d("button", {
                   class: "rlzc-eye-btn",
                   type: "button",
                   "aria-label": r.value ? "隐藏密钥" : "显示密钥",
-                  onClick: p[5] || (p[5] = (m) => r.value = !r.value)
+                  onClick: p[5] || (p[5] = (h) => r.value = !r.value)
                 }, [
-                  r.value ? (b(), w("svg", By, [...p[14] || (p[14] = [
+                  r.value ? (y(), w("svg", ib, [...p[14] || (p[14] = [
                     d("path", { d: "M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" }, null, -1),
                     d("circle", {
                       cx: "8",
@@ -9062,7 +9167,7 @@ const Ov = {
                       r: "2"
                     }, null, -1),
                     d("path", { d: "M2 2l12 12" }, null, -1)
-                  ])])) : (b(), w("svg", Vy, [...p[15] || (p[15] = [
+                  ])])) : (y(), w("svg", ob, [...p[15] || (p[15] = [
                     d("path", { d: "M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" }, null, -1),
                     d("circle", {
                       cx: "8",
@@ -9070,62 +9175,62 @@ const Ov = {
                       r: "2"
                     }, null, -1)
                   ])]))
-                ], 8, Oy)
+                ], 8, rb)
               ])
             ]),
-            d("div", Uy, [
+            d("div", lb, [
               p[17] || (p[17] = d("label", { class: "rlzc-label" }, "模型", -1)),
-              s.value.length ? (b(), w("select", {
+              s.value.length ? (y(), w("select", {
                 key: 0,
                 class: "rlzc-input",
-                onChange: p[6] || (p[6] = (m) => D("model", m))
+                onChange: p[6] || (p[6] = (h) => O("model", h))
               }, [
-                n.value.model ? F("", !0) : (b(), w("option", Hy, "请选择…")),
-                n.value.model && !s.value.includes(n.value.model) ? (b(), w("option", {
+                n.value.model ? R("", !0) : (y(), w("option", ab, "请选择…")),
+                n.value.model && !s.value.includes(n.value.model) ? (y(), w("option", {
                   key: 1,
                   value: n.value.model,
                   selected: ""
-                }, _(n.value.model), 9, Wy)) : F("", !0),
-                (b(!0), w(J, null, ce(s.value, (m) => (b(), w("option", {
-                  key: m,
-                  value: m,
-                  selected: m === n.value.model
-                }, _(m), 9, Gy))), 128))
-              ], 32)) : (b(), w("input", {
+                }, _(n.value.model), 9, cb)) : R("", !0),
+                (y(!0), w(J, null, ce(s.value, (h) => (y(), w("option", {
+                  key: h,
+                  value: h,
+                  selected: h === n.value.model
+                }, _(h), 9, ub))), 128))
+              ], 32)) : (y(), w("input", {
                 key: 1,
                 class: "rlzc-input rlzc-input-disabled",
                 value: n.value.model ? n.value.model : "先拉取模型",
                 readonly: "",
                 tabindex: "-1"
-              }, null, 8, Ky))
+              }, null, 8, db))
             ]),
-            d("div", qy, [
+            d("div", Ab, [
               d("button", {
                 class: "rlzc-btn ghost",
                 type: "button",
-                disabled: !!i.value || !S(il)(n.value),
+                disabled: !!i.value || !C(al)(n.value),
                 onClick: ee
-              }, _(i.value === n.value.id ? "拉取中…" : "拉取模型"), 9, Yy),
+              }, _(i.value === n.value.id ? "拉取中…" : "拉取模型"), 9, fb),
               d("button", {
                 class: "rlzc-btn ghost",
                 type: "button",
-                disabled: !!o.value || !S(ol)(n.value),
+                disabled: !!o.value || !C(cl)(n.value),
                 onClick: te
-              }, _(o.value === n.value.id ? "测试中…" : "测试模型"), 9, Jy)
+              }, _(o.value === n.value.id ? "测试中…" : "测试模型"), 9, pb)
             ]),
-            c.value.length ? (b(), w("ul", Zy, [
-              (b(!0), w(J, null, ce(c.value, (m) => (b(), w("li", {
-                key: m.id,
-                "data-kind": m.kind
+            c.value.length ? (y(), w("ul", hb, [
+              (y(!0), w(J, null, ce(c.value, (h) => (y(), w("li", {
+                key: h.id,
+                "data-kind": h.kind
               }, [
-                d("span", Qy, _(m.text), 1),
-                m.time ? (b(), w("time", eb, _(m.time), 1)) : F("", !0)
-              ], 8, Xy))), 128))
-            ])) : F("", !0)
-          ], 64)) : F("", !0)
-        ])) : F("", !0),
-        t.value.source !== "off" ? (b(), w("div", tb, [
-          d("div", nb, [
+                d("span", gb, _(h.text), 1),
+                h.time ? (y(), w("time", xb, _(h.time), 1)) : R("", !0)
+              ], 8, mb))), 128))
+            ])) : R("", !0)
+          ], 64)) : R("", !0)
+        ])) : R("", !0),
+        t.value.source !== "off" ? (y(), w("div", vb, [
+          d("div", yb, [
             p[19] || (p[19] = d("div", { class: "rlzc-option-label" }, [
               d("span", null, "省钱模式"),
               d("small", null, "只在有预设事件的轮次检测")
@@ -9135,12 +9240,12 @@ const Ov = {
               type: "button",
               "aria-checked": t.value.saveMode ? "true" : "false",
               class: Z(["rlzc-toggle", { on: t.value.saveMode }]),
-              onClick: p[7] || (p[7] = (m) => re("saveMode", !t.value.saveMode))
+              onClick: p[7] || (p[7] = (h) => re("saveMode", !t.value.saveMode))
             }, [...p[18] || (p[18] = [
               d("span", null, null, -1)
-            ])], 10, sb)
+            ])], 10, bb)
           ]),
-          d("div", rb, [
+          d("div", kb, [
             p[21] || (p[21] = d("div", { class: "rlzc-option-label" }, [
               d("span", null, "等检测完再写下一轮"),
               d("small", null, "关掉更快，状态可能晚一轮")
@@ -9150,96 +9255,96 @@ const Ov = {
               type: "button",
               "aria-checked": t.value.wait ? "true" : "false",
               class: Z(["rlzc-toggle", { on: t.value.wait }]),
-              onClick: p[8] || (p[8] = (m) => re("wait", !t.value.wait))
+              onClick: p[8] || (p[8] = (h) => re("wait", !t.value.wait))
             }, [...p[20] || (p[20] = [
               d("span", null, null, -1)
-            ])], 10, ib)
+            ])], 10, wb)
           ]),
-          d("div", ob, [
+          d("div", zb, [
             p[23] || (p[23] = d("span", null, "超时", -1)),
-            d("div", lb, [
+            d("div", _b, [
               d("input", {
                 type: "number",
                 min: "5",
                 class: "rlzc-input rlzc-input-num",
                 value: t.value.timeoutSec,
-                onChange: X
-              }, null, 40, ab),
+                onChange: Q
+              }, null, 40, $b),
               p[22] || (p[22] = d("span", { class: "rlzc-unit" }, "秒", -1))
             ])
           ])
-        ])) : F("", !0)
+        ])) : R("", !0)
       ]))
     ]));
   }
-}), ub = { class: "rlzc-card rlzc-collapsible rlzc-live-card" }, db = ["aria-expanded"], Ab = {
+}), Cb = { class: "rlzc-card rlzc-collapsible rlzc-live-card" }, Eb = ["aria-expanded"], Mb = {
   key: 0,
   class: "rlzc-dot",
   "data-kind": "on"
-}, fb = {
+}, Tb = {
   key: 0,
   class: "rlzc-collapse-body"
-}, pb = { class: "rlzc-onair-text" }, hb = {
+}, Ib = { class: "rlzc-onair-text" }, Nb = {
   key: 0,
   class: "rlzc-onair-lock",
   "aria-label": "副本内已锁定"
-}, mb = { class: "rlzc-option-list" }, gb = { class: "rlzc-option-row rlzc-option-row-stack" }, xb = {
+}, Pb = { class: "rlzc-option-list" }, Db = { class: "rlzc-option-row rlzc-option-row-stack" }, Lb = {
   class: "rlzc-segsrc",
   role: "group",
   "aria-label": "弹幕来源"
-}, vb = ["disabled"], yb = {
+}, Rb = ["disabled"], Ob = {
   key: 0,
   class: "rlzc-hint"
-}, bb = {
+}, Fb = {
   key: 0,
   class: "rlzc-option-row"
-}, kb = { class: "rlzc-timeout-wrap" }, wb = ["value"], zb = { class: "rlzc-option-row" }, _b = ["aria-checked"], $b = /* @__PURE__ */ Be({
+}, jb = { class: "rlzc-timeout-wrap" }, Bb = ["value"], Vb = { class: "rlzc-option-row" }, Ub = ["aria-checked"], Hb = /* @__PURE__ */ Be({
   __name: "LiveCard",
   setup(e) {
-    const t = H(() => A.settings.live), n = H(() => A.settings.subApi.source !== "off"), s = H(() => n.value ? t.value.source : "local"), r = H(() => (A.tick, A.session, lv())), i = H(() => r.value.on);
+    const t = H(() => A.settings.live), n = H(() => A.settings.subApi.source !== "off"), s = H(() => n.value ? t.value.source : "local"), r = H(() => (A.tick, A.session, pv())), i = H(() => r.value.on);
     function o() {
-      r.value.locked || iu();
+      r.value.locked || au();
     }
     const l = H(() => A.settings.cardCollapsed.live);
     function c() {
       A.settings.cardCollapsed.live = !A.settings.cardCollapsed.live, ke();
     }
-    function a(h) {
-      h === "ai" && !n.value || (t.value.source = h, ke());
+    function a(m) {
+      m === "ai" && !n.value || (t.value.source = m, ke());
     }
-    function u(h) {
-      const x = Math.floor(Number(h.target.value));
-      t.value.freq = Number.isFinite(x) ? Math.max(1, Math.min(10, x)) : 3, h.target.value = String(t.value.freq), ke();
+    function u(m) {
+      const k = Math.floor(Number(m.target.value));
+      t.value.freq = Number.isFinite(k) ? Math.max(1, Math.min(10, k)) : 3, m.target.value = String(t.value.freq), ke();
     }
-    function f(h) {
-      t.value.injectToAI = h, ke();
+    function f(m) {
+      t.value.injectToAI = m, ke();
     }
-    return (h, x) => (b(), w("div", ub, [
+    return (m, k) => (y(), w("div", Cb, [
       d("button", {
         class: "rlzc-collapse-head",
         "aria-expanded": !l.value,
         onClick: c
       }, [
-        x[3] || (x[3] = d("h4", null, "直播", -1)),
-        i.value ? (b(), w("span", Ab, "直播中")) : F("", !0),
+        k[3] || (k[3] = d("h4", null, "直播", -1)),
+        i.value ? (y(), w("span", Mb, "直播中")) : R("", !0),
         d("span", {
           class: Z(["rlzc-collapse-arrow", { open: !l.value }])
         }, "▸", 2)
-      ], 8, db),
-      l.value ? F("", !0) : (b(), w("div", fb, [
-        x[12] || (x[12] = d("p", { class: "rlzc-hint" }, "开播后有观众弹幕和打赏，打赏计入积分。画面在状态栏的直播页。", -1)),
+      ], 8, Eb),
+      l.value ? R("", !0) : (y(), w("div", Tb, [
+        k[12] || (k[12] = d("p", { class: "rlzc-hint" }, "开播后有观众弹幕和打赏，打赏计入积分。画面在状态栏的直播页。", -1)),
         d("div", {
           class: Z(["rlzc-onair", { on: r.value.on, locked: r.value.locked }])
         }, [
-          x[5] || (x[5] = d("span", {
+          k[5] || (k[5] = d("span", {
             class: "rlzc-onair-dot",
             "aria-hidden": "true"
           }, null, -1)),
-          d("div", pb, [
+          d("div", Ib, [
             d("strong", null, _(r.value.on ? "直播中" : "未开播"), 1),
             d("small", null, _(r.value.note), 1)
           ]),
-          r.value.locked ? (b(), w("span", hb, [...x[4] || (x[4] = [
+          r.value.locked ? (y(), w("span", Nb, [...k[4] || (k[4] = [
             d("svg", {
               width: "14",
               height: "14",
@@ -9258,39 +9363,39 @@ const Ov = {
               }),
               d("path", { d: "M5.5 7V5a2.5 2.5 0 0 1 5 0v2" })
             ], -1),
-            Ee(" 已锁定 ", -1)
-          ])])) : (b(), w("button", {
+            Me(" 已锁定 ", -1)
+          ])])) : (y(), w("button", {
             key: 1,
             type: "button",
             class: Z(["rlzc-onair-btn", { stop: r.value.on }]),
             onClick: o
           }, _(r.value.on ? "下播" : "开播"), 3))
         ], 2),
-        d("div", mb, [
-          d("div", gb, [
-            x[6] || (x[6] = d("span", { class: "rlzc-option-label" }, [
+        d("div", Pb, [
+          d("div", Db, [
+            k[6] || (k[6] = d("span", { class: "rlzc-option-label" }, [
               d("span", null, "弹幕来源")
             ], -1)),
-            d("div", xb, [
+            d("div", Lb, [
               d("button", {
                 class: Z({ on: s.value === "local" }),
-                onClick: x[0] || (x[0] = (z) => a("local"))
+                onClick: k[0] || (k[0] = (z) => a("local"))
               }, "本地", 2),
               d("button", {
                 class: Z({ on: s.value === "ai" }),
                 disabled: !n.value,
-                onClick: x[1] || (x[1] = (z) => a("ai"))
-              }, "本地+AI", 10, vb)
+                onClick: k[1] || (k[1] = (z) => a("ai"))
+              }, "本地+AI", 10, Rb)
             ]),
-            n.value ? F("", !0) : (b(), w("small", yb, "需先在副本事件检测里选接口"))
+            n.value ? R("", !0) : (y(), w("small", Ob, "需先在副本事件检测里选接口"))
           ]),
-          s.value === "ai" ? (b(), w("div", bb, [
-            x[9] || (x[9] = d("div", { class: "rlzc-option-label" }, [
+          s.value === "ai" ? (y(), w("div", Fb, [
+            k[9] || (k[9] = d("div", { class: "rlzc-option-label" }, [
               d("span", null, "生成频率"),
               d("small", null, "关键事件时另加一次")
             ], -1)),
-            d("div", kb, [
-              x[7] || (x[7] = d("span", { class: "rlzc-unit" }, "每", -1)),
+            d("div", jb, [
+              k[7] || (k[7] = d("span", { class: "rlzc-unit" }, "每", -1)),
               d("input", {
                 type: "number",
                 min: "1",
@@ -9298,12 +9403,12 @@ const Ov = {
                 class: "rlzc-input rlzc-input-num",
                 value: t.value.freq,
                 onChange: u
-              }, null, 40, wb),
-              x[8] || (x[8] = d("span", { class: "rlzc-unit" }, "轮", -1))
+              }, null, 40, Bb),
+              k[8] || (k[8] = d("span", { class: "rlzc-unit" }, "轮", -1))
             ])
-          ])) : F("", !0),
-          d("div", zb, [
-            x[11] || (x[11] = d("div", { class: "rlzc-option-label" }, [
+          ])) : R("", !0),
+          d("div", Vb, [
+            k[11] || (k[11] = d("div", { class: "rlzc-option-label" }, [
               d("span", null, "弹幕传给AI"),
               d("small", null, "主AI能看到最近弹幕")
             ], -1)),
@@ -9312,111 +9417,111 @@ const Ov = {
               type: "button",
               "aria-checked": t.value.injectToAI ? "true" : "false",
               class: Z(["rlzc-toggle", { on: t.value.injectToAI }]),
-              onClick: x[2] || (x[2] = (z) => f(!t.value.injectToAI))
-            }, [...x[10] || (x[10] = [
+              onClick: k[2] || (k[2] = (z) => f(!t.value.injectToAI))
+            }, [...k[10] || (k[10] = [
               d("span", null, null, -1)
-            ])], 10, _b)
+            ])], 10, Ub)
           ])
         ])
       ]))
     ]));
   }
-}), Sb = { class: "rlzc-settings" }, Cb = { class: "rlzc-card" }, Eb = ["value"], Mb = { class: "rlzc-card rlzc-collapsible rlzc-format-card" }, Tb = ["aria-expanded"], Ib = {
+}), Wb = { class: "rlzc-settings" }, Gb = { class: "rlzc-card" }, Kb = ["value"], qb = { class: "rlzc-card rlzc-collapsible rlzc-format-card" }, Yb = ["aria-expanded"], Jb = {
   key: 0,
   class: "rlzc-collapse-status"
-}, Nb = {
+}, Zb = {
   key: 0,
   class: "rlzc-collapse-body"
-}, Pb = { class: "rlzc-option-row" }, Rb = ["aria-checked"], Lb = { class: "rlzc-card rlzc-collapsible" }, Db = ["aria-expanded"], Fb = {
+}, Qb = { class: "rlzc-option-row" }, Xb = ["aria-checked"], e1 = { class: "rlzc-card rlzc-collapsible" }, t1 = ["aria-expanded"], n1 = {
   key: 0,
   class: "rlzc-collapse-body"
-}, jb = { class: "rlzc-ledger-status" }, Ob = { class: "rlzc-row" }, Bb = ["placeholder"], Vb = ["disabled"], Ub = { class: "rlzc-row" }, Hb = ["disabled"], Wb = { class: "rlzc-row" }, Gb = { class: "rlzc-seg-group" }, Kb = ["aria-pressed", "onClick"], qb = ["disabled"], Yb = {
+}, s1 = { class: "rlzc-ledger-status" }, r1 = { class: "rlzc-row" }, i1 = ["placeholder"], o1 = ["disabled"], l1 = { class: "rlzc-row" }, a1 = ["disabled"], c1 = { class: "rlzc-row" }, u1 = { class: "rlzc-seg-group" }, d1 = ["aria-pressed", "onClick"], A1 = ["disabled"], f1 = {
   key: 0,
   class: "rlzc-hint rlzc-warn-text"
-}, Jb = { class: "rlzc-card rlzc-collapsible" }, Zb = ["aria-expanded"], Xb = {
+}, p1 = { class: "rlzc-card rlzc-collapsible" }, h1 = ["aria-expanded"], m1 = {
   key: 0,
   class: "rlzc-collapse-body"
-}, Qb = { class: "rlzc-depth" }, e1 = { class: "rlzc-field rlzc-field-num" }, t1 = ["value"], n1 = { class: "rlzc-field rlzc-field-num" }, s1 = ["value"], r1 = { class: "rlzc-field rlzc-field-num" }, i1 = ["value"], o1 = { class: "rlzc-field rlzc-field-num" }, l1 = ["value"], a1 = { class: "rlzc-field rlzc-field-num" }, c1 = ["value"], u1 = { class: "rlzc-field rlzc-field-num" }, d1 = ["value"], A1 = { class: "rlzc-card rlzc-collapsible" }, f1 = ["aria-expanded"], p1 = {
+}, g1 = { class: "rlzc-depth" }, x1 = { class: "rlzc-field rlzc-field-num" }, v1 = ["value"], y1 = { class: "rlzc-field rlzc-field-num" }, b1 = ["value"], k1 = { class: "rlzc-field rlzc-field-num" }, w1 = ["value"], z1 = { class: "rlzc-field rlzc-field-num" }, _1 = ["value"], $1 = { class: "rlzc-field rlzc-field-num" }, S1 = ["value"], C1 = { class: "rlzc-field rlzc-field-num" }, E1 = ["value"], M1 = { class: "rlzc-card rlzc-collapsible" }, T1 = ["aria-expanded"], I1 = {
   key: 0,
   class: "rlzc-collapse-body"
-}, h1 = ["value", "onChange"], m1 = { class: "rlzc-card" }, g1 = {
+}, N1 = ["value", "onChange"], P1 = { class: "rlzc-card" }, D1 = {
   key: 0,
   class: "rlzc-list"
-}, x1 = ["onClick"], v1 = {
+}, L1 = ["onClick"], R1 = {
   key: 1,
   class: "rlzc-hint"
-}, y1 = {
+}, O1 = {
   key: 2,
   class: "rlzc-errors"
-}, b1 = { class: "rlzc-card" }, k1 = { class: "rlzc-check" }, w1 = ["checked"], z1 = { class: "rlzc-check" }, _1 = ["checked"], $1 = /* @__PURE__ */ Be({
+}, F1 = { class: "rlzc-card" }, j1 = { class: "rlzc-check" }, B1 = ["checked"], V1 = { class: "rlzc-check" }, U1 = ["checked"], H1 = /* @__PURE__ */ Be({
   __name: "SettingsTab",
   setup(e) {
-    const t = /* @__PURE__ */ xe([]), n = /* @__PURE__ */ xe(null), s = /* @__PURE__ */ xe(null), r = /* @__PURE__ */ xe(null), i = /* @__PURE__ */ xe(""), o = /* @__PURE__ */ xe(""), l = /* @__PURE__ */ xe(""), c = ["D", "C", "B", "A", "S"], a = H(() => St(q())), u = H(() => fn(a.value.value, A.ledger)), f = H(() => (A.tick, st(q()))), h = H(() => $t[f.value]), x = H(() => As(a.value.value, A.ledger, h.value));
+    const t = /* @__PURE__ */ xe([]), n = /* @__PURE__ */ xe(null), s = /* @__PURE__ */ xe(null), r = /* @__PURE__ */ xe(null), i = /* @__PURE__ */ xe(""), o = /* @__PURE__ */ xe(""), l = /* @__PURE__ */ xe(""), c = ["D", "C", "B", "A", "S"], a = H(() => Ct(q())), u = H(() => pn(a.value.value, A.ledger)), f = H(() => (A.tick, it(q()))), m = H(() => St[f.value]), k = H(() => ms(a.value.value, A.ledger, m.value));
     function z() {
-      s.value !== null && (Ix(s.value), s.value = null);
+      s.value !== null && (Dx(s.value), s.value = null);
     }
-    function k() {
-      r.value !== null && (Tx(r.value, i.value || "手动"), r.value = null, i.value = "");
+    function x() {
+      r.value !== null && (Px(r.value, i.value || "手动"), r.value = null, i.value = "");
     }
-    function R() {
-      !o.value && !l.value || (Nx(o.value || void 0, l.value || void 0), o.value = "", l.value = "", Se("success", "校正已保存，下一轮生成时写入状态栏。"));
+    function $() {
+      !o.value && !l.value || (Lx(o.value || void 0, l.value || void 0), o.value = "", l.value = "", we("success", "校正已保存，下一轮生成时写入状态栏。"));
     }
-    function U(C, p) {
-      const m = Math.max(0, Math.min(1e4, Math.floor(Number(p.target.value) || 0)));
-      A.settings.depths[C] = m, ke();
+    function j(E, p) {
+      const h = Math.max(0, Math.min(1e4, Math.floor(Number(p.target.value) || 0)));
+      A.settings.depths[E] = h, ke();
     }
-    async function D(C) {
-      const p = C.target, m = p.files?.[0];
-      p.value = "", m && (t.value = Sx(await m.text()), t.value.length || Se("success", `已导入副本包：${m.name}`));
+    async function O(E) {
+      const p = E.target, h = p.files?.[0];
+      p.value = "", h && (t.value = Mx(await h.text()), t.value.length || we("success", `已导入副本包：${h.name}`));
     }
-    async function E(C, p) {
-      await Ht(`确定删除自定义副本包《${p}》吗？`) && Cx(C);
+    async function M(E, p) {
+      await Ht(`确定删除自定义副本包《${p}》吗？`) && Tx(E);
     }
-    function M(C, p) {
-      const m = Math.floor(Number(p.target.value));
-      !Number.isFinite(m) || m < 1 || (A.settings.genericCaps = { ...A.settings.genericCaps, [C]: m }, ke());
+    function T(E, p) {
+      const h = Math.floor(Number(p.target.value));
+      !Number.isFinite(h) || h < 1 || (A.settings.genericCaps = { ...A.settings.genericCaps, [E]: h }, ke());
     }
-    function ee(C) {
-      ev(C.target.value);
+    function ee(E) {
+      lv(E.target.value);
     }
-    function te(C) {
-      A.settings.statusBarFix = C, ke();
+    function te(E) {
+      A.settings.statusBarFix = E, ke();
     }
-    function X(C, p) {
-      A.settings[C] = p.target.checked, ke();
+    function Q(E, p) {
+      A.settings[E] = p.target.checked, ke();
     }
-    function re(C) {
-      A.settings.cardCollapsed[C] = !A.settings.cardCollapsed[C], ke();
+    function re(E) {
+      A.settings.cardCollapsed[E] = !A.settings.cardCollapsed[E], ke();
     }
-    return (C, p) => (b(), w(J, null, [
-      d("div", Sb, [
-        d("div", Cb, [
+    return (E, p) => (y(), w(J, null, [
+      d("div", Wb, [
+        d("div", Gb, [
           p[19] || (p[19] = d("h4", null, "副本信息显示位置", -1)),
           d("select", {
             class: "rlzc-input",
-            value: S(A).settings.panelDisplay,
+            value: C(A).settings.panelDisplay,
             onChange: ee
           }, [...p[18] || (p[18] = [
             d("option", { value: "panel" }, "扩展面板（默认）", -1),
             d("option", { value: "statusbar" }, "正文状态栏", -1)
-          ])], 40, Eb),
+          ])], 40, Kb),
           p[20] || (p[20] = d("p", { class: "rlzc-hint" }, "选「正文状态栏」时，时限和任务由状态栏显示，系统页不重复。", -1))
         ]),
-        d("div", Mb, [
+        d("div", qb, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.statusBar,
-            onClick: p[0] || (p[0] = (m) => re("statusBar"))
+            "aria-expanded": !C(A).settings.cardCollapsed.statusBar,
+            onClick: p[0] || (p[0] = (h) => re("statusBar"))
           }, [
             p[21] || (p[21] = d("h4", null, "状态栏格式", -1)),
-            S(A).settings.cardCollapsed.statusBar ? (b(), w("span", Ib, _(S(A).settings.statusBarFix ? "自动修正" : "只提醒"), 1)) : F("", !0),
+            C(A).settings.cardCollapsed.statusBar ? (y(), w("span", Jb, _(C(A).settings.statusBarFix ? "自动修正" : "只提醒"), 1)) : R("", !0),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.statusBar }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.statusBar }])
             }, "▸", 2)
-          ], 8, Tb),
-          S(A).settings.cardCollapsed.statusBar ? F("", !0) : (b(), w("div", Nb, [
+          ], 8, Yb),
+          C(A).settings.cardCollapsed.statusBar ? R("", !0) : (y(), w("div", Zb, [
             p[24] || (p[24] = d("p", { class: "rlzc-hint" }, "AI 回复的状态栏缺失或标签写错时，下一轮提醒 AI 按原样输出。", -1)),
-            d("div", Pb, [
+            d("div", Qb, [
               p[23] || (p[23] = d("div", { class: "rlzc-option-label" }, [
                 d("span", null, "自动修正状态栏标签"),
                 d("small", null, "只改标签名，不动内容")
@@ -9424,45 +9529,45 @@ const Ov = {
               d("button", {
                 role: "switch",
                 type: "button",
-                class: Z(["rlzc-toggle rlzc-format-fix", { on: S(A).settings.statusBarFix }]),
-                "aria-checked": S(A).settings.statusBarFix ? "true" : "false",
-                onClick: p[1] || (p[1] = (m) => te(!S(A).settings.statusBarFix))
+                class: Z(["rlzc-toggle rlzc-format-fix", { on: C(A).settings.statusBarFix }]),
+                "aria-checked": C(A).settings.statusBarFix ? "true" : "false",
+                onClick: p[1] || (p[1] = (h) => te(!C(A).settings.statusBarFix))
               }, [...p[22] || (p[22] = [
                 d("span", null, null, -1)
-              ])], 10, Rb)
+              ])], 10, Xb)
             ])
           ]))
         ]),
-        d("div", Lb, [
+        d("div", e1, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.accountFix,
-            onClick: p[2] || (p[2] = (m) => re("accountFix"))
+            "aria-expanded": !C(A).settings.cardCollapsed.accountFix,
+            onClick: p[2] || (p[2] = (h) => re("accountFix"))
           }, [
             p[25] || (p[25] = d("h4", null, "账户校正", -1)),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.accountFix }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.accountFix }])
             }, "▸", 2)
-          ], 8, Db),
-          S(A).settings.cardCollapsed.accountFix ? F("", !0) : (b(), w("div", Fb, [
+          ], 8, t1),
+          C(A).settings.cardCollapsed.accountFix ? R("", !0) : (y(), w("div", n1, [
             p[27] || (p[27] = d("p", { class: "rlzc-hint" }, "当账本与AI状态栏不同步时，在此手动校正积分或写入等级位格。", -1)),
-            d("div", jb, [
+            d("div", s1, [
               d("span", null, [
-                p[26] || (p[26] = Ee("当前余额：", -1)),
+                p[26] || (p[26] = Me("当前余额：", -1)),
                 d("b", null, _(u.value), 1)
               ]),
-              d("span", null, _(x.value ? "⚠ 待清算" : "无待清算"), 1)
+              d("span", null, _(k.value ? "⚠ 待清算" : "无待清算"), 1)
             ]),
             p[28] || (p[28] = d("div", { class: "rlzc-section-label" }, "初始积分", -1)),
-            d("div", Ob, [
-              pt(d("input", {
-                "onUpdate:modelValue": p[3] || (p[3] = (m) => s.value = m),
+            d("div", r1, [
+              mt(d("input", {
+                "onUpdate:modelValue": p[3] || (p[3] = (h) => s.value = h),
                 type: "number",
                 class: "rlzc-input",
                 placeholder: `当前：${a.value.value}`
-              }, null, 8, Bb), [
+              }, null, 8, i1), [
                 [
-                  Nt,
+                  Pt,
                   s.value,
                   void 0,
                   { number: !0 }
@@ -9472,460 +9577,460 @@ const Ov = {
                 class: "rlzc-btn small",
                 disabled: s.value === null,
                 onClick: z
-              }, "保存", 8, Vb)
+              }, "保存", 8, o1)
             ]),
             p[29] || (p[29] = d("div", { class: "rlzc-section-label" }, "追加一笔", -1)),
-            d("div", Ub, [
-              pt(d("input", {
-                "onUpdate:modelValue": p[4] || (p[4] = (m) => r.value = m),
+            d("div", l1, [
+              mt(d("input", {
+                "onUpdate:modelValue": p[4] || (p[4] = (h) => r.value = h),
                 type: "number",
                 class: "rlzc-input",
                 placeholder: "金额（正/负）"
               }, null, 512), [
                 [
-                  Nt,
+                  Pt,
                   r.value,
                   void 0,
                   { number: !0 }
                 ]
               ]),
-              pt(d("input", {
-                "onUpdate:modelValue": p[5] || (p[5] = (m) => i.value = m),
+              mt(d("input", {
+                "onUpdate:modelValue": p[5] || (p[5] = (h) => i.value = h),
                 class: "rlzc-input",
                 placeholder: "备注（可选）"
               }, null, 512), [
-                [Nt, i.value]
+                [Pt, i.value]
               ]),
               d("button", {
                 class: "rlzc-btn small",
                 disabled: r.value === null,
-                onClick: k
-              }, "追加", 8, Hb)
+                onClick: x
+              }, "追加", 8, a1)
             ]),
             p[30] || (p[30] = d("div", { class: "rlzc-section-label" }, "等级 / 位格校正", -1)),
             p[31] || (p[31] = d("p", { class: "rlzc-hint" }, "下一轮生成时在状态栏写入，之后按剧情照常。", -1)),
-            d("div", Wb, [
-              d("div", Gb, [
-                (b(), w(J, null, ce(c, (m) => d("button", {
-                  key: m,
+            d("div", c1, [
+              d("div", u1, [
+                (y(), w(J, null, ce(c, (h) => d("button", {
+                  key: h,
                   type: "button",
-                  class: Z(["rlzc-seg", { active: o.value === m }]),
-                  "aria-pressed": o.value === m ? "true" : "false",
-                  onClick: (v) => o.value = o.value === m ? "" : m
-                }, _(m), 11, Kb)), 64))
+                  class: Z(["rlzc-seg", { active: o.value === h }]),
+                  "aria-pressed": o.value === h ? "true" : "false",
+                  onClick: (v) => o.value = o.value === h ? "" : h
+                }, _(h), 11, d1)), 64))
               ]),
-              pt(d("input", {
-                "onUpdate:modelValue": p[6] || (p[6] = (m) => l.value = m),
+              mt(d("input", {
+                "onUpdate:modelValue": p[6] || (p[6] = (h) => l.value = h),
                 class: "rlzc-input",
                 placeholder: "位格（如：候补）"
               }, null, 512), [
-                [Nt, l.value]
+                [Pt, l.value]
               ]),
               d("button", {
                 class: "rlzc-btn small",
                 disabled: !o.value && !l.value,
-                onClick: R
-              }, "校正", 8, qb)
+                onClick: $
+              }, "校正", 8, A1)
             ]),
-            S(A).ledger.length === 0 && a.value.source === "默认值" ? (b(), w("p", Yb, " 初始积分使用默认值 1000，建议设置正确的初始值。 ")) : F("", !0)
+            C(A).ledger.length === 0 && a.value.source === "默认值" ? (y(), w("p", f1, " 初始积分使用默认值 1000，建议设置正确的初始值。 ")) : R("", !0)
           ]))
         ]),
-        d("div", Jb, [
+        d("div", p1, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.depths,
-            onClick: p[7] || (p[7] = (m) => re("depths"))
+            "aria-expanded": !C(A).settings.cardCollapsed.depths,
+            onClick: p[7] || (p[7] = (h) => re("depths"))
           }, [
             p[32] || (p[32] = d("h4", null, "注入深度", -1)),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.depths }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.depths }])
             }, "▸", 2)
-          ], 8, Zb),
-          S(A).settings.cardCollapsed.depths ? F("", !0) : (b(), w("div", Xb, [
+          ], 8, h1),
+          C(A).settings.cardCollapsed.depths ? R("", !0) : (y(), w("div", m1, [
             p[39] || (p[39] = d("p", { class: "rlzc-hint" }, "数字越小越靠近最新消息，AI 越重视。一般不用改。", -1)),
-            d("div", Qb, [
-              d("label", e1, [
+            d("div", g1, [
+              d("label", x1, [
                 p[33] || (p[33] = d("span", null, [
-                  Ee("副本暗号"),
+                  Me("副本暗号"),
                   d("small", null, "触发世界书的副本条目")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.token,
-                  onChange: p[8] || (p[8] = (m) => U("token", m))
-                }, null, 40, t1)
+                  value: C(A).settings.depths.token,
+                  onChange: p[8] || (p[8] = (h) => j("token", h))
+                }, null, 40, v1)
               ]),
-              d("label", n1, [
+              d("label", y1, [
                 p[34] || (p[34] = d("span", null, [
-                  Ee("副本进度"),
+                  Me("副本进度"),
                   d("small", null, "阶段、轮次、时限、副本状态")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.progress,
-                  onChange: p[9] || (p[9] = (m) => U("progress", m))
-                }, null, 40, s1)
+                  value: C(A).settings.depths.progress,
+                  onChange: p[9] || (p[9] = (h) => j("progress", h))
+                }, null, 40, b1)
               ]),
-              d("label", r1, [
+              d("label", k1, [
                 p[35] || (p[35] = d("span", null, [
-                  Ee("本轮指令"),
+                  Me("本轮指令"),
                   d("small", null, "本轮事件与时限写法")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.turn,
-                  onChange: p[10] || (p[10] = (m) => U("turn", m))
-                }, null, 40, i1)
+                  value: C(A).settings.depths.turn,
+                  onChange: p[10] || (p[10] = (h) => j("turn", h))
+                }, null, 40, w1)
               ]),
-              d("label", o1, [
+              d("label", z1, [
                 p[36] || (p[36] = d("span", null, [
-                  Ee("账户"),
+                  Me("账户"),
                   d("small", null, "积分余额与清算状态")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.ledger,
-                  onChange: p[11] || (p[11] = (m) => U("ledger", m))
-                }, null, 40, l1)
+                  value: C(A).settings.depths.ledger,
+                  onChange: p[11] || (p[11] = (h) => j("ledger", h))
+                }, null, 40, _1)
               ]),
-              d("label", a1, [
+              d("label", $1, [
                 p[37] || (p[37] = d("span", null, [
-                  Ee("直播"),
+                  Me("直播"),
                   d("small", null, "在看人数与最近弹幕")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.live,
-                  onChange: p[12] || (p[12] = (m) => U("live", m))
-                }, null, 40, c1)
+                  value: C(A).settings.depths.live,
+                  onChange: p[12] || (p[12] = (h) => j("live", h))
+                }, null, 40, S1)
               ]),
-              d("label", u1, [
+              d("label", C1, [
                 p[38] || (p[38] = d("span", null, [
-                  Ee("格式提醒"),
+                  Me("格式提醒"),
                   d("small", null, "状态栏格式出错后的提醒")
                 ], -1)),
                 d("input", {
                   type: "number",
                   min: "0",
                   class: "rlzc-input rlzc-input-num",
-                  value: S(A).settings.depths.format,
-                  onChange: p[13] || (p[13] = (m) => U("format", m))
-                }, null, 40, d1)
+                  value: C(A).settings.depths.format,
+                  onChange: p[13] || (p[13] = (h) => j("format", h))
+                }, null, 40, E1)
               ])
             ])
           ]))
         ]),
-        _e(cb),
-        _e($b),
-        d("div", A1, [
+        Se(Sb),
+        Se(Hb),
+        d("div", M1, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.genericCaps,
-            onClick: p[14] || (p[14] = (m) => re("genericCaps"))
+            "aria-expanded": !C(A).settings.cardCollapsed.genericCaps,
+            onClick: p[14] || (p[14] = (h) => re("genericCaps"))
           }, [
             p[40] || (p[40] = d("h4", null, "通用副本默认轮数上限", -1)),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.genericCaps }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.genericCaps }])
             }, "▸", 2)
-          ], 8, f1),
-          S(A).settings.cardCollapsed.genericCaps ? F("", !0) : (b(), w("div", p1, [
+          ], 8, T1),
+          C(A).settings.cardCollapsed.genericCaps ? R("", !0) : (y(), w("div", I1, [
             p[41] || (p[41] = d("p", { class: "rlzc-hint" }, "未收录副本按等级取轮数上限，简报里写了「（最多N轮）」时以简报为准。", -1)),
-            (b(), w(J, null, ce(c, (m) => d("label", {
-              key: m,
+            (y(), w(J, null, ce(c, (h) => d("label", {
+              key: h,
               class: "rlzc-field rlzc-field-num"
             }, [
-              d("span", null, _(m) + " 级", 1),
+              d("span", null, _(h) + " 级", 1),
               d("input", {
                 type: "number",
                 min: "1",
                 class: "rlzc-input rlzc-input-num",
-                value: S(A).settings.genericCaps[m],
-                onChange: (v) => M(m, v)
-              }, null, 40, h1)
+                value: C(A).settings.genericCaps[h],
+                onChange: (v) => T(h, v)
+              }, null, 40, N1)
             ])), 64))
           ]))
         ]),
-        d("div", m1, [
+        d("div", P1, [
           p[42] || (p[42] = d("h4", null, "自定义副本包", -1)),
-          S(A).settings.customPacks.length ? (b(), w("ul", g1, [
-            (b(!0), w(J, null, ce(S(A).settings.customPacks, (m) => (b(), w("li", {
-              key: m.id
+          C(A).settings.customPacks.length ? (y(), w("ul", D1, [
+            (y(!0), w(J, null, ce(C(A).settings.customPacks, (h) => (y(), w("li", {
+              key: h.id
             }, [
               d("span", null, [
-                Ee(_(m.level) + "｜" + _(m.name) + " ", 1),
-                d("small", null, "v" + _(m.version), 1)
+                Me(_(h.level) + "｜" + _(h.name) + " ", 1),
+                d("small", null, "v" + _(h.version), 1)
               ]),
               d("button", {
                 class: "rlzc-btn ghost small",
-                onClick: (v) => E(m.id, m.name)
-              }, "删除", 8, x1)
+                onClick: (v) => M(h.id, h.name)
+              }, "删除", 8, L1)
             ]))), 128))
-          ])) : (b(), w("p", v1, "还没有导入自定义副本包。")),
+          ])) : (y(), w("p", R1, "还没有导入自定义副本包。")),
           d("input", {
             ref_key: "fileInput",
             ref: n,
             type: "file",
             accept: ".json,application/json",
             hidden: "",
-            onChange: D
+            onChange: O
           }, null, 544),
           d("button", {
             class: "rlzc-btn",
-            onClick: p[15] || (p[15] = (m) => n.value?.click())
+            onClick: p[15] || (p[15] = (h) => n.value?.click())
           }, "导入 JSON…"),
-          t.value.length ? (b(), w("ul", y1, [
-            (b(!0), w(J, null, ce(t.value, (m, v) => (b(), w("li", { key: v }, _(m), 1))), 128))
-          ])) : F("", !0)
+          t.value.length ? (y(), w("ul", O1, [
+            (y(!0), w(J, null, ce(t.value, (h, v) => (y(), w("li", { key: v }, _(h), 1))), 128))
+          ])) : R("", !0)
         ]),
-        d("div", b1, [
+        d("div", F1, [
           p[45] || (p[45] = d("h4", null, "其他", -1)),
-          d("label", k1, [
+          d("label", j1, [
             d("input", {
               type: "checkbox",
-              checked: S(A).settings.showBall,
-              onChange: p[16] || (p[16] = (m) => X("showBall", m))
-            }, null, 40, w1),
-            p[43] || (p[43] = Ee("显示悬浮球", -1))
+              checked: C(A).settings.showBall,
+              onChange: p[16] || (p[16] = (h) => Q("showBall", h))
+            }, null, 40, B1),
+            p[43] || (p[43] = Me("显示悬浮球", -1))
           ]),
-          d("label", z1, [
+          d("label", V1, [
             d("input", {
               type: "checkbox",
-              checked: S(A).settings.debug,
-              onChange: p[17] || (p[17] = (m) => X("debug", m))
-            }, null, 40, _1),
-            p[44] || (p[44] = Ee("调试模式", -1))
+              checked: C(A).settings.debug,
+              onChange: p[17] || (p[17] = (h) => Q("debug", h))
+            }, null, 40, U1),
+            p[44] || (p[44] = Me("调试模式", -1))
           ])
         ])
       ]),
       p[46] || (p[46] = d("p", { class: "rlzc-hint rlzc-key-notice" }, "密钥保存在本机酒馆设置里，分享设置或截图时注意别带出去。", -1))
     ], 64));
   }
-}), S1 = { class: "rlzc-debug" }, C1 = {
+}), W1 = { class: "rlzc-debug" }, G1 = {
   key: 0,
   class: "rlzc-note"
-}, E1 = {
-  key: 0,
-  class: "rlzc-note"
-}, M1 = {
-  key: 1,
-  class: "rlzc-note"
-}, T1 = {
-  key: 2,
-  class: "rlzc-card"
-}, I1 = { class: "rlzc-row" }, N1 = ["disabled"], P1 = ["value"], R1 = ["disabled"], L1 = { class: "rlzc-row" }, D1 = ["disabled"], F1 = ["disabled"], j1 = {
-  key: 3,
-  class: "rlzc-card rlzc-collapsible"
-}, O1 = ["aria-expanded"], B1 = {
-  key: 0,
-  class: "rlzc-collapse-body"
-}, V1 = ["onUpdate:modelValue", "disabled"], U1 = ["disabled"], H1 = { class: "rlzc-card rlzc-collapsible" }, W1 = ["aria-expanded"], G1 = {
-  key: 0,
-  class: "rlzc-collapse-status"
 }, K1 = {
   key: 0,
-  class: "rlzc-collapse-body"
+  class: "rlzc-note"
 }, q1 = {
-  key: 0,
-  class: "rlzc-hint"
-}, Y1 = { class: "rlzc-hint" }, J1 = { class: "rlzc-list rlzc-warns" }, Z1 = { class: "rlzc-card rlzc-collapsible" }, X1 = ["aria-expanded"], Q1 = {
-  key: 0,
-  class: "rlzc-collapse-status"
-}, ek = {
-  key: 0,
-  class: "rlzc-collapse-body"
-}, tk = {
-  key: 0,
-  class: "rlzc-list"
-}, nk = ["disabled", "onClick"], sk = {
   key: 1,
-  class: "rlzc-hint"
-}, rk = {
-  key: 4,
-  class: "rlzc-card"
-}, ik = { class: "rlzc-pre" }, ok = {
-  key: 0,
-  class: "rlzc-pre"
-}, lk = {
-  key: 5,
-  class: "rlzc-card"
-}, ak = { class: "rlzc-table" }, ck = { class: "rlzc-hint" }, uk = {
-  key: 0,
-  class: "rlzc-hint"
-}, dk = { class: "rlzc-hint" }, Ak = {
-  key: 1,
-  class: "rlzc-table"
-}, fk = { class: "rlzc-card rlzc-collapsible" }, pk = ["aria-expanded"], hk = {
-  key: 0,
-  class: "rlzc-collapse-body"
-}, mk = { class: "rlzc-pre" }, gk = { class: "rlzc-card" }, xk = { class: "rlzc-pre" }, vk = { class: "rlzc-card" }, yk = { class: "rlzc-pre" }, bk = { class: "rlzc-card" }, kk = { class: "rlzc-table" }, wk = {
-  key: 0,
-  class: "rlzc-warn-text"
-}, zk = { key: 1 }, _k = ["disabled"], $k = { class: "rlzc-card rlzc-collapsible rlzc-format-debug" }, Sk = ["aria-expanded"], Ck = {
-  key: 0,
-  class: "rlzc-collapse-status"
-}, Ek = {
-  key: 0,
-  class: "rlzc-collapse-body"
-}, Mk = {
-  key: 0,
-  class: "rlzc-hint"
-}, Tk = {
-  key: 1,
-  class: "rlzc-table"
-}, Ik = {
+  class: "rlzc-note"
+}, Y1 = {
   key: 2,
   class: "rlzc-card"
-}, Nk = { class: "rlzc-table" }, Pk = /* @__PURE__ */ Be({
+}, J1 = { class: "rlzc-row" }, Z1 = ["disabled"], Q1 = ["value"], X1 = ["disabled"], ek = { class: "rlzc-row" }, tk = ["disabled"], nk = ["disabled"], sk = {
+  key: 3,
+  class: "rlzc-card rlzc-collapsible"
+}, rk = ["aria-expanded"], ik = {
+  key: 0,
+  class: "rlzc-collapse-body"
+}, ok = ["onUpdate:modelValue", "disabled"], lk = ["disabled"], ak = { class: "rlzc-card rlzc-collapsible" }, ck = ["aria-expanded"], uk = {
+  key: 0,
+  class: "rlzc-collapse-status"
+}, dk = {
+  key: 0,
+  class: "rlzc-collapse-body"
+}, Ak = {
+  key: 0,
+  class: "rlzc-hint"
+}, fk = { class: "rlzc-hint" }, pk = { class: "rlzc-list rlzc-warns" }, hk = { class: "rlzc-card rlzc-collapsible" }, mk = ["aria-expanded"], gk = {
+  key: 0,
+  class: "rlzc-collapse-status"
+}, xk = {
+  key: 0,
+  class: "rlzc-collapse-body"
+}, vk = {
+  key: 0,
+  class: "rlzc-list"
+}, yk = ["disabled", "onClick"], bk = {
+  key: 1,
+  class: "rlzc-hint"
+}, kk = {
+  key: 4,
+  class: "rlzc-card"
+}, wk = { class: "rlzc-pre" }, zk = {
+  key: 0,
+  class: "rlzc-pre"
+}, _k = {
+  key: 5,
+  class: "rlzc-card"
+}, $k = { class: "rlzc-table" }, Sk = { class: "rlzc-hint" }, Ck = {
+  key: 0,
+  class: "rlzc-hint"
+}, Ek = { class: "rlzc-hint" }, Mk = {
+  key: 1,
+  class: "rlzc-table"
+}, Tk = { class: "rlzc-card rlzc-collapsible" }, Ik = ["aria-expanded"], Nk = {
+  key: 0,
+  class: "rlzc-collapse-body"
+}, Pk = { class: "rlzc-pre" }, Dk = { class: "rlzc-card" }, Lk = { class: "rlzc-pre" }, Rk = { class: "rlzc-card" }, Ok = { class: "rlzc-pre" }, Fk = { class: "rlzc-card" }, jk = { class: "rlzc-table" }, Bk = {
+  key: 0,
+  class: "rlzc-warn-text"
+}, Vk = { key: 1 }, Uk = ["disabled"], Hk = { class: "rlzc-card rlzc-collapsible rlzc-format-debug" }, Wk = ["aria-expanded"], Gk = {
+  key: 0,
+  class: "rlzc-collapse-status"
+}, Kk = {
+  key: 0,
+  class: "rlzc-collapse-body"
+}, qk = {
+  key: 0,
+  class: "rlzc-hint"
+}, Yk = {
+  key: 1,
+  class: "rlzc-table"
+}, Jk = {
+  key: 2,
+  class: "rlzc-card"
+}, Zk = { class: "rlzc-table" }, Qk = /* @__PURE__ */ Be({
   __name: "DebugTab",
   setup(e) {
-    const t = H(() => A.settings.debug), n = /* @__PURE__ */ xe(""), s = /* @__PURE__ */ xe(null), r = /* @__PURE__ */ ur({});
-    Ar(
+    const t = H(() => A.settings.debug), n = /* @__PURE__ */ xe(""), s = /* @__PURE__ */ xe(null), r = /* @__PURE__ */ fr({});
+    hr(
       () => [A.tick, A.pack?.id],
       () => {
-        for (const m of Object.keys(r)) delete r[m];
-        const p = Xc() ?? {};
-        for (const m of A.pack?.roles ?? []) r[m] = p[m] ?? "";
+        for (const h of Object.keys(r)) delete r[h];
+        const p = eu() ?? {};
+        for (const h of A.pack?.roles ?? []) r[h] = p[h] ?? "";
       },
       { immediate: !0 }
     );
     const i = H(() => {
       A.tick;
-      const p = q(), m = [], v = A.session?.entryIndex ?? 0;
-      for (let N = v; N < p.length; N++) {
-        const ie = p[N]?.extra?.rlzc;
-        ie && m.push({ index: N, snap: ie });
+      const p = q(), h = [], v = A.session?.entryIndex ?? 0;
+      for (let P = v; P < p.length; P++) {
+        const ie = p[P]?.extra?.rlzc;
+        ie && h.push({ index: P, snap: ie });
       }
-      return m.reverse().slice(0, 60);
+      return h.reverse().slice(0, 60);
     }), o = H(() => {
-      const p = new Set((A.audit?.warnings ?? []).filter((N) => N.kind === "limit" || N.kind === "eventMissed").map((N) => N.index)), m = q(), v = A.session?.entryIndex ?? 0;
-      for (let N = v; N < m.length; N++)
-        m[N]?.extra?.rlzc?.ledgerMismatch && p.add(N);
-      for (const N of l.value) p.add(N.index);
+      const p = new Set((A.audit?.warnings ?? []).filter((P) => P.kind === "limit" || P.kind === "eventMissed").map((P) => P.index)), h = q(), v = A.session?.entryIndex ?? 0;
+      for (let P = v; P < h.length; P++)
+        h[P]?.extra?.rlzc?.ledgerMismatch && p.add(P);
+      for (const P of l.value) p.add(P.index);
       return p;
-    }), l = H(() => (A.tick, Hh(q()))), c = H(() => l.value.filter((p) => !p.fixed).length), a = H(() => {
+    }), l = H(() => (A.tick, Gh(q()))), c = H(() => l.value.filter((p) => !p.fixed).length), a = H(() => {
       if (A.tick, !A.session || !A.pack || !A.progress) return null;
-      const p = q(), m = vr(p, A.progress.entryIndex);
+      const p = q(), h = kr(p, A.progress.entryIndex);
       let v = null;
-      for (let N = p.length - 1; N >= A.progress.entryIndex; N--) {
-        const ie = p[N]?.extra?.rlzc?.sub;
+      for (let P = p.length - 1; P >= A.progress.entryIndex; P--) {
+        const ie = p[P]?.extra?.rlzc?.sub;
         if (ie) {
           v = ie;
           break;
         }
       }
       return {
-        text: m ? gc(A.pack, m.state) : "",
-        state: m?.state ?? null,
+        text: h ? yc(A.pack, h.state) : "",
+        state: h?.state ?? null,
         record: v
       };
     }), u = H(() => {
       A.tick;
-      const p = q(), m = [];
-      for (let v = p.length - 1; v >= 0 && m.length < 60; v--) {
-        const N = Wt(p[v]);
-        N && m.push({ index: v, rec: N });
+      const p = q(), h = [];
+      for (let v = p.length - 1; v >= 0 && h.length < 60; v--) {
+        const P = Wt(p[v]);
+        P && h.push({ index: v, rec: P });
       }
-      return m;
+      return h;
     });
     function f(p) {
-      const m = p.feed.filter((v) => v.t === "tip").map((v) => `${v.name} ${v.amount}→${v.net}`);
-      return p.revoke && m.push(`撤回 −${p.revoke}`), m.join("；");
+      const h = p.feed.filter((v) => v.t === "tip").map((v) => `${v.name} ${v.amount}→${v.net}`);
+      return p.revoke && h.push(`撤回 −${p.revoke}`), h.join("；");
     }
-    function h(p) {
-      const m = p.ai;
-      return m ? m.pending ? "生成中…" : m.ok ? `${m.count}条（${m.ms}ms）` : `失败：${m.error ?? ""}` : "";
+    function m(p) {
+      const h = p.ai;
+      return h ? h.pending ? "生成中…" : h.ok ? `${h.count}条（${h.ms}ms）` : `失败：${h.error ?? ""}` : "";
     }
-    const x = { done: "✓", missed: "✗", void: "–" };
+    const k = { done: "✓", missed: "✗", void: "–" };
     function z(p) {
       if (!p.sub && !p.skippedEvents?.length) return "";
-      const m = [];
-      p.sub?.skipped && m.push(`未更新（${p.sub.error ?? ""}）`);
-      for (const v of p.sub?.events ?? []) m.push(`${v.id}${x[v.status]}`);
-      for (const v of p.skippedEvents ?? []) m.push(`跳过${v.id}`);
-      return p.sub && !p.sub.skipped && !m.length && m.push("已整理"), m.join(" ");
+      const h = [];
+      p.sub?.skipped && h.push(`未更新（${p.sub.error ?? ""}）`);
+      for (const v of p.sub?.events ?? []) h.push(`${v.id}${k[v.status]}`);
+      for (const v of p.skippedEvents ?? []) h.push(`跳过${v.id}`);
+      return p.sub && !p.sub.skipped && !h.length && h.push("已整理"), h.join(" ");
     }
-    const k = H(() => {
+    const x = H(() => {
       if (A.tick, !A.session) return null;
-      const p = Ve().books[A.session.id];
-      return p ? { book: p, rounds: xv() } : null;
-    }), R = { ending: "结局", rating: "评价", event: "事件", freak: "庄家" };
-    function U(p, m) {
-      return p ? p.kind === "refund" ? `全退（#${p.index}）` : p.kind === "lost" ? `全废（#${p.index}）` : `${m[p.option] ?? p.option}（#${p.index}）` : "待开奖";
+      const p = Ue().books[A.session.id];
+      return p ? { book: p, rounds: _v() } : null;
+    }), $ = { ending: "结局", rating: "评价", event: "事件", freak: "庄家" };
+    function j(p, h) {
+      return p ? p.kind === "refund" ? `全退（#${p.index}）` : p.kind === "lost" ? `全废（#${p.index}）` : `${h[p.option] ?? p.option}（#${p.index}）` : "待开奖";
     }
-    function D(p) {
+    function O(p) {
       return p ? p.status === "pending" ? "出题中…" : p.status === "ok" ? `已出 ${p.count} 题（${p.ms}ms）` : p.status === "late" ? `晚于封盘到达，已丢弃（${p.ms}ms）` : `失败：${p.error ?? ""}` : "事件检测关闭，未出题";
     }
-    const E = { ok: "已检测", miss: "没检测", pending: "检测中" }, M = H(() => {
+    const M = { ok: "已检测", miss: "没检测", pending: "检测中" }, T = H(() => {
       const p = A.progress;
       if (!p) return null;
-      const { perMessage: m, phase: v, next: N, ...ie } = p;
+      const { perMessage: h, phase: v, next: P, ...ie } = p;
       return {
         phase: v.id + " " + v.name,
         ...ie,
-        next: N ? { round: N.round, skipFrom: N.skipFrom, events: N.events.map((le) => le.id) } : null,
-        messages: Object.keys(m).length
+        next: P ? { round: P.round, skipFrom: P.skipFrom, events: P.events.map((le) => le.id) } : null,
+        messages: Object.keys(h).length
       };
     });
     function ee() {
-      n.value && Ux(n.value);
+      n.value && Jx(n.value);
     }
     function te() {
-      s.value !== null && s.value >= 0 && Hx(s.value);
+      s.value !== null && s.value >= 0 && Zx(s.value);
     }
-    function X() {
-      Wx({ ...r });
+    function Q() {
+      Qx({ ...r });
     }
     const re = (p) => JSON.stringify(p, null, 2);
-    function C(p) {
+    function E(p) {
       A.settings.cardCollapsed[p] = !A.settings.cardCollapsed[p], ke();
     }
-    return (p, m) => (b(), w("div", S1, [
-      S(A).session ? (b(), w(J, { key: 1 }, [
-        t.value ? F("", !0) : (b(), w("p", E1, "只读。要手动修改，请先在「设置」里打开调试模式。")),
-        S(A).pack && S(A).session.packVersion !== S(A).pack.version ? (b(), w("p", M1, " 入场时副本包版本为 " + _(S(A).session.packVersion) + "，当前为 " + _(S(A).pack.version) + "。 ", 1)) : F("", !0),
-        S(A).pack?.phases.length ? (b(), w("div", T1, [
-          m[9] || (m[9] = d("h4", null, "手动修正", -1)),
-          d("div", I1, [
-            pt(d("select", {
-              "onUpdate:modelValue": m[0] || (m[0] = (v) => n.value = v),
+    return (p, h) => (y(), w("div", W1, [
+      C(A).session ? (y(), w(J, { key: 1 }, [
+        t.value ? R("", !0) : (y(), w("p", K1, "只读。要手动修改，请先在「设置」里打开调试模式。")),
+        C(A).pack && C(A).session.packVersion !== C(A).pack.version ? (y(), w("p", q1, " 入场时副本包版本为 " + _(C(A).session.packVersion) + "，当前为 " + _(C(A).pack.version) + "。 ", 1)) : R("", !0),
+        C(A).pack?.phases.length ? (y(), w("div", Y1, [
+          h[9] || (h[9] = d("h4", null, "手动修正", -1)),
+          d("div", J1, [
+            mt(d("select", {
+              "onUpdate:modelValue": h[0] || (h[0] = (v) => n.value = v),
               class: "rlzc-input",
               disabled: !t.value
             }, [
-              m[8] || (m[8] = d("option", { value: "" }, "切换到阶段…", -1)),
-              (b(!0), w(J, null, ce(S(A).pack.phases, (v) => (b(), w("option", {
+              h[8] || (h[8] = d("option", { value: "" }, "切换到阶段…", -1)),
+              (y(!0), w(J, null, ce(C(A).pack.phases, (v) => (y(), w("option", {
                 key: v.id,
                 value: v.id
-              }, _(v.name), 9, P1))), 128))
-            ], 8, N1), [
-              [Va, n.value]
+              }, _(v.name), 9, Q1))), 128))
+            ], 8, Z1), [
+              [Wa, n.value]
             ]),
             d("button", {
               class: "rlzc-btn small",
               disabled: !t.value || !n.value,
               onClick: ee
-            }, "切换", 8, R1)
+            }, "切换", 8, X1)
           ]),
-          d("div", L1, [
-            pt(d("input", {
-              "onUpdate:modelValue": m[1] || (m[1] = (v) => s.value = v),
+          d("div", ek, [
+            mt(d("input", {
+              "onUpdate:modelValue": h[1] || (h[1] = (v) => s.value = v),
               type: "number",
               min: "0",
               class: "rlzc-input",
               placeholder: "本阶段已完成的轮数",
               disabled: !t.value
-            }, null, 8, D1), [
+            }, null, 8, tk), [
               [
-                Nt,
+                Pt,
                 s.value,
                 void 0,
                 { number: !0 }
@@ -9935,104 +10040,104 @@ const Ov = {
               class: "rlzc-btn small",
               disabled: !t.value || s.value === null,
               onClick: te
-            }, "修正轮次", 8, F1)
+            }, "修正轮次", 8, nk)
           ])
-        ])) : F("", !0),
-        S(A).pack?.roles?.length ? (b(), w("div", j1, [
+        ])) : R("", !0),
+        C(A).pack?.roles?.length ? (y(), w("div", sk, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.rolesDebug,
-            onClick: m[2] || (m[2] = (v) => C("rolesDebug"))
+            "aria-expanded": !C(A).settings.cardCollapsed.rolesDebug,
+            onClick: h[2] || (h[2] = (v) => E("rolesDebug"))
           }, [
-            m[10] || (m[10] = d("h4", null, "角色登记", -1)),
+            h[10] || (h[10] = d("h4", null, "角色登记", -1)),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.rolesDebug }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.rolesDebug }])
             }, "▸", 2)
-          ], 8, O1),
-          S(A).settings.cardCollapsed.rolesDebug ? F("", !0) : (b(), w("div", B1, [
-            (b(!0), w(J, null, ce(S(A).pack.roles, (v) => (b(), w("label", {
+          ], 8, rk),
+          C(A).settings.cardCollapsed.rolesDebug ? R("", !0) : (y(), w("div", ik, [
+            (y(!0), w(J, null, ce(C(A).pack.roles, (v) => (y(), w("label", {
               key: v,
               class: "rlzc-field"
             }, [
               d("span", null, _(v), 1),
-              pt(d("input", {
-                "onUpdate:modelValue": (N) => r[v] = N,
+              mt(d("input", {
+                "onUpdate:modelValue": (P) => r[v] = P,
                 class: "rlzc-input",
                 disabled: !t.value,
                 placeholder: "未登记"
-              }, null, 8, V1), [
-                [Nt, r[v]]
+              }, null, 8, ok), [
+                [Pt, r[v]]
               ])
             ]))), 128)),
             d("button", {
               class: "rlzc-btn small",
               disabled: !t.value,
-              onClick: X
-            }, "保存登记", 8, U1)
+              onClick: Q
+            }, "保存登记", 8, lk)
           ]))
-        ])) : F("", !0),
-        d("div", H1, [
+        ])) : R("", !0),
+        d("div", ak, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.auditDebug,
-            onClick: m[3] || (m[3] = (v) => C("auditDebug"))
+            "aria-expanded": !C(A).settings.cardCollapsed.auditDebug,
+            onClick: h[3] || (h[3] = (v) => E("auditDebug"))
           }, [
-            m[11] || (m[11] = d("h4", null, "<副本> 核对", -1)),
-            S(A).settings.cardCollapsed.auditDebug ? (b(), w("span", G1, _(S(A).audit?.warnings.length ? "⚠️" : "无"), 1)) : F("", !0),
+            h[11] || (h[11] = d("h4", null, "<副本> 核对", -1)),
+            C(A).settings.cardCollapsed.auditDebug ? (y(), w("span", uk, _(C(A).audit?.warnings.length ? "⚠️" : "无"), 1)) : R("", !0),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.auditDebug }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.auditDebug }])
             }, "▸", 2)
-          ], 8, W1),
-          S(A).settings.cardCollapsed.auditDebug ? F("", !0) : (b(), w("div", K1, [
-            S(A).audit?.warnings.length ? (b(), w(J, { key: 1 }, [
-              d("p", Y1, "共 " + _(S(A).audit.warnings.length) + " 条，显示最近 30 条。只作提示，不会改动消息。", 1),
-              d("ul", J1, [
-                (b(!0), w(J, null, ce(S(A).audit.warnings.slice(-30).reverse(), (v, N) => (b(), w("li", { key: N }, [
+          ], 8, ck),
+          C(A).settings.cardCollapsed.auditDebug ? R("", !0) : (y(), w("div", dk, [
+            C(A).audit?.warnings.length ? (y(), w(J, { key: 1 }, [
+              d("p", fk, "共 " + _(C(A).audit.warnings.length) + " 条，显示最近 30 条。只作提示，不会改动消息。", 1),
+              d("ul", pk, [
+                (y(!0), w(J, null, ce(C(A).audit.warnings.slice(-30).reverse(), (v, P) => (y(), w("li", { key: P }, [
                   d("span", null, [
                     d("small", null, "#" + _(v.index) + "｜" + _(v.phase) + "第" + _(v.round) + "轮", 1),
-                    m[12] || (m[12] = d("br", null, null, -1)),
-                    Ee("⚠️ " + _(v.text), 1)
+                    h[12] || (h[12] = d("br", null, null, -1)),
+                    Me("⚠️ " + _(v.text), 1)
                   ])
                 ]))), 128))
               ])
-            ], 64)) : (b(), w("p", q1, "没有发现问题。"))
+            ], 64)) : (y(), w("p", Ak, "没有发现问题。"))
           ]))
         ]),
-        d("div", Z1, [
+        d("div", hk, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.manualDebug,
-            onClick: m[4] || (m[4] = (v) => C("manualDebug"))
+            "aria-expanded": !C(A).settings.cardCollapsed.manualDebug,
+            onClick: h[4] || (h[4] = (v) => E("manualDebug"))
           }, [
-            m[13] || (m[13] = d("h4", null, "手动操作记录", -1)),
-            S(A).settings.cardCollapsed.manualDebug && S(A).session.manual.length ? (b(), w("span", Q1, "×" + _(S(A).session.manual.length), 1)) : F("", !0),
+            h[13] || (h[13] = d("h4", null, "手动操作记录", -1)),
+            C(A).settings.cardCollapsed.manualDebug && C(A).session.manual.length ? (y(), w("span", gk, "×" + _(C(A).session.manual.length), 1)) : R("", !0),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.manualDebug }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.manualDebug }])
             }, "▸", 2)
-          ], 8, X1),
-          S(A).settings.cardCollapsed.manualDebug ? F("", !0) : (b(), w("div", ek, [
-            S(A).session.manual.length ? (b(), w("ul", tk, [
-              (b(!0), w(J, null, ce(S(A).session.manual, (v, N) => (b(), w("li", { key: N }, [
+          ], 8, mk),
+          C(A).settings.cardCollapsed.manualDebug ? R("", !0) : (y(), w("div", xk, [
+            C(A).session.manual.length ? (y(), w("ul", vk, [
+              (y(!0), w(J, null, ce(C(A).session.manual, (v, P) => (y(), w("li", { key: P }, [
                 d("code", null, "#" + _(v.atIndex) + " " + _(v.kind) + " " + _("phase" in v ? v.phase : "") + _("round" in v ? v.round : "") + _("targetPhase" in v ? `${v.targetPhase}:${v.targetRound}` : ""), 1),
                 d("button", {
                   class: "rlzc-btn ghost small",
                   disabled: !t.value,
-                  onClick: (ie) => S(Gx)(N)
-                }, "撤销", 8, nk)
+                  onClick: (ie) => C(Xx)(P)
+                }, "撤销", 8, yk)
               ]))), 128))
-            ])) : (b(), w("p", sk, "无"))
+            ])) : (y(), w("p", bk, "无"))
           ]))
         ]),
-        a.value && (a.value.state || a.value.record) ? (b(), w("details", rk, [
-          m[14] || (m[14] = d("summary", null, "副本事件检测：副本状态与最近一次检测", -1)),
-          d("pre", ik, _(a.value.text || "（尚无状态）"), 1),
-          a.value.record ? (b(), w("pre", ok, _(re(a.value.record)), 1)) : F("", !0),
-          m[15] || (m[15] = d("p", { class: "rlzc-hint" }, "✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 检测时判断条件已不成立，这一轮没有注入", -1))
-        ])) : F("", !0),
-        k.value ? (b(), w("details", lk, [
-          m[21] || (m[21] = d("summary", null, "黑市：盘口赔率与检测判定", -1)),
-          d("table", ak, [
-            m[19] || (m[19] = d("thead", null, [
+        a.value && (a.value.state || a.value.record) ? (y(), w("details", kk, [
+          h[14] || (h[14] = d("summary", null, "副本事件检测：副本状态与最近一次检测", -1)),
+          d("pre", wk, _(a.value.text || "（尚无状态）"), 1),
+          a.value.record ? (y(), w("pre", zk, _(re(a.value.record)), 1)) : R("", !0),
+          h[15] || (h[15] = d("p", { class: "rlzc-hint" }, "✓ 已发生　✗ 该发生但没写出来　– 条件不成立　跳过 = 检测时判断条件已不成立，这一轮没有注入", -1))
+        ])) : R("", !0),
+        x.value ? (y(), w("details", _k, [
+          h[21] || (h[21] = d("summary", null, "黑市：盘口赔率与检测判定", -1)),
+          d("table", $k, [
+            h[19] || (h[19] = d("thead", null, [
               d("tr", null, [
                 d("th", null, "盘"),
                 d("th", null, "题目"),
@@ -10041,35 +10146,35 @@ const Ov = {
               ])
             ], -1)),
             d("tbody", null, [
-              (b(!0), w(J, null, ce(k.value.book.markets, (v) => (b(), w("tr", {
+              (y(!0), w(J, null, ce(x.value.book.markets, (v) => (y(), w("tr", {
                 key: v.id
               }, [
-                d("td", null, _(R[v.kind]) + " " + _(v.id), 1),
+                d("td", null, _($[v.kind]) + " " + _(v.id), 1),
                 d("td", null, [
-                  Ee(_(v.q), 1),
-                  v.judge ? (b(), w(J, { key: 0 }, [
-                    m[16] || (m[16] = d("br", null, null, -1)),
+                  Me(_(v.q), 1),
+                  v.judge ? (y(), w(J, { key: 0 }, [
+                    h[16] || (h[16] = d("br", null, null, -1)),
                     d("small", null, _(v.judge), 1)
-                  ], 64)) : F("", !0),
-                  v.judgeNo ? (b(), w(J, { key: 1 }, [
-                    m[17] || (m[17] = d("br", null, null, -1)),
+                  ], 64)) : R("", !0),
+                  v.judgeNo ? (y(), w(J, { key: 1 }, [
+                    h[17] || (h[17] = d("br", null, null, -1)),
                     d("small", null, "否：" + _(v.judgeNo), 1)
-                  ], 64)) : F("", !0),
-                  v.by ? (b(), w(J, { key: 2 }, [
-                    m[18] || (m[18] = d("br", null, null, -1)),
+                  ], 64)) : R("", !0),
+                  v.by ? (y(), w(J, { key: 2 }, [
+                    h[18] || (h[18] = d("br", null, null, -1)),
                     d("small", null, "by " + _(v.by), 1)
-                  ], 64)) : F("", !0)
+                  ], 64)) : R("", !0)
                 ]),
-                d("td", null, _(v.options.map((N) => `${N.label}(${Math.round(N.p * 100)}%) ×${N.odds.toFixed(2)}`).join("　")), 1),
-                d("td", null, _(U(S(A).market.results[v.id], Object.fromEntries(v.options.map((N) => [N.id, N.label])))), 1)
+                d("td", null, _(v.options.map((P) => `${P.label}(${Math.round(P.p * 100)}%) ×${P.odds.toFixed(2)}`).join("　")), 1),
+                d("td", null, _(j(C(A).market.results[v.id], Object.fromEntries(v.options.map((P) => [P.id, P.label])))), 1)
               ]))), 128))
             ])
           ]),
-          d("p", ck, "庄家怪盘：" + _(D(k.value.book.freak)), 1),
-          k.value.book.plan ? (b(), w("p", uk, "计划开 " + _(k.value.book.plan.total) + " 个盘，其中怪盘 " + _(k.value.book.plan.freak) + " 个；实开 " + _(k.value.book.markets.length) + " 个", 1)) : F("", !0),
-          d("p", dk, "开盘 " + _(k.value.book.openedAt) + "　" + _(k.value.book.closedAt ? `封盘 ${k.value.book.closedAt}` : "未封盘") + _(k.value.book.frozen ? "　已定格" : ""), 1),
-          k.value.rounds.length ? (b(), w("table", Ak, [
-            m[20] || (m[20] = d("thead", null, [
+          d("p", Sk, "庄家怪盘：" + _(O(x.value.book.freak)), 1),
+          x.value.book.plan ? (y(), w("p", Ck, "计划开 " + _(x.value.book.plan.total) + " 个盘，其中怪盘 " + _(x.value.book.plan.freak) + " 个；实开 " + _(x.value.book.markets.length) + " 个", 1)) : R("", !0),
+          d("p", Ek, "开盘 " + _(x.value.book.openedAt) + "　" + _(x.value.book.closedAt ? `封盘 ${x.value.book.closedAt}` : "未封盘") + _(x.value.book.frozen ? "　已定格" : ""), 1),
+          x.value.rounds.length ? (y(), w("table", Mk, [
+            h[20] || (h[20] = d("thead", null, [
               d("tr", null, [
                 d("th", null, "楼"),
                 d("th", null, "检测"),
@@ -10077,46 +10182,46 @@ const Ov = {
               ])
             ], -1)),
             d("tbody", null, [
-              (b(!0), w(J, null, ce(k.value.rounds, (v) => (b(), w("tr", {
+              (y(!0), w(J, null, ce(x.value.rounds, (v) => (y(), w("tr", {
                 key: v.index,
                 class: Z({ "rlzc-row-warn": v.state === "miss" })
               }, [
                 d("td", null, _(v.index), 1),
-                d("td", null, _(E[v.state]), 1),
-                d("td", null, _(Object.keys(v.hits).filter((N) => v.hits[N]).join(" ") || "—"), 1)
+                d("td", null, _(M[v.state]), 1),
+                d("td", null, _(Object.keys(v.hits).filter((P) => v.hits[P]).join(" ") || "—"), 1)
               ], 2))), 128))
             ])
-          ])) : F("", !0)
-        ])) : F("", !0),
-        d("div", fk, [
+          ])) : R("", !0)
+        ])) : R("", !0),
+        d("div", Tk, [
           d("button", {
             class: "rlzc-collapse-head",
-            "aria-expanded": !S(A).settings.cardCollapsed.injectionDebug,
-            onClick: m[5] || (m[5] = (v) => C("injectionDebug"))
+            "aria-expanded": !C(A).settings.cardCollapsed.injectionDebug,
+            onClick: h[5] || (h[5] = (v) => E("injectionDebug"))
           }, [
-            m[22] || (m[22] = d("h4", null, "本次注入", -1)),
+            h[22] || (h[22] = d("h4", null, "本次注入", -1)),
             d("span", {
-              class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.injectionDebug }])
+              class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.injectionDebug }])
             }, "▸", 2)
-          ], 8, pk),
-          S(A).settings.cardCollapsed.injectionDebug ? F("", !0) : (b(), w("div", hk, [
-            d("pre", mk, _([S(A).lastInjection.token, S(A).lastInjection.progress, S(A).lastInjection.turn, S(A).lastInjection.format].filter(Boolean).join(`
+          ], 8, Ik),
+          C(A).settings.cardCollapsed.injectionDebug ? R("", !0) : (y(), w("div", Nk, [
+            d("pre", Pk, _([C(A).lastInjection.token, C(A).lastInjection.progress, C(A).lastInjection.turn, C(A).lastInjection.format].filter(Boolean).join(`
 
 `) || "（尚未生成）"), 1)
           ]))
         ]),
-        d("details", gk, [
-          m[23] || (m[23] = d("summary", null, "重放结果", -1)),
-          d("pre", xk, _(re(M.value)), 1)
+        d("details", Dk, [
+          h[23] || (h[23] = d("summary", null, "重放结果", -1)),
+          d("pre", Lk, _(re(T.value)), 1)
         ]),
-        d("details", vk, [
-          m[24] || (m[24] = d("summary", null, "会话原始数据", -1)),
-          d("pre", yk, _(re(S(A).session)), 1)
+        d("details", Rk, [
+          h[24] || (h[24] = d("summary", null, "会话原始数据", -1)),
+          d("pre", Ok, _(re(C(A).session)), 1)
         ]),
-        d("details", bk, [
-          m[26] || (m[26] = d("summary", null, "每楼快照（最近60条）", -1)),
-          d("table", kk, [
-            m[25] || (m[25] = d("thead", null, [
+        d("details", Fk, [
+          h[26] || (h[26] = d("summary", null, "每楼快照（最近60条）", -1)),
+          d("table", jk, [
+            h[25] || (h[25] = d("thead", null, [
               d("tr", null, [
                 d("th", null, "楼"),
                 d("th", null, "阶段"),
@@ -10128,7 +10233,7 @@ const Ov = {
               ])
             ], -1)),
             d("tbody", null, [
-              (b(!0), w(J, null, ce(i.value, (v) => (b(), w("tr", {
+              (y(!0), w(J, null, ce(i.value, (v) => (y(), w("tr", {
                 key: v.index,
                 class: Z({ "rlzc-row-warn": o.value.has(v.index) })
               }, [
@@ -10139,7 +10244,7 @@ const Ov = {
                 d("td", null, _(v.snap.limit?.text ?? ""), 1),
                 d("td", null, _(v.snap.injected.join(" ")), 1),
                 d("td", null, _(z(v.snap)), 1),
-                v.snap.ledgerMismatch ? (b(), w("td", wk, "状态栏 " + _(v.snap.ledgerMismatch.status) + " / 账本 " + _(v.snap.ledgerMismatch.ledger), 1)) : (b(), w("td", zk))
+                v.snap.ledgerMismatch ? (y(), w("td", Bk, "状态栏 " + _(v.snap.ledgerMismatch.status) + " / 账本 " + _(v.snap.ledgerMismatch.ledger), 1)) : (y(), w("td", Vk))
               ], 2))), 128))
             ])
           ])
@@ -10147,25 +10252,25 @@ const Ov = {
         d("button", {
           class: "rlzc-btn ghost",
           disabled: !t.value,
-          onClick: m[6] || (m[6] = //@ts-ignore
-          (...v) => S(kl) && S(kl)(...v))
-        }, "删除副本会话", 8, _k)
-      ], 64)) : (b(), w("p", C1, "当前聊天没有副本会话。")),
-      d("div", $k, [
+          onClick: h[6] || (h[6] = //@ts-ignore
+          (...v) => C(_l) && C(_l)(...v))
+        }, "删除副本会话", 8, Uk)
+      ], 64)) : (y(), w("p", G1, "当前聊天没有副本会话。")),
+      d("div", Hk, [
         d("button", {
           class: "rlzc-collapse-head",
-          "aria-expanded": !S(A).settings.cardCollapsed.formatDebug,
-          onClick: m[7] || (m[7] = (v) => C("formatDebug"))
+          "aria-expanded": !C(A).settings.cardCollapsed.formatDebug,
+          onClick: h[7] || (h[7] = (v) => E("formatDebug"))
         }, [
-          m[27] || (m[27] = d("h4", null, "状态栏格式", -1)),
-          S(A).settings.cardCollapsed.formatDebug ? (b(), w("span", Ck, _(c.value ? "⚠️" : l.value.length ? `已修正×${l.value.length}` : "无"), 1)) : F("", !0),
+          h[27] || (h[27] = d("h4", null, "状态栏格式", -1)),
+          C(A).settings.cardCollapsed.formatDebug ? (y(), w("span", Gk, _(c.value ? "⚠️" : l.value.length ? `已修正×${l.value.length}` : "无"), 1)) : R("", !0),
           d("span", {
-            class: Z(["rlzc-collapse-arrow", { open: !S(A).settings.cardCollapsed.formatDebug }])
+            class: Z(["rlzc-collapse-arrow", { open: !C(A).settings.cardCollapsed.formatDebug }])
           }, "▸", 2)
-        ], 8, Sk),
-        S(A).settings.cardCollapsed.formatDebug ? F("", !0) : (b(), w("div", Ek, [
-          l.value.length ? (b(), w("table", Tk, [
-            m[29] || (m[29] = d("thead", null, [
+        ], 8, Wk),
+        C(A).settings.cardCollapsed.formatDebug ? R("", !0) : (y(), w("div", Kk, [
+          l.value.length ? (y(), w("table", Yk, [
+            h[29] || (h[29] = d("thead", null, [
               d("tr", null, [
                 d("th", null, "楼"),
                 d("th", null, "问题"),
@@ -10173,28 +10278,28 @@ const Ov = {
               ])
             ], -1)),
             d("tbody", null, [
-              (b(!0), w(J, null, ce(l.value, (v) => (b(), w("tr", {
+              (y(!0), w(J, null, ce(l.value, (v) => (y(), w("tr", {
                 key: v.index,
                 class: "rlzc-row-warn"
               }, [
                 d("td", null, _(v.index), 1),
                 d("td", null, [
-                  Ee(_(S(Dh)[v.kind]), 1),
-                  v.detail ? (b(), w(J, { key: 0 }, [
-                    m[28] || (m[28] = d("br", null, null, -1)),
+                  Me(_(C(Fh)[v.kind]), 1),
+                  v.detail ? (y(), w(J, { key: 0 }, [
+                    h[28] || (h[28] = d("br", null, null, -1)),
                     d("small", null, _(v.detail), 1)
-                  ], 64)) : F("", !0)
+                  ], 64)) : R("", !0)
                 ]),
                 d("td", null, _(v.fixed ? `已自动修正（原标签 ${v.from}）` : "未修正"), 1)
               ]))), 128))
             ])
-          ])) : (b(), w("p", Mk, "没有发现问题。"))
+          ])) : (y(), w("p", qk, "没有发现问题。"))
         ]))
       ]),
-      u.value.length ? (b(), w("details", Ik, [
-        m[31] || (m[31] = d("summary", null, "直播（每楼，最近60条）", -1)),
-        d("table", Nk, [
-          m[30] || (m[30] = d("thead", null, [
+      u.value.length ? (y(), w("details", Jk, [
+        h[31] || (h[31] = d("summary", null, "直播（每楼，最近60条）", -1)),
+        d("table", Zk, [
+          h[30] || (h[30] = d("thead", null, [
             d("tr", null, [
               d("th", null, "楼"),
               d("th", null, "精彩度"),
@@ -10205,7 +10310,7 @@ const Ov = {
             ])
           ], -1)),
           d("tbody", null, [
-            (b(!0), w(J, null, ce(u.value, (v) => (b(), w("tr", {
+            (y(!0), w(J, null, ce(u.value, (v) => (y(), w("tr", {
               key: v.index,
               class: Z({ "rlzc-row-warn": v.rec.ai && !v.rec.ai.ok && !v.rec.ai.pending })
             }, [
@@ -10214,18 +10319,18 @@ const Ov = {
               d("td", null, _(v.rec.heat), 1),
               d("td", null, _(v.rec.viewers), 1),
               d("td", null, _(f(v.rec)), 1),
-              d("td", null, _(h(v.rec)), 1)
+              d("td", null, _(m(v.rec)), 1)
             ], 2))), 128))
           ])
         ])
-      ])) : F("", !0)
+      ])) : R("", !0)
     ]));
   }
-}), Rk = {
+}), Xk = {
   class: "rlzc-panel",
   role: "dialog",
   "aria-label": "回廊种菜系统"
-}, Lk = { class: "rlzc-head" }, Dk = { class: "rlzc-tabs" }, Fk = ["onClick"], jk = { class: "rlzc-body" }, Ok = /* @__PURE__ */ Be({
+}, ew = { class: "rlzc-head" }, tw = { class: "rlzc-tabs" }, nw = ["onClick"], sw = { class: "rlzc-body" }, rw = /* @__PURE__ */ Be({
   __name: "Panel",
   setup(e) {
     const t = [
@@ -10242,55 +10347,55 @@ const Ov = {
       }
       A.tab = s;
     }
-    return (s, r) => (b(), w("div", {
+    return (s, r) => (y(), w("div", {
       class: "rlzc-backdrop",
-      onClick: r[1] || (r[1] = EA((i) => S(A).panelOpen = !1, ["self"]))
+      onClick: r[1] || (r[1] = TA((i) => C(A).panelOpen = !1, ["self"]))
     }, [
-      d("section", Rk, [
-        d("header", Lk, [
+      d("section", Xk, [
+        d("header", ew, [
           r[2] || (r[2] = d("span", { class: "rlzc-title" }, "回廊种菜系统", -1)),
           d("button", {
             class: "rlzc-icon",
             title: "关闭",
-            onClick: r[0] || (r[0] = (i) => S(A).panelOpen = !1)
+            onClick: r[0] || (r[0] = (i) => C(A).panelOpen = !1)
           }, "×")
         ]),
-        d("nav", Dk, [
-          (b(), w(J, null, ce(t, (i) => d("button", {
+        d("nav", tw, [
+          (y(), w(J, null, ce(t, (i) => d("button", {
             key: i.id,
-            class: Z({ on: S(A).tab === i.id }),
+            class: Z({ on: C(A).tab === i.id }),
             onClick: (o) => n(i.id)
-          }, _(i.label), 11, Fk)), 64))
+          }, _(i.label), 11, nw)), 64))
         ]),
-        d("div", jk, [
-          S(A).tab === "system" ? (b(), We(C0, { key: 0 })) : S(A).tab === "ledger" ? (b(), We(G0, { key: 1 })) : S(A).tab === "market" ? (b(), We(ky, { key: 2 })) : S(A).tab === "settings" ? (b(), We($1, { key: 3 })) : S(A).tab === "debug" && S(A).debugUnlocked ? (b(), We(Pk, { key: 4 })) : F("", !0)
+        d("div", sw, [
+          C(A).tab === "system" ? (y(), Ge(Gy, { key: 0 })) : C(A).tab === "ledger" ? (y(), Ge(u0, { key: 1 })) : C(A).tab === "market" ? (y(), Ge(j0, { key: 2 })) : C(A).tab === "settings" ? (y(), Ge(H1, { key: 3 })) : C(A).tab === "debug" && C(A).debugUnlocked ? (y(), Ge(Qk, { key: 4 })) : R("", !0)
         ])
       ])
     ]));
   }
-}), Bk = /* @__PURE__ */ Be({
+}), iw = /* @__PURE__ */ Be({
   __name: "App",
   setup(e) {
-    return (t, n) => (b(), w(J, null, [
-      S(A).settings.showBall ? (b(), We(Dv, { key: 0 })) : F("", !0),
-      S(A).panelOpen ? (b(), We(Ok, { key: 1 })) : F("", !0),
-      _e(Mv)
+    return (t, n) => (y(), w(J, null, [
+      C(A).settings.showBall ? (y(), Ge(Hv, { key: 0 })) : R("", !0),
+      C(A).panelOpen ? (y(), Ge(rw, { key: 1 })) : R("", !0),
+      Se(Rv)
     ], 64));
   }
-}), Vk = ':host{all:initial}.rlzc-root{--fg: var(--SmartThemeBodyColor, #dcdcd2);--bg: var(--SmartThemeBlurTintColor, #171717);--line: var(--SmartThemeBorderColor, rgba(127, 127, 127, .35));--accent: var(--SmartThemeQuoteColor, #d88a2a);--muted: var(--SmartThemeEmColor, #919191);--solid: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);--soft: color-mix(in srgb, var(--fg) 7%, transparent);--ok: #4caf72;--bad: #c9534f;font-family:var(--mainFontFamily, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif);font-size:14px;line-height:1.55;color:var(--fg)}.rlzc-root *,.rlzc-root *:before,.rlzc-root *:after{box-sizing:border-box}.rlzc-ball{position:fixed;z-index:5000;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--solid);color:var(--muted);display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 10px #00000040;padding:0;font:inherit}.rlzc-ball:active{cursor:grabbing}.rlzc-ball.is-active{color:var(--accent);border-color:var(--accent)}.rlzc-ball.has-ring{border-color:transparent}.rlzc-ball.is-warn{color:var(--bad)}.rlzc-ball-inf{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.rlzc-ball-ring{position:absolute;inset:-1px;width:48px;height:48px;transform:rotate(-90deg);pointer-events:none}.rlzc-ball-ring circle{fill:none;stroke-width:3}.rlzc-ball-ring-base{stroke:var(--line)}.rlzc-ball-ring-bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dasharray .3s ease}.rlzc-ball.is-warn .rlzc-ball-ring-bar{stroke:var(--bad)}@media(prefers-reduced-motion:reduce){.rlzc-ball-ring-bar{transition:none}}.rlzc-ball-live{position:absolute;top:1px;left:1px;width:12px;height:12px;border-radius:50%;background:var(--bad);border:2px solid var(--solid);pointer-events:none}.rlzc-ball-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;line-height:18px;text-align:center;pointer-events:none}.rlzc-entry-card{position:fixed;z-index:9000;top:calc(var(--topBarBlockSize, 40px) + 12px);right:12px;width:300px;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px #0000004d;padding:10px 12px 4px 14px}@media(max-width:323.98px){.rlzc-entry-card{left:12px;width:auto}}@media(min-width:800px){.rlzc-entry-card.beside-panel{right:476px}}.rlzc-entry-close{position:absolute;top:0;right:0;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;cursor:pointer;padding:0}.rlzc-entry-close:hover{color:var(--fg)}.rlzc-entry-kicker{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);padding-right:36px}.rlzc-entry-inf{width:16px;height:16px;fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.rlzc-entry-title{display:flex;align-items:center;gap:8px;margin:6px 0 2px;padding-right:30px}.rlzc-entry-level{flex:0 0 auto;display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 4px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);font-size:13px;font-weight:800;line-height:1}.rlzc-entry-name{font-size:16px;font-weight:700;min-width:0;overflow-wrap:anywhere}.rlzc-entry-note{font-size:12px;color:var(--muted);margin-top:2px}.rlzc-entry-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:2px;border-top:1px solid var(--line)}.rlzc-entry-live{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;margin-left:-2px;background:none;border:0;color:var(--fg);font:inherit;font-size:13px;cursor:pointer}.rlzc-entry-live .rlzc-toggle{display:inline-block;width:44px}.rlzc-entry-live .rlzc-toggle:after{content:none}.rlzc-entry-live:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}.rlzc-toggle.danger.on{background:color-mix(in srgb,var(--bad) 75%,transparent);border-color:var(--bad)}.rlzc-entry-live.on{color:var(--bad)}.rlzc-entry-actions{display:flex;gap:6px}.rlzc-entry-actions .rlzc-btn{min-height:44px;min-width:60px}.rlzc-entry-actions .rlzc-entry-go{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:opacity .16s ease,transform .16s ease}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{opacity:0;transform:translateY(-4px)}@media(prefers-reduced-motion:reduce){.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:none}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{transform:none}}.rlzc-backdrop{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:5001;background:#0000004d;display:flex;align-items:flex-end;justify-content:center}.rlzc-panel{width:100%;max-height:86dvh;height:86vh;height:86dvh;display:flex;flex-direction:column;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -6px 30px #00000059;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0)}@media(min-width:720px){.rlzc-backdrop{align-items:center;justify-content:flex-end;padding:24px;background:#00000026}.rlzc-panel{width:440px;height:min(760px,90vh);border-radius:14px}}.rlzc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px}.rlzc-title{font-weight:700;letter-spacing:.08em}.rlzc-icon{background:none;border:0;color:var(--fg);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px}.rlzc-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}.rlzc-tabs button,.rlzc-subtabs button{flex:1 0 auto;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;padding:9px 10px;border-bottom:2px solid transparent;white-space:nowrap}.rlzc-tabs button.on{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}.rlzc-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}.rlzc-body>div{display:flex;flex-direction:column;gap:10px}.rlzc-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft)}.rlzc-card h3,.rlzc-card h4{margin:0 0 6px}.rlzc-card h4{font-size:13px;color:var(--muted);font-weight:600}.rlzc-card summary{cursor:pointer;font-weight:600}.rlzc-note{margin:0;padding:8px 10px;border-left:3px solid var(--accent);background:var(--soft);border-radius:4px;font-size:13px}.rlzc-hint{font-size:12px;color:var(--muted);margin:4px 0}.rlzc-row{display:flex;gap:8px;align-items:center;margin:4px 0}.rlzc-row>.rlzc-input{flex:1;min-width:0}.rlzc-label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-input{font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 70%,transparent);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}.rlzc-input:focus{outline:1px solid var(--accent)}.rlzc-input option{background:var(--solid);color:var(--fg)}.rlzc-btn{font:inherit;cursor:pointer;border-radius:8px;padding:7px 12px;white-space:nowrap;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--fg)}.rlzc-btn.ghost{border-color:var(--line);background:none}.rlzc-btn.small{padding:4px 9px;font-size:12px}.rlzc-btn:disabled{opacity:.4;cursor:not-allowed}.rlzc-field{display:flex;align-items:center;gap:8px;margin:4px 0}.rlzc-field>span{flex:0 0 42%;font-size:13px}.rlzc-check{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:13px}.rlzc-list{list-style:none;margin:0 0 8px;padding:0}.rlzc-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}.rlzc-errors{color:#d9534f;font-size:12px;margin:6px 0 0;padding-left:18px}.rlzc-mono,.rlzc-pre,code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.rlzc-pre{white-space:pre-wrap;word-break:break-all;font-size:12px;margin:8px 0 0;max-height:50vh;overflow:auto}.rlzc-hero-top{display:flex;align-items:center;gap:10px}.rlzc-hero-top h3{margin:0;font-size:18px;flex:1}.rlzc-level{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:800}.rlzc-chip{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.rlzc-goal{margin:8px 0 0;font-size:13px}.rlzc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-stat{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;background:var(--soft)}.rlzc-stat span{font-size:11px;color:var(--muted)}.rlzc-stat b{font-size:16px;font-variant-numeric:tabular-nums}.rlzc-stat.warn b{color:var(--accent)}.rlzc-kv{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.rlzc-kv span,.rlzc-tasks>span{color:var(--muted);font-size:12px}.rlzc-tasks ul{margin:4px 0 0;padding-left:18px}.rlzc-ps{font-size:13px;color:var(--muted);margin-top:6px;white-space:pre-wrap}.rlzc-actions{display:flex;gap:8px;flex-wrap:wrap}.rlzc-actions .rlzc-btn{flex:1}.rlzc-rest{text-align:center;padding:24px 12px}.rlzc-rest p{color:var(--muted);font-size:13px;margin:0}.rlzc-docs{border:1px solid var(--line);border-radius:10px;padding:2px 12px 10px;background:var(--soft)}.rlzc-subtabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line)}.rlzc-subtabs button{flex:0 0 auto}.rlzc-subtabs button.on{color:var(--fg);border-bottom-color:var(--accent)}.rlzc-md{font-size:14px}.rlzc-md h3,.rlzc-md h4,.rlzc-md h5{margin:14px 0 6px}.rlzc-md p{margin:6px 0}.rlzc-md ul,.rlzc-md ol{padding-left:20px;margin:6px 0}.rlzc-md blockquote{margin:6px 0;padding-left:10px;border-left:3px solid var(--line);color:var(--muted)}.rlzc-img{display:block;max-width:100%;margin:8px auto;background:#fff;border-radius:8px}.rlzc-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.rlzc-table th,.rlzc-table td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);vertical-align:top}.rlzc-warns li{align-items:flex-start;font-size:13px}.rlzc-row-warn td{background:color-mix(in srgb,#e0b000 22%,transparent)}.rlzc-intro{line-height:1.6;margin-bottom:8px}.rlzc-grow{flex:1;margin:0}.rlzc-grow>.rlzc-input{flex:1;min-width:0}.rlzc-subline{font-size:12px;color:var(--muted);margin:0}.rlzc-depth .rlzc-field>span{display:flex;flex-direction:column;gap:2px}.rlzc-depth .rlzc-field>span small{color:var(--muted);font-size:11px;line-height:1.4}.rlzc-field.rlzc-field-num>span{flex:1 1 auto;min-width:0}.rlzc-subapi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.rlzc-subapi-head h4{margin:0}.rlzc-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}.rlzc-dot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted)}.rlzc-dot[data-kind=on]{color:#4caf72}.rlzc-dot[data-kind=on]:before{background:#4caf72}.rlzc-dot[data-kind=warn]{color:#c9833a}.rlzc-dot[data-kind=warn]:before{background:#c9833a}.rlzc-segsrc{display:flex;width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:8px 0}.rlzc-segsrc button{flex:1;padding:8px 4px;font:inherit;font-size:13px;background:none;border:none;border-right:1px solid var(--line);color:var(--muted);cursor:pointer;min-height:44px}.rlzc-segsrc button:last-child{border-right:none}.rlzc-segsrc button.on{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--fg);font-weight:600}.rlzc-segsrc button:hover:not(.on){background:var(--soft);color:var(--fg)}.rlzc-preset-area{background:color-mix(in srgb,var(--bg) 50%,transparent);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.rlzc-preset-row{display:flex;gap:6px;align-items:center}.rlzc-preset-row .rlzc-input{flex:1;min-width:0}.rlzc-icon-btn{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);cursor:pointer;padding:0}.rlzc-icon-btn:hover:not(:disabled){color:var(--fg);border-color:var(--fg)}.rlzc-icon-btn.rlzc-danger{color:#c9534f;border-color:color-mix(in srgb,#c9534f 40%,transparent)}.rlzc-icon-btn.rlzc-danger:hover:not(:disabled){background:color-mix(in srgb,#c9534f 12%,transparent);border-color:#c9534f}.rlzc-icon-btn:disabled{opacity:.35;cursor:not-allowed}.rlzc-stacked-field{display:flex;flex-direction:column;gap:4px}.rlzc-key-wrap{position:relative;display:flex}.rlzc-key-wrap .rlzc-input{padding-right:44px;width:100%}.rlzc-eye-btn{position:absolute;right:0;top:0;bottom:0;width:44px;display:grid;place-items:center;background:none;border:none;color:var(--muted);cursor:pointer;padding:0}.rlzc-eye-btn:hover{color:var(--fg)}.rlzc-input-disabled{color:var(--muted);cursor:default}.rlzc-check-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rlzc-check-btns .rlzc-btn{min-height:44px;width:100%}.rlzc-check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}.rlzc-check-list li{display:flex;align-items:baseline;gap:10px;font-size:12px;line-height:1.45}.rlzc-check-list li[data-kind=on]{color:#4caf72}.rlzc-check-list li[data-kind=warn]{color:#c9833a}.rlzc-check-text{flex:1;min-width:0;overflow-wrap:anywhere}.rlzc-check-time{flex:none;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-option-list{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;display:flex;flex-direction:column}.rlzc-option-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 50%,transparent);min-height:44px}.rlzc-option-row:last-child{border-bottom:none}.rlzc-option-label{display:flex;flex-direction:column;gap:2px;font-size:13px}.rlzc-option-label small{font-size:11px;color:var(--muted)}.rlzc-option-row-timeout>span{font-size:13px}.rlzc-timeout-wrap{display:flex;align-items:center;gap:6px;flex:0 0 auto}.rlzc-input.rlzc-input-num{flex:0 0 auto;width:calc(4ch + 20px);margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}.rlzc-input-num::-webkit-inner-spin-button,.rlzc-input-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.rlzc-seg.active{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-unit{font-size:13px;color:var(--muted)}.rlzc-toggle{flex:0 0 44px;height:26px;border-radius:13px;background:color-mix(in srgb,var(--muted) 30%,transparent);border:1px solid var(--line);cursor:pointer;padding:0;position:relative;transition:background .15s}.rlzc-toggle.on{background:color-mix(in srgb,var(--accent) 70%,transparent);border-color:var(--accent)}.rlzc-toggle span{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .15s}.rlzc-toggle.on span{transform:translate(18px)}.rlzc-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-toggle:after{content:"";position:absolute;inset:-10px 0}.rlzc-segsrc button:disabled{opacity:.4;cursor:not-allowed}.rlzc-segsrc button:disabled:hover{background:none;color:var(--muted)}.rlzc-live-card .rlzc-input-num{min-height:44px}.rlzc-onair{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}.rlzc-onair.on{border-color:color-mix(in srgb,var(--bad) 45%,transparent);background:color-mix(in srgb,var(--bad) 8%,transparent)}.rlzc-onair-dot{flex:none;width:10px;height:10px;border-radius:50%;background:color-mix(in srgb,var(--muted) 55%,transparent)}.rlzc-onair.on .rlzc-onair-dot{background:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 22%,transparent);animation:rlzc-onair-pulse 1.8s ease-in-out infinite}@keyframes rlzc-onair-pulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--bad) 8%,transparent)}}@media(prefers-reduced-motion:reduce){.rlzc-onair.on .rlzc-onair-dot{animation:none}}.rlzc-onair-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-onair-text strong{font-size:14px;font-weight:600;color:var(--fg)}.rlzc-onair.on .rlzc-onair-text strong{color:var(--bad)}.rlzc-onair-text small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.rlzc-onair-btn{flex:none;min-width:76px;min-height:44px;padding:0 16px;border-radius:22px;font:inherit;font-weight:600;cursor:pointer;border:1px solid var(--bad);background:var(--bad);color:#fff}.rlzc-onair-btn.stop{background:none;color:var(--bad)}.rlzc-onair-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-onair-lock{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 12px;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:22px}.rlzc-option-row-stack{flex-direction:column;align-items:stretch;gap:0}.rlzc-option-row-stack .rlzc-segsrc{margin:6px 0 2px}.rlzc-option-row-stack .rlzc-hint{margin:2px 0 0}.rlzc-key-notice{text-align:center;margin-top:4px}.rlzc-ledger-hero-card{display:flex;flex-direction:column;gap:0}.rlzc-ledger-hero-label{font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-ledger-hero-num{font-size:32px;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}.rlzc-ledger-hero-num.negative{color:#c9534f}.rlzc-ledger-hero-divider{height:1px;background:var(--line);margin:0 0 10px}.rlzc-ledger-hero-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rlzc-ledger-hero-col{display:flex;flex-direction:column;gap:3px}.rlzc-ledger-hero-col-label{font-size:11px;color:var(--muted)}.rlzc-ledger-hero-col-val{font-size:14px;font-variant-numeric:tabular-nums;font-weight:600}.rlzc-ledger-warn{color:#c9833a}.rlzc-ledger-init-hint{font-size:11px;color:var(--muted);margin:10px 0 0}.rlzc-ledger-list{list-style:none;margin:6px 0 0;padding:0}.rlzc-ledger-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-ledger-item:last-child{border-bottom:none}.rlzc-ledger-item-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-ledger-item-src{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rlzc-ledger-item-time{font-size:11px;color:var(--muted)}.rlzc-ledger-item-delta{flex:0 0 auto;font-size:14px;font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}.rlzc-ledger-item-right{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px}.rlzc-ledger-item-after{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.rlzc-ledger-item-delta.pos{color:#4caf72}.rlzc-ledger-item-delta.neg{color:#c9534f}.rlzc-collapsible{padding:0}.rlzc-collapse-head{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;min-height:44px;background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.rlzc-collapsible .rlzc-collapse-head h4{flex:1;margin:0}.rlzc-collapse-head:hover{background:var(--soft);border-radius:10px}.rlzc-collapse-arrow{flex:0 0 auto;font-size:13px;color:var(--muted);display:inline-block;transition:transform .15s ease;transform:rotate(0)}.rlzc-collapse-arrow.open{transform:rotate(90deg)}.rlzc-collapse-body{padding:0 12px 10px}.rlzc-collapse-status{flex:0 0 auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-collapse-head .rlzc-dot{font-size:12px}.rlzc-market-tabs button{flex:1 1 0;min-height:44px}.rlzc-mk-status{font-size:14px}.rlzc-mk-q{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-weight:600;overflow-wrap:anywhere}.rlzc-mk-tag{flex:0 0 auto;font-size:11px;font-weight:600;color:var(--accent);padding:1px 6px;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);border-radius:4px}.rlzc-mk-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.rlzc-mk-opt{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding:6px 10px;font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid var(--line);border-radius:8px;cursor:pointer;text-align:left}.rlzc-mk-opt b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}.rlzc-mk-opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}.rlzc-mk-opt.on b{color:var(--fg)}.rlzc-mk-opt:disabled{opacity:.55;cursor:not-allowed}.rlzc-mk-bet{margin-top:8px}.rlzc-mk-bet .rlzc-input,.rlzc-mk-bet .rlzc-btn{min-height:44px}.rlzc-mk-bet .rlzc-btn{flex:0 0 auto;min-width:64px}.rlzc-mk-red{color:var(--bad);font-size:12px;margin:2px 0}.rlzc-mk-mine{list-style:none;margin:8px 0 0;padding:6px 0 0;border-top:1px dashed var(--line);font-size:12px;color:var(--muted)}.rlzc-mk-mine li{padding:2px 0;font-variant-numeric:tabular-nums}.rlzc-tk-list{list-style:none;margin:0;padding:0}.rlzc-tk{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-tk:last-child{border-bottom:none}.rlzc-tk-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-tk-title{font-size:13px;overflow-wrap:anywhere}.rlzc-tk-left small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-stamp{flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;border:2px solid currentColor;transform:rotate(-14deg);box-shadow:inset 0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}.rlzc-stamp.win{color:var(--ok)}.rlzc-stamp.lose{color:var(--bad)}.rlzc-stamp.refund{color:var(--muted)}.rlzc-stamp.pending{color:var(--muted);border-style:dashed;border-width:1px;box-shadow:none;transform:none;font-weight:600;font-size:14px}.rlzc-cs-tables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-cs-table{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:76px;text-align:left;font:inherit;color:var(--fg);cursor:pointer}.rlzc-cs-table b{font-size:15px}.rlzc-cs-table small{font-size:12px;color:var(--muted);line-height:1.45}.rlzc-cs-table.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}.rlzc-cs-play h4{margin-bottom:4px}.rlzc-cs-seg{margin:6px 0}.rlzc-cs-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:6px 0}.rlzc-cs-grid.door{grid-template-columns:repeat(5,minmax(0,1fr))}.rlzc-cs-grid button{min-height:44px;padding:0 2px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}.rlzc-cs-grid button.on{color:var(--fg);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,transparent);font-weight:600}.rlzc-cs-face{margin-top:10px;min-height:52px;display:grid;place-items:center;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;border:1px dashed var(--line);border-radius:10px}.rlzc-cs-face.rolling{color:var(--muted)}.rlzc-cs-result{margin:8px 0 0;font-weight:600;font-variant-numeric:tabular-nums}.rlzc-cs-result.win{color:var(--ok)}.rlzc-cs-result.lose{color:var(--bad)}';
-function Uk(e = import.meta.url) {
+}), ow = ':host{all:initial}.rlzc-root{--fg: var(--SmartThemeBodyColor, #dcdcd2);--bg: var(--SmartThemeBlurTintColor, #171717);--line: var(--SmartThemeBorderColor, rgba(127, 127, 127, .35));--accent: var(--SmartThemeQuoteColor, #d88a2a);--muted: var(--SmartThemeEmColor, #919191);--solid: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);--soft: color-mix(in srgb, var(--fg) 7%, transparent);--ok: #4caf72;--bad: #c9534f;font-family:var(--mainFontFamily, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif);font-size:14px;line-height:1.55;color:var(--fg)}.rlzc-root *,.rlzc-root *:before,.rlzc-root *:after{box-sizing:border-box}.rlzc-ball{position:fixed;z-index:5000;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--solid);color:var(--muted);display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 10px #00000040;padding:0;font:inherit}.rlzc-ball:active{cursor:grabbing}.rlzc-ball.is-active{color:var(--accent);border-color:var(--accent)}.rlzc-ball.has-ring{border-color:transparent}.rlzc-ball.is-warn{color:var(--bad)}.rlzc-ball-inf{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.rlzc-ball-ring{position:absolute;inset:-1px;width:48px;height:48px;transform:rotate(-90deg);pointer-events:none}.rlzc-ball-ring circle{fill:none;stroke-width:3}.rlzc-ball-ring-base{stroke:var(--line)}.rlzc-ball-ring-bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dasharray .3s ease}.rlzc-ball.is-warn .rlzc-ball-ring-bar{stroke:var(--bad)}@media(prefers-reduced-motion:reduce){.rlzc-ball-ring-bar{transition:none}}.rlzc-ball-live{position:absolute;top:1px;left:1px;width:12px;height:12px;border-radius:50%;background:var(--bad);border:2px solid var(--solid);pointer-events:none}.rlzc-ball-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;line-height:18px;text-align:center;pointer-events:none}.rlzc-entry-card{position:fixed;z-index:9000;top:calc(var(--topBarBlockSize, 40px) + 12px);right:12px;width:300px;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px #0000004d;padding:10px 12px 4px 14px}@media(max-width:323.98px){.rlzc-entry-card{left:12px;width:auto}}@media(min-width:800px){.rlzc-entry-card.beside-panel{right:476px}}.rlzc-entry-close{position:absolute;top:0;right:0;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;cursor:pointer;padding:0}.rlzc-entry-close:hover{color:var(--fg)}.rlzc-pending{position:relative;padding:10px 12px 4px 14px}.rlzc-entry-kicker{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);padding-right:36px}.rlzc-entry-inf{width:16px;height:16px;fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.rlzc-entry-title{display:flex;align-items:center;gap:8px;margin:6px 0 2px;padding-right:30px}.rlzc-entry-level{flex:0 0 auto;display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 4px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);font-size:13px;font-weight:800;line-height:1}.rlzc-entry-name{font-size:16px;font-weight:700;min-width:0;overflow-wrap:anywhere}.rlzc-entry-note{font-size:12px;color:var(--muted);margin-top:2px}.rlzc-entry-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:2px;border-top:1px solid var(--line)}.rlzc-entry-live{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;margin-left:-2px;background:none;border:0;color:var(--fg);font:inherit;font-size:13px;cursor:pointer}.rlzc-entry-live .rlzc-toggle{display:inline-block;width:44px}.rlzc-entry-live .rlzc-toggle:after{content:none}.rlzc-entry-live:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}.rlzc-toggle.danger.on{background:color-mix(in srgb,var(--bad) 75%,transparent);border-color:var(--bad)}.rlzc-entry-live.on{color:var(--bad)}.rlzc-entry-actions{display:flex;gap:6px}.rlzc-entry-actions .rlzc-btn{min-height:44px;min-width:60px}.rlzc-entry-actions .rlzc-entry-go{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:opacity .16s ease,transform .16s ease}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{opacity:0;transform:translateY(-4px)}@media(prefers-reduced-motion:reduce){.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:none}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{transform:none}}.rlzc-backdrop{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:5001;background:#0000004d;display:flex;align-items:flex-end;justify-content:center}.rlzc-panel{width:100%;max-height:86dvh;height:86vh;height:86dvh;display:flex;flex-direction:column;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -6px 30px #00000059;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0)}@media(min-width:720px){.rlzc-backdrop{align-items:center;justify-content:flex-end;padding:24px;background:#00000026}.rlzc-panel{width:440px;height:min(760px,90vh);border-radius:14px}}.rlzc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px}.rlzc-title{font-weight:700;letter-spacing:.08em}.rlzc-icon{background:none;border:0;color:var(--fg);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px}.rlzc-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}.rlzc-tabs button,.rlzc-subtabs button{flex:1 0 auto;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;padding:9px 10px;border-bottom:2px solid transparent;white-space:nowrap}.rlzc-tabs button.on{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}.rlzc-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}.rlzc-body>div{display:flex;flex-direction:column;gap:10px}.rlzc-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft)}.rlzc-card h3,.rlzc-card h4{margin:0 0 6px}.rlzc-card h4{font-size:13px;color:var(--muted);font-weight:600}.rlzc-card summary{cursor:pointer;font-weight:600}.rlzc-note{margin:0;padding:8px 10px;border-left:3px solid var(--accent);background:var(--soft);border-radius:4px;font-size:13px}.rlzc-hint{font-size:12px;color:var(--muted);margin:4px 0}.rlzc-row{display:flex;gap:8px;align-items:center;margin:4px 0}.rlzc-row>.rlzc-input{flex:1;min-width:0}.rlzc-label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-input{font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 70%,transparent);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}.rlzc-input:focus{outline:1px solid var(--accent)}.rlzc-input option{background:var(--solid);color:var(--fg)}.rlzc-btn{font:inherit;cursor:pointer;border-radius:8px;padding:7px 12px;white-space:nowrap;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--fg)}.rlzc-btn.ghost{border-color:var(--line);background:none}.rlzc-btn.small{padding:4px 9px;font-size:12px}.rlzc-btn:disabled{opacity:.4;cursor:not-allowed}.rlzc-field{display:flex;align-items:center;gap:8px;margin:4px 0}.rlzc-field>span{flex:0 0 42%;font-size:13px}.rlzc-check{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:13px}.rlzc-list{list-style:none;margin:0 0 8px;padding:0}.rlzc-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}.rlzc-errors{color:#d9534f;font-size:12px;margin:6px 0 0;padding-left:18px}.rlzc-mono,.rlzc-pre,code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.rlzc-pre{white-space:pre-wrap;word-break:break-all;font-size:12px;margin:8px 0 0;max-height:50vh;overflow:auto}.rlzc-hero-top{display:flex;align-items:center;gap:10px}.rlzc-hero-top h3{margin:0;font-size:18px;flex:1}.rlzc-level{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:800}.rlzc-chip{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.rlzc-goal{margin:8px 0 0;font-size:13px}.rlzc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-stat{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;background:var(--soft)}.rlzc-stat span{font-size:11px;color:var(--muted)}.rlzc-stat b{font-size:16px;font-variant-numeric:tabular-nums}.rlzc-stat.warn b{color:var(--accent)}.rlzc-kv{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.rlzc-kv span,.rlzc-tasks>span{color:var(--muted);font-size:12px}.rlzc-tasks ul{margin:4px 0 0;padding-left:18px}.rlzc-ps{font-size:13px;color:var(--muted);margin-top:6px;white-space:pre-wrap}.rlzc-actions{display:flex;gap:8px;flex-wrap:wrap}.rlzc-actions .rlzc-btn{flex:1}.rlzc-rest{text-align:center;padding:24px 12px}.rlzc-rest p{color:var(--muted);font-size:13px;margin:0}.rlzc-docs{border:1px solid var(--line);border-radius:10px;padding:2px 12px 10px;background:var(--soft)}.rlzc-subtabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line)}.rlzc-subtabs button{flex:0 0 auto}.rlzc-subtabs button.on{color:var(--fg);border-bottom-color:var(--accent)}.rlzc-md{font-size:14px}.rlzc-md h3,.rlzc-md h4,.rlzc-md h5{margin:14px 0 6px}.rlzc-md p{margin:6px 0}.rlzc-md ul,.rlzc-md ol{padding-left:20px;margin:6px 0}.rlzc-md blockquote{margin:6px 0;padding-left:10px;border-left:3px solid var(--line);color:var(--muted)}.rlzc-img{display:block;max-width:100%;margin:8px auto;background:#fff;border-radius:8px}.rlzc-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.rlzc-table th,.rlzc-table td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);vertical-align:top}.rlzc-warns li{align-items:flex-start;font-size:13px}.rlzc-row-warn td{background:color-mix(in srgb,#e0b000 22%,transparent)}.rlzc-intro{line-height:1.6;margin-bottom:8px}.rlzc-grow{flex:1;margin:0}.rlzc-grow>.rlzc-input{flex:1;min-width:0}.rlzc-subline{font-size:12px;color:var(--muted);margin:0}.rlzc-depth .rlzc-field>span{display:flex;flex-direction:column;gap:2px}.rlzc-depth .rlzc-field>span small{color:var(--muted);font-size:11px;line-height:1.4}.rlzc-field.rlzc-field-num>span{flex:1 1 auto;min-width:0}.rlzc-subapi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.rlzc-subapi-head h4{margin:0}.rlzc-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}.rlzc-dot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted)}.rlzc-dot[data-kind=on]{color:#4caf72}.rlzc-dot[data-kind=on]:before{background:#4caf72}.rlzc-dot[data-kind=warn]{color:#c9833a}.rlzc-dot[data-kind=warn]:before{background:#c9833a}.rlzc-segsrc{display:flex;width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:8px 0}.rlzc-segsrc button{flex:1;padding:8px 4px;font:inherit;font-size:13px;background:none;border:none;border-right:1px solid var(--line);color:var(--muted);cursor:pointer;min-height:44px}.rlzc-segsrc button:last-child{border-right:none}.rlzc-segsrc button.on{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--fg);font-weight:600}.rlzc-segsrc button:hover:not(.on){background:var(--soft);color:var(--fg)}.rlzc-preset-area{background:color-mix(in srgb,var(--bg) 50%,transparent);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.rlzc-preset-row{display:flex;gap:6px;align-items:center}.rlzc-preset-row .rlzc-input{flex:1;min-width:0}.rlzc-icon-btn{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);cursor:pointer;padding:0}.rlzc-icon-btn:hover:not(:disabled){color:var(--fg);border-color:var(--fg)}.rlzc-icon-btn.rlzc-danger{color:#c9534f;border-color:color-mix(in srgb,#c9534f 40%,transparent)}.rlzc-icon-btn.rlzc-danger:hover:not(:disabled){background:color-mix(in srgb,#c9534f 12%,transparent);border-color:#c9534f}.rlzc-icon-btn:disabled{opacity:.35;cursor:not-allowed}.rlzc-stacked-field{display:flex;flex-direction:column;gap:4px}.rlzc-key-wrap{position:relative;display:flex}.rlzc-key-wrap .rlzc-input{padding-right:44px;width:100%}.rlzc-eye-btn{position:absolute;right:0;top:0;bottom:0;width:44px;display:grid;place-items:center;background:none;border:none;color:var(--muted);cursor:pointer;padding:0}.rlzc-eye-btn:hover{color:var(--fg)}.rlzc-input-disabled{color:var(--muted);cursor:default}.rlzc-check-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rlzc-check-btns .rlzc-btn{min-height:44px;width:100%}.rlzc-check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}.rlzc-check-list li{display:flex;align-items:baseline;gap:10px;font-size:12px;line-height:1.45}.rlzc-check-list li[data-kind=on]{color:#4caf72}.rlzc-check-list li[data-kind=warn]{color:#c9833a}.rlzc-check-text{flex:1;min-width:0;overflow-wrap:anywhere}.rlzc-check-time{flex:none;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-option-list{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;display:flex;flex-direction:column}.rlzc-option-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 50%,transparent);min-height:44px}.rlzc-option-row:last-child{border-bottom:none}.rlzc-option-label{display:flex;flex-direction:column;gap:2px;font-size:13px}.rlzc-option-label small{font-size:11px;color:var(--muted)}.rlzc-option-row-timeout>span{font-size:13px}.rlzc-timeout-wrap{display:flex;align-items:center;gap:6px;flex:0 0 auto}.rlzc-input.rlzc-input-num{flex:0 0 auto;width:calc(4ch + 20px);margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}.rlzc-input-num::-webkit-inner-spin-button,.rlzc-input-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.rlzc-seg.active{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-unit{font-size:13px;color:var(--muted)}.rlzc-toggle{flex:0 0 44px;height:26px;border-radius:13px;background:color-mix(in srgb,var(--muted) 30%,transparent);border:1px solid var(--line);cursor:pointer;padding:0;position:relative;transition:background .15s}.rlzc-toggle.on{background:color-mix(in srgb,var(--accent) 70%,transparent);border-color:var(--accent)}.rlzc-toggle span{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .15s}.rlzc-toggle.on span{transform:translate(18px)}.rlzc-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-toggle:after{content:"";position:absolute;inset:-10px 0}.rlzc-segsrc button:disabled{opacity:.4;cursor:not-allowed}.rlzc-segsrc button:disabled:hover{background:none;color:var(--muted)}.rlzc-live-card .rlzc-input-num{min-height:44px}.rlzc-onair{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}.rlzc-onair.on{border-color:color-mix(in srgb,var(--bad) 45%,transparent);background:color-mix(in srgb,var(--bad) 8%,transparent)}.rlzc-onair-dot{flex:none;width:10px;height:10px;border-radius:50%;background:color-mix(in srgb,var(--muted) 55%,transparent)}.rlzc-onair.on .rlzc-onair-dot{background:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 22%,transparent);animation:rlzc-onair-pulse 1.8s ease-in-out infinite}@keyframes rlzc-onair-pulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--bad) 8%,transparent)}}@media(prefers-reduced-motion:reduce){.rlzc-onair.on .rlzc-onair-dot{animation:none}}.rlzc-onair-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-onair-text strong{font-size:14px;font-weight:600;color:var(--fg)}.rlzc-onair.on .rlzc-onair-text strong{color:var(--bad)}.rlzc-onair-text small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.rlzc-onair-btn{flex:none;min-width:76px;min-height:44px;padding:0 16px;border-radius:22px;font:inherit;font-weight:600;cursor:pointer;border:1px solid var(--bad);background:var(--bad);color:#fff}.rlzc-onair-btn.stop{background:none;color:var(--bad)}.rlzc-onair-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-onair-lock{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 12px;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:22px}.rlzc-option-row-stack{flex-direction:column;align-items:stretch;gap:0}.rlzc-option-row-stack .rlzc-segsrc{margin:6px 0 2px}.rlzc-option-row-stack .rlzc-hint{margin:2px 0 0}.rlzc-key-notice{text-align:center;margin-top:4px}.rlzc-ledger-hero-card{display:flex;flex-direction:column;gap:0}.rlzc-ledger-hero-label{font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-ledger-hero-num{font-size:32px;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}.rlzc-ledger-hero-num.negative{color:#c9534f}.rlzc-ledger-hero-divider{height:1px;background:var(--line);margin:0 0 10px}.rlzc-ledger-hero-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rlzc-ledger-hero-col{display:flex;flex-direction:column;gap:3px}.rlzc-ledger-hero-col-label{font-size:11px;color:var(--muted)}.rlzc-ledger-hero-col-val{font-size:14px;font-variant-numeric:tabular-nums;font-weight:600}.rlzc-ledger-warn{color:#c9833a}.rlzc-ledger-init-hint{font-size:11px;color:var(--muted);margin:10px 0 0}.rlzc-ledger-list{list-style:none;margin:6px 0 0;padding:0}.rlzc-ledger-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-ledger-item:last-child{border-bottom:none}.rlzc-ledger-item-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-ledger-item-src{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rlzc-ledger-item-time{font-size:11px;color:var(--muted)}.rlzc-ledger-item-delta{flex:0 0 auto;font-size:14px;font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}.rlzc-ledger-item-right{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px}.rlzc-ledger-item-after{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.rlzc-ledger-item-delta.pos{color:#4caf72}.rlzc-ledger-item-delta.neg{color:#c9534f}.rlzc-collapsible{padding:0}.rlzc-collapse-head{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;min-height:44px;background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.rlzc-collapsible .rlzc-collapse-head h4{flex:1;margin:0}.rlzc-collapse-head:hover{background:var(--soft);border-radius:10px}.rlzc-collapse-arrow{flex:0 0 auto;font-size:13px;color:var(--muted);display:inline-block;transition:transform .15s ease;transform:rotate(0)}.rlzc-collapse-arrow.open{transform:rotate(90deg)}.rlzc-collapse-body{padding:0 12px 10px}.rlzc-collapse-status{flex:0 0 auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-collapse-head .rlzc-dot{font-size:12px}.rlzc-market-tabs button{flex:1 1 0;min-height:44px}.rlzc-mk-status{font-size:14px}.rlzc-mk-q{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-weight:600;overflow-wrap:anywhere}.rlzc-mk-tag{flex:0 0 auto;font-size:11px;font-weight:600;color:var(--accent);padding:1px 6px;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);border-radius:4px}.rlzc-mk-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.rlzc-mk-opt{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding:6px 10px;font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid var(--line);border-radius:8px;cursor:pointer;text-align:left}.rlzc-mk-opt b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}.rlzc-mk-opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}.rlzc-mk-opt.on b{color:var(--fg)}.rlzc-mk-opt:disabled{opacity:.55;cursor:not-allowed}.rlzc-mk-bet{margin-top:8px}.rlzc-mk-bet .rlzc-input,.rlzc-mk-bet .rlzc-btn{min-height:44px}.rlzc-mk-bet .rlzc-btn{flex:0 0 auto;min-width:64px}.rlzc-mk-red{color:var(--bad);font-size:12px;margin:2px 0}.rlzc-mk-mine{list-style:none;margin:8px 0 0;padding:6px 0 0;border-top:1px dashed var(--line);font-size:12px;color:var(--muted)}.rlzc-mk-mine li{padding:2px 0;font-variant-numeric:tabular-nums}.rlzc-tk-list{list-style:none;margin:0;padding:0}.rlzc-tk{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-tk:last-child{border-bottom:none}.rlzc-tk-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-tk-title{font-size:13px;overflow-wrap:anywhere}.rlzc-tk-left small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-stamp{flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;border:2px solid currentColor;transform:rotate(-14deg);box-shadow:inset 0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}.rlzc-stamp.win{color:var(--ok)}.rlzc-stamp.lose{color:var(--bad)}.rlzc-stamp.refund{color:var(--muted)}.rlzc-stamp.pending{color:var(--muted);border-style:dashed;border-width:1px;box-shadow:none;transform:none;font-weight:600;font-size:14px}.rlzc-cs-tables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-cs-table{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:76px;text-align:left;font:inherit;color:var(--fg);cursor:pointer}.rlzc-cs-table b{font-size:15px}.rlzc-cs-table small{font-size:12px;color:var(--muted);line-height:1.45}.rlzc-cs-table.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}.rlzc-cs-play h4{margin-bottom:4px}.rlzc-cs-seg{margin:6px 0}.rlzc-cs-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:6px 0}.rlzc-cs-grid.door{grid-template-columns:repeat(5,minmax(0,1fr))}.rlzc-cs-grid button{min-height:44px;padding:0 2px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}.rlzc-cs-grid button.on{color:var(--fg);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,transparent);font-weight:600}.rlzc-cs-face{margin-top:10px;min-height:52px;display:grid;place-items:center;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;border:1px dashed var(--line);border-radius:10px}.rlzc-cs-face.rolling{color:var(--muted)}.rlzc-cs-result{margin:8px 0 0;font-weight:600;font-variant-numeric:tabular-nums}.rlzc-cs-result.win{color:var(--ok)}.rlzc-cs-result.lose{color:var(--bad)}';
+function lw(e = import.meta.url) {
   const t = /\/scripts\/extensions\/third-party\/([^/]+)\//.exec(decodeURIComponent(new URL(e, globalThis.location?.href ?? "http://localhost/").pathname));
   return t ? t[1] : null;
 }
-async function Au(e, t, n) {
+async function pu(e, t, n) {
   const s = me().getRequestHeaders?.() ?? { "Content-Type": "application/json" };
   return fetch(e, { method: "POST", headers: s, body: JSON.stringify({ extensionName: t, global: n }) });
 }
-async function Hk() {
-  const e = Uk();
+async function aw() {
+  const e = lw();
   if (!e) throw new Error("无法确定扩展的安装位置");
   for (const t of [!1, !0]) {
-    const n = await Au("/api/extensions/version", e, t);
+    const n = await pu("/api/extensions/version", e, t);
     if (n.status === 404) continue;
     if (!n.ok) throw new Error(`检查失败（${n.status}）`);
     const s = await n.json();
@@ -10305,22 +10410,22 @@ async function Hk() {
   }
   throw new Error("找不到扩展的安装文件夹");
 }
-async function Wk(e) {
-  const t = await Au("/api/extensions/update", e.folder, e.global);
+async function cw(e) {
+  const t = await pu("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const Gk = "回廊种菜系统", Kk = 100, qk = [], Yk = [], Jk = "dist/index.js", Zk = "xiaxiii", Xk = "1.1.9", Qk = "https://github.com/xiaxiii/M-bius-strip", e2 = !0, t2 = "rlzcInterceptor", Tl = {
-  display_name: Gk,
-  loading_order: Kk,
-  requires: qk,
-  optional: Yk,
-  js: Jk,
-  author: Zk,
-  version: Xk,
-  homePageUrl: Qk,
-  auto_update: e2,
-  generate_interceptor: t2
-}, n2 = {
+const uw = "回廊种菜系统", dw = 100, Aw = [], fw = [], pw = "dist/index.js", hw = "xiaxiii", mw = "1.1.9", gw = "https://github.com/xiaxiii/M-bius-strip", xw = !0, vw = "rlzcInterceptor", Pl = {
+  display_name: uw,
+  loading_order: dw,
+  requires: Aw,
+  optional: fw,
+  js: pw,
+  author: hw,
+  version: mw,
+  homePageUrl: gw,
+  auto_update: xw,
+  generate_interceptor: vw
+}, yw = {
   /** 有新版本、还没更新时：打开酒馆弹窗与扩展设置里的更新状态 */
   有新版本: [
     "喂喂喂，有新版本啦～（现在是 {版本}）",
@@ -10330,29 +10435,29 @@ const Gk = "回廊种菜系统", Kk = 100, qk = [], Yk = [], Jk = "dist/index.js
     "叩叩叩，新版本到啦～（现在是 {版本}）"
   ]
 };
-function s2(e, t = {}, n = Math.random) {
-  const s = n2[e];
+function bw(e, t = {}, n = Math.random) {
+  const s = yw[e];
   return (s[Math.floor(n() * s.length)] ?? s[0] ?? "").replace(/\{([^{}]+)\}/g, (i, o) => t[o] ?? i);
 }
-const Il = "rlzc-host", Nl = "rlzc-menu-btn", Pl = "rlzc-settings-drawer";
-function r2() {
-  if (document.getElementById(Il)) return;
+const Dl = "rlzc-host", Ll = "rlzc-menu-btn", Rl = "rlzc-settings-drawer";
+function kw() {
+  if (document.getElementById(Dl)) return;
   const e = document.createElement("div");
-  e.id = Il, document.body.appendChild(e);
+  e.id = Dl, document.body.appendChild(e);
   const t = e.attachShadow({ mode: "open" }), n = document.createElement("style");
-  n.textContent = Vk, t.appendChild(n);
+  n.textContent = ow, t.appendChild(n);
   const s = document.createElement("div");
-  s.className = "rlzc-root", t.appendChild(s), IA(Bk).mount(s), fu(), pu();
+  s.className = "rlzc-root", t.appendChild(s), PA(iw).mount(s), hu(), mu();
 }
-function fu(e = 0) {
+function hu(e = 0) {
   const t = document.getElementById("extensionsMenu");
   if (!t) {
-    e < 40 && setTimeout(() => fu(e + 1), 500);
+    e < 40 && setTimeout(() => hu(e + 1), 500);
     return;
   }
-  if (document.getElementById(Nl)) return;
+  if (document.getElementById(Ll)) return;
   const n = document.createElement("div");
-  n.id = Nl, n.className = "list-group-item flex-container flexGap5 interactable", n.tabIndex = 0, n.title = "打开回廊种菜系统面板";
+  n.id = Ll, n.className = "list-group-item flex-container flexGap5 interactable", n.tabIndex = 0, n.title = "打开回廊种菜系统面板";
   const s = document.createElement("div");
   s.className = "fa-solid fa-seedling extensionsMenuExtensionButton";
   const r = document.createElement("span");
@@ -10360,18 +10465,18 @@ function fu(e = 0) {
     A.panelOpen = !A.panelOpen;
   }), t.appendChild(n);
 }
-function pu(e = 0) {
+function mu(e = 0) {
   const t = document.getElementById("extensions_settings2") ?? document.getElementById("extensions_settings");
   if (!t) {
-    e < 40 && setTimeout(() => pu(e + 1), 500);
+    e < 40 && setTimeout(() => mu(e + 1), 500);
     return;
   }
-  if (document.getElementById(Pl)) return;
-  const n = (p, m = "", v = "") => {
-    const N = document.createElement(p);
-    return m && (N.className = m), v && (N.textContent = v), N;
+  if (document.getElementById(Rl)) return;
+  const n = (p, h = "", v = "") => {
+    const P = document.createElement(p);
+    return h && (P.className = h), v && (P.textContent = v), P;
   }, s = n("div");
-  s.id = Pl;
+  s.id = Rl;
   const r = n("div", "inline-drawer"), i = n("div", "inline-drawer-toggle inline-drawer-header"), o = n("div", "flex-container alignitemscenter margin0"), l = n("small", "rlzc-update-badge", "有更新");
   l.style.cssText = "display:none;margin-left:6px;padding:0 6px;border-radius:8px;background:var(--SmartThemeQuoteColor,#d88a2a);color:#fff;font-weight:normal;", o.append(n("b", "", "回廊种菜系统"), l), i.append(o, n("div", "inline-drawer-icon fa-solid fa-circle-chevron-down down"));
   const c = n("div", "inline-drawer-content"), a = n("div", "menu_button menu_button_icon", "打开面板");
@@ -10380,51 +10485,51 @@ function pu(e = 0) {
   u.addEventListener("click", () => {
     A.settings.ball = { x: null, y: null }, A.settings.showBall = !0, ke();
   });
-  const f = n("label", "checkbox_label"), h = document.createElement("input");
-  h.type = "checkbox", h.addEventListener("change", () => {
-    A.settings.showBall = h.checked, ke();
-  }), f.append(h, n("span", "", "显示悬浮球")), Ar(() => A.settings.showBall, (p) => h.checked = p, { immediate: !0 });
-  const x = n("div", "flex-container");
-  x.append(a, u);
-  const z = n("div", "flex-container alignitemscenter"), k = n("small", "rlzc-update-status", "正在检查更新…"), R = n("div", "menu_button menu_button_icon", "检查更新"), U = n("div", "menu_button menu_button_icon", "立即更新"), D = n("div", "menu_button menu_button_icon", "刷新页面");
-  U.style.display = "none", D.style.display = "none", z.append(k, R, U, D);
-  let E = null, M = !1, ee = "";
-  const te = () => ee || (ee = s2("有新版本", { 版本: Tl.version })), X = async (p = !1) => {
-    if (!M) {
-      M = !0, k.textContent = "正在检查更新…", U.style.display = "none";
+  const f = n("label", "checkbox_label"), m = document.createElement("input");
+  m.type = "checkbox", m.addEventListener("change", () => {
+    A.settings.showBall = m.checked, ke();
+  }), f.append(m, n("span", "", "显示悬浮球")), hr(() => A.settings.showBall, (p) => m.checked = p, { immediate: !0 });
+  const k = n("div", "flex-container");
+  k.append(a, u);
+  const z = n("div", "flex-container alignitemscenter"), x = n("small", "rlzc-update-status", "正在检查更新…"), $ = n("div", "menu_button menu_button_icon", "检查更新"), j = n("div", "menu_button menu_button_icon", "立即更新"), O = n("div", "menu_button menu_button_icon", "刷新页面");
+  j.style.display = "none", O.style.display = "none", z.append(x, $, j, O);
+  let M = null, T = !1, ee = "";
+  const te = () => ee || (ee = bw("有新版本", { 版本: Pl.version })), Q = async (p = !1) => {
+    if (!T) {
+      T = !0, x.textContent = "正在检查更新…", j.style.display = "none";
       try {
-        E = await Hk();
-        const m = `（${Tl.version}）`;
-        E.isGit ? E.isUpToDate ? k.textContent = `已是最新版本${m}` : (k.textContent = te(), U.style.display = "") : k.textContent = "不是用仓库地址安装的，无法检查更新。", l.style.display = E.isGit && !E.isUpToDate ? "" : "none";
-      } catch (m) {
-        k.textContent = `检查更新失败：${m.message}`;
+        M = await aw();
+        const h = `（${Pl.version}）`;
+        M.isGit ? M.isUpToDate ? x.textContent = `已是最新版本${h}` : (x.textContent = te(), j.style.display = "") : x.textContent = "不是用仓库地址安装的，无法检查更新。", l.style.display = M.isGit && !M.isUpToDate ? "" : "none";
+      } catch (h) {
+        x.textContent = `检查更新失败：${h.message}`;
         return;
       } finally {
-        M = !1;
+        T = !1;
       }
-      p && E?.isGit && !E.isUpToDate && C();
+      p && M?.isGit && !M.isUpToDate && E();
     }
   }, re = async () => {
-    if (!E || M) return !1;
-    M = !0, k.textContent = "正在更新…", U.style.display = "none";
+    if (!M || T) return !1;
+    T = !0, x.textContent = "正在更新…", j.style.display = "none";
     try {
-      return await Wk(E), l.style.display = "none", k.textContent = "更新完成，刷新页面后生效。", D.style.display = "", !0;
+      return await cw(M), l.style.display = "none", x.textContent = "更新完成，刷新页面后生效。", O.style.display = "", !0;
     } catch (p) {
-      throw k.textContent = `更新失败：${p.message}`, U.style.display = "", p;
+      throw x.textContent = `更新失败：${p.message}`, j.style.display = "", p;
     } finally {
-      M = !1;
+      T = !1;
     }
-  }, C = () => nl(te(), "立即更新", () => {
+  }, E = () => il(te(), "立即更新", () => {
     re().then((p) => {
-      p && nl("更新完成，刷新页面后生效。", "刷新页面", () => location.reload());
-    }).catch((p) => Se("error", `更新失败：${p.message}`));
+      p && il("更新完成，刷新页面后生效。", "刷新页面", () => location.reload());
+    }).catch((p) => we("error", `更新失败：${p.message}`));
   });
-  R.addEventListener("click", () => void X()), U.addEventListener("click", () => void re().catch(() => {
-  })), D.addEventListener("click", () => location.reload()), setTimeout(() => void X(!0), 1e3), c.append(x, f, z, n("small", "", "也可以从输入框左侧的魔棒菜单打开面板。")), r.append(i, c), s.append(r), t.append(s);
+  $.addEventListener("click", () => void Q()), j.addEventListener("click", () => void re().catch(() => {
+  })), O.addEventListener("click", () => location.reload()), setTimeout(() => void Q(!0), 1e3), c.append(k, f, z, n("small", "", "也可以从输入框左侧的魔棒菜单打开面板。")), r.append(i, c), s.append(r), t.append(s);
 }
-globalThis.rlzcInterceptor = Dx;
-function Qr() {
-  zx(), gn("MESSAGE_RECEIVED", (e, t) => Xx(Number(e), t)), gn("MESSAGE_DELETED", () => Yr()), gn("MESSAGE_SWIPED", (e) => Bx(Number(e))), gn("MESSAGE_EDITED", (e) => Yr(Number(e))), gn("MESSAGE_UPDATED", (e) => Yr(Number(e))), gn("CHAT_CHANGED", () => $l()), Nn("CHARACTER_MESSAGE_RENDERED", (e) => Ps(Number(e), !0)), Nn("MESSAGE_SWIPED", (e) => Ps(Number(e), !0)), Nn("MESSAGE_UPDATED", (e) => Ps(Number(e), !0)), Nn("MORE_MESSAGES_LOADED", () => nr(!1, !0)), Nn("CHAT_LOADED", () => nr(!1, !0)), r2(), Pg({ view: ao, toggle: iu }), $l(), console.log("[rlzc] 回廊种菜系统已加载", A.settings);
+globalThis.rlzcInterceptor = Bx;
+function ti() {
+  Sx(), xn("MESSAGE_RECEIVED", (e, t) => iv(Number(e), t)), xn("MESSAGE_DELETED", () => Zr()), xn("MESSAGE_SWIPED", (e) => Wx(Number(e))), xn("MESSAGE_EDITED", (e) => Zr(Number(e))), xn("MESSAGE_UPDATED", (e) => Zr(Number(e))), xn("CHAT_CHANGED", () => El()), Rn("CHARACTER_MESSAGE_RENDERED", (e) => Os(Number(e), !0)), Rn("MESSAGE_SWIPED", (e) => Os(Number(e), !0)), Rn("MESSAGE_UPDATED", (e) => Os(Number(e), !0)), Rn("MORE_MESSAGES_LOADED", () => ir(!1, !0)), Rn("CHAT_LOADED", () => ir(!1, !0)), kw(), Rg({ view: uo, toggle: au }), El(), console.log("[rlzc] 回廊种菜系统已加载", A.settings);
 }
-const Rl = window.jQuery;
-typeof Rl == "function" ? Rl(() => Qr()) : document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", Qr) : Qr();
+const Ol = window.jQuery;
+typeof Ol == "function" ? Ol(() => ti()) : document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", ti) : ti();

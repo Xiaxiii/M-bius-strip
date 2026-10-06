@@ -33,6 +33,7 @@ import {
   DECLINED_KEY,
   entryCandidateAt,
   firstEntryCandidate,
+  pendingEntries,
   seenBriefings,
   type EntryCandidate,
   effectiveRoles,
@@ -219,8 +220,8 @@ export const state = reactive({
   market: emptyMarketView(),
   /** 入场提示小卡片（右上角，不挡操作）；同一时间只有一张 */
   entryCard: null as EntryCardView | null,
-  /** 本段聊天（开头或上一个副本结算之后）里出现过简报、但没收录的副本：「手动选择副本」里也能选 */
-  seenGeneric: [] as BriefingInfo[],
+  /** 待确认的副本：点过「不是」的入场信号，系统页里二次确认（进入 / 关掉不再提示） */
+  pendingEntries: [] as PendingEntryView[],
 });
 
 /** 去掉 Vue 响应式代理，得到可被 structuredClone 的普通数据 */
@@ -536,13 +537,27 @@ function addDeclined(key: string): void {
   saveMeta();
 }
 
-/** 写会话时保留拒绝记录；没有会话时 chatMetadata.rlzc 只剩拒绝记录（没有就删除） */
+/** 在「待确认的副本」里关掉的记录：chatMetadata.rlzc.dropped（键与拒绝记录相同：消息下标:副本名） */
+function readDropped(): string[] {
+  const now = getMeta()[META_KEY]?.dropped;
+  return Array.isArray(now) ? (now as string[]) : [];
+}
+
+function addDropped(keys: string[]): void {
+  const meta = getMeta();
+  const dropped = [...new Set([...readDropped(), ...keys])];
+  meta[META_KEY] = { ...(meta[META_KEY] ?? {}), dropped };
+  saveMeta();
+}
+
+/** 写会话时保留拒绝、关掉记录；没有会话时 chatMetadata.rlzc 只剩这两项（都没有就删除） */
 function writeSession(session: Session | null): void {
   const meta = getMeta();
   const declined = readDeclined();
-  const extra = declined.length ? { declined } : {};
+  const dropped = readDropped();
+  const extra = { ...(declined.length ? { declined } : {}), ...(dropped.length ? { dropped } : {}) };
   if (session) meta[META_KEY] = { ...JSON.parse(JSON.stringify(session)), ...extra };
-  else if (declined.length) meta[META_KEY] = extra;
+  else if (declined.length || dropped.length) meta[META_KEY] = extra;
   else delete meta[META_KEY];
   saveMeta();
 }
@@ -602,9 +617,7 @@ export function refresh(): void {
   state.subLine = subStatusLine(chat, c.progress);
   refreshMarket(chat, c.session);
   state.ledger = replayLedger(chat);
-  state.seenGeneric = seenBriefings(chat, entrySearchStart(), chat.length).filter(
-    (b) => !state.packs.some((p) => p.detect.briefingName === b.name),
-  );
+  state.pendingEntries = c.session?.status === 'active' ? [] : pendingViews(chat);
   state.tick++;
   notifyLive();
   syncGreetingWatch(c.session);
@@ -734,7 +747,7 @@ function entrySearchStart(): number {
 
 /** 起点到 index（不含）之间出现过的副本简报：认出之前点过「不是」的未收录副本 */
 function seenBefore(chat: ChatMessage[], index: number): BriefingInfo[] {
-  return seenBriefings(chat, entrySearchStart(), index);
+  return seenBriefings(chat, entrySearchStart(), index, readDropped());
 }
 
 export interface EntryCardView {
@@ -804,13 +817,15 @@ export function dismissEntryCard(): void {
   entryCardCand = null;
 }
 
-/** 「不是」：记入拒绝，这条消息以后不再问 */
+/** 「不是」：记入拒绝，这条消息以后不再问；副本进系统页「待确认的副本」 */
 export function declineEntryCard(): void {
   const card = state.entryCard;
   const cand = entryCardCand;
   dismissEntryCard();
   if (!card || !cand || getChatId() !== card.chatId) return;
   addDeclined(declineKey(cand.index, cand.info.name));
+  // 不直接丢掉：系统页「待确认的副本」里还能进入或关掉
+  refresh();
 }
 
 /** 「进入」 */
@@ -956,38 +971,92 @@ function startSession(pack: Pack, entryIndex: number, briefing?: Session['briefi
 }
 
 /** 手动选择副本：以最后一条AI消息作为第1轮 */
-/** 「手动选择副本」里本段聊天出现过的未收录副本的选项值 */
-export const GENERIC_PICK_PREFIX = 'generic:';
-
 export async function startManual(packId: string): Promise<void> {
-  // 未收录的副本：用它出现过的简报生成通用副本包
-  const seen = packId.startsWith(GENERIC_PICK_PREFIX)
-    ? state.seenGeneric.find((b) => b.name === packId.slice(GENERIC_PICK_PREFIX.length))
-    : undefined;
-  const pack = seen ? undefined : state.packs.find((p) => p.id === packId);
-  if (!pack && !seen) return;
-  const name = pack?.name ?? seen!.name;
-  const chat = getChat();
-  let idx = chat.length - 1;
-  while (idx >= 0 && !isCountable(chat[idx])) idx--;
+  const pack = state.packs.find((p) => p.id === packId);
+  if (!pack) return;
+  const idx = latestAiIndex();
   if (idx < 0) {
     toast('warning', '当前聊天还没有AI消息，无法手动进入副本。');
     return;
   }
   const existing = readSession();
   if (existing?.status === 'active' && !(await confirmBox('当前已有进行中的副本，确定要替换吗？'))) return;
-  const opt = entryLiveOption(pack ?? ({} as Pack), state.settings.live.optIn);
-  const answer = await confirmWithCheck(`以最新一条AI回复作为《${name}》的第1轮，确定进入吗？`, opt.show ? { label: '开启直播', checked: opt.checked } : null);
+  const opt = entryLiveOption(pack, state.settings.live.optIn);
+  const answer = await confirmWithCheck(`以最新一条AI回复作为《${pack.name}》的第1轮，确定进入吗？`, opt.show ? { label: '开启直播', checked: opt.checked } : null);
   if (!answer.ok) return;
   if (opt.show) rememberLiveChoice(answer.checked);
-  if (pack) {
-    startSession(pack, idx, detectBriefing(chat[idx].mes) ?? { name: pack.name }, opt.show && answer.checked);
+  startSession(pack, idx, detectBriefing(getChat()[idx].mes) ?? { name: pack.name }, opt.show && answer.checked);
+}
+
+/** 最新一条AI消息的下标；没有时为 -1 */
+function latestAiIndex(chat: ChatMessage[] = getChat()): number {
+  let idx = chat.length - 1;
+  while (idx >= 0 && !isCountable(chat[idx])) idx--;
+  return idx;
+}
+
+// ───────────── 待确认的副本（点过「不是」后的二次确认）─────────────
+
+export interface PendingEntryView {
+  /** 拒绝记录的键：消息下标:副本名 */
+  key: string;
+  index: number;
+  name: string;
+  level: string;
+  unknown: boolean;
+  liveShow: boolean;
+  /** 直播开关的默认值：沿用上次选择 */
+  live: boolean;
+}
+
+function pendingCandidates(chat: ChatMessage[] = getChat()): EntryCandidate[] {
+  return pendingEntries(chat, state.packs, entrySearchStart(), readDeclined(), readDropped());
+}
+
+function pendingViews(chat: ChatMessage[]): PendingEntryView[] {
+  return pendingCandidates(chat).map(({ index, info, pack }) => {
+    const opt = entryLiveOption(pack ?? ({} as Pack), state.settings.live.optIn);
+    return {
+      key: declineKey(index, info.name),
+      index,
+      name: pack?.name ?? info.name,
+      level: pack ? (pack.rest ? '—' : pack.level) : genericLevel(info),
+      unknown: !pack,
+      liveShow: opt.show,
+      live: opt.checked,
+    };
+  });
+}
+
+/** 「进入」：以最新一条AI回复为第1轮入场（剧情走完才真正开始副本） */
+export function enterPending(key: string, live: boolean): void {
+  const cand = pendingCandidates().find((c) => declineKey(c.index, c.info.name) === key);
+  if (!cand) {
+    toast('warning', '这条副本信息已不存在。');
+    refresh();
     return;
   }
-  // 通用副本包：轮数上限在入场时确定并记入会话（与入场卡片「进入」一致）
-  const briefing: BriefingInfo = { ...seen! };
-  briefing.rounds = genericTiming(briefing.limit, genericLevel(briefing), state.settings.genericCaps).rounds;
-  startSession(buildGenericPack(briefing, state.settings.genericCaps), idx, briefing, opt.show && answer.checked);
+  if (readSession()?.status === 'active') return;
+  const idx = latestAiIndex();
+  if (idx < 0) return;
+  const opt = entryLiveOption(cand.pack ?? ({} as Pack), state.settings.live.optIn);
+  if (opt.show) rememberLiveChoice(live);
+  const briefing: BriefingInfo = { ...cand.info };
+  if (!cand.pack) {
+    // 通用副本包：轮数上限在入场时确定并记入会话（与入场卡片「进入」一致）
+    briefing.rounds = genericTiming(briefing.limit, genericLevel(briefing), state.settings.genericCaps).rounds;
+  }
+  withdrawEntryCard();
+  startSession(cand.pack ?? buildGenericPack(briefing, state.settings.genericCaps), idx, briefing, opt.show && live);
+}
+
+/** 「✕」：这个副本不再收录——同名的拒绝记录都记为关掉，后面的消息提到它也不再提示 */
+export function dropPending(key: string): void {
+  const name = key.slice(key.indexOf(':') + 1);
+  const from = entrySearchStart();
+  const keys = readDeclined().filter((k) => k.slice(k.indexOf(':') + 1) === name && Number(k.slice(0, k.indexOf(':'))) >= from);
+  addDropped(keys.length ? keys : [key]);
+  refresh();
 }
 
 function addAction(action: ManualAction): void {
@@ -1312,7 +1381,7 @@ export function onMessageReceived(index: number, type?: string): void {
   if (!session || session.status === 'ended') {
     // 这条消息带入场信号时，入场消息取起点之后第一条带信号、没被拒绝过的AI消息
     if (entryCandidateAt(chat, index, state.packs, seenBefore(chat, index))) {
-      const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined());
+      const cand = firstEntryCandidate(chat, state.packs, entrySearchStart(), index, readDeclined(), readDropped());
       if (cand) askEntry(cand);
     }
     if (type === 'first_message') return;

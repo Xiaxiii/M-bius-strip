@@ -7,6 +7,7 @@ import type { ChatMessage } from '../src/packs/types';
 
 const st = installFakeSt();
 const XIYAN_GREETING = '红烛高照，满院宾客。\n此次副本的规则是：6=5+1？';
+const YONGZHOU = '站台上人很多。\n「副本简报 - 永昼列车」\n「人数：4人」\n「等级：B」\n「时限：8小时」';
 
 function reset() {
   st.chat = [];
@@ -92,15 +93,13 @@ describe('入场提示小卡片', () => {
   it('未收录副本：简报时点了「不是」，剧情走完后状态栏地点进入副本时再提示，用简报里的等级和时限', async () => {
     st.chat.push(ai('开场白'));
     user();
-    const b = await reply('站台上人很多。\n「副本简报 - 永昼列车」\n「人数：4人」\n「等级：B」\n「时限：8小时」');
+    const b = await reply(YONGZHOU);
     expect(app.state.entryCard).toMatchObject({ index: b, name: '永昼列车', unknown: true });
     app.declineEntryCard();
     // 剧情还没走完：不提示
     user();
     await reply('你和朋友在站台上道别。');
     expect(app.state.entryCard).toBeNull();
-    // 手动选择副本里也能选到它
-    expect(app.state.seenGeneric.map((x) => x.name)).toEqual(['永昼列车']);
     // 真正上车：状态栏地点写进了副本
     user();
     const i = await reply('列车开动了。\n<状态栏>\n地点：B级副本《永昼列车》· 3号车厢\n</状态栏>');
@@ -108,34 +107,77 @@ describe('入场提示小卡片', () => {
     app.enterEntryCard();
     expect(app.state.session).toMatchObject({ packId: 'generic', entryIndex: i, status: 'active', briefing: { name: '永昼列车', limit: '8小时' } });
     expect(app.state.pack).toMatchObject({ name: '永昼列车', level: 'B' });
+    // 进入副本后「待确认的副本」消失
+    expect(app.state.pendingEntries).toEqual([]);
   });
 
-  it('手动选择副本：可以选本聊天出现过简报的未收录副本，以最新一条AI回复为第1轮', async () => {
+  it('待确认的副本：点「不是」后出现在系统页，「进入」以最新一条AI回复为第1轮', async () => {
     st.chat.push(ai('开场白'));
     user();
-    await reply('「副本简报 - 永昼列车」\n「等级：b」\n「时限：8小时（最多40轮）」');
+    const b = await reply('「副本简报 - 永昼列车」\n「等级：b」\n「时限：8小时（最多40轮）」');
+    expect(app.state.pendingEntries).toEqual([]);
     app.declineEntryCard();
+    expect(app.state.pendingEntries).toMatchObject([{ key: `${b}:永昼列车`, index: b, name: '永昼列车', level: 'B', unknown: true, liveShow: true, live: false }]);
     user();
     const i = await reply('列车开动了。');
-    expect(app.state.seenGeneric).toHaveLength(1);
-    await app.startManual(`${app.GENERIC_PICK_PREFIX}永昼列车`);
-    expect(st.popups[st.popups.length - 1]?.text).toContain('《永昼列车》的第1轮');
-    expect(app.state.session).toMatchObject({ packId: 'generic', entryIndex: i, status: 'active', briefing: { rounds: 40 } });
+    // 剧情里没再提到副本：卡片不出，待确认的副本还在
+    expect(app.state.entryCard).toBeNull();
+    expect(app.state.pendingEntries).toHaveLength(1);
+    app.enterPending(`${b}:永昼列车`, true);
+    expect(app.state.session).toMatchObject({ packId: 'generic', entryIndex: i, status: 'active', live: true, briefing: { rounds: 40 } });
     expect(app.state.pack).toMatchObject({ name: '永昼列车', level: 'B' });
     expect(app.state.progress?.phase.cap).toBe(40);
+    expect(app.state.settings.live.optIn).toBe(true);
+    expect(app.state.pendingEntries).toEqual([]);
   });
 
-  it('已收录的副本不重复列进「本聊天出现过」；上一个副本结算之前的简报不列', async () => {
-    const i = await briefingCard();
-    expect(app.state.seenGeneric).toEqual([]);
-    app.enterEntryCard();
-    expect(app.state.session?.entryIndex).toBe(i);
+  it('待确认的副本：「✕」后不再收录，后面的消息提到它也不再提示；重新出现简报时照常提示', async () => {
+    st.chat.push(ai('开场白'));
     user();
-    await reply('「副本简报 - 雾港」\n「等级：C」');
+    const b = await reply(YONGZHOU);
+    app.declineEntryCard();
+    app.dropPending(`${b}:永昼列车`);
+    expect(app.state.pendingEntries).toEqual([]);
+    expect(st.meta.rlzc.dropped).toEqual([`${b}:永昼列车`]);
+    // 切换聊天回来也不出现
+    app.onChatChanged();
+    expect(app.state.pendingEntries).toEqual([]);
+    user();
+    await reply('列车开动了。\n<状态栏>\n地点：B级副本《永昼列车》· 3号车厢\n</状态栏>');
+    expect(app.state.entryCard).toBeNull();
+    expect(app.state.pendingEntries).toEqual([]);
+    // AI 重新给出简报：这是新的一次，照常提示
+    user();
+    const again = await reply(YONGZHOU);
+    expect(app.state.entryCard).toMatchObject({ index: again, name: '永昼列车' });
+  });
+
+  it('待确认的副本：已收录的也一样；同名只留最近一次；上一个副本结算之前的不列', async () => {
+    const i = await briefingCard();
+    app.declineEntryCard();
+    expect(app.state.pendingEntries).toMatchObject([{ index: i, name: '钟楼', level: 'S', unknown: false }]);
+    user();
+    const j = await reply('<副本>\n副本名：钟楼\n</副本>');
+    expect(app.state.entryCard).toMatchObject({ index: j, name: '钟楼' });
+    app.declineEntryCard();
+    expect(app.state.pendingEntries.map((e) => e.index)).toEqual([j]);
+    app.enterPending(`${j}:钟楼`, false);
+    expect(app.state.session).toMatchObject({ packId: 'zhonglou', entryIndex: j });
     user();
     await reply('<副本结算>结果=通关｜评价=A</副本结算>');
     expect(app.state.progress?.ended).toBe(true);
-    expect(app.state.seenGeneric).toEqual([]);
+    expect(app.state.pendingEntries).toEqual([]);
+  });
+
+  it('待确认的副本：那一楼被删掉后自然消失', async () => {
+    st.chat.push(ai('开场白'));
+    user();
+    await reply(YONGZHOU);
+    app.declineEntryCard();
+    expect(app.state.pendingEntries).toHaveLength(1);
+    st.chat.splice(-2, 2);
+    app.onChatMutated();
+    expect(app.state.pendingEntries).toEqual([]);
   });
 
   it('「✕」：这次先不处理，不记拒绝；重新打开聊天后还会提示', async () => {

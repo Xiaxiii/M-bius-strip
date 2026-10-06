@@ -6,6 +6,8 @@ import { INF_PATH } from './icons';
 const SIZE = 48;
 const pos = ref({ x: 0, y: 0 });
 let drag: { id: number; dx: number; dy: number; moved: boolean; sx: number; sy: number } | null = null;
+/** 刚拖动过：这次松手后的 click 不开关面板 */
+let dragged = false;
 
 function clamp(x: number, y: number) {
   const maxX = window.innerWidth - SIZE - 4;
@@ -20,6 +22,7 @@ function place() {
 
 function down(e: PointerEvent) {
   (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  dragged = false;
   drag = { id: e.pointerId, dx: e.clientX - pos.value.x, dy: e.clientY - pos.value.y, moved: false, sx: e.clientX, sy: e.clientY };
 }
 function move(e: PointerEvent) {
@@ -32,11 +35,21 @@ function up(e: PointerEvent) {
   const moved = drag.moved;
   drag = null;
   if (moved) {
+    dragged = true;
     state.settings.ball = { x: Math.round(pos.value.x), y: Math.round(pos.value.y) };
     saveSettings();
-  } else {
-    state.panelOpen = !state.panelOpen;
   }
+}
+/**
+ * 开关面板放在 click 里，不放在松手时：手机上松手后浏览器还会在同一位置补发一次 click，
+ * 松手时就打开面板的话，这次 click 会落到刚出现的面板上（误点到右上角的 ✕ 等）。
+ */
+function toggle() {
+  if (dragged) {
+    dragged = false;
+    return;
+  }
+  state.panelOpen = !state.panelOpen;
 }
 
 const active = computed(() => !!state.session && !!state.progress && !state.progress.ended);
@@ -72,6 +85,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', place));
     @pointermove="move"
     @pointerup="up"
     @pointercancel="up"
+    @click="toggle"
   >
     <svg v-if="ring !== null" class="rlzc-ball-ring" viewBox="0 0 48 48" aria-hidden="true">
       <circle class="rlzc-ball-ring-base" cx="24" cy="24" r="22.5" />
