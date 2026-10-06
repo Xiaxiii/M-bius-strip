@@ -149,6 +149,8 @@ async function runCollect(page) {
   const hasBtn = (await card.locator('.rlzc-pending-save').count()) === 1;
   if (hasBtn) await card.locator('.rlzc-pending-save').click();
   await sleep(600);
+  // 收录后的提示（酒馆自带的顶部小通知）
+  await ui.shot(page, `reentry-collect-toast${process.env.E2E_MOBILE ? '-mobile' : ''}`).catch(() => {});
   const toasts = await page.locator('#toast-container .toast').allInnerTexts().catch(() => []);
   const gone = (await pendingCard(page).count()) === 0;
   const select = host(page).locator('.rlzc-card select.rlzc-input').first();
