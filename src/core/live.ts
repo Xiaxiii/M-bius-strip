@@ -202,17 +202,37 @@ export interface DrawDanmakuOpts {
   whoNames: string[];
   /** 每次调用返回 0–1 随机数 */
   rand: () => number;
-  /** 要抽的条数；不传时随机 10–13 条 */
+  /** 要抽的条数；不传时按 danmakuTarget 随机 */
   count?: number;
 }
 
-/** 每轮弹幕总数：10–13 条（含 AI 生成的） */
+/** 旧版每轮弹幕总数 10–13 条（旧楼层的 pending 没有新字段时按它合成） */
 export const DANMAKU_MIN = 10;
 export const DANMAKU_MAX = 13;
 
-/** 随机取一轮的弹幕总数 10–13 */
-export function danmakuTarget(rand: () => number): number {
-  return DANMAKU_MIN + Math.floor(rand() * (DANMAKU_MAX - DANMAKU_MIN + 1));
+/** 设置里「每轮弹幕数」的范围与默认值；实际每轮在设定值上下浮动 1 条 */
+export const DANMAKU_TOTAL_MIN = 5;
+export const DANMAKU_TOTAL_MAX = 25;
+export const DANMAKU_TOTAL_DEFAULT = 12;
+
+/** 只开新弹幕时，接口失败这一轮从弹幕库借的条数 */
+export const BORROW_MIN = 5;
+export const BORROW_MAX = 8;
+
+/** 随机取一轮的弹幕总数：设定值 ±1（不传设定值时为默认 12，即 11–13） */
+export function danmakuTarget(rand: () => number, total = DANMAKU_TOTAL_DEFAULT): number {
+  const t = clampTotal(total);
+  return Math.max(1, t - 1 + Math.floor(rand() * 3));
+}
+
+export function clampTotal(total: number): number {
+  const t = Math.round(Number(total));
+  return Number.isFinite(t) ? Math.max(DANMAKU_TOTAL_MIN, Math.min(DANMAKU_TOTAL_MAX, t)) : DANMAKU_TOTAL_DEFAULT;
+}
+
+/** 借几条：5–8 */
+export function borrowCount(rand: () => number): number {
+  return BORROW_MIN + Math.floor(rand() * (BORROW_MAX - BORROW_MIN + 1));
 }
 
 /** 判断一条 pool/template 条目是否在当前上下文可抽 */
@@ -237,7 +257,7 @@ function isAvailable(
   return true;
 }
 
-/** 本地弹幕抽取，默认每轮10–13条。随机数通过 rand 传入。 */
+/** 本地弹幕抽取，默认按 danmakuTarget 取条数。随机数通过 rand 传入。 */
 export function drawDanmaku(opts: DrawDanmakuOpts): DanmakuLine[] {
   const {
     pool, templates, packDanmaku = [], currentPhase,

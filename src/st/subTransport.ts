@@ -119,11 +119,11 @@ async function callMain(m: SubMessages): Promise<string> {
 }
 
 /** 按设置发一次请求，返回模型的原始文字 */
-export function callSub(target: SubTarget, m: SubMessages, opts: { temperature?: number } = {}): Promise<string> {
+export function callSub(target: SubTarget, m: SubMessages, opts: { temperature?: number; maxTokens?: number } = {}): Promise<string> {
   return withTimeout(target.timeoutMs, (signal) => {
     if (target.source === 'main') return callMain(m);
     if (!target.preset) throw new Error('没有选择接口预设');
-    return callPreset(target.preset, m, signal, MAX_TOKENS, opts.temperature ?? 0.2);
+    return callPreset(target.preset, m, signal, opts.maxTokens ?? MAX_TOKENS, opts.temperature ?? 0.2);
   });
 }
 

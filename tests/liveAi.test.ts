@@ -9,6 +9,9 @@ import {
   DANMAKU_STYLE,
   formatLiveInjection,
   parseDanmakuResponse,
+  askCount,
+  keepCount,
+  danmakuMaxTokens,
   pickSamples,
   shouldGenAiDanmaku,
   stripForAudience,
@@ -20,7 +23,7 @@ import type { ChatMessage } from '../src/packs/types';
 // ─────────────────── 纯函数 ───────────────────
 
 describe('AI 弹幕的生成时机', () => {
-  const base = { aiSource: true, subOn: true, roundInShow: 1, freq: 3, phaseSwitch: false, hurt: false, eventDone: false };
+  const base = { aiOn: true, roundInShow: 1, freq: 3, phaseSwitch: false, hurt: false, eventDone: false };
 
   it('每 N 轮一次', () => {
     const hits = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((r) => shouldGenAiDanmaku({ ...base, roundInShow: r }));
@@ -36,9 +39,9 @@ describe('AI 弹幕的生成时机', () => {
     expect(shouldGenAiDanmaku({ ...base, eventDone: true })).toBe(true);
   });
 
-  it('弹幕来源「本地」或事件检测「关闭」时只用本地池', () => {
-    expect(shouldGenAiDanmaku({ ...base, roundInShow: 3, aiSource: false })).toBe(false);
-    expect(shouldGenAiDanmaku({ ...base, roundInShow: 3, hurt: true, subOn: false })).toBe(false);
+  it('「新弹幕」关着时不生成', () => {
+    expect(shouldGenAiDanmaku({ ...base, roundInShow: 3, aiOn: false })).toBe(false);
+    expect(shouldGenAiDanmaku({ ...base, roundInShow: 3, hurt: true, aiOn: false })).toBe(false);
   });
 });
 
@@ -72,6 +75,18 @@ describe('AI 弹幕请求与解析', () => {
     ]);
     expect(() => parseDanmakuResponse('没有')).toThrow();
     expect(() => parseDanmakuResponse('[]')).toThrow();
+  });
+
+  it('提示词里要的条数比需要的多3条，至少8条；解析按上限截取', () => {
+    expect(askCount(6)).toBe(9);
+    expect(askCount(1)).toBe(8);
+    expect(askCount(25)).toBe(28);
+    const m = buildDanmakuPrompt({ scene: '回廊', texts: [], cast: [], samples: [], count: 20 });
+    expect(m.system).toContain('23条左右');
+    const many = JSON.stringify(Array.from({ length: 40 }, (_, i) => ({ type: 'praise', text: `t${i}` })));
+    expect(parseDanmakuResponse(many, keepCount(20))).toHaveLength(25);
+    expect(danmakuMaxTokens(25)).toBeGreaterThan(1500);
+    expect(danmakuMaxTokens(6)).toBe(1500);
   });
 
   it('语气示例随机抽10条，不重复', () => {
@@ -161,6 +176,8 @@ async function reply(mes: string, type = 'normal'): Promise<number> {
 }
 const user = () => st.chat.push({ mes: '继续。', is_user: true, extra: {} });
 const live = (i: number): LiveRecord | undefined => st.chat[i]?.extra?.rlzc?.live;
+/** 旧版「本地+AI」的等价设置：两种都开、跟随主API、占比100% */
+const aiMix = () => Object.assign(app.state.settings.live, { library: true, aiOn: true, api: 'main', ratio: 100 });
 const danmakuCalls = () => calls.filter((c) => c.system.includes('回廊直播间'));
 
 async function enter() {
@@ -183,7 +200,7 @@ afterEach(() => {
 describe('AI 弹幕接入', () => {
   it('「本地+AI」：同一轮最多一次；弹幕并入本轮、id 继续递增', async () => {
     app.state.settings.subApi.source = 'main';
-    app.state.settings.live.source = 'ai';
+    aiMix();
     app.state.settings.live.freq = 3;
     await enter();
     user();
@@ -205,9 +222,9 @@ describe('AI 弹幕接入', () => {
     expect(rec.hype).toBe(35);
   });
 
-  it('AI 返回超过13条时截到13条；没有 AI 的轮次本地池抽 10–13 条', async () => {
+  it('占比100%：新弹幕多了截到本轮总数；没有新弹幕的轮次全用弹幕库', async () => {
     app.state.settings.subApi.source = 'main';
-    app.state.settings.live.source = 'local';
+    app.state.settings.live.aiOn = false;
     app.state.settings.live.freq = 1;
     dmCount = 15;
     await enter();
@@ -215,21 +232,20 @@ describe('AI 弹幕接入', () => {
     const i = await reply('平静的一轮。');
     expect(danmakuCalls()).toHaveLength(0);
     const local = live(i)!.feed.filter((f) => f.t === 'msg');
-    expect(local.length).toBeGreaterThanOrEqual(10);
-    expect(local.length).toBeLessThanOrEqual(13);
-    app.state.settings.live.source = 'ai';
+    expect(local).toHaveLength(11);
+    aiMix();
     user();
     const j = await reply('又一轮。');
     expect(danmakuCalls()).toHaveLength(1);
     const msgs = live(j)!.feed.filter((f) => f.t === 'msg');
-    expect(msgs).toHaveLength(13);
+    expect(msgs).toHaveLength(11);
     expect(msgs.every((f) => f.text.startsWith('AI弹幕'))).toBe(true);
-    expect(live(j)!.ai).toMatchObject({ ok: true, count: 13 });
+    expect(live(j)!.ai).toMatchObject({ ok: true, count: 11 });
   });
 
   it('等 AI 弹幕时打赏已记账；切换聊天后没等到的楼层用本地池补齐', async () => {
     app.state.settings.subApi.source = 'main';
-    app.state.settings.live.source = 'ai';
+    aiMix();
     app.state.settings.live.freq = 1;
     await enter();
     let release!: (v: string) => void;
@@ -257,7 +273,7 @@ describe('AI 弹幕接入', () => {
 
   it('请求里没有事件表、隐藏状态、副本资料、事件检测结果', async () => {
     app.state.settings.subApi.source = 'main';
-    app.state.settings.live.source = 'ai';
+    aiMix();
     app.state.settings.live.freq = 1;
     await enter();
     user();
@@ -280,7 +296,7 @@ describe('AI 弹幕接入', () => {
 
   it('失败重试1次；仍失败不弹窗、不阻塞，这一轮用本地池，调试记原因', async () => {
     app.state.settings.subApi.source = 'main';
-    app.state.settings.live.source = 'ai';
+    aiMix();
     app.state.settings.live.freq = 1;
     await enter();
     danmakuFails = true;
@@ -302,14 +318,86 @@ describe('AI 弹幕接入', () => {
     expect(live(j)).toBeTruthy();
   });
 
-  it('事件检测来源「关闭」时只用本地池', async () => {
-    app.state.settings.live.source = 'ai';
+  it('新弹幕不依赖事件检测：事件检测关着也能跟随主API生成', async () => {
+    aiMix();
     app.state.settings.live.freq = 1;
     await enter();
     user();
     const i = await reply('一轮。');
-    expect(calls).toHaveLength(0);
-    expect(live(i)!.ai).toBeUndefined();
+    expect(danmakuCalls()).toHaveLength(1);
+    expect(live(i)!.ai).toMatchObject({ ok: true });
+  });
+
+  it('自设API没有选预设：按失败处理，这一轮用弹幕库', async () => {
+    aiMix();
+    Object.assign(app.state.settings.live, { api: 'preset', presetId: '', freq: 1 });
+    await enter();
+    user();
+    const i = await reply('一轮。');
+    expect(danmakuCalls()).toHaveLength(0);
+    expect(live(i)!.ai).toMatchObject({ ok: false, error: '新弹幕的接口没有设置好' });
+    expect(live(i)!.feed.filter((f) => f.t === 'msg')).toHaveLength(11);
+  });
+
+  it('两种都开、占比50%：新弹幕一半，其余弹幕库', async () => {
+    aiMix();
+    Object.assign(app.state.settings.live, { ratio: 50, freq: 1, total: 20 });
+    dmCount = 30;
+    await enter();
+    user();
+    const i = await reply('一轮。');
+    const msgs = live(i)!.feed.filter((f) => f.t === 'msg');
+    // 随机数固定 0.3：本轮 19 条，新弹幕 round(19×50%)=10 条
+    expect(msgs).toHaveLength(19);
+    expect(msgs.filter((f) => f.text.startsWith('AI弹幕'))).toHaveLength(10);
+    expect(danmakuCalls()[0].system).toContain('13条左右');
+  });
+
+  it('只开新弹幕、每轮生成：全是新弹幕；失败时借5–8条', async () => {
+    Object.assign(app.state.settings.live, { library: false, aiOn: true, api: 'main', freq: 1, total: 12 });
+    dmCount = 20;
+    await enter();
+    user();
+    const i = await reply('一轮。');
+    const msgs = live(i)!.feed.filter((f) => f.t === 'msg');
+    expect(msgs).toHaveLength(11);
+    expect(msgs.every((f) => f.text.startsWith('AI弹幕'))).toBe(true);
+    danmakuFails = true;
+    user();
+    const j = await reply('又一轮。');
+    const borrowed = live(j)!.feed.filter((f) => f.t === 'msg');
+    expect(live(j)!.ai?.ok).toBe(false);
+    // 随机数固定 0.3：借 5+floor(0.3×4)=6 条
+    expect(borrowed).toHaveLength(6);
+    expect(borrowed.some((f) => f.text.startsWith('AI弹幕'))).toBe(false);
+  });
+
+  it('只开新弹幕、每2轮生成：不生成的轮次没有弹幕，打赏照常', async () => {
+    Object.assign(app.state.settings.live, { library: false, aiOn: true, api: 'main', freq: 2 });
+    await enter();
+    user();
+    const i = await reply('平静的一轮。');
+    expect(danmakuCalls()).toHaveLength(0);
+    expect(live(i)!.feed.filter((f) => f.t === 'msg')).toHaveLength(0);
+    user();
+    const j = await reply('又一轮。');
+    expect(danmakuCalls()).toHaveLength(1);
+    expect(live(j)!.feed.filter((f) => f.t === 'msg').length).toBeGreaterThan(0);
+  });
+});
+
+describe('直播设置升级', () => {
+  it('旧版「本地+AI」升级为两种都开、占比100%，接口沿用事件检测', () => {
+    expect(app.normalizeLiveSettings({ source: 'ai', freq: 4 } as any, { source: 'preset', presetId: 'p1' } as any)).toMatchObject({
+      library: true, aiOn: true, api: 'preset', presetId: 'p1', ratio: 100, freq: 4, total: 12,
+    });
+    expect(app.normalizeLiveSettings({ source: 'ai' } as any, { source: 'main' } as any)).toMatchObject({ aiOn: true, api: 'main', ratio: 100 });
+  });
+
+  it('旧版「本地」：只开弹幕库；两种都关时打开弹幕库；数值越界夹回范围', () => {
+    expect(app.normalizeLiveSettings({ source: 'local' } as any)).toMatchObject({ library: true, aiOn: false, ratio: 50 });
+    expect(app.normalizeLiveSettings({ library: false, aiOn: false })).toMatchObject({ library: true });
+    expect(app.normalizeLiveSettings({ total: 99, ratio: 3, freq: 0 })).toMatchObject({ total: 25, ratio: 10, freq: 1 });
   });
 });
 

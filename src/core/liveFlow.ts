@@ -10,7 +10,9 @@ import {
   calcTips,
   calcViewers,
   detectHurt,
+  borrowCount,
   danmakuTarget,
+  BORROW_MAX,
   DANMAKU_MAX,
   DANMAKU_MIN,
   drawDanmaku,
@@ -69,13 +71,43 @@ export interface LiveRecord {
   tipSource: string;
   /** 死亡撤回的数额（正数），本局打赏合计 */
   revoke?: number;
-  /** 等 AI 弹幕时暂存：本地备用弹幕、打赏、系统消息、本轮目标条数 */
-  pending?: { local: DanmakuLine[]; tips: FeedDraft[]; sys: FeedDraft[]; target: number };
+  /** 等 AI 弹幕时暂存：本地备用弹幕、打赏、系统消息、本轮目标条数与配比 */
+  pending?: LivePending;
   /** AI 生成弹幕的结果（第4段） */
   ai?: { ok: boolean; pending?: boolean; count?: number; error?: string; ms?: number };
 }
 
 export type FeedDraft = Omit<FeedItem, 'id'>;
+
+/** 弹幕配比设置：弹幕库开关、每轮弹幕数、新弹幕占比（10–100，只在两种都开时生效） */
+export interface DanmakuMix {
+  library: boolean;
+  total: number;
+  ratio: number;
+}
+
+export const DEFAULT_MIX: DanmakuMix = { library: true, total: 12, ratio: 100 };
+
+export interface LivePending {
+  local: DanmakuLine[];
+  tips: FeedDraft[];
+  sys: FeedDraft[];
+  /** 本轮弹幕总数 */
+  target: number;
+  /** 本轮要用几条新弹幕（旧楼层没有此字段） */
+  aiWant?: number;
+  /** 本轮是否用弹幕库补足（旧楼层没有此字段，按开着算） */
+  library?: boolean;
+  /** 只开新弹幕时，接口失败借几条（5–8） */
+  borrow?: number;
+}
+
+/** 生成新弹幕的那一轮要几条新弹幕：两种都开按占比，只开新弹幕时全是新的 */
+export function aiWantOf(target: number, mix: DanmakuMix): number {
+  if (!mix.library) return target;
+  const r = Math.max(10, Math.min(100, Math.round(Number(mix.ratio) || 100)));
+  return Math.max(1, Math.min(target, Math.round((target * r) / 100)));
+}
 
 export interface SysItem extends FeedItem {
   show: string;
@@ -245,6 +277,8 @@ export interface LiveRoundInput {
   settle?: { died: boolean; tipsBefore: number };
   /** 这一轮要生成 AI 弹幕：先不出 feed，等 AI 结果再合成（第4段） */
   awaitAi?: boolean;
+  /** 弹幕配比；不传时为旧规则（弹幕库开、约12条、新弹幕优先） */
+  mix?: DanmakuMix;
   rand: () => number;
 }
 
@@ -268,25 +302,29 @@ export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
     heat,
     rand: 0.9 + rand() * 0.2,
   });
-  // 每轮弹幕总数 10–13 条；要等 AI 弹幕的轮次先多抽几条本地的，留着补足
-  const target = danmakuTarget(rand);
-  const local = drawDanmaku({
-    pool: inp.pool,
-    templates: inp.templates,
-    packDanmaku: inp.packDanmaku,
-    currentPhase: inp.phaseId,
-    isInst: inp.scope === 'instance',
-    isRest: inp.isRest,
-    isHurt: hurt,
-    hype,
-    isOpen: inp.roundsInShow < 2,
-    isEnd: inp.isEnd,
-    recentTexts: inp.recentTexts,
-    names: inp.names,
-    whoNames: inp.whoNames,
-    rand,
-    count: inp.awaitAi ? DANMAKU_MAX : target,
-  });
+  // 每轮弹幕总数按设置（±1 条）；要等 AI 弹幕的轮次多抽几条本地的，留着补足或借用
+  const mix = inp.mix ?? DEFAULT_MIX;
+  const target = danmakuTarget(rand, mix.total);
+  const localCount = inp.awaitAi ? Math.max(target, BORROW_MAX) : mix.library ? target : 0;
+  const local = localCount
+    ? drawDanmaku({
+        pool: inp.pool,
+        templates: inp.templates,
+        packDanmaku: inp.packDanmaku,
+        currentPhase: inp.phaseId,
+        isInst: inp.scope === 'instance',
+        isRest: inp.isRest,
+        isHurt: hurt,
+        hype,
+        isOpen: inp.roundsInShow < 2,
+        isEnd: inp.isEnd,
+        recentTexts: inp.recentTexts,
+        names: inp.names,
+        whoNames: inp.whoNames,
+        rand,
+        count: localCount,
+      })
+    : [];
   const calc = calcTips({ hype, isCorr, rand, names: inp.names });
   const tips: FeedDraft[] = calc.faces.map((face, k) => ({ t: 'tip', name: calc.names[k], text: '', amount: face, net: Math.floor(face * 0.6) }));
   const sys: FeedDraft[] = [];
@@ -313,16 +351,36 @@ export function buildLiveRecord(inp: LiveRoundInput): LiveRecord {
   };
   if (revoke) rec.revoke = revoke;
   // 等 AI 弹幕：先不出 feed（打赏已记账），AI 返回或失败后再按 finalizeLiveRecord 合成
-  if (inp.awaitAi) rec.pending = { local, tips, sys, target };
-  else rec.feed = assembleFeed(local.slice(0, target), tips, sys, inp.firstId, rand);
+  if (inp.awaitAi) {
+    rec.pending = { local, tips, sys, target, aiWant: aiWantOf(target, mix), library: mix.library };
+    if (!mix.library) rec.pending.borrow = borrowCount(rand);
+  } else rec.feed = assembleFeed(local.slice(0, target), tips, sys, inp.firstId, rand);
   return rec;
 }
 
 /**
- * 本轮弹幕：有 AI 生成的先用 AI 的（最多13条），不足10条用本地池补到 10–13 条；
- * 没有 AI 生成的（关闭、失败）只用本地池 10–13 条。
+ * 生成新弹幕那一轮的合成：
+ *  - 新弹幕成功：取前 aiWant 条；开着弹幕库时用弹幕库补到 target 条（不重复）；
+ *  - 新弹幕失败：开着弹幕库时全用弹幕库 target 条；只开新弹幕时从弹幕库借 borrow 条（5–8）。
+ * 旧楼层的 pending 没有 aiWant / library 字段：按旧规则，新弹幕优先、最多13条，不足10条用弹幕库补到 target（10–13）。
  */
-export function composeDanmaku(ai: DanmakuLine[] | null, local: DanmakuLine[], target: number): DanmakuLine[] {
+export function composeDanmaku(ai: DanmakuLine[] | null, local: DanmakuLine[], pending: Pick<LivePending, 'target' | 'aiWant' | 'library' | 'borrow'>): DanmakuLine[] {
+  if (pending.aiWant === undefined) return composeLegacy(ai, local, pending.target);
+  const library = pending.library !== false;
+  if (!ai?.length) return library ? local.slice(0, pending.target) : local.slice(0, pending.borrow ?? BORROW_MAX);
+  const out = ai.slice(0, pending.aiWant);
+  if (!library) return out;
+  const used = new Set(out.map((d) => d.text));
+  for (const d of local) {
+    if (out.length >= pending.target) break;
+    if (used.has(d.text)) continue;
+    used.add(d.text);
+    out.push(d);
+  }
+  return out;
+}
+
+function composeLegacy(ai: DanmakuLine[] | null, local: DanmakuLine[], target: number): DanmakuLine[] {
   const want = Math.max(DANMAKU_MIN, Math.min(DANMAKU_MAX, target));
   if (!ai?.length) return local.slice(0, want);
   const out = ai.slice(0, DANMAKU_MAX);
@@ -356,7 +414,7 @@ function assembleFeed(msgs: DanmakuLine[], tips: FeedDraft[], sys: FeedDraft[], 
 export function finalizeLiveRecord(rec: LiveRecord, ai: DanmakuLine[] | null, firstId: number, rand: () => number): LiveRecord {
   if (!rec.pending) return rec;
   const { pending, ...rest } = rec;
-  const msgs = composeDanmaku(ai, pending.local, pending.target);
+  const msgs = composeDanmaku(ai, pending.local, pending);
   return { ...rest, feed: assembleFeed(msgs, pending.tips, pending.sys, firstId, rand) };
 }
 

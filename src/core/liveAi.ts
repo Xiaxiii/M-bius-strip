@@ -21,10 +21,8 @@ export interface AiDanmaku {
 // ───────────── 生成时机 ─────────────
 
 export interface AiTimingInput {
-  /** 弹幕来源选了「本地+AI」 */
-  aiSource: boolean;
-  /** 副本事件检测卡的来源不是「关闭」 */
-  subOn: boolean;
+  /** 「新弹幕」开着（接口没设置好也算开，调用时按失败处理） */
+  aiOn: boolean;
   /** 本场第几轮（从1开始） */
   roundInShow: number;
   /** 每 N 轮一次（1–10） */
@@ -39,7 +37,7 @@ export interface AiTimingInput {
 
 /** 每 N 轮一次，另外在关键事件那轮加一次；同一轮最多一次（本函数每轮只调用一次，返回真假即一次） */
 export function shouldGenAiDanmaku(i: AiTimingInput): boolean {
-  if (!i.aiSource || !i.subOn) return false;
+  if (!i.aiOn) return false;
   const freq = Math.max(1, Math.min(10, Math.floor(i.freq) || 3));
   if (i.roundInShow > 0 && i.roundInShow % freq === 0) return true;
   return i.phaseSwitch || i.hurt || i.eventDone;
@@ -79,12 +77,29 @@ export interface DanmakuPromptInput {
   cast: string[];
   /** 语气示例 */
   samples: string[];
+  /** 本轮要几条新弹幕；提示词里多要几条，留给格式检查筛掉的 */
+  count?: number;
+}
+
+/** 提示词里要的条数：在需要的条数上多要 3 条，至少 8 条 */
+export function askCount(count: number | undefined): number {
+  return Math.max(8, Math.round(Number(count) || 10) + 3);
+}
+
+/** 解析时最多留几条 */
+export function keepCount(count: number | undefined): number {
+  return askCount(count) + 2;
+}
+
+/** 回复长度上限：按条数估，至少 1500 */
+export function danmakuMaxTokens(count: number | undefined): number {
+  return Math.min(4000, Math.max(1500, 600 + askCount(count) * 80));
 }
 
 export function buildDanmakuPrompt(inp: DanmakuPromptInput): SubMessages {
   const system = [
     DANMAKU_STYLE,
-    '只输出一个 JSON 数组，8–12条，不要任何解释，格式：',
+    `只输出一个 JSON 数组，${askCount(inp.count)}条左右，不要任何解释，格式：`,
     '[{"type":"praise|bless|discuss|cold|envy|smear|rumor","name":"观众昵称","text":"…"}]',
   ].join('\n');
   const user = [
@@ -99,7 +114,7 @@ export function buildDanmakuPrompt(inp: DanmakuPromptInput): SubMessages {
 // ───────────── 解析 ─────────────
 
 /** 解析方式同事件检测：去掉 ``` 标记，取出 JSON 数组；不合格抛 SubFormatError */
-export function parseDanmakuResponse(raw: string): AiDanmaku[] {
+export function parseDanmakuResponse(raw: string, keep = 13): AiDanmaku[] {
   let text = String(raw ?? '').trim();
   const fence = /```(?:json)?\s*([\s\S]*?)```/i.exec(text);
   if (fence) text = fence[1].trim();
@@ -120,17 +135,17 @@ export function parseDanmakuResponse(raw: string): AiDanmaku[] {
       name: typeof d.name === 'string' && d.name.trim() ? d.name.trim().slice(0, 16) : '匿名',
       text: d.text.trim(),
     }))
-    .slice(0, 13);
+    .slice(0, keep);
   if (!out.length) throw new SubFormatError('返回的弹幕为空');
   return out;
 }
 
 /** 失败重试1次；仍失败抛出最后一个错误 */
-export async function callDanmakuWithRetry(call: (m: SubMessages) => Promise<string>, m: SubMessages, retries = 1): Promise<AiDanmaku[]> {
+export async function callDanmakuWithRetry(call: (m: SubMessages) => Promise<string>, m: SubMessages, retries = 1, keep = 13): Promise<AiDanmaku[]> {
   let last: unknown;
   for (let k = 0; k <= retries; k++) {
     try {
-      return parseDanmakuResponse(await call(m));
+      return parseDanmakuResponse(await call(m), keep);
     } catch (e) {
       last = e;
     }

@@ -495,3 +495,17 @@
 .rlzc-cs-result { margin: 8px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
 .rlzc-cs-result.win { color: var(--ok); }
 .rlzc-cs-result.lose { color: var(--bad); }
+
+/* 直播卡：新弹幕的子设置、滑块、一行效果说明 */
+.rlzc-live-ai {
+  border-left: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  padding-left: 10px; margin: 2px 0 4px;
+}
+.rlzc-live-ai .rlzc-preset-area { margin: 4px 0 8px; }
+.rlzc-range-wrap { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.rlzc-range { flex: 1; min-width: 0; accent-color: var(--accent); height: 28px; }
+.rlzc-range-val { min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; color: var(--fg); font-size: 13px; }
+.rlzc-live-summary {
+  margin: 4px 0 6px; padding: 8px 10px; border-radius: 8px;
+  background: var(--soft);
+}

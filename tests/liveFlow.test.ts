@@ -3,6 +3,7 @@ import {
   appendLiveTipSentence,
   buildLiveRecord,
   buildLiveView,
+  aiWantOf,
   composeDanmaku,
   entryLiveOption,
   finalizeLiveRecord,
@@ -242,36 +243,78 @@ describe('事件检测的 hype / hurt', () => {
   });
 });
 
-describe('每轮弹幕 10–13 条（含 AI 生成的）', () => {
+describe('弹幕配比', () => {
   const line = (p: string, n: number) => Array.from({ length: n }, (_, i) => ({ name: '观众', text: `${p}${i}`, type: 'discuss' }));
+  const plan = (target: number, aiWant: number, library = true, borrow?: number) => ({ target, aiWant, library, borrow });
 
-  it('没有 AI：本地池取目标条数', () => {
-    expect(composeDanmaku(null, line('本地', 13), 11)).toHaveLength(11);
-    expect(composeDanmaku([], line('本地', 13), 10)).toHaveLength(10);
-  });
-
-  it('AI 不足10条：全用上，本地补到目标条数', () => {
-    const r = composeDanmaku(line('AI', 6), line('本地', 13), 12);
+  it('旧楼层（没有配比字段）按旧规则：AI 优先最多13条，不足10条用本地补到目标', () => {
+    expect(composeDanmaku(null, line('本地', 13), { target: 11 })).toHaveLength(11);
+    const r = composeDanmaku(line('AI', 6), line('本地', 13), { target: 12 });
     expect(r).toHaveLength(12);
     expect(r.slice(0, 6).every((d) => d.text.startsWith('AI'))).toBe(true);
+    expect(composeDanmaku(line('AI', 11), line('本地', 13), { target: 13 })).toHaveLength(11);
+    expect(composeDanmaku(line('AI', 20), line('本地', 13), { target: 10 })).toHaveLength(13);
   });
 
-  it('AI 10–13条：只用 AI 的；超过13条截到13条', () => {
-    expect(composeDanmaku(line('AI', 11), line('本地', 13), 13).every((d) => d.text.startsWith('AI'))).toBe(true);
-    expect(composeDanmaku(line('AI', 11), line('本地', 13), 13)).toHaveLength(11);
-    expect(composeDanmaku(line('AI', 20), line('本地', 13), 10)).toHaveLength(13);
+  it('两种都开：新弹幕取 aiWant 条，弹幕库补到总数', () => {
+    const r = composeDanmaku(line('AI', 15), line('本地', 13), plan(12, 6));
+    expect(r).toHaveLength(12);
+    expect(r.filter((d) => d.text.startsWith('AI'))).toHaveLength(6);
+    // 新弹幕不够 aiWant：有几条用几条，其余弹幕库补
+    const few = composeDanmaku(line('AI', 3), line('本地', 13), plan(12, 6));
+    expect(few).toHaveLength(12);
+    expect(few.filter((d) => d.text.startsWith('AI'))).toHaveLength(3);
   });
 
-  it('没有 AI 的轮次一轮 10–13 条；等 AI 的轮次先不出 feed，合成后打赏夹在中间', () => {
+  it('两种都开、新弹幕失败：全用弹幕库', () => {
+    const r = composeDanmaku(null, line('本地', 13), plan(12, 6));
+    expect(r).toHaveLength(12);
+    expect(r.every((d) => d.text.startsWith('本地'))).toBe(true);
+  });
+
+  it('只开新弹幕：全是新弹幕，不用弹幕库补；失败时借 5–8 条', () => {
+    const r = composeDanmaku(line('AI', 30), line('本地', 13), plan(20, 20, false, 6));
+    expect(r).toHaveLength(20);
+    expect(r.every((d) => d.text.startsWith('AI'))).toBe(true);
+    expect(composeDanmaku(line('AI', 4), line('本地', 13), plan(20, 20, false, 6))).toHaveLength(4);
+    const borrowed = composeDanmaku(null, line('本地', 13), plan(20, 20, false, 6));
+    expect(borrowed).toHaveLength(6);
+    expect(borrowed.every((d) => d.text.startsWith('本地'))).toBe(true);
+  });
+
+  it('aiWantOf：按占比取整，至少1条；只开新弹幕时等于总数', () => {
+    expect(aiWantOf(12, { library: true, total: 12, ratio: 50 })).toBe(6);
+    expect(aiWantOf(11, { library: true, total: 12, ratio: 10 })).toBe(1);
+    expect(aiWantOf(11, { library: true, total: 12, ratio: 100 })).toBe(11);
+    expect(aiWantOf(19, { library: false, total: 20, ratio: 30 })).toBe(19);
+  });
+
+  it('每轮弹幕数按设置上下浮动1条；只开新弹幕的非生成轮没有弹幕', () => {
+    const pool = Array.from({ length: 60 }, (_, i) => ({ type: 'discuss', text: `池${i}` }));
+    for (let t = 0; t < 20; t++) {
+      const n = buildLiveRecord(input({ pool, rand: Math.random, mix: { library: true, total: 20, ratio: 50 } })).feed.filter((f) => f.t === 'msg').length;
+      expect(n).toBeGreaterThanOrEqual(19);
+      expect(n).toBeLessThanOrEqual(21);
+    }
+    const quiet = buildLiveRecord(input({ pool, mix: { library: false, total: 12, ratio: 50 } }));
+    expect(quiet.feed.filter((f) => f.t === 'msg')).toHaveLength(0);
+    const wait = buildLiveRecord(input({ pool, awaitAi: true, mix: { library: false, total: 12, ratio: 50 } }));
+    expect(wait.pending).toMatchObject({ library: false, aiWant: wait.pending!.target });
+    expect(wait.pending!.borrow).toBeGreaterThanOrEqual(5);
+    expect(wait.pending!.borrow).toBeLessThanOrEqual(8);
+    expect(wait.pending!.local.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it('默认约12条（11–13）；等 AI 的轮次先不出 feed，合成后打赏夹在中间', () => {
     const pool = Array.from({ length: 40 }, (_, i) => ({ type: 'discuss', text: `池${i}` }));
     for (let t = 0; t < 20; t++) {
       const n = buildLiveRecord(input({ pool, rand: Math.random })).feed.filter((f) => f.t === 'msg').length;
-      expect(n).toBeGreaterThanOrEqual(10);
+      expect(n).toBeGreaterThanOrEqual(11);
       expect(n).toBeLessThanOrEqual(13);
     }
     const wait = buildLiveRecord(input({ pool, awaitAi: true, text: '他从台阶上摔下来，重伤昏迷。' }));
     expect(wait.feed).toEqual([]);
-    expect(wait.pending?.local.length).toBe(13);
+    expect(wait.pending!.local.length).toBeGreaterThanOrEqual(wait.pending!.target);
     const done = finalizeLiveRecord(wait, line('AI', 4), 100, Math.random);
     const msgs = done.feed.filter((f) => f.t === 'msg');
     expect(msgs.length).toBe(wait.pending!.target);

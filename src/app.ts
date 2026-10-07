@@ -8,7 +8,7 @@ import { DEFAULT_GENERIC_CAPS, genericTiming, type GenericCaps } from './core/ti
 import { clockAt, replay, isCountable, type Progress } from './core/replay';
 import { buildInjection, EMPTY_INJECTION, ALL_KEYS, fillRoles, KEY_PROGRESS, KEY_STATE, KEY_TOKEN, KEY_TURN, KEY_LEDGER, KEY_LIVE, KEY_FORMAT, type Injection } from './core/injector';
 import { checkStatusBar, fixStatusBar, FORMAT_REMINDER, isGreeting, needFormatReminder, type FormatRecord } from './core/statusBar';
-import { buildDanmakuPrompt, callDanmakuWithRetry, formatLiveInjection, pickSamples, shouldGenAiDanmaku, type AiDanmaku } from './core/liveAi';
+import { buildDanmakuPrompt, callDanmakuWithRetry, danmakuMaxTokens, formatLiveInjection, keepCount, pickSamples, shouldGenAiDanmaku, type AiDanmaku } from './core/liveAi';
 import {
   buildSubPrompt,
   callWithRetry,
@@ -69,7 +69,7 @@ import {
   type LiveView,
   type SysItem,
 } from './core/liveFlow';
-import { calcViewers, type PoolItem, type TemplateItem } from './core/live';
+import { calcViewers, clampTotal, DANMAKU_TOTAL_DEFAULT, type PoolItem, type TemplateItem } from './core/live';
 import danmakuPool from './packs/builtin/danmaku_pool.json';
 import { notifyLive, releaseAll, scheduleFeed } from './st/liveApi';
 import { createChatWatch, isGenerating } from './st/chatWatch';
@@ -149,13 +149,33 @@ export interface LiveSettings {
   optIn: boolean;
   /** 弹幕传给主AI */
   injectToAI: boolean;
-  /** 弹幕来源：本地 / 本地+AI */
-  source: 'local' | 'ai';
-  /** AI 生成弹幕的频率：每 N 轮 */
+  /** 弹幕库：从现成弹幕里抽 */
+  library: boolean;
+  /** 新弹幕：调用接口根据剧情现写（弹幕库和新弹幕至少开一个） */
+  aiOn: boolean;
+  /** 新弹幕接口：跟随主API / 自设API（预设列表与副本事件检测共用） */
+  api: 'main' | 'preset';
+  /** 新弹幕用的接口预设 */
+  presetId: string;
+  /** 新弹幕占比 10–100（两种都开时，生成那一轮里新弹幕的比例） */
+  ratio: number;
+  /** 新弹幕生成频率：每 N 轮（1–10） */
   freq: number;
+  /** 每轮弹幕数 5–25（实际上下浮动 1 条） */
+  total: number;
 }
 
-export const DEFAULT_LIVE: LiveSettings = { optIn: false, injectToAI: false, source: 'local', freq: 3 };
+export const DEFAULT_LIVE: LiveSettings = {
+  optIn: false,
+  injectToAI: false,
+  library: true,
+  aiOn: false,
+  api: 'main',
+  presetId: '',
+  ratio: 50,
+  freq: 3,
+  total: DANMAKU_TOTAL_DEFAULT,
+};
 
 export interface SubApiSettings {
   /** 关闭 / 跟随主API / 自设API（接口预设） */
@@ -267,21 +287,43 @@ export function loadSettings(): void {
       injectionDebug: (saved.cardCollapsed as any)?.injectionDebug ?? true,
       formatDebug: (saved.cardCollapsed as any)?.formatDebug ?? true,
     },
-    live: normalizeLiveSettings(saved.live),
+    live: normalizeLiveSettings(saved.live, saved.subApi),
   };
   all[SETTINGS_KEY] = merged;
   state.settings = merged;
   state.packs = allPacks(merged.customPacks);
 }
 
-export function normalizeLiveSettings(raw: Partial<LiveSettings> | undefined): LiveSettings {
+/**
+ * 直播设置补全。旧版存的是 source（local / ai）：选了 ai 的升级为「弹幕库 + 新弹幕、占比100%」，
+ * 接口沿用当时副本事件检测的来源与预设，体验与旧版一致。
+ */
+export function normalizeLiveSettings(raw: (Partial<LiveSettings> & { source?: string }) | undefined, sub?: Partial<SubApiSettings>): LiveSettings {
   const r = raw ?? {};
-  const freq = Math.floor(Number(r.freq));
+  const int = (v: unknown, lo: number, hi: number, d: number) => {
+    const n = Math.round(Number(v));
+    return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : d;
+  };
+  const legacyAi = r.aiOn === undefined && r.source === 'ai';
+  let library = typeof r.library === 'boolean' ? r.library : DEFAULT_LIVE.library;
+  const aiOn = typeof r.aiOn === 'boolean' ? r.aiOn : legacyAi;
+  if (!library && !aiOn) library = true;
+  let api: LiveSettings['api'] = r.api === 'preset' || r.api === 'main' ? r.api : DEFAULT_LIVE.api;
+  let presetId = typeof r.presetId === 'string' ? r.presetId : '';
+  if (legacyAi && sub?.source === 'preset') {
+    api = 'preset';
+    presetId = String(sub.presetId ?? '');
+  }
   return {
     optIn: typeof r.optIn === 'boolean' ? r.optIn : DEFAULT_LIVE.optIn,
     injectToAI: typeof r.injectToAI === 'boolean' ? r.injectToAI : DEFAULT_LIVE.injectToAI,
-    source: r.source === 'ai' ? 'ai' : 'local',
-    freq: Number.isFinite(freq) ? Math.max(1, Math.min(10, freq)) : DEFAULT_LIVE.freq,
+    library,
+    aiOn,
+    api,
+    presetId,
+    ratio: legacyAi ? 100 : Math.round(int(r.ratio, 10, 100, DEFAULT_LIVE.ratio) / 10) * 10,
+    freq: int(r.freq, 1, 10, DEFAULT_LIVE.freq),
+    total: clampTotal(r.total ?? DEFAULT_LIVE.total),
   };
 }
 
@@ -293,9 +335,8 @@ export function saveSettings(): void {
 }
 
 /** 改当前接口预设的地址 / 密钥 / 模型，并立即保存（改地址或密钥清空两个结果与模型列表，换模型只清空测试结果） */
-export function setCurrentPresetField(field: 'url' | 'key' | 'model', value: string): void {
-  const s = state.settings.subApi;
-  const p = s.presets.find((x) => x.id === s.presetId);
+export function setCurrentPresetField(field: 'url' | 'key' | 'model', value: string, presetId = state.settings.subApi.presetId): void {
+  const p = state.settings.subApi.presets.find((x) => x.id === presetId);
   if (!p) return;
   if (setPresetField(p, field, value)) saveSettings();
 }
@@ -1680,8 +1721,7 @@ export function applyLive(index: number, type?: string): void {
   const eventIds = new Set((pack?.events ?? []).filter((e) => e.kind !== 'directive').map((e) => e.id));
   // AI 弹幕：每 N 轮一次，关键事件那轮加一次（阶段切换、有人受伤或死亡、注入事件判定已发生）
   const genAi = shouldGenAiDanmaku({
-    aiSource: state.settings.live.source === 'ai',
-    subOn: subEnabled(),
+    aiOn: state.settings.live.aiOn,
     roundInShow: before.length + 1,
     freq: state.settings.live.freq,
     phaseSwitch,
@@ -1711,6 +1751,7 @@ export function applyLive(index: number, type?: string): void {
     firstId: maxFeedId(chat, meta) + 1,
     settle: settlement ? { died, tipsBefore: showTipTotal(chat.slice(0, index), show) } : undefined,
     awaitAi: genAi,
+    mix: { library: state.settings.live.library, total: state.settings.live.total, ratio: state.settings.live.ratio },
     rand: Math.random,
   });
   if (genAi) rec.ai = { ok: false, pending: true };
@@ -1726,20 +1767,29 @@ export function applyLive(index: number, type?: string): void {
   // 打赏已记账；要等 AI 弹幕的轮次，弹幕和打赏等 AI 返回后一起放出
   if (rec.feed.length) scheduleFeed(rec.feed, true);
   else notifyLive();
-  if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined);
+  if (genAi) startAiDanmaku(index, rec.scope === 'instance' ? pack?.name : undefined, rec.pending?.aiWant);
+}
+
+/** 新弹幕的接口：跟随主API，或直播卡里选的自设API预设；超时沿用副本事件检测的设置 */
+function liveDanmakuTarget(): SubTarget | null {
+  const live = state.settings.live;
+  const timeoutMs = Math.max(5, Number(state.settings.subApi.timeoutSec) || 60) * 1000;
+  if (live.api === 'main') return { source: 'main', timeoutMs };
+  const preset = state.settings.subApi.presets.find((p) => p.id === live.presetId);
+  return preset ? { source: 'preset', preset, timeoutMs } : null;
 }
 
 /**
- * AI 生成弹幕：独立调用，接口跟随「副本事件检测」卡的来源与预设。
+ * 新弹幕：独立调用，接口按直播卡的设置（跟随主API / 自设API），与副本事件检测分开。
  * 输入只有最近两轮AI正文（去掉面板与机器标签）、副本名、在场角色名、风格说明、10条语气示例。
- * 失败重试1次；仍失败不弹窗、不阻塞，这一轮只用本地池，调试页记原因。不受「等检测完再写下一轮」影响。
+ * 失败重试1次；仍失败不弹窗、不阻塞，这一轮按设置用弹幕库或借几条，调试页记原因。不受「等检测完再写下一轮」影响。
  */
-function startAiDanmaku(index: number, instanceName?: string): void {
+function startAiDanmaku(index: number, instanceName?: string, count?: number): void {
   const chat = getChat();
   const key = subKey(index);
-  const target = subTarget();
+  const target = liveDanmakuTarget();
   if (!target) {
-    writeAiDanmaku(index, key, [], '副本事件检测没有设置好', 0);
+    writeAiDanmaku(index, key, [], '新弹幕的接口没有设置好', 0);
     return;
   }
   const texts: string[] = [];
@@ -1749,11 +1799,12 @@ function startAiDanmaku(index: number, instanceName?: string): void {
     texts,
     cast: parseCastNames(latestStatusBar(chat, index + 1), String((ctx() as any).name1 ?? '')),
     samples: pickSamples(POOL.pool, 10, Math.random),
+    count,
   });
   const subst = (ctx() as any).substituteParams as ((t: string) => string) | undefined;
   const messages: SubMessages = subst ? { system: subst(raw.system), user: subst(raw.user) } : raw;
   const t0 = Date.now();
-  callDanmakuWithRetry((m) => callSub(target, m, { temperature: 0.9 }), messages, 1)
+  callDanmakuWithRetry((m) => callSub(target, m, { temperature: 0.9, maxTokens: danmakuMaxTokens(count) }), messages, 1, keepCount(count))
     .then((list) => writeAiDanmaku(index, key, list, null, Date.now() - t0))
     .catch((e) => {
       log('AI 弹幕生成失败', e);
@@ -1763,8 +1814,7 @@ function startAiDanmaku(index: number, instanceName?: string): void {
 }
 
 /**
- * AI 弹幕返回（或失败）后合成这一轮：先用 AI 的，不足10条用本地池补到 10–13 条，超过13条截到13条；
- * 失败时只用本地池。id 从当前最大值继续递增，一起按节奏放出。
+ * 新弹幕返回（或失败）后按配比合成这一轮（composeDanmaku）；id 从当前最大值继续递增，一起按节奏放出。
  */
 function writeAiDanmaku(index: number, key: string, list: AiDanmaku[], error: string | null, ms: number): void {
   if (subKey(index) !== key) return; // 这一楼已被删改、滑动
@@ -1774,7 +1824,7 @@ function writeAiDanmaku(index: number, key: string, list: AiDanmaku[], error: st
   if (!rec?.pending || !msg.extra?.rlzc) return;
   const meta = readLiveMeta();
   const done = finalizeLiveRecord(rec, error ? null : list, maxFeedId(chat, meta) + 1, Math.random);
-  const aiUsed = error ? 0 : Math.min(list.length, 13);
+  const aiUsed = error ? 0 : done.feed.filter((f) => f.t === 'msg' && list.some((d) => d.text === f.text)).length;
   const next = { ...done, ai: error ? { ok: false, error, ms } : { ok: true, count: aiUsed, ms } };
   msg.extra.rlzc = plain({ ...msg.extra.rlzc, live: next });
   meta.seq = Math.max(meta.seq, ...next.feed.map((f) => f.id));
