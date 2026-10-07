@@ -499,8 +499,11 @@
 /* 直播卡：每行左边一个短标题，右边控件；底部一行效果说明 */
 .rlzc-live-key { font-size: 13px; flex: none; }
 .rlzc-live-ctl { flex: 1; min-width: 0; max-width: 240px; margin: 0; }
+/* 每行统一 48px 高，控件居中 */
+.rlzc-live-opts > .rlzc-option-row { min-height: 48px; padding: 6px 0; }
 .rlzc-live-opts .rlzc-segsrc { margin: 0; }
-.rlzc-live-opts .rlzc-segsrc button { min-height: 40px; }
+.rlzc-live-opts .rlzc-segsrc button { min-height: 34px; padding: 4px; }
+.rlzc-live-opts .rlzc-range-wrap { min-height: 34px; }
 .rlzc-live-api { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
 /* 小圆角胶囊：接口下拉框、编辑按钮、频率数字框 */
 .rlzc-pill-select { position: relative; display: inline-flex; min-width: 0; max-width: 170px; }
@@ -526,7 +529,7 @@
 /* 图标本体 30px，点击区域扩到 44px */
 .rlzc-pill-icon::after { content: ''; position: absolute; inset: -7px; }
 .rlzc-pill-num {
-  width: 30px; height: 26px; border-radius: 8px; padding: 0; text-align: center;
+  width: 32px; height: 30px; border-radius: 8px; padding: 0; text-align: center;
   border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, transparent);
   color: var(--fg); font: inherit; font-size: 13px; font-variant-numeric: tabular-nums;
   -moz-appearance: textfield; appearance: textfield;
@@ -537,5 +540,15 @@
 .rlzc-range-wrap { display: flex; align-items: center; gap: 10px; min-height: 44px; }
 .rlzc-range { flex: 1; min-width: 0; accent-color: var(--accent); height: 28px; }
 .rlzc-range-val { min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; color: var(--fg); font-size: 13px; }
-.rlzc-live-summary { margin: 6px 0 2px; }
+.rlzc-live-summary {
+  margin: 0; padding: 8px 0; min-height: 36px; display: flex; align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+}
+.rlzc-preset-links { display: flex; justify-content: flex-end; gap: 4px; }
+.rlzc-text-btn {
+  background: none; border: none; font: inherit; font-size: 12px; color: var(--muted);
+  padding: 6px 8px; min-height: 32px; cursor: pointer; border-radius: 6px;
+}
+.rlzc-text-btn:hover { background: var(--soft); color: var(--fg); }
+.rlzc-text-btn.rlzc-danger-text { color: #c9534f; }
 .rlzc-danger-text { color: #c9534f; }

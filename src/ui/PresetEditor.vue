@@ -170,9 +170,9 @@ async function testModel() {
           <time v-if="row.time" class="rlzc-check-time">{{ row.time }}</time>
         </li>
       </ul>
-      <div v-if="bare" class="rlzc-check-btns">
-        <button class="rlzc-btn ghost small" type="button" @click="renamePreset">改名</button>
-        <button class="rlzc-btn ghost small rlzc-danger-text" type="button" @click="removePreset">删除接口</button>
+      <div v-if="bare" class="rlzc-preset-links">
+        <button class="rlzc-text-btn" type="button" @click="renamePreset">改名</button>
+        <button class="rlzc-text-btn rlzc-danger-text" type="button" @click="removePreset">删除接口</button>
       </div>
     </template>
   </div>
