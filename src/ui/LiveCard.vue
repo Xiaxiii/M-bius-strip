@@ -136,12 +136,14 @@ function setInject(v: boolean) {
           <div class="rlzc-option-row">
             <span class="rlzc-live-key">接口</span>
             <div class="rlzc-live-ctl rlzc-live-api">
-              <select class="rlzc-input" aria-label="新弹幕接口" :value="apiValue" @change="pickApi">
-                <option value="main">跟随主API</option>
-                <option v-for="p in presets" :key="p.id" :value="p.id">{{ p.name }}</option>
-                <option value="new">＋ 新建接口</option>
-              </select>
-              <button v-if="live.api === 'preset' && live.presetId" class="rlzc-btn ghost small" type="button" @click="editing = !editing">{{ editing ? '收起' : '编辑' }}</button>
+              <span class="rlzc-pill-select">
+                <select aria-label="新弹幕接口" :value="apiValue" @change="pickApi">
+                  <option value="main">跟随主API</option>
+                  <option v-for="p in presets" :key="p.id" :value="p.id">{{ p.name }}</option>
+                  <option value="new">＋ 新建接口</option>
+                </select>
+              </span>
+              <button v-if="live.api === 'preset' && live.presetId" class="rlzc-pill-btn" type="button" @click="editing = !editing">{{ editing ? '收起' : '编辑' }}</button>
             </div>
           </div>
           <PresetEditor v-if="editing && live.api === 'preset' && live.presetId" :owner="live" bare />
@@ -149,7 +151,7 @@ function setInject(v: boolean) {
             <span class="rlzc-live-key">生成频率</span>
             <div class="rlzc-timeout-wrap">
               <span class="rlzc-unit">每</span>
-              <input type="number" min="1" max="10" class="rlzc-input rlzc-input-num" aria-label="生成频率" :value="live.freq" @change="setNum('freq', 1, 10, 1, $event)" />
+              <input type="number" min="1" max="10" class="rlzc-pill-num" aria-label="生成频率" :value="live.freq" @change="setNum('freq', 1, 10, 1, $event)" />
               <span class="rlzc-unit">轮</span>
             </div>
           </div>
