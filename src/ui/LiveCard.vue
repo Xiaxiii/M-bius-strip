@@ -143,7 +143,17 @@ function setInject(v: boolean) {
                   <option value="new">＋ 新建接口</option>
                 </select>
               </span>
-              <button v-if="live.api === 'preset' && live.presetId" class="rlzc-pill-btn" type="button" @click="editing = !editing">{{ editing ? '收起' : '编辑' }}</button>
+              <button
+                v-if="live.api === 'preset' && live.presetId"
+                class="rlzc-pill-icon"
+                :class="{ on: editing }"
+                type="button"
+                :aria-label="editing ? '收起接口设置' : '编辑接口'"
+                :aria-expanded="editing"
+                @click="editing = !editing"
+              >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 2L14 5 5 14H2v-3L11 2z"/></svg>
+              </button>
             </div>
           </div>
           <PresetEditor v-if="editing && live.api === 'preset' && live.presetId" :owner="live" bare />

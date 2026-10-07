@@ -501,12 +501,12 @@
 .rlzc-live-ctl { flex: 1; min-width: 0; max-width: 240px; margin: 0; }
 .rlzc-live-opts .rlzc-segsrc { margin: 0; }
 .rlzc-live-opts .rlzc-segsrc button { min-height: 40px; }
-.rlzc-live-api { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+.rlzc-live-api { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
 /* 小圆角胶囊：接口下拉框、编辑按钮、频率数字框 */
 .rlzc-pill-select { position: relative; display: inline-flex; min-width: 0; max-width: 170px; }
 .rlzc-pill-select select {
   appearance: none; -webkit-appearance: none; min-width: 0; max-width: 100%;
-  height: 34px; padding: 0 28px 0 12px; border-radius: 17px;
+  height: 30px; padding: 0 26px 0 12px; border-radius: 15px;
   border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, transparent);
   color: var(--fg); font: inherit; font-size: 13px; cursor: pointer;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -517,13 +517,16 @@
   content: ''; position: absolute; right: 12px; top: 50%; width: 6px; height: 6px; pointer-events: none;
   border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: translateY(-70%) rotate(45deg);
 }
-.rlzc-pill-btn {
-  flex: none; height: 34px; padding: 0 12px; border-radius: 17px; font: inherit; font-size: 12px;
-  border: 1px solid var(--line); background: none; color: var(--muted); cursor: pointer;
+.rlzc-pill-icon {
+  flex: none; width: 30px; height: 30px; padding: 0; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid var(--line); background: none; color: var(--muted); cursor: pointer; position: relative;
 }
-.rlzc-pill-btn:hover { color: var(--fg); border-color: var(--fg); }
+.rlzc-pill-icon:hover, .rlzc-pill-icon.on { color: var(--fg); border-color: var(--fg); }
+.rlzc-pill-icon:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* 图标本体 30px，点击区域扩到 44px */
+.rlzc-pill-icon::after { content: ''; position: absolute; inset: -7px; }
 .rlzc-pill-num {
-  width: 44px; height: 34px; border-radius: 17px; padding: 0; text-align: center;
+  width: 30px; height: 26px; border-radius: 8px; padding: 0; text-align: center;
   border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, transparent);
   color: var(--fg); font: inherit; font-size: 13px; font-variant-numeric: tabular-nums;
   -moz-appearance: textfield; appearance: textfield;
