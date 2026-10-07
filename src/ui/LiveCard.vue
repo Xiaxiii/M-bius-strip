@@ -1,8 +1,10 @@
 <script setup lang="ts">
 /** 设置页「直播」卡（第三期b-第4段） */
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { liveControl, saveSettings, state, toggleCorridorLive } from '../app';
 import PresetEditor from './PresetEditor.vue';
+import { inputBox } from '../st/context';
+import type { SubPreset } from '../st/subTransport';
 
 const live = computed(() => state.settings.live);
 const ctl = computed(() => {
@@ -23,17 +25,42 @@ function toggleCollapse() {
   saveSettings();
 }
 
-/** 弹幕库和新弹幕至少开一个 */
-function setSwitch(key: 'library' | 'aiOn', v: boolean) {
-  const other = key === 'library' ? 'aiOn' : 'library';
-  if (!v && !live.value[other]) return;
-  live.value[key] = v;
+/** 弹幕来源三选一：弹幕库 / 混合 / 全新（存成 library、aiOn 两个开关） */
+type Mode = 'library' | 'mix' | 'fresh';
+const mode = computed<Mode>(() => (!live.value.aiOn ? 'library' : live.value.library ? 'mix' : 'fresh'));
+function setMode(m: Mode) {
+  live.value.library = m !== 'fresh';
+  live.value.aiOn = m !== 'library';
   saveSettings();
 }
 
-function setApi(api: 'main' | 'preset') {
-  live.value.api = api;
-  if (api === 'preset' && !live.value.presetId) live.value.presetId = state.settings.subApi.presets[0]?.id ?? '';
+/** 接口下拉框：main、预设 id，或 new（新建） */
+const apiValue = computed(() => (live.value.api === 'main' ? 'main' : live.value.presetId || 'main'));
+const presets = computed(() => state.settings.subApi.presets);
+const editing = ref(false);
+
+async function pickApi(e: Event) {
+  const el = e.target as HTMLSelectElement;
+  const v = el.value;
+  if (v === 'new') {
+    const name = (await inputBox('给这个API起个名字：', `我的API ${presets.value.length + 1}`))?.trim();
+    if (name) {
+      const p: SubPreset = { id: Math.random().toString(36).slice(2, 10), name, url: '', key: '', model: '' };
+      state.settings.subApi.presets = [...presets.value, p];
+      live.value.api = 'preset';
+      live.value.presetId = p.id;
+      editing.value = true;
+      saveSettings();
+    }
+    el.value = apiValue.value;
+    return;
+  }
+  if (v === 'main') live.value.api = 'main';
+  else {
+    live.value.api = 'preset';
+    live.value.presetId = v;
+  }
+  editing.value = false;
   saveSettings();
 }
 
@@ -45,20 +72,12 @@ function setNum(key: 'freq' | 'total' | 'ratio', lo: number, hi: number, step: n
   saveSettings();
 }
 
-/** 生成新弹幕那一轮里新弹幕的条数（按设定值算，实际每轮浮动1条） */
-const aiShare = computed(() => {
-  const t = live.value.total;
-  return live.value.library ? Math.max(1, Math.round((t * live.value.ratio) / 100)) : t;
-});
-
-/** 一行小字说明当前组合的效果 */
+/** 底部一行：说明当前组合在各轮的效果 */
 const summary = computed(() => {
-  const l = live.value;
-  if (!l.aiOn) return `每轮弹幕库约 ${l.total} 条，不调用API。`;
-  if (!l.library) {
-    return l.freq === 1 ? `每轮新弹幕约 ${l.total} 条，每轮调用一次API。` : `每 ${l.freq} 轮新弹幕约 ${l.total} 条，其余轮次没有弹幕。`;
-  }
-  return `生成那轮新弹幕 ${aiShare.value} 条、弹幕库 ${l.total - aiShare.value} 条，其余轮次全用弹幕库。`;
+  const f = live.value.freq;
+  if (mode.value === 'library') return '每轮来源弹幕库';
+  if (mode.value === 'fresh') return f === 1 ? '每轮输出全新弹幕' : `每 ${f} 轮只输出 1 次弹幕`;
+  return f === 1 ? '每轮输出混合弹幕' : `每 ${f} 轮输出 1 次混合弹幕；其余轮来源弹幕库`;
 });
 
 function setInject(v: boolean) {
@@ -90,81 +109,54 @@ function setInject(v: boolean) {
           {{ ctl.on ? '下播' : '开播' }}
         </button>
       </div>
-      <div class="rlzc-option-list">
+      <div class="rlzc-option-list rlzc-live-opts">
         <div class="rlzc-option-row">
-          <div class="rlzc-option-label">
-            <span>弹幕库</span>
-            <small>从现成弹幕里抽，不调用API</small>
+          <span class="rlzc-live-key">弹幕</span>
+          <div class="rlzc-segsrc rlzc-live-ctl" role="group" aria-label="弹幕来源">
+            <button :class="{ on: mode === 'library' }" @click="setMode('library')">弹幕库</button>
+            <button :class="{ on: mode === 'mix' }" @click="setMode('mix')">混合</button>
+            <button :class="{ on: mode === 'fresh' }" @click="setMode('fresh')">全新</button>
           </div>
-          <button
-            role="switch"
-            type="button"
-            :aria-checked="live.library ? 'true' : 'false'"
-            :class="['rlzc-toggle', { on: live.library }]"
-            @click="setSwitch('library', !live.library)"
-          ><span /></button>
         </div>
         <div class="rlzc-option-row">
-          <div class="rlzc-option-label">
-            <span>新弹幕</span>
-            <small>按剧情现写，会调用API</small>
-          </div>
-          <button
-            role="switch"
-            type="button"
-            :aria-checked="live.aiOn ? 'true' : 'false'"
-            :class="['rlzc-toggle', { on: live.aiOn }]"
-            @click="setSwitch('aiOn', !live.aiOn)"
-          ><span /></button>
-        </div>
-        <div v-if="live.aiOn" class="rlzc-live-ai">
-          <div class="rlzc-option-row rlzc-option-row-stack">
-            <span class="rlzc-option-label"><span>新弹幕接口</span></span>
-            <div class="rlzc-segsrc" role="group" aria-label="新弹幕接口">
-              <button :class="{ on: live.api === 'main' }" @click="setApi('main')">跟随主API</button>
-              <button :class="{ on: live.api === 'preset' }" @click="setApi('preset')">自设API</button>
-            </div>
-            <small v-if="live.api === 'preset'" class="rlzc-hint">接口列表与事件检测共用</small>
-          </div>
-          <PresetEditor v-if="live.api === 'preset'" :owner="live" />
-          <div v-if="live.library" class="rlzc-option-row rlzc-option-row-stack">
-            <div class="rlzc-option-label">
-              <span>新弹幕占比</span>
-              <small>生成那轮里新弹幕的比例</small>
-            </div>
-            <div class="rlzc-range-wrap">
-              <input type="range" min="10" max="100" step="10" class="rlzc-range" aria-label="新弹幕占比" :value="live.ratio" @input="setNum('ratio', 10, 100, 10, $event)" />
-              <span class="rlzc-range-val">{{ live.ratio }}%</span>
-            </div>
-          </div>
-          <div class="rlzc-option-row">
-            <div class="rlzc-option-label">
-              <span>生成频率</span>
-              <small>关键事件时另加一次</small>
-            </div>
-            <div class="rlzc-timeout-wrap">
-              <span class="rlzc-unit">每</span>
-              <input type="number" min="1" max="10" class="rlzc-input rlzc-input-num" :value="live.freq" @change="setNum('freq', 1, 10, 1, $event)" />
-              <span class="rlzc-unit">轮</span>
-            </div>
-          </div>
-        </div>
-        <div class="rlzc-option-row rlzc-option-row-stack">
-          <div class="rlzc-option-label">
-            <span>每轮弹幕数</span>
-            <small>实际上下浮动1条</small>
-          </div>
-          <div class="rlzc-range-wrap">
+          <span class="rlzc-live-key">每轮</span>
+          <div class="rlzc-range-wrap rlzc-live-ctl">
             <input type="range" min="5" max="25" step="1" class="rlzc-range" aria-label="每轮弹幕数" :value="live.total" @input="setNum('total', 5, 25, 1, $event)" />
             <span class="rlzc-range-val">{{ live.total }} 条</span>
           </div>
         </div>
+        <div v-if="mode === 'mix'" class="rlzc-option-row">
+          <span class="rlzc-live-key">新弹幕占</span>
+          <div class="rlzc-range-wrap rlzc-live-ctl">
+            <input type="range" min="10" max="100" step="10" class="rlzc-range" aria-label="新弹幕占比" :value="live.ratio" @input="setNum('ratio', 10, 100, 10, $event)" />
+            <span class="rlzc-range-val">{{ live.ratio }}%</span>
+          </div>
+        </div>
+        <template v-if="mode !== 'library'">
+          <div class="rlzc-option-row">
+            <span class="rlzc-live-key">接口</span>
+            <div class="rlzc-live-ctl rlzc-live-api">
+              <select class="rlzc-input" aria-label="新弹幕接口" :value="apiValue" @change="pickApi">
+                <option value="main">跟随主API</option>
+                <option v-for="p in presets" :key="p.id" :value="p.id">{{ p.name }}</option>
+                <option value="new">＋ 新建接口</option>
+              </select>
+              <button v-if="live.api === 'preset' && live.presetId" class="rlzc-btn ghost small" type="button" @click="editing = !editing">{{ editing ? '收起' : '编辑' }}</button>
+            </div>
+          </div>
+          <PresetEditor v-if="editing && live.api === 'preset' && live.presetId" :owner="live" bare />
+          <div class="rlzc-option-row">
+            <span class="rlzc-live-key">生成频率</span>
+            <div class="rlzc-timeout-wrap">
+              <span class="rlzc-unit">每</span>
+              <input type="number" min="1" max="10" class="rlzc-input rlzc-input-num" aria-label="生成频率" :value="live.freq" @change="setNum('freq', 1, 10, 1, $event)" />
+              <span class="rlzc-unit">轮</span>
+            </div>
+          </div>
+        </template>
         <p class="rlzc-hint rlzc-live-summary">{{ summary }}</p>
         <div class="rlzc-option-row">
-          <div class="rlzc-option-label">
-            <span>弹幕传给AI</span>
-            <small>主AI能看到最近弹幕</small>
-          </div>
+          <span class="rlzc-live-key">弹幕传给AI</span>
           <button
             role="switch"
             type="button"

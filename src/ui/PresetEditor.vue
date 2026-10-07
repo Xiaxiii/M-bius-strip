@@ -19,7 +19,8 @@ import {
   type CheckResult,
 } from '../core/subPreset';
 
-const props = defineProps<{ owner: { presetId: string } }>();
+/** bare：不显示顶上的预设选择行（由外面的下拉框选），改名、删除放在底部 */
+const props = defineProps<{ owner: { presetId: string }; bare?: boolean }>();
 const owner = props.owner;
 
 const presets = computed(() => state.settings.subApi.presets);
@@ -120,7 +121,7 @@ async function testModel() {
 
 <template>
   <div class="rlzc-preset-area">
-    <div class="rlzc-preset-row">
+    <div v-if="!bare" class="rlzc-preset-row">
       <select class="rlzc-input" :value="owner.presetId" @change="pickPreset">
         <option v-if="!presets.length" value="">还没有保存的接口</option>
         <option v-for="p in presets" :key="p.id" :value="p.id">{{ p.name }}</option>
@@ -169,6 +170,10 @@ async function testModel() {
           <time v-if="row.time" class="rlzc-check-time">{{ row.time }}</time>
         </li>
       </ul>
+      <div v-if="bare" class="rlzc-check-btns">
+        <button class="rlzc-btn ghost small" type="button" @click="renamePreset">改名</button>
+        <button class="rlzc-btn ghost small rlzc-danger-text" type="button" @click="removePreset">删除接口</button>
+      </div>
     </template>
   </div>
 </template>
