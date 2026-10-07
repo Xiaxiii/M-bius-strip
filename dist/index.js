@@ -8152,7 +8152,7 @@ const ho = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
 }, Wv = ["d"], Gv = { class: "rlzc-entry-title" }, Kv = { class: "rlzc-entry-level" }, qv = { class: "rlzc-entry-name" }, Yv = {
   key: 0,
   class: "rlzc-entry-note"
-}, Jv = { class: "rlzc-entry-foot" }, Zv = ["aria-checked"], Xv = { key: 1 }, Qv = { class: "rlzc-entry-actions" }, e0 = /* @__PURE__ */ Re({
+}, Jv = { class: "rlzc-entry-foot" }, Zv = ["aria-checked"], Xv = { key: 1 }, Qv = { class: "rlzc-entry-actions" }, eb = /* @__PURE__ */ Re({
   __name: "EntryCard",
   setup(e) {
     const t = K(() => f.entryCard);
@@ -8222,24 +8222,24 @@ const ho = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
       _: 1
     }));
   }
-}), t0 = {
+}), tb = {
   key: 0,
   class: "rlzc-ball-ring",
   viewBox: "0 0 48 48",
   "aria-hidden": "true"
-}, n0 = ["stroke-dasharray"], s0 = {
+}, nb = ["stroke-dasharray"], sb = {
   class: "rlzc-ball-inf",
   viewBox: "0 0 32 32",
   "aria-hidden": "true"
-}, r0 = ["d"], i0 = {
+}, rb = ["d"], ib = {
   key: 1,
   class: "rlzc-ball-live",
   title: "直播中"
-}, o0 = {
+}, ob = {
   key: 2,
   class: "rlzc-ball-badge",
   title: "待开奖赌票"
-}, ti = 48, l0 = /* @__PURE__ */ Re({
+}, ti = 48, lb = /* @__PURE__ */ Re({
   __name: "FloatBall",
   setup(e) {
     const t = /* @__PURE__ */ he({ x: 0, y: 0 });
@@ -8286,7 +8286,7 @@ const ho = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
       onPointercancel: a,
       onClick: c
     }, [
-      p.value !== null ? (v(), k("svg", t0, [
+      p.value !== null ? (v(), k("svg", tb, [
         x[0] || (x[0] = u("circle", {
           class: "rlzc-ball-ring-base",
           cx: "24",
@@ -8301,23 +8301,23 @@ const ho = "M16 16c-2.6-3.4-5-5.2-7.6-5.2a5.2 5.2 0 000 10.4c2.6 0 5-1.8 7.6-5.2
           r: "22.5",
           pathLength: "100",
           "stroke-dasharray": `${p.value} 100`
-        }, null, 8, n0)) : j("", !0)
+        }, null, 8, nb)) : j("", !0)
       ])) : j("", !0),
-      (v(), k("svg", s0, [
-        u("path", { d: E(ho) }, null, 8, r0)
+      (v(), k("svg", sb, [
+        u("path", { d: E(ho) }, null, 8, rb)
       ])),
-      z.value ? (v(), k("span", i0)) : j("", !0),
-      E(f).market.pending > 0 ? (v(), k("span", o0, $(E(f).market.pending), 1)) : j("", !0)
+      z.value ? (v(), k("span", ib)) : j("", !0),
+      E(f).market.pending > 0 ? (v(), k("span", ob, $(E(f).market.pending), 1)) : j("", !0)
     ], 38));
   }
 });
-function a0(e) {
+function ab(e) {
   return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 function jn(e) {
-  return a0(e).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  return ab(e).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
 }
-function c0(e) {
+function cb(e) {
   const t = [];
   let n = null, s = [];
   const r = () => {
@@ -8359,10 +8359,10 @@ function c0(e) {
   }
   return r(), i(), t.join("");
 }
-const u0 = {
+const ub = {
   key: 0,
   class: "rlzc-docs"
-}, d0 = { class: "rlzc-subtabs" }, A0 = ["onClick"], f0 = { class: "rlzc-md" }, p0 = ["innerHTML"], h0 = ["src", "alt"], m0 = {
+}, db = { class: "rlzc-subtabs" }, Ab = ["onClick"], fb = { class: "rlzc-md" }, pb = ["innerHTML"], hb = ["src", "alt"], mb = {
   key: 2,
   class: "rlzc-note"
 }, Ll = /* @__PURE__ */ Re({
@@ -8376,105 +8376,105 @@ const u0 = {
       () => t.pack.id,
       () => n.value = 0
     );
-    const s = K(() => t.pack.docs?.[n.value]), r = K(() => s.value?.md ? c0(s.value.md) : ""), i = K(() => s.value?.image ? yh(t.pack, s.value.image) : null);
-    return (o, l) => e.pack.docs?.length ? (v(), k("section", u0, [
-      u("div", d0, [
+    const s = K(() => t.pack.docs?.[n.value]), r = K(() => s.value?.md ? cb(s.value.md) : ""), i = K(() => s.value?.image ? yh(t.pack, s.value.image) : null);
+    return (o, l) => e.pack.docs?.length ? (v(), k("section", ub, [
+      u("div", db, [
         (v(!0), k(X, null, ce(e.pack.docs, (a, c) => (v(), k("button", {
           key: c,
           class: Q({ on: n.value === c }),
           onClick: (d) => n.value = c
-        }, $(a.title), 11, A0))), 128))
+        }, $(a.title), 11, Ab))), 128))
       ]),
-      u("article", f0, [
+      u("article", fb, [
         r.value ? (v(), k("div", {
           key: 0,
           innerHTML: r.value
-        }, null, 8, p0)) : j("", !0),
+        }, null, 8, pb)) : j("", !0),
         i.value ? (v(), k("img", {
           key: 1,
           src: i.value,
           alt: s.value?.title,
           class: "rlzc-img"
-        }, null, 8, h0)) : s.value?.image && !i.value ? (v(), k("p", m0, "图片无法加载：" + $(s.value.image), 1)) : j("", !0)
+        }, null, 8, hb)) : s.value?.image && !i.value ? (v(), k("p", mb, "图片无法加载：" + $(s.value.image), 1)) : j("", !0)
       ])
     ])) : j("", !0);
   }
-}), g0 = {
+}), gb = {
   key: 0,
   class: "rlzc-ledger-summary"
-}, x0 = {
+}, xb = {
   key: 0,
   class: "rlzc-ledger-sum-pending"
 }, Dl = /* @__PURE__ */ Re({
   __name: "LedgerSummary",
   setup(e) {
     const t = K(() => Z()), n = K(() => Ct(t.value)), s = K(() => hn(n.value.value, f.ledger)), r = K(() => (f.tick, it(t.value))), i = K(() => St[r.value]), o = K(() => ms(n.value.value, f.ledger, i.value)), l = K(() => f.ledger.length > 0 || n.value.source !== "默认值");
-    return (a, c) => l.value ? (v(), k("div", g0, [
+    return (a, c) => l.value ? (v(), k("div", gb, [
       u("span", {
         class: Q(["rlzc-ledger-sum-bal", { negative: s.value < 0 }])
       }, "积分 " + $(s.value >= 0 ? "+" : "") + $(s.value), 3),
-      o.value ? (v(), k("span", x0, "待清算")) : j("", !0)
+      o.value ? (v(), k("span", xb, "待清算")) : j("", !0)
     ])) : j("", !0);
   }
-}), v0 = { class: "rlzc-system" }, b0 = { class: "rlzc-card rlzc-hero" }, y0 = { class: "rlzc-hero-top" }, k0 = { class: "rlzc-level" }, w0 = {
+}), vb = { class: "rlzc-system" }, bb = { class: "rlzc-card rlzc-hero" }, yb = { class: "rlzc-hero-top" }, kb = { class: "rlzc-level" }, wb = {
   key: 0,
   class: "rlzc-chip"
-}, z0 = {
+}, zb = {
   key: 0,
   class: "rlzc-goal"
-}, _0 = { class: "rlzc-grid" }, $0 = {
+}, _b = { class: "rlzc-grid" }, $b = {
   key: 0,
   class: "rlzc-stat"
-}, S0 = {
+}, Sb = {
   key: 1,
   class: "rlzc-stat"
-}, C0 = {
+}, Cb = {
   key: 2,
   class: "rlzc-stat"
-}, E0 = {
+}, Eb = {
   key: 3,
   class: "rlzc-stat"
-}, M0 = {
+}, Mb = {
   key: 0,
   class: "rlzc-subline"
-}, T0 = {
+}, Tb = {
   key: 1,
   class: "rlzc-note"
-}, I0 = {
+}, Ib = {
   key: 2,
   class: "rlzc-card"
-}, N0 = { class: "rlzc-kv" }, P0 = { class: "rlzc-kv" }, O0 = {
+}, Nb = { class: "rlzc-kv" }, Pb = { class: "rlzc-kv" }, Ob = {
   key: 0,
   class: "rlzc-note rlzc-note-warn"
-}, L0 = {
+}, Lb = {
   key: 3,
   class: "rlzc-note"
-}, D0 = {
+}, Db = {
   key: 4,
   class: "rlzc-card"
-}, R0 = {
+}, Rb = {
   key: 0,
   class: "rlzc-kv"
-}, F0 = { class: "rlzc-mono" }, j0 = {
+}, Fb = { class: "rlzc-mono" }, jb = {
   key: 1,
   class: "rlzc-tasks"
-}, B0 = {
+}, Bb = {
   key: 2,
   class: "rlzc-ps"
-}, U0 = { class: "rlzc-actions" }, V0 = ["disabled"], H0 = ["disabled"], W0 = {
+}, Ub = { class: "rlzc-actions" }, Vb = ["disabled"], Hb = ["disabled"], Wb = {
   key: 1,
   class: "rlzc-card rlzc-rest"
-}, G0 = ["onClick"], K0 = { class: "rlzc-entry-kicker" }, q0 = {
+}, Gb = ["onClick"], Kb = { class: "rlzc-entry-kicker" }, qb = {
   class: "rlzc-entry-inf",
   viewBox: "0 0 32 32",
   "aria-hidden": "true"
-}, Y0 = ["d"], J0 = { class: "rlzc-entry-title" }, Z0 = { class: "rlzc-entry-level" }, X0 = { class: "rlzc-entry-name" }, Q0 = {
+}, Yb = ["d"], Jb = { class: "rlzc-entry-title" }, Zb = { class: "rlzc-entry-level" }, Xb = { class: "rlzc-entry-name" }, Qb = {
   key: 0,
   class: "rlzc-entry-note"
-}, eb = { class: "rlzc-entry-foot" }, tb = ["aria-checked", "onClick"], nb = { key: 1 }, sb = { class: "rlzc-entry-actions" }, rb = ["onClick"], ib = ["onClick"], ob = {
+}, e0 = { class: "rlzc-entry-foot" }, t0 = ["aria-checked", "onClick"], n0 = { key: 1 }, s0 = { class: "rlzc-entry-actions" }, r0 = ["onClick"], i0 = ["onClick"], o0 = {
   key: 3,
   class: "rlzc-card"
-}, lb = { class: "rlzc-row" }, ab = ["value"], cb = ["disabled"], ub = /* @__PURE__ */ Re({
+}, l0 = { class: "rlzc-row" }, a0 = ["value"], c0 = ["disabled"], u0 = /* @__PURE__ */ Re({
   __name: "SystemTab",
   setup(e) {
     const t = /* @__PURE__ */ he(""), n = K(() => !!f.session && !!f.pack), s = K(() => f.progress), r = K(() => n.value && !!s.value && !s.value.ended), i = K(() => f.packs.find((w) => w.id === t.value) ?? null), o = /* @__PURE__ */ he({}), l = (w, x) => o.value[w] ?? x, a = K(() => !!f.pack?.phases.length), c = K(() => f.settings.panelDisplay !== "statusbar"), d = K(() => {
@@ -8490,18 +8490,18 @@ const u0 = {
     async function z() {
       t.value && (await lv(t.value), t.value = "");
     }
-    return (w, x) => (v(), k("div", v0, [
+    return (w, x) => (v(), k("div", vb, [
       n.value && s.value ? (v(), k(X, { key: 0 }, [
-        u("div", b0, [
-          u("div", y0, [
-            u("span", k0, $(E(f).pack?.rest ? "—" : E(f).pack.level), 1),
+        u("div", bb, [
+          u("div", yb, [
+            u("span", kb, $(E(f).pack?.rest ? "—" : E(f).pack.level), 1),
             u("h3", null, $(E(f).pack.name), 1),
-            s.value.ended ? (v(), k("span", w0, "已结束")) : j("", !0)
+            s.value.ended ? (v(), k("span", wb, "已结束")) : j("", !0)
           ]),
-          E(f).session?.briefing?.goal ? (v(), k("p", z0, "目标：" + $(E(f).session.briefing.goal), 1)) : j("", !0)
+          E(f).session?.briefing?.goal ? (v(), k("p", zb, "目标：" + $(E(f).session.briefing.goal), 1)) : j("", !0)
         ]),
-        u("div", _0, [
-          a.value ? (v(), k("div", $0, [
+        u("div", _b, [
+          a.value ? (v(), k("div", $b, [
             x[3] || (x[3] = u("span", null, "阶段", -1)),
             u("b", null, $(s.value.phase.name), 1)
           ])) : j("", !0),
@@ -8511,65 +8511,65 @@ const u0 = {
             x[4] || (x[4] = u("span", null, "轮次", -1)),
             u("b", null, $(d.value), 1)
           ], 2),
-          s.value.currentClock ? (v(), k("div", S0, [
+          s.value.currentClock ? (v(), k("div", Sb, [
             x[5] || (x[5] = u("span", null, "钟时", -1)),
             u("b", null, $(s.value.currentClock), 1)
           ])) : j("", !0),
-          s.value.roundsLeft ? (v(), k("div", C0, [
+          s.value.roundsLeft ? (v(), k("div", Cb, [
             x[6] || (x[6] = u("span", null, "最多剩余轮次", -1)),
             u("b", null, $(s.value.roundsLeft.x) + "/" + $(s.value.roundsLeft.y), 1)
           ])) : j("", !0),
-          c.value ? (v(), k("div", E0, [
+          c.value ? (v(), k("div", Eb, [
             x[7] || (x[7] = u("span", null, "剩余时间", -1)),
             u("b", null, $(A.value), 1)
           ])) : j("", !0),
           r.value ? j("", !0) : (v(), De(Dl, { key: 4 }))
         ]),
-        E(f).subLine ? (v(), k("p", M0, $(E(f).subLine), 1)) : j("", !0),
-        s.value.skipGoal ? (v(), k("div", T0, "快进中：目标 " + $(E(f).pack.phases.find((_) => _.id === s.value.skipGoal.phase)?.name) + " 第" + $(s.value.skipGoal.round) + "轮", 1)) : j("", !0),
-        s.value.ended && s.value.settlement ? (v(), k("div", I0, [
-          u("div", N0, [
+        E(f).subLine ? (v(), k("p", Mb, $(E(f).subLine), 1)) : j("", !0),
+        s.value.skipGoal ? (v(), k("div", Tb, "快进中：目标 " + $(E(f).pack.phases.find((_) => _.id === s.value.skipGoal.phase)?.name) + " 第" + $(s.value.skipGoal.round) + "轮", 1)) : j("", !0),
+        s.value.ended && s.value.settlement ? (v(), k("div", Ib, [
+          u("div", Nb, [
             x[8] || (x[8] = u("span", null, "结果", -1)),
             u("b", null, $(s.value.settlement.result ?? "—"), 1)
           ]),
-          u("div", P0, [
+          u("div", Pb, [
             x[9] || (x[9] = u("span", null, "评价", -1)),
             u("b", null, $(s.value.settlement.rating ?? "—"), 1)
           ]),
-          E(f).session?.clearance && s.value.settlement.result === "失败" ? (v(), k("div", O0, " 清算未通关 ")) : j("", !0)
-        ])) : s.value.ended ? (v(), k("div", L0, "副本已手动结束。")) : j("", !0),
-        c.value && s.value.panel ? (v(), k("div", D0, [
-          s.value.panel.progressBar ? (v(), k("div", R0, [
+          E(f).session?.clearance && s.value.settlement.result === "失败" ? (v(), k("div", Ob, " 清算未通关 ")) : j("", !0)
+        ])) : s.value.ended ? (v(), k("div", Lb, "副本已手动结束。")) : j("", !0),
+        c.value && s.value.panel ? (v(), k("div", Db, [
+          s.value.panel.progressBar ? (v(), k("div", Rb, [
             x[10] || (x[10] = u("span", null, "进度", -1)),
-            u("b", F0, $(s.value.panel.progressBar), 1)
+            u("b", Fb, $(s.value.panel.progressBar), 1)
           ])) : j("", !0),
-          s.value.panel.tasks.length ? (v(), k("div", j0, [
+          s.value.panel.tasks.length ? (v(), k("div", jb, [
             x[11] || (x[11] = u("span", null, "任务", -1)),
             u("ul", null, [
               (v(!0), k(X, null, ce(s.value.panel.tasks, (_, S) => (v(), k("li", { key: S }, $(_), 1))), 128))
             ])
           ])) : j("", !0),
-          s.value.panel.ps ? (v(), k("div", B0, "ps：" + $(s.value.panel.ps), 1)) : j("", !0)
+          s.value.panel.ps ? (v(), k("div", Bb, "ps：" + $(s.value.panel.ps), 1)) : j("", !0)
         ])) : j("", !0),
-        u("div", U0, [
+        u("div", Ub, [
           u("button", {
             class: "rlzc-btn",
             disabled: !p.value,
             onClick: x[0] || (x[0] = //@ts-ignore
             (..._) => E(Sl) && E(Sl)(..._))
-          }, "跳过（到本阶段结束）", 8, V0),
+          }, "跳过（到本阶段结束）", 8, Vb),
           u("button", {
             class: "rlzc-btn ghost",
             disabled: s.value.ended,
             onClick: x[1] || (x[1] = //@ts-ignore
             (..._) => E(Cl) && E(Cl)(..._))
-          }, "手动结束副本", 8, H0)
+          }, "手动结束副本", 8, Hb)
         ]),
         r.value && E(f).pack.docs?.length ? (v(), De(Ll, {
           key: 5,
           pack: E(f).pack
         }, null, 8, ["pack"])) : j("", !0)
-      ], 64)) : (v(), k("div", W0, [
+      ], 64)) : (v(), k("div", Wb, [
         x[12] || (x[12] = u("h3", null, "当前在回廊里，没有进行中的副本。", -1)),
         Ee(Dl)
       ])),
@@ -8583,20 +8583,20 @@ const u0 = {
           "aria-label": "不再提示",
           title: "不再提示",
           onClick: (S) => E(dv)(_.key)
-        }, "✕", 8, G0),
-        u("div", K0, [
-          (v(), k("svg", q0, [
-            u("path", { d: E(ho) }, null, 8, Y0)
+        }, "✕", 8, Gb),
+        u("div", Kb, [
+          (v(), k("svg", qb, [
+            u("path", { d: E(ho) }, null, 8, Yb)
           ])),
           x[13] || (x[13] = u("span", null, "待确认的副本", -1))
         ]),
-        u("div", J0, [
-          u("span", Z0, $(_.level), 1),
-          u("span", X0, $(_.name), 1)
+        u("div", Jb, [
+          u("span", Zb, $(_.level), 1),
+          u("span", Xb, $(_.name), 1)
         ]),
-        _.unknown ? (v(), k("div", Q0, "未收录，将使用通用副本包")) : j("", !0),
+        _.unknown ? (v(), k("div", Qb, "未收录，将使用通用副本包")) : j("", !0),
         x[16] || (x[16] = u("div", { class: "rlzc-entry-note" }, "进入后以最新一条AI回复为第1轮", -1)),
-        u("div", eb, [
+        u("div", e0, [
           _.liveShow ? (v(), k("button", {
             key: 0,
             type: "button",
@@ -8611,26 +8611,26 @@ const u0 = {
               u("span", null, null, -1)
             ])], 2),
             x[15] || (x[15] = u("span", null, "直播", -1))
-          ], 10, tb)) : (v(), k("span", nb)),
-          u("div", sb, [
+          ], 10, t0)) : (v(), k("span", n0)),
+          u("div", s0, [
             _.unknown ? (v(), k("button", {
               key: 0,
               type: "button",
               class: "rlzc-btn ghost rlzc-pending-save",
               title: "现在不玩，以后在手动选择副本里进入",
               onClick: (S) => E(uv)(_.key)
-            }, "收录", 8, rb)) : j("", !0),
+            }, "收录", 8, r0)) : j("", !0),
             u("button", {
               type: "button",
               class: "rlzc-btn rlzc-entry-go",
               onClick: (S) => E(cv)(_.key, l(_.key, _.live))
-            }, "进入", 8, ib)
+            }, "进入", 8, i0)
           ])
         ])
       ]))), 128)),
-      r.value ? j("", !0) : (v(), k("div", ob, [
+      r.value ? j("", !0) : (v(), k("div", o0, [
         x[18] || (x[18] = u("label", { class: "rlzc-label" }, "手动选择副本", -1)),
-        u("div", lb, [
+        u("div", l0, [
           mt(u("select", {
             "onUpdate:modelValue": x[2] || (x[2] = (_) => t.value = _),
             class: "rlzc-input"
@@ -8639,7 +8639,7 @@ const u0 = {
             (v(!0), k(X, null, ce(E(f).packs, (_) => (v(), k("option", {
               key: _.id,
               value: _.id
-            }, $(_.level) + "｜" + $(_.name), 9, ab))), 128))
+            }, $(_.level) + "｜" + $(_.name), 9, a0))), 128))
           ], 512), [
             [Ya, t.value]
           ]),
@@ -8647,7 +8647,7 @@ const u0 = {
             class: "rlzc-btn",
             disabled: !t.value,
             onClick: z
-          }, "进入", 8, cb)
+          }, "进入", 8, c0)
         ])
       ])),
       !r.value && i.value?.docs?.length ? (v(), De(Ll, {
@@ -8656,16 +8656,16 @@ const u0 = {
       }, null, 8, ["pack"])) : j("", !0)
     ]));
   }
-}), db = { class: "rlzc-ledger" }, Ab = { class: "rlzc-card rlzc-ledger-hero-card" }, fb = { class: "rlzc-ledger-hero-cols" }, pb = { class: "rlzc-ledger-hero-col" }, hb = { class: "rlzc-ledger-hero-col-val" }, mb = { class: "rlzc-ledger-hero-col" }, gb = { class: "rlzc-ledger-hero-col-val" }, xb = { class: "rlzc-ledger-hero-col" }, vb = {
+}), d0 = { class: "rlzc-ledger" }, A0 = { class: "rlzc-card rlzc-ledger-hero-card" }, f0 = { class: "rlzc-ledger-hero-cols" }, p0 = { class: "rlzc-ledger-hero-col" }, h0 = { class: "rlzc-ledger-hero-col-val" }, m0 = { class: "rlzc-ledger-hero-col" }, g0 = { class: "rlzc-ledger-hero-col-val" }, x0 = { class: "rlzc-ledger-hero-col" }, v0 = {
   key: 0,
   class: "rlzc-ledger-init-hint"
-}, bb = { class: "rlzc-card" }, yb = {
+}, b0 = { class: "rlzc-card" }, y0 = {
   key: 0,
   class: "rlzc-ledger-list"
-}, kb = { class: "rlzc-ledger-item-left" }, wb = { class: "rlzc-ledger-item-src" }, zb = { class: "rlzc-ledger-item-time" }, _b = { class: "rlzc-ledger-item-right" }, $b = { class: "rlzc-ledger-item-after" }, Sb = {
+}, k0 = { class: "rlzc-ledger-item-left" }, w0 = { class: "rlzc-ledger-item-src" }, z0 = { class: "rlzc-ledger-item-time" }, _0 = { class: "rlzc-ledger-item-right" }, $0 = { class: "rlzc-ledger-item-after" }, S0 = {
   key: 1,
   class: "rlzc-hint"
-}, Cb = /* @__PURE__ */ Re({
+}, C0 = /* @__PURE__ */ Re({
   __name: "LedgerTab",
   setup(e) {
     const t = K(() => Z()), n = K(() => Ct(t.value)), s = K(() => f.ledger), r = K(() => hn(n.value.value, s.value)), i = K(() => {
@@ -8686,78 +8686,78 @@ const u0 = {
         return w;
       }
     }
-    return (w, x) => (v(), k("div", db, [
-      u("div", Ab, [
+    return (w, x) => (v(), k("div", d0, [
+      u("div", A0, [
         x[3] || (x[3] = u("span", { class: "rlzc-ledger-hero-label" }, "当前积分", -1)),
         u("b", {
           class: Q(["rlzc-ledger-hero-num", { negative: r.value < 0 }])
         }, $(A(r.value)), 3),
         x[4] || (x[4] = u("div", { class: "rlzc-ledger-hero-divider" }, null, -1)),
-        u("div", fb, [
-          u("div", pb, [
+        u("div", f0, [
+          u("div", p0, [
             x[0] || (x[0] = u("span", { class: "rlzc-ledger-hero-col-label" }, "等级", -1)),
-            u("span", hb, $(o.value), 1)
+            u("span", h0, $(o.value), 1)
           ]),
-          u("div", mb, [
+          u("div", m0, [
             x[1] || (x[1] = u("span", { class: "rlzc-ledger-hero-col-label" }, "斩杀线", -1)),
-            u("span", gb, $(A(l.value)), 1)
+            u("span", g0, $(A(l.value)), 1)
           ]),
-          u("div", xb, [
+          u("div", x0, [
             x[2] || (x[2] = u("span", { class: "rlzc-ledger-hero-col-label" }, "待清算", -1)),
             u("span", {
               class: Q(["rlzc-ledger-hero-col-val", { "rlzc-ledger-warn": a.value }])
             }, $(a.value ? `距线 ${A(c.value)}` : "无"), 3)
           ])
         ]),
-        d.value ? (v(), k("p", vb, "初始积分按 1000 计，可在设置页修改")) : j("", !0)
+        d.value ? (v(), k("p", v0, "初始积分按 1000 计，可在设置页修改")) : j("", !0)
       ]),
-      u("div", bb, [
+      u("div", b0, [
         x[5] || (x[5] = u("h4", null, "流水", -1)),
-        s.value.length ? (v(), k("ul", yb, [
+        s.value.length ? (v(), k("ul", y0, [
           (v(!0), k(X, null, ce(i.value, (_, S) => (v(), k("li", {
             key: `${S}-${_.e.mesIndex}-${_.e.delta}-${_.e.at}`,
             class: "rlzc-ledger-item"
           }, [
-            u("div", kb, [
-              u("span", wb, $(_.e.source), 1),
-              u("span", zb, $(z(_.e.at)), 1)
+            u("div", k0, [
+              u("span", w0, $(_.e.source), 1),
+              u("span", z0, $(z(_.e.at)), 1)
             ]),
-            u("div", _b, [
+            u("div", _0, [
               u("span", {
                 class: Q(["rlzc-ledger-item-delta", _.e.delta >= 0 ? "pos" : "neg"])
               }, $(p(_.e.delta)), 3),
-              u("span", $b, "余额 " + $(A(_.after)), 1)
+              u("span", $0, "余额 " + $(A(_.after)), 1)
             ])
           ]))), 128))
-        ])) : (v(), k("p", Sb, "还没有收支记录。"))
+        ])) : (v(), k("p", S0, "还没有收支记录。"))
       ])
     ]));
   }
-}), Eb = { class: "rlzc-market" }, Mb = { class: "rlzc-subtabs rlzc-market-tabs" }, Tb = { class: "rlzc-card rlzc-mk-status" }, Ib = { class: "rlzc-mk-q" }, Nb = { class: "rlzc-mk-tag" }, Pb = { class: "rlzc-mk-opts" }, Ob = ["disabled", "onClick"], Lb = { class: "rlzc-row rlzc-mk-bet" }, Db = ["onUpdate:modelValue"], Rb = ["disabled", "onClick"], Fb = { class: "rlzc-hint" }, jb = {
+}), E0 = { class: "rlzc-market" }, M0 = { class: "rlzc-subtabs rlzc-market-tabs" }, T0 = { class: "rlzc-card rlzc-mk-status" }, I0 = { class: "rlzc-mk-q" }, N0 = { class: "rlzc-mk-tag" }, P0 = { class: "rlzc-mk-opts" }, O0 = ["disabled", "onClick"], L0 = { class: "rlzc-row rlzc-mk-bet" }, D0 = ["onUpdate:modelValue"], R0 = ["disabled", "onClick"], F0 = { class: "rlzc-hint" }, j0 = {
   key: 0,
   class: "rlzc-mk-red"
-}, Bb = {
+}, B0 = {
   key: 1,
   class: "rlzc-mk-mine"
-}, Ub = {
+}, U0 = {
   key: 1,
   class: "rlzc-card"
-}, Vb = {
+}, V0 = {
   key: 0,
   class: "rlzc-tk-list"
-}, Hb = { class: "rlzc-tk-left" }, Wb = { class: "rlzc-tk-title" }, Gb = {
+}, H0 = { class: "rlzc-tk-left" }, W0 = { class: "rlzc-tk-title" }, G0 = {
   key: 1,
   class: "rlzc-hint"
-}, Kb = {
+}, K0 = {
   key: 0,
   class: "rlzc-card rlzc-mk-status"
-}, qb = { class: "rlzc-cs-tables" }, Yb = ["onClick"], Jb = {
+}, q0 = { class: "rlzc-cs-tables" }, Y0 = ["onClick"], J0 = {
   key: 0,
   class: "rlzc-card rlzc-cs-play"
-}, Zb = {
+}, Z0 = {
   key: 0,
   class: "rlzc-segsrc rlzc-cs-seg"
-}, Xb = ["onClick"], Qb = ["onClick"], ey = { class: "rlzc-row rlzc-mk-bet" }, ty = ["disabled"], ny = { class: "rlzc-hint" }, sy = {
+}, X0 = ["onClick"], Q0 = ["onClick"], ey = { class: "rlzc-row rlzc-mk-bet" }, ty = ["disabled"], ny = { class: "rlzc-hint" }, sy = {
   key: 2,
   class: "rlzc-mk-red"
 }, ry = /* @__PURE__ */ Re({
@@ -8846,8 +8846,8 @@ const u0 = {
     });
     return Ni(() => {
       b && clearInterval(b);
-    }), (U, J) => (v(), k("div", Eb, [
-      u("nav", Mb, [
+    }), (U, J) => (v(), k("div", E0, [
+      u("nav", M0, [
         u("button", {
           class: Q({ on: t.value === "book" }),
           onClick: J[0] || (J[0] = (Y) => t.value = "book")
@@ -8862,16 +8862,16 @@ const u0 = {
         }, "赌坊", 2)
       ]),
       t.value === "book" ? (v(), k(X, { key: 0 }, [
-        u("div", Tb, $(a.value), 1),
+        u("div", T0, $(a.value), 1),
         (v(!0), k(X, null, ce(o.value?.markets ?? [], (Y) => (v(), k("div", {
           key: Y.id,
           class: "rlzc-card rlzc-mk-card"
         }, [
-          u("div", Ib, [
-            u("span", Nb, $(c[Y.kind]), 1),
+          u("div", I0, [
+            u("span", N0, $(c[Y.kind]), 1),
             Me($(Y.q), 1)
           ]),
-          u("div", Pb, [
+          u("div", P0, [
             (v(!0), k(X, null, ce(Y.options, (xe) => (v(), k("button", {
               key: xe.id,
               class: Q(["rlzc-mk-opt", { on: d.value[Y.id] === xe.id }]),
@@ -8880,10 +8880,10 @@ const u0 = {
             }, [
               u("span", null, $(xe.label), 1),
               u("b", null, $(s(xe.odds)), 1)
-            ], 10, Ob))), 128))
+            ], 10, O0))), 128))
           ]),
           d.value[Y.id] && !l.value ? (v(), k(X, { key: 0 }, [
-            u("div", Lb, [
+            u("div", L0, [
               mt(u("input", {
                 "onUpdate:modelValue": (xe) => A.value[Y.id] = xe,
                 type: "number",
@@ -8892,7 +8892,7 @@ const u0 = {
                 inputmode: "numeric",
                 class: "rlzc-input",
                 placeholder: "押多少"
-              }, null, 8, Db), [
+              }, null, 8, D0), [
                 [
                   Ot,
                   A.value[Y.id],
@@ -8904,36 +8904,36 @@ const u0 = {
                 class: "rlzc-btn",
                 disabled: typeof A.value[Y.id] != "number",
                 onClick: (xe) => w(Y)
-              }, "下注", 8, Rb)
+              }, "下注", 8, R0)
             ]),
-            u("p", Fb, "单注上限 " + $(n(z(Y).cap)) + "（" + $(i.value) + "级）", 1),
-            z(Y).belowKill ? (v(), k("p", jb, "押完余额低于斩杀线")) : j("", !0)
+            u("p", F0, "单注上限 " + $(n(z(Y).cap)) + "（" + $(i.value) + "级）", 1),
+            z(Y).belowKill ? (v(), k("p", j0, "押完余额低于斩杀线")) : j("", !0)
           ], 64)) : j("", !0),
-          x(Y).length ? (v(), k("ul", Bb, [
+          x(Y).length ? (v(), k("ul", B0, [
             (v(!0), k(X, null, ce(x(Y), (xe) => (v(), k("li", {
               key: xe.ticket.id
             }, $(_(xe)) + " · " + $(T(xe)), 1))), 128))
           ])) : j("", !0)
         ]))), 128))
-      ], 64)) : t.value === "tickets" ? (v(), k("div", Ub, [
-        E(f).market.tickets.length ? (v(), k("ul", Vb, [
+      ], 64)) : t.value === "tickets" ? (v(), k("div", U0, [
+        E(f).market.tickets.length ? (v(), k("ul", V0, [
           (v(!0), k(X, null, ce(E(f).market.tickets, (Y) => (v(), k("li", {
             key: Y.ticket.id,
             class: "rlzc-tk"
           }, [
-            u("div", Hb, [
-              u("span", Wb, $(S(Y)), 1),
+            u("div", H0, [
+              u("span", W0, $(S(Y)), 1),
               u("small", null, $(T(Y)), 1)
             ]),
             u("span", {
               class: Q(["rlzc-stamp", Y.res ? Y.res.stamp : "pending"])
             }, $(Y.res ? C[Y.res.stamp] : "待"), 3)
           ]))), 128))
-        ])) : (v(), k("p", Gb, "还没有赌票。"))
+        ])) : (v(), k("p", G0, "还没有赌票。"))
       ])) : (v(), k(X, { key: 2 }, [
         E(f).market.casinoOpen ? (v(), k(X, { key: 1 }, [
           J[4] || (J[4] = u("p", { class: "rlzc-hint" }, "今晚开两张桌，回到回廊换一批。", -1)),
-          u("div", qb, [
+          u("div", q0, [
             (v(!0), k(X, null, ce(I.value, (Y) => (v(), k("button", {
               key: Y.id,
               class: Q(["rlzc-card rlzc-cs-table", { on: F.value === Y.id }]),
@@ -8941,16 +8941,16 @@ const u0 = {
             }, [
               u("b", null, $(Y.name), 1),
               u("small", null, $(Y.desc), 1)
-            ], 10, Yb))), 128))
+            ], 10, Y0))), 128))
           ]),
-          D.value ? (v(), k("div", Jb, [
+          D.value ? (v(), k("div", J0, [
             u("h4", null, $(D.value.name), 1),
-            ie.value.length ? (v(), k("div", Zb, [
+            ie.value.length ? (v(), k("div", Z0, [
               (v(!0), k(X, null, ce(ie.value, (Y) => (v(), k("button", {
                 key: Y.id,
                 class: Q({ on: B.value === Y.id }),
                 onClick: (xe) => B.value = Y.id
-              }, $(Y.label), 11, Xb))), 128))
+              }, $(Y.label), 11, X0))), 128))
             ])) : j("", !0),
             le.value.length ? (v(), k("div", {
               key: 1,
@@ -8960,7 +8960,7 @@ const u0 = {
                 key: Y.id,
                 class: Q({ on: B.value === Y.id }),
                 onClick: (xe) => B.value = Y.id
-              }, $(Y.label), 11, Qb))), 128))
+              }, $(Y.label), 11, Q0))), 128))
             ], 2)) : j("", !0),
             u("div", ey, [
               mt(u("input", {
@@ -8996,7 +8996,7 @@ const u0 = {
               class: Q(["rlzc-cs-result", g.value.win ? "win" : "lose"])
             }, $(qt.value), 3)) : j("", !0)
           ])) : j("", !0)
-        ], 64)) : (v(), k("div", Kb, "赌坊只在回廊营业。"))
+        ], 64)) : (v(), k("div", K0, "赌坊只在回廊营业。"))
       ], 64))
     ]));
   }
@@ -10591,7 +10591,7 @@ const u0 = {
           }, $(i.label), 11, Pw)), 64))
         ]),
         u("div", Ow, [
-          E(f).tab === "system" ? (v(), De(ub, { key: 0 })) : E(f).tab === "ledger" ? (v(), De(Cb, { key: 1 })) : E(f).tab === "market" ? (v(), De(ry, { key: 2 })) : E(f).tab === "settings" ? (v(), De(kk, { key: 3 })) : E(f).tab === "debug" && E(f).debugUnlocked ? (v(), De(Mw, { key: 4 })) : j("", !0)
+          E(f).tab === "system" ? (v(), De(u0, { key: 0 })) : E(f).tab === "ledger" ? (v(), De(C0, { key: 1 })) : E(f).tab === "market" ? (v(), De(ry, { key: 2 })) : E(f).tab === "settings" ? (v(), De(kk, { key: 3 })) : E(f).tab === "debug" && E(f).debugUnlocked ? (v(), De(Mw, { key: 4 })) : j("", !0)
         ])
       ])
     ]));
@@ -10600,9 +10600,9 @@ const u0 = {
   __name: "App",
   setup(e) {
     return (t, n) => (v(), k(X, null, [
-      E(f).settings.showBall ? (v(), De(l0, { key: 0 })) : j("", !0),
+      E(f).settings.showBall ? (v(), De(lb, { key: 0 })) : j("", !0),
       E(f).panelOpen ? (v(), De(Lw, { key: 1 })) : j("", !0),
-      Ee(e0)
+      Ee(eb)
     ], 64));
   }
 }), Rw = ':host{all:initial}.rlzc-root{--fg: var(--SmartThemeBodyColor, #dcdcd2);--bg: var(--SmartThemeBlurTintColor, #171717);--line: var(--SmartThemeBorderColor, rgba(127, 127, 127, .35));--accent: var(--SmartThemeQuoteColor, #d88a2a);--muted: var(--SmartThemeEmColor, #919191);--solid: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);--soft: color-mix(in srgb, var(--fg) 7%, transparent);--ok: #4caf72;--bad: #c9534f;font-family:var(--mainFontFamily, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif);font-size:14px;line-height:1.55;color:var(--fg)}.rlzc-root *,.rlzc-root *:before,.rlzc-root *:after{box-sizing:border-box}.rlzc-ball{position:fixed;z-index:5000;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--solid);color:var(--muted);display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 10px #00000040;padding:0;font:inherit}.rlzc-ball:active{cursor:grabbing}.rlzc-ball.is-active{color:var(--accent);border-color:var(--accent)}.rlzc-ball.has-ring{border-color:transparent}.rlzc-ball.is-warn{color:var(--bad)}.rlzc-ball-inf{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.rlzc-ball-ring{position:absolute;inset:-1px;width:48px;height:48px;transform:rotate(-90deg);pointer-events:none}.rlzc-ball-ring circle{fill:none;stroke-width:3}.rlzc-ball-ring-base{stroke:var(--line)}.rlzc-ball-ring-bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dasharray .3s ease}.rlzc-ball.is-warn .rlzc-ball-ring-bar{stroke:var(--bad)}@media(prefers-reduced-motion:reduce){.rlzc-ball-ring-bar{transition:none}}.rlzc-ball-live{position:absolute;top:1px;left:1px;width:12px;height:12px;border-radius:50%;background:var(--bad);border:2px solid var(--solid);pointer-events:none}.rlzc-ball-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;line-height:18px;text-align:center;pointer-events:none}.rlzc-entry-card{position:fixed;z-index:9000;top:calc(var(--topBarBlockSize, 40px) + 12px);right:12px;width:300px;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px #0000004d;padding:10px 12px 4px 14px}@media(max-width:323.98px){.rlzc-entry-card{left:12px;width:auto}}@media(min-width:800px){.rlzc-entry-card.beside-panel{right:476px}}.rlzc-entry-close{position:absolute;top:0;right:0;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;cursor:pointer;padding:0}.rlzc-entry-close:hover{color:var(--fg)}.rlzc-pending{position:relative;padding:10px 12px 4px 14px}.rlzc-entry-kicker{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);padding-right:36px}.rlzc-entry-inf{width:16px;height:16px;fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.rlzc-entry-title{display:flex;align-items:center;gap:8px;margin:6px 0 2px;padding-right:30px}.rlzc-entry-level{flex:0 0 auto;display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 4px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);font-size:13px;font-weight:800;line-height:1}.rlzc-entry-name{font-size:16px;font-weight:700;min-width:0;overflow-wrap:anywhere}.rlzc-entry-note{font-size:12px;color:var(--muted);margin-top:2px}.rlzc-entry-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:2px;border-top:1px solid var(--line)}.rlzc-entry-live{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;margin-left:-2px;background:none;border:0;color:var(--fg);font:inherit;font-size:13px;cursor:pointer}.rlzc-entry-live .rlzc-toggle{display:inline-block;width:44px}.rlzc-entry-live .rlzc-toggle:after{content:none}.rlzc-entry-live:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}.rlzc-toggle.danger.on{background:color-mix(in srgb,var(--bad) 75%,transparent);border-color:var(--bad)}.rlzc-entry-live.on{color:var(--bad)}.rlzc-entry-actions{display:flex;gap:6px}.rlzc-entry-actions .rlzc-btn{min-height:44px;min-width:60px}.rlzc-entry-actions .rlzc-entry-go{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:opacity .16s ease,transform .16s ease}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{opacity:0;transform:translateY(-4px)}@media(prefers-reduced-motion:reduce){.rlzc-entry-fade-enter-active,.rlzc-entry-fade-leave-active{transition:none}.rlzc-entry-fade-enter-from,.rlzc-entry-fade-leave-to{transform:none}}.rlzc-backdrop{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:5001;background:#0000004d;display:flex;align-items:flex-end;justify-content:center}.rlzc-panel{width:100%;max-height:86dvh;height:86vh;height:86dvh;display:flex;flex-direction:column;background:var(--solid);color:var(--fg);border:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -6px 30px #00000059;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0)}@media(min-width:720px){.rlzc-backdrop{align-items:center;justify-content:flex-end;padding:24px;background:#00000026}.rlzc-panel{width:440px;height:min(760px,90vh);border-radius:14px}}.rlzc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px}.rlzc-title{font-weight:700;letter-spacing:.08em}.rlzc-icon{background:none;border:0;color:var(--fg);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px}.rlzc-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}.rlzc-tabs button,.rlzc-subtabs button{flex:1 0 auto;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;padding:9px 10px;border-bottom:2px solid transparent;white-space:nowrap}.rlzc-tabs button.on{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}.rlzc-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}.rlzc-body>div{display:flex;flex-direction:column;gap:10px}.rlzc-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft)}.rlzc-card h3,.rlzc-card h4{margin:0 0 6px}.rlzc-card h4{font-size:13px;color:var(--muted);font-weight:600}.rlzc-card summary{cursor:pointer;font-weight:600}.rlzc-note{margin:0;padding:8px 10px;border-left:3px solid var(--accent);background:var(--soft);border-radius:4px;font-size:13px}.rlzc-hint{font-size:12px;color:var(--muted);margin:4px 0}.rlzc-row{display:flex;gap:8px;align-items:center;margin:4px 0}.rlzc-row>.rlzc-input{flex:1;min-width:0}.rlzc-label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-input{font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 70%,transparent);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}.rlzc-input:focus{outline:1px solid var(--accent)}.rlzc-input option{background:var(--solid);color:var(--fg)}.rlzc-btn{font:inherit;cursor:pointer;border-radius:8px;padding:7px 12px;white-space:nowrap;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--fg)}.rlzc-btn.ghost{border-color:var(--line);background:none}.rlzc-btn.small{padding:4px 9px;font-size:12px}.rlzc-btn:disabled{opacity:.4;cursor:not-allowed}.rlzc-field{display:flex;align-items:center;gap:8px;margin:4px 0}.rlzc-field>span{flex:0 0 42%;font-size:13px}.rlzc-check{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:13px}.rlzc-list{list-style:none;margin:0 0 8px;padding:0}.rlzc-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}.rlzc-errors{color:#d9534f;font-size:12px;margin:6px 0 0;padding-left:18px}.rlzc-mono,.rlzc-pre,code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.rlzc-pre{white-space:pre-wrap;word-break:break-all;font-size:12px;margin:8px 0 0;max-height:50vh;overflow:auto}.rlzc-hero-top{display:flex;align-items:center;gap:10px}.rlzc-hero-top h3{margin:0;font-size:18px;flex:1}.rlzc-level{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:800}.rlzc-chip{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.rlzc-goal{margin:8px 0 0;font-size:13px}.rlzc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-stat{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;background:var(--soft)}.rlzc-stat span{font-size:11px;color:var(--muted)}.rlzc-stat b{font-size:16px;font-variant-numeric:tabular-nums}.rlzc-stat.warn b{color:var(--accent)}.rlzc-kv{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.rlzc-kv span,.rlzc-tasks>span{color:var(--muted);font-size:12px}.rlzc-tasks ul{margin:4px 0 0;padding-left:18px}.rlzc-ps{font-size:13px;color:var(--muted);margin-top:6px;white-space:pre-wrap}.rlzc-actions{display:flex;gap:8px;flex-wrap:wrap}.rlzc-actions .rlzc-btn{flex:1}.rlzc-rest{text-align:center;padding:24px 12px}.rlzc-rest p{color:var(--muted);font-size:13px;margin:0}.rlzc-docs{border:1px solid var(--line);border-radius:10px;padding:2px 12px 10px;background:var(--soft)}.rlzc-subtabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line)}.rlzc-subtabs button{flex:0 0 auto}.rlzc-subtabs button.on{color:var(--fg);border-bottom-color:var(--accent)}.rlzc-md{font-size:14px}.rlzc-md h3,.rlzc-md h4,.rlzc-md h5{margin:14px 0 6px}.rlzc-md p{margin:6px 0}.rlzc-md ul,.rlzc-md ol{padding-left:20px;margin:6px 0}.rlzc-md blockquote{margin:6px 0;padding-left:10px;border-left:3px solid var(--line);color:var(--muted)}.rlzc-img{display:block;max-width:100%;margin:8px auto;background:#fff;border-radius:8px}.rlzc-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.rlzc-table th,.rlzc-table td{text-align:left;padding:3px 4px;border-bottom:1px solid var(--line);vertical-align:top}.rlzc-warns li{align-items:flex-start;font-size:13px}.rlzc-row-warn td{background:color-mix(in srgb,#e0b000 22%,transparent)}.rlzc-intro{line-height:1.6;margin-bottom:8px}.rlzc-grow{flex:1;margin:0}.rlzc-grow>.rlzc-input{flex:1;min-width:0}.rlzc-subline{font-size:12px;color:var(--muted);margin:0}.rlzc-depth .rlzc-field>span{display:flex;flex-direction:column;gap:2px}.rlzc-depth .rlzc-field>span small{color:var(--muted);font-size:11px;line-height:1.4}.rlzc-field.rlzc-field-num>span{flex:1 1 auto;min-width:0}.rlzc-subapi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.rlzc-subapi-head h4{margin:0}.rlzc-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}.rlzc-dot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted)}.rlzc-dot[data-kind=on]{color:#4caf72}.rlzc-dot[data-kind=on]:before{background:#4caf72}.rlzc-dot[data-kind=warn]{color:#c9833a}.rlzc-dot[data-kind=warn]:before{background:#c9833a}.rlzc-segsrc{display:flex;width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:8px 0}.rlzc-segsrc button{flex:1;padding:8px 4px;font:inherit;font-size:13px;background:none;border:none;border-right:1px solid var(--line);color:var(--muted);cursor:pointer;min-height:44px}.rlzc-segsrc button:last-child{border-right:none}.rlzc-segsrc button.on{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--fg);font-weight:600}.rlzc-segsrc button:hover:not(.on){background:var(--soft);color:var(--fg)}.rlzc-preset-area{background:color-mix(in srgb,var(--bg) 50%,transparent);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.rlzc-preset-row{display:flex;gap:6px;align-items:center}.rlzc-preset-row .rlzc-input{flex:1;min-width:0}.rlzc-icon-btn{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);cursor:pointer;padding:0}.rlzc-icon-btn:hover:not(:disabled){color:var(--fg);border-color:var(--fg)}.rlzc-icon-btn.rlzc-danger{color:#c9534f;border-color:color-mix(in srgb,#c9534f 40%,transparent)}.rlzc-icon-btn.rlzc-danger:hover:not(:disabled){background:color-mix(in srgb,#c9534f 12%,transparent);border-color:#c9534f}.rlzc-icon-btn:disabled{opacity:.35;cursor:not-allowed}.rlzc-stacked-field{display:flex;flex-direction:column;gap:4px}.rlzc-key-wrap{position:relative;display:flex}.rlzc-key-wrap .rlzc-input{padding-right:44px;width:100%}.rlzc-eye-btn{position:absolute;right:0;top:0;bottom:0;width:44px;display:grid;place-items:center;background:none;border:none;color:var(--muted);cursor:pointer;padding:0}.rlzc-eye-btn:hover{color:var(--fg)}.rlzc-input-disabled{color:var(--muted);cursor:default}.rlzc-check-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rlzc-check-btns .rlzc-btn{min-height:44px;width:100%}.rlzc-check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}.rlzc-check-list li{display:flex;align-items:baseline;gap:10px;font-size:12px;line-height:1.45}.rlzc-check-list li[data-kind=on]{color:#4caf72}.rlzc-check-list li[data-kind=warn]{color:#c9833a}.rlzc-check-text{flex:1;min-width:0;overflow-wrap:anywhere}.rlzc-check-time{flex:none;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-option-list{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;display:flex;flex-direction:column}.rlzc-option-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 50%,transparent);min-height:44px}.rlzc-option-row:last-child{border-bottom:none}.rlzc-option-label{display:flex;flex-direction:column;gap:2px;font-size:13px}.rlzc-option-label small{font-size:11px;color:var(--muted)}.rlzc-option-row-timeout>span{font-size:13px}.rlzc-timeout-wrap{display:flex;align-items:center;gap:6px;flex:0 0 auto}.rlzc-input.rlzc-input-num{flex:0 0 auto;width:calc(4ch + 20px);margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}.rlzc-input-num::-webkit-inner-spin-button,.rlzc-input-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.rlzc-seg.active{background:var(--accent);border-color:var(--accent);font-weight:700;color:var(--bg);color:rgb(from var(--bg) r g b)}.rlzc-unit{font-size:13px;color:var(--muted)}.rlzc-toggle{flex:0 0 44px;height:26px;border-radius:13px;background:color-mix(in srgb,var(--muted) 30%,transparent);border:1px solid var(--line);cursor:pointer;padding:0;position:relative;transition:background .15s}.rlzc-toggle.on{background:color-mix(in srgb,var(--accent) 70%,transparent);border-color:var(--accent)}.rlzc-toggle span{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .15s}.rlzc-toggle.on span{transform:translate(18px)}.rlzc-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-toggle:after{content:"";position:absolute;inset:-10px 0}.rlzc-segsrc button:disabled{opacity:.4;cursor:not-allowed}.rlzc-segsrc button:disabled:hover{background:none;color:var(--muted)}.rlzc-live-card .rlzc-input-num{min-height:44px}.rlzc-onair{display:flex;align-items:center;gap:12px;margin:10px 0 4px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}.rlzc-onair.on{border-color:color-mix(in srgb,var(--bad) 45%,transparent);background:color-mix(in srgb,var(--bad) 8%,transparent)}.rlzc-onair-dot{flex:none;width:10px;height:10px;border-radius:50%;background:color-mix(in srgb,var(--muted) 55%,transparent)}.rlzc-onair.on .rlzc-onair-dot{background:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 22%,transparent);animation:rlzc-onair-pulse 1.8s ease-in-out infinite}@keyframes rlzc-onair-pulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--bad) 8%,transparent)}}@media(prefers-reduced-motion:reduce){.rlzc-onair.on .rlzc-onair-dot{animation:none}}.rlzc-onair-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-onair-text strong{font-size:14px;font-weight:600;color:var(--fg)}.rlzc-onair.on .rlzc-onair-text strong{color:var(--bad)}.rlzc-onair-text small{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.rlzc-onair-btn{flex:none;min-width:76px;min-height:44px;padding:0 16px;border-radius:22px;font:inherit;font-weight:600;cursor:pointer;border:1px solid var(--bad);background:var(--bad);color:#fff}.rlzc-onair-btn.stop{background:none;color:var(--bad)}.rlzc-onair-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.rlzc-onair-lock{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 12px;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:22px}.rlzc-option-row-stack{flex-direction:column;align-items:stretch;gap:0}.rlzc-option-row-stack .rlzc-segsrc{margin:6px 0 2px}.rlzc-option-row-stack .rlzc-hint{margin:2px 0 0}.rlzc-key-notice{text-align:center;margin-top:4px}.rlzc-ledger-hero-card{display:flex;flex-direction:column;gap:0}.rlzc-ledger-hero-label{font-size:12px;color:var(--muted);margin-bottom:4px}.rlzc-ledger-hero-num{font-size:32px;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}.rlzc-ledger-hero-num.negative{color:#c9534f}.rlzc-ledger-hero-divider{height:1px;background:var(--line);margin:0 0 10px}.rlzc-ledger-hero-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rlzc-ledger-hero-col{display:flex;flex-direction:column;gap:3px}.rlzc-ledger-hero-col-label{font-size:11px;color:var(--muted)}.rlzc-ledger-hero-col-val{font-size:14px;font-variant-numeric:tabular-nums;font-weight:600}.rlzc-ledger-warn{color:#c9833a}.rlzc-ledger-init-hint{font-size:11px;color:var(--muted);margin:10px 0 0}.rlzc-ledger-list{list-style:none;margin:6px 0 0;padding:0}.rlzc-ledger-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-ledger-item:last-child{border-bottom:none}.rlzc-ledger-item-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-ledger-item-src{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rlzc-ledger-item-time{font-size:11px;color:var(--muted)}.rlzc-ledger-item-delta{flex:0 0 auto;font-size:14px;font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}.rlzc-ledger-item-right{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px}.rlzc-ledger-item-after{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.rlzc-ledger-item-delta.pos{color:#4caf72}.rlzc-ledger-item-delta.neg{color:#c9534f}.rlzc-collapsible{padding:0}.rlzc-collapse-head{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;min-height:44px;background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.rlzc-collapsible .rlzc-collapse-head h4{flex:1;margin:0}.rlzc-collapse-head:hover{background:var(--soft);border-radius:10px}.rlzc-collapse-arrow{flex:0 0 auto;font-size:13px;color:var(--muted);display:inline-block;transition:transform .15s ease;transform:rotate(0)}.rlzc-collapse-arrow.open{transform:rotate(90deg)}.rlzc-collapse-body{padding:0 12px 10px}.rlzc-collapse-status{flex:0 0 auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-collapse-head .rlzc-dot{font-size:12px}.rlzc-market-tabs button{flex:1 1 0;min-height:44px}.rlzc-mk-status{font-size:14px}.rlzc-mk-q{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-weight:600;overflow-wrap:anywhere}.rlzc-mk-tag{flex:0 0 auto;font-size:11px;font-weight:600;color:var(--accent);padding:1px 6px;border:1px solid color-mix(in srgb,var(--accent) 60%,transparent);border-radius:4px}.rlzc-mk-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.rlzc-mk-opt{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding:6px 10px;font:inherit;color:var(--fg);background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid var(--line);border-radius:8px;cursor:pointer;text-align:left}.rlzc-mk-opt b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}.rlzc-mk-opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}.rlzc-mk-opt.on b{color:var(--fg)}.rlzc-mk-opt:disabled{opacity:.55;cursor:not-allowed}.rlzc-mk-bet{margin-top:8px}.rlzc-mk-bet .rlzc-input,.rlzc-mk-bet .rlzc-btn{min-height:44px}.rlzc-mk-bet .rlzc-btn{flex:0 0 auto;min-width:64px}.rlzc-mk-red{color:var(--bad);font-size:12px;margin:2px 0}.rlzc-mk-mine{list-style:none;margin:8px 0 0;padding:6px 0 0;border-top:1px dashed var(--line);font-size:12px;color:var(--muted)}.rlzc-mk-mine li{padding:2px 0;font-variant-numeric:tabular-nums}.rlzc-tk-list{list-style:none;margin:0;padding:0}.rlzc-tk{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.rlzc-tk:last-child{border-bottom:none}.rlzc-tk-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rlzc-tk-title{font-size:13px;overflow-wrap:anywhere}.rlzc-tk-left small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.rlzc-stamp{flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;border:2px solid currentColor;transform:rotate(-14deg);box-shadow:inset 0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}.rlzc-stamp.win{color:var(--ok)}.rlzc-stamp.lose{color:var(--bad)}.rlzc-stamp.refund{color:var(--muted)}.rlzc-stamp.pending{color:var(--muted);border-style:dashed;border-width:1px;box-shadow:none;transform:none;font-weight:600;font-size:14px}.rlzc-cs-tables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rlzc-cs-table{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:76px;text-align:left;font:inherit;color:var(--fg);cursor:pointer}.rlzc-cs-table b{font-size:15px}.rlzc-cs-table small{font-size:12px;color:var(--muted);line-height:1.45}.rlzc-cs-table.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}.rlzc-cs-play h4{margin-bottom:4px}.rlzc-cs-seg{margin:6px 0}.rlzc-cs-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:6px 0}.rlzc-cs-grid.door{grid-template-columns:repeat(5,minmax(0,1fr))}.rlzc-cs-grid button{min-height:44px;padding:0 2px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}.rlzc-cs-grid button.on{color:var(--fg);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,transparent);font-weight:600}.rlzc-cs-face{margin-top:10px;min-height:52px;display:grid;place-items:center;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;border:1px dashed var(--line);border-radius:10px}.rlzc-cs-face.rolling{color:var(--muted)}.rlzc-cs-result{margin:8px 0 0;font-weight:600;font-variant-numeric:tabular-nums}.rlzc-cs-result.win{color:var(--ok)}.rlzc-cs-result.lose{color:var(--bad)}.rlzc-live-key{font-size:13px;flex:none}.rlzc-live-ctl{flex:1;min-width:0;max-width:240px;margin:0}.rlzc-live-opts>.rlzc-option-row{min-height:48px;padding:6px 0}.rlzc-live-opts .rlzc-segsrc{margin:0}.rlzc-live-opts .rlzc-segsrc button{min-height:34px;padding:4px}.rlzc-live-opts .rlzc-range-wrap{min-height:34px}.rlzc-live-api{display:flex;gap:8px;align-items:center;justify-content:flex-end}.rlzc-pill-select{position:relative;display:inline-flex;min-width:0;max-width:170px}.rlzc-pill-select select{appearance:none;-webkit-appearance:none;min-width:0;max-width:100%;height:30px;padding:0 26px 0 12px;border-radius:15px;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 60%,transparent);color:var(--fg);font:inherit;font-size:13px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rlzc-pill-select select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.rlzc-pill-select select option{background:var(--solid);color:var(--fg)}.rlzc-pill-select:after{content:"";position:absolute;right:12px;top:50%;width:6px;height:6px;pointer-events:none;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:translateY(-70%) rotate(45deg)}.rlzc-pill-icon{flex:none;width:30px;height:30px;padding:0;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;position:relative}.rlzc-pill-icon:hover,.rlzc-pill-icon.on{color:var(--fg);border-color:var(--fg)}.rlzc-pill-icon:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.rlzc-pill-icon:after{content:"";position:absolute;inset:-7px}.rlzc-pill-num{width:32px;height:30px;border-radius:8px;padding:0;text-align:center;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 60%,transparent);color:var(--fg);font:inherit;font-size:13px;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}.rlzc-pill-num::-webkit-inner-spin-button,.rlzc-pill-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.rlzc-pill-num:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.rlzc-live-opts .rlzc-preset-area{margin:2px 0 6px}.rlzc-range-wrap{display:flex;align-items:center;gap:10px;min-height:44px}.rlzc-range{flex:1;min-width:0;accent-color:var(--accent);height:28px}.rlzc-range-val{min-width:44px;text-align:right;font-variant-numeric:tabular-nums;color:var(--fg);font-size:13px}.rlzc-live-summary{margin:0;padding:8px 0;min-height:36px;display:flex;align-items:center;border-bottom:1px solid color-mix(in srgb,var(--line) 50%,transparent)}.rlzc-preset-links{display:flex;justify-content:flex-end;gap:4px}.rlzc-text-btn{background:none;border:none;font:inherit;font-size:12px;color:var(--muted);padding:6px 8px;min-height:32px;cursor:pointer;border-radius:6px}.rlzc-text-btn:hover{background:var(--soft);color:var(--fg)}.rlzc-text-btn.rlzc-danger-text,.rlzc-danger-text{color:#c9534f}';
@@ -10637,7 +10637,7 @@ async function Bw(e) {
   const t = await ku("/api/extensions/update", e.folder, e.global);
   if (!t.ok) throw new Error(t.status === 403 ? "没有权限更新全局扩展" : `更新失败（${t.status}）`);
 }
-const Uw = "回廊种菜系统", Vw = 100, Hw = [], Ww = [], Gw = "dist/index.js", Kw = "xiaxiii", qw = "1.3.0", Yw = "https://github.com/xiaxiii/M-bius-strip", Jw = !0, Zw = "rlzcInterceptor", Rl = {
+const Uw = "回廊种菜系统", Vw = 100, Hw = [], Ww = [], Gw = "dist/index.js", Kw = "xiaxiii", qw = "1.2.1", Yw = "https://github.com/xiaxiii/M-bius-strip", Jw = !0, Zw = "rlzcInterceptor", Rl = {
   display_name: Uw,
   loading_order: Vw,
   requires: Hw,
